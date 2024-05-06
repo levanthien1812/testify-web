@@ -1,26 +1,31 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { RouterProvider, createBrowserRouter } from "react-router-dom";
+import { ToastContainer } from "react-toastify";
+import GuessRoute from "./components/routes/GuessRoute";
+import RegistePage from "./pages/authPage/RegistePage";
+import { QueryClient, QueryClientProvider } from "react-query";
+
+const queryClient = new QueryClient();
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.tsx</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+    const router = createBrowserRouter([
+        {
+            element: <GuessRoute />,
+            children: [
+                {
+                    path: "/register",
+                    element: <RegistePage />,
+                },
+            ],
+        },
+    ]);
+
+    return (
+        <QueryClientProvider client={queryClient}>
+            <RouterProvider router={router} />
+            <ToastContainer position="top-center" autoClose={4000} />
+        </QueryClientProvider>
+    );
 }
 
 export default App;
