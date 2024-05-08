@@ -7,16 +7,19 @@ import { QueryClient, QueryClientProvider } from "react-query";
 import MainLayout from "./components/layouts/MainLayout";
 import LoginPage from "./pages/authPage/LoginPage";
 import "react-toastify/dist/ReactToastify.css";
+import ProtectedRoute from "./components/routes/ProtectedRoute";
+import { roles } from "./config/config";
+import HomePage from "./pages/homePage/HomePage";
 
 const queryClient = new QueryClient();
 
 function App() {
     const router = createBrowserRouter([
         {
-            element: <GuessRoute />,
+            element: <MainLayout />,
             children: [
                 {
-                    element: <MainLayout />,
+                    element: <GuessRoute />,
                     children: [
                         {
                             path: "/register",
@@ -25,6 +28,15 @@ function App() {
                         {
                             path: "/login",
                             element: <LoginPage />,
+                        },
+                    ],
+                },
+                {
+                    element: <ProtectedRoute allowedRoles={[roles.MAKER]} />,
+                    children: [
+                        {
+                            path: "/home",
+                            element: <HomePage />,
                         },
                     ],
                 },

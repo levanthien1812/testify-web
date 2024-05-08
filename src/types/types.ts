@@ -28,3 +28,13 @@ export interface RegisterBodyItf {
     email: string;
     password: string;
 }
+
+export interface LoginBodyItf {
+    email: string;
+    password: string;
+}
+
+export interface LoginErrorItf {
+    email?: string;
+    password?: string;
+}
