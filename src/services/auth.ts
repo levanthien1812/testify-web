@@ -1,10 +1,14 @@
 import { notAuthInstance } from "../config/axios";
-import { RegisterBodyItf } from "../types/types";
+import { LoginBodyItf, RegisterBodyItf } from "../types/types";
 
 export const register = async (registerBody: RegisterBodyItf) => {
     const response = await notAuthInstance.post("/auth/register", registerBody);
 
-    console.log(response);
+    return response;
+};
+
+export const login = async (loginBody: LoginBodyItf) => {
+    const response = await notAuthInstance.post("/auth/login", loginBody);
 
     return response;
 };

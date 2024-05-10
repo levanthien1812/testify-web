@@ -1,4 +1,4 @@
-import { roles } from "../config/config";
+import { roles, testLevels } from "../config/config";
 
 export interface userItf {
     username: string;
@@ -27,4 +27,25 @@ export interface RegisterBodyItf {
     username: string;
     email: string;
     password: string;
+}
+
+export interface LoginBodyItf {
+    email: string;
+    password: string;
+}
+
+export interface LoginErrorItf {
+    email?: string;
+    password?: string;
+}
+
+export interface TestFormDataItf {
+    title: "";
+    datetime: Date;
+    description: string;
+    duration: number;
+    max_score: number;
+    num_questions: number;
+    level: (typeof testLevels)[keyof typeof testLevels];
+    code: string;
 }

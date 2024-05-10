@@ -1,11 +1,16 @@
 import React, { FormEvent, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Input from "./components/Input";
 import { RegisterBodyItf, RegisterErrorItf } from "../../types/types";
-import { registerSchema } from "../../validations/register";
+import { registerSchema } from "../../validations/auth";
 import { register } from "../../services/auth";
 import { isSuccess } from "../../utils/response";
 import { toast } from "react-toastify";
+import { AxiosError } from "axios";
+import { useDispatch } from "react-redux";
+import { authActions } from "../../stores/auth";
+import Cookies from "js-cookie";
+import { roles } from "../../config/config";
 
 const RegistePage = () => {
     const [name, setName] = useState<string>("");
@@ -14,6 +19,9 @@ const RegistePage = () => {
     const [password, setPassword] = useState<string>("");
     const [passwordConfirm, setPasswordConfirm] = useState<string>("");
     const [error, setError] = useState<RegisterErrorItf | null>({});
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
 
     const handleRegister = async (e: FormEvent) => {
         e.preventDefault();
@@ -51,10 +59,31 @@ const RegistePage = () => {
             const response = await register(userBody);
 
             if (isSuccess(response)) {
+                const { user, tokens } = response.data;
+
+                Cookies.set("user", JSON.stringify(user), {
+                    expires: new Date(tokens.access.expires),
+                });
+                Cookies.set("access_token", tokens.access.token, {
+                    expires: new Date(tokens.access.expires),
+                });
+                Cookies.set("refresh_token", tokens.refresh.token, {
+                    expires: new Date(tokens.refresh.expires),
+                });
+
+                dispatch(authActions.register({ user }));
+
                 toast.success("Register successfuly. Welcome to our app!");
+
+                if (user.role === roles.MAKER) {
+                    navigate("/home");
+                }
             }
-        } catch (error ) {
-            toast.error("error");
+        } catch (error: unknown) {
+            if (error instanceof AxiosError) {
+                console.log(error);
+                toast.error(error.response?.data.message);
+            }
         }
     };
 
