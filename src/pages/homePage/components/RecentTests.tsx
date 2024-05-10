@@ -1,12 +1,21 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import RecentTestItem from "./RecentTestItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 
 const RecentTests = () => {
+    const navigate = useNavigate();
     return (
         <div>
-            <h2 className="text-2xl">Recent tests</h2>
+            <div>
+                <h2 className="text-2xl inline-block">Recent tests</h2>
+                <button
+                    className="ms-3 bg-orange-500 text-white px-3 py-0 hover:bg-orange-600 border-2 border-orange-600"
+                    onClick={() => navigate("/tests/create")}
+                >
+                    Create test
+                </button>
+            </div>
 
             <div className="flex gap-6 mt-3">
                 <RecentTestItem />

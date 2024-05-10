@@ -6,7 +6,7 @@ export const authInstance = axios.create({
     timeout: 1000,
     withCredentials: true,
     headers: {
-        Authorization: "Bearer" + Cookies.get("access_token"),
+        Authorization: "Bearer " + Cookies.get("access_token"),
     },
 });
 
@@ -15,7 +15,7 @@ authInstance.interceptors.request.use(
         const token = Cookies.get("access_token");
 
         if (token) {
-            config.headers.Authorization = "Bearer" + token;
+            config.headers.Authorization = "Bearer " + token;
         }
 
         return config;

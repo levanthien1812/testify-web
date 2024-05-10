@@ -10,6 +10,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ProtectedRoute from "./components/routes/ProtectedRoute";
 import { roles } from "./config/config";
 import HomePage from "./pages/homePage/HomePage";
+import CreateTestPage from "./pages/createTestPage.tsx/CreateTestPage";
 
 const queryClient = new QueryClient();
 
@@ -37,6 +38,10 @@ function App() {
                         {
                             path: "/home",
                             element: <HomePage />,
+                        },
+                        {
+                            path: "/tests/create",
+                            element: <CreateTestPage />,
                         },
                     ],
                 },

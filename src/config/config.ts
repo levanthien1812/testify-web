@@ -3,3 +3,10 @@ export const roles = {
     MAKER: "maker",
     ADMIN: "admin",
 };
+
+export const testLevels = {
+    EASY: "easy",
+    MEDIUM: "medium",
+    HARD: "hard",
+    VERY_HARD: "very hard",
+};

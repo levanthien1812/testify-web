@@ -3,7 +3,7 @@ import RecentTests from "./components/RecentTests";
 
 const HomePage = () => {
     return (
-        <div className="2xl:w-2/3 mx-auto py-10">
+        <div className="xl:w-2/3 md:w-5/6 mx-auto py-10">
             <RecentTests />
         </div>
     );
