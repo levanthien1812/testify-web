@@ -1,4 +1,4 @@
-import { roles, testLevels } from "../config/config";
+import { questionTypes, roles, testLevels } from "../config/config";
 
 export interface userItf {
     username: string;
@@ -40,7 +40,7 @@ export interface LoginErrorItf {
 }
 
 export interface TestFormDataItf {
-    title: "";
+    title: string;
     datetime: Date;
     description: string;
     duration: number;
@@ -48,4 +48,72 @@ export interface TestFormDataItf {
     num_questions: number;
     level: (typeof testLevels)[keyof typeof testLevels];
     code: string;
+}
+
+export interface PartFormDataItf {
+    name: string;
+    score: number;
+    description: string;
+    num_questions: number;
+}
+
+export interface TestPartItf extends PartFormDataItf {
+    _id?: string;
+}
+
+export interface MultipleChoiceQuestionItf {
+    _id: string;
+    text: string;
+    allow_multiple: string;
+    options: {
+        text: string;
+        _id: string;
+    }[];
+    answer?: string[];
+}
+
+export interface FillGapsQuestionItf {
+    _id: string;
+    text: string;
+    answer?: string[];
+}
+
+export interface MatchingQuestionItf {
+    _id: string;
+    text: string;
+    left_items: {
+        _id: string;
+        text: string;
+    }[];
+    right_items: {
+        _id: string;
+        text: string;
+    }[];
+    answer?: {
+        left: string;
+        right: string;
+    }[];
+}
+
+export interface QuestionItf {
+    _id: string;
+    order: number;
+    test_id: string;
+    score: number;
+    part_number: number;
+    level?: [keyof typeof testLevels];
+    type: [keyof typeof questionTypes];
+    content:
+        | MultipleChoiceQuestionItf
+        | FillGapsQuestionItf
+        | MatchingQuestionItf;
+}
+
+export interface TestItf extends TestFormDataItf {
+    _id: string;
+    parts: TestPartItf[];
+    maker_id: string;
+    taker_ids?: string[];
+    is_finished: false;
+    questions?: QuestionItf[];
 }

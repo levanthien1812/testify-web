@@ -1,17 +1,16 @@
-import React, {
-    ChangeEvent,
-    ChangeEventHandler,
-    FormEvent,
-    useState,
-} from "react";
+import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { testLevels } from "../../../config/config";
-import { TestFormDataItf } from "../../../types/types";
+import { TestFormDataItf, TestItf } from "../../../types/types";
 import { createTest } from "../../../services/test";
-import { isSuccess } from "../../../utils/response";
-import { toast } from "react-toastify";
 import { useMutation } from "react-query";
 
-const TestInfo: React.FC<{ onNext: () => void }> = ({ onNext }) => {
+const TestInfo: React.FC<{
+    test: TestItf | null;
+    setTest: React.Dispatch<React.SetStateAction<TestItf | null>>;
+    numParts: number;
+    setNumParts: React.Dispatch<React.SetStateAction<number>>;
+    onNext: () => void;
+}> = ({ test, setTest, numParts, setNumParts, onNext }) => {
     const [testFormData, setTestFormData] = useState<TestFormDataItf>({
         title: "",
         datetime: new Date(),
@@ -23,12 +22,15 @@ const TestInfo: React.FC<{ onNext: () => void }> = ({ onNext }) => {
         code: "",
     });
 
-    const [numParts, setNumParts] = useState<number>(1);
     const [isFinished, setIsFinished] = useState<boolean>(false);
 
-    const { data, mutate, isLoading, isError } = useMutation({
+    const { mutate, isLoading, isError } = useMutation({
         mutationFn: (testFormData: TestFormDataItf) => createTest(testFormData),
-        mutationKey: "create-test",
+        mutationKey: ["create-test", { body: testFormData }],
+        onSuccess: (data) => {
+            setTest(data.test);
+            onNext();
+        },
     });
 
     const handleInputChange = (
@@ -53,10 +55,29 @@ const TestInfo: React.FC<{ onNext: () => void }> = ({ onNext }) => {
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
 
-        mutate(testFormData);
+        if (test) {
+            setTest(test);
+            onNext();
+            return;
+        }
 
-        onNext()
+        mutate(testFormData);
     };
+
+    useEffect(() => {
+        if (test) {
+            setTestFormData({
+                title: test.title,
+                datetime: new Date(test.datetime),
+                description: test.description,
+                duration: test.duration,
+                max_score: test.max_score,
+                num_questions: test.num_questions,
+                level: test.level,
+                code: test.code,
+            });
+        }
+    }, [test]);
 
     return (
         <div className="px-20 py-12 shadow-2xl">
