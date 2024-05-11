@@ -1,6 +1,6 @@
 import { AxiosError } from "axios";
 import { authInstance } from "../config/axios";
-import { TestFormDataItf } from "../types/types";
+import { PartFormDataItf, TestFormDataItf } from "../types/types";
 import { toast } from "react-toastify";
 
 export const createTest = async (testFormData: TestFormDataItf) => {
@@ -14,11 +14,29 @@ export const createTest = async (testFormData: TestFormDataItf) => {
     }
 };
 
-export const addParts = async (testId: string, partsBody: number) => {
-    const response = await authInstance.post(
-        `/tests/${testId}/parts`,
-        partsBody
-    );
+export const getTest = async (testId: string) => {
+    try {
+        const response = await authInstance.get(`/tests/${testId}`);
+        return response.data;
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            toast.error(error.response?.data.message);
+        }
+    }
+};
 
-    return response;
+export const addParts = async (
+    testId: string,
+    partsBody: PartFormDataItf[]
+) => {
+    try {
+        const response = await authInstance.post(`/tests/${testId}/parts`, {
+            parts: partsBody,
+        });
+        return response.data;
+    } catch (error) {
+        if (error instanceof AxiosError) {
+            toast.error(error.response?.data.message);
+        }
+    }
 };

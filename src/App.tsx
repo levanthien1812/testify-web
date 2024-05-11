@@ -43,6 +43,10 @@ function App() {
                             path: "/tests/create",
                             element: <CreateTestPage />,
                         },
+                        {
+                            path: "/tests/:testId/edit",
+                            element: <CreateTestPage />,
+                        },
                     ],
                 },
             ],
