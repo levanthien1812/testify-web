@@ -55,6 +55,7 @@ export interface PartFormDataItf {
     score: number;
     description: string;
     num_questions: number;
+    order: number;
 }
 
 export interface TestPartItf extends PartFormDataItf {

@@ -34,6 +34,9 @@ const CreateTestPage = () => {
     useEffect(() => {
         if (data) {
             setTest(data);
+            if (data.parts.length > 1) {
+                setNumParts(data.parts.length);
+            }
         } else setTest(null);
     }, [data]);
 
@@ -44,6 +47,7 @@ const CreateTestPage = () => {
 
                 const initParts = nums.map((num) => {
                     return {
+                        order: num,
                         name: "",
                         description: "",
                         num_questions: 0,
@@ -108,7 +112,14 @@ const CreateTestPage = () => {
                         onNext={() => setStep(3)}
                     />
                 )}
-                {step === 3 && <TestQuestions />}
+                {step === 3 && test && (
+                    <TestQuestions
+                        test={test}
+                        setTest={setTest}
+                        onBack={() => setStep(2)}
+                        onNext={() => setStep(4)}
+                    />
+                )}
                 {step === 4 && <TestAnswers />}
             </div>
         </div>
