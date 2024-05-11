@@ -19,9 +19,7 @@ export const getTest = async (testId: string) => {
         const response = await authInstance.get(`/tests/${testId}`);
         return response.data;
     } catch (error) {
-        if (error instanceof AxiosError) {
-            toast.error(error.response?.data.message);
-        }
+        throw error;
     }
 };
 
@@ -35,8 +33,6 @@ export const addParts = async (
         });
         return response.data;
     } catch (error) {
-        if (error instanceof AxiosError) {
-            toast.error(error.response?.data.message);
-        }
+        throw error;
     }
 };

@@ -3,6 +3,8 @@ import { testLevels } from "../../../config/config";
 import { TestFormDataItf, TestItf } from "../../../types/types";
 import { createTest } from "../../../services/test";
 import { useMutation } from "react-query";
+import { AxiosError } from "axios";
+import { toast } from "react-toastify";
 
 const TestInfo: React.FC<{
     test: TestItf | null;
@@ -25,11 +27,17 @@ const TestInfo: React.FC<{
     const [isFinished, setIsFinished] = useState<boolean>(false);
 
     const { mutate, isLoading, isError } = useMutation({
-        mutationFn: (testFormData: TestFormDataItf) => createTest(testFormData),
+        mutationFn: async (testFormData: TestFormDataItf) =>
+            await createTest(testFormData),
         mutationKey: ["create-test", { body: testFormData }],
         onSuccess: (data) => {
             setTest(data.test);
             onNext();
+        },
+        onError: (err) => {
+            if (err instanceof AxiosError) {
+                toast.error(err.response?.data.message);
+            }
         },
     });
 
