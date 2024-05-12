@@ -2,29 +2,7 @@ import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import { QuestionItf, TestItf, TestPartItf } from "../../../types/types";
-import Modal from "../../../components/modals/Modal";
-
-const Question: React.FC<{ question: QuestionItf }> = ({ question }) => {
-    const [open, setOpen] = useState<boolean>(false);
-    return (
-        <>
-            <div
-                className="bg-orange-100 p-2 text-center cursor-pointer hover:bg-orange-200"
-                onClick={() => setOpen(true)}
-            >
-                Question {question.order}
-            </div>
-            {open && (
-                <Modal
-                    title={`Question ${question.order}`}
-                    onClose={() => setOpen(false)}
-                >
-                    <div>{question._id}</div>
-                </Modal>
-            )}
-        </>
-    );
-};
+import Question from "./testQuestions/Question";
 
 const QuestionsByPart: React.FC<{
     part: TestPartItf;
@@ -80,6 +58,7 @@ const TestQuestions: React.FC<{
                 {test.parts.map((part, index) => (
                     <QuestionsByPart
                         part={part}
+                        key={part.name}
                         questions={test.questions?.filter(
                             (question) => question.part_number === part.order
                         )}
