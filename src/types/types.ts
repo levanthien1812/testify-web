@@ -62,10 +62,17 @@ export interface TestPartItf extends PartFormDataItf {
     _id?: string;
 }
 
-export interface MultipleChoiceQuestionItf {
-    _id: string;
+export interface MultipleChoiceQuestionFormDataItf {
     text: string;
-    allow_multiple: string;
+    allow_multiple: boolean;
+    options: {
+        text: string;
+    }[];
+}
+
+export interface MultipleChoiceQuestionItf
+    extends MultipleChoiceQuestionFormDataItf {
+    _id: string;
     options: {
         text: string;
         _id: string;
@@ -73,15 +80,26 @@ export interface MultipleChoiceQuestionItf {
     answer?: string[];
 }
 
-export interface FillGapsQuestionItf {
-    _id: string;
+export interface FillGapsQuestionFormDataItf {
     text: string;
+}
+
+export interface FillGapsQuestionItf extends FillGapsQuestionFormDataItf {
     answer?: string[];
 }
 
-export interface MatchingQuestionItf {
-    _id: string;
+export interface MatchingQuestionFormDataItf {
     text: string;
+    left_items: {
+        text: string;
+    }[];
+    right_items: {
+        text: string;
+    }[];
+}
+
+export interface MatchingQuestionItf extends MatchingQuestionFormDataItf {
+    _id: string;
     left_items: {
         _id: string;
         text: string;
@@ -102,12 +120,22 @@ export interface QuestionItf {
     test_id: string;
     score: number;
     part_number: number;
-    level?: [keyof typeof testLevels];
-    type: [keyof typeof questionTypes];
+    level?: (typeof testLevels)[keyof typeof testLevels];
+    type: (typeof questionTypes)[keyof typeof questionTypes];
     content:
         | MultipleChoiceQuestionItf
         | FillGapsQuestionItf
         | MatchingQuestionItf;
+}
+
+export interface QuestionFormDataItf {
+    score: number;
+    level: (typeof testLevels)[keyof typeof testLevels];
+    type: (typeof questionTypes)[keyof typeof questionTypes];
+    content:
+        | MultipleChoiceQuestionFormDataItf
+        | FillGapsQuestionFormDataItf
+        | MatchingQuestionFormDataItf;
 }
 
 export interface TestItf extends TestFormDataItf {

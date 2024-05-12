@@ -11,7 +11,7 @@ const Modal: React.FC<{
     return createPortal(
         <>
             <div className="absolute top-0 left-0 right-0 bottom-0 m-auto bg-black bg-opacity-15 shadow-md w-full h-full"></div>
-            <div className="absolute top-0 left-0 right-0 bottom-0 m-auto bg-white shadow-md w-1/4 h-fit">
+            <div className="absolute top-0 left-0 right-0 bottom-0 m-auto bg-white shadow-md min-w-1/4 w-fit h-fit">
                 <div className="flex justify-between px-4 py-2 border-b items-center">
                     <p className="text-2xl">{title}</p>
                     <button
