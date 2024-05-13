@@ -5,6 +5,7 @@ export const roles = {
 };
 
 export const testLevels = {
+    NONE: "none",
     EASY: "easy",
     MEDIUM: "medium",
     HARD: "hard",

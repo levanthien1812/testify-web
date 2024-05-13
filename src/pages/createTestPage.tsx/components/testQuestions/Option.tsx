@@ -1,37 +1,38 @@
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState } from "react";
+import React, { ChangeEvent, useState } from "react";
 import { motion } from "framer-motion";
 
-const Option: React.FC<{ num: number; value: { text: string }, name: string }> = ({
-    num,
-    value,
-}) => {
+const Option: React.FC<{
+    index: number;
+    value: { text: string };
+    name: string;
+    onInputChange?: (e: ChangeEvent<HTMLInputElement>) => void;
+    onDelete?: (index: number) => void;
+}> = ({ index, value, name, onInputChange, onDelete }) => {
     const [hover, setHover] = useState<boolean>(false);
 
     return (
         <div
             className="flex border border-gray-500 relative"
-            key={num}
+            key={index}
             onMouseOver={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
         >
             <label
-                htmlFor={`option${num}`}
+                htmlFor={name}
                 className="text-nowrap px-2 bg-orange-500 text-white"
             >
-                Option {num}
+                Option {index + 1}
             </label>
             <input
                 type="text"
-                name={`option${num}`}
-                id={`option${num}`}
+                name={name}
+                id={name}
                 min={0}
                 className="px-2 py-1 w-full focus:border-orange-600 outline-none leading-5"
                 value={value.text}
-                // onChange={
-                //     handleInputChange
-                // }
+                onChange={onInputChange}
                 required
             />
             {hover && (
@@ -39,6 +40,7 @@ const Option: React.FC<{ num: number; value: { text: string }, name: string }> =
                     className="absolute top-0 right-0 bg-gray-200 text-red-500 h-full px-2 flex items-center border-l border-gray-500 hover:bg-gray-300"
                     initial={{ translateX: 20, opacity: 0 }}
                     animate={{ translateX: 0, opacity: 1 }}
+                    onClick={() => onDelete && onDelete(index)}
                 >
                     <FontAwesomeIcon icon={faTimes} />
                 </motion.button>

@@ -11,20 +11,28 @@ import { questionTypes, testLevels } from "../../../../config/config";
 import MulitpleChoiceQuestion from "./MultipleChoicesQuestion";
 import FillGapsQuestion from "./FillGapsQuestion";
 import MatchingQuestion from "./MatchingQuestion";
+import { useMutation } from "react-query";
+import { updateQuestion } from "../../../../services/test";
+import { toast } from "react-toastify";
+import { AxiosError } from "axios";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
-const Question: React.FC<{ question: QuestionItf }> = ({ question }) => {
+const Question: React.FC<{
+    question: QuestionItf;
+    onAfterUpdate: () => void;
+}> = ({ question, onAfterUpdate }) => {
     const [open, setOpen] = useState<boolean>(false);
     const [questionFormData, setQuestionFormData] =
-        useState<QuestionFormDataItf>({
-            score: 0,
-            level: testLevels.EASY,
-            type: questionTypes.MULITPLE_CHOICES,
-            content: {
-                allow_multiple: false,
-                options: [],
-                text: "",
-            },
-        });
+        useState<QuestionFormDataItf>(
+            !question.content
+                ? {
+                      score: 0,
+                      level: testLevels.NONE,
+                      type: questionTypes.MULITPLE_CHOICES,
+                      content: null,
+                  }
+                : question
+        );
 
     const handleInputChange = (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -37,34 +45,35 @@ const Question: React.FC<{ question: QuestionItf }> = ({ question }) => {
             value = parseInt(value);
         }
 
-        if (name.includes("content")) {
-            let content;
+        setQuestionFormData({
+            ...questionFormData,
+            [name]: value,
+            content: name === "type" ? null : questionFormData.content,
+        });
+    };
 
-            switch (questionFormData.type) {
-                case questionTypes.MULITPLE_CHOICES:
-                    content = {
-                        ...questionFormData,
-                        [name.split(".")[1]]: value,
-                    };
-            }
-            setQuestionFormData({
-                ...questionFormData,
-                content: { ...questionFormData.content },
-            });
-        }
-
-        setQuestionFormData({ ...questionFormData, [name]: value });
+    const handleContentChange = (
+        content:
+            | MultipleChoiceQuestionFormDataItf
+            | FillGapsQuestionFormDataItf
+            | MatchingQuestionFormDataItf
+    ) => {
+        setQuestionFormData({ ...questionFormData, content: content });
     };
 
     useEffect(() => {
-        console.log(questionFormData.type);
+        if (question.content && questionFormData.type === question.type) {
+            setQuestionFormData(question);
+            return;
+        }
+
         switch (questionFormData.type) {
             case questionTypes.MULITPLE_CHOICES:
                 setQuestionFormData({
                     ...questionFormData,
                     content: {
                         allow_multiple: false,
-                        options: [],
+                        options: [{ text: "" }, { text: "" }],
                         text: "",
                     },
                 });
@@ -82,17 +91,39 @@ const Question: React.FC<{ question: QuestionItf }> = ({ question }) => {
                     ...questionFormData,
                     content: {
                         text: "",
-                        left_items: [],
-                        right_items: [],
+                        left_items: [{ text: "" }, { text: "" }],
+                        right_items: [{ text: "" }, { text: "" }],
                     },
                 });
                 break;
         }
     }, [questionFormData.type]);
+
+    const { mutate, isLoading } = useMutation({
+        mutationFn: async (questionBody: QuestionFormDataItf) =>
+            await updateQuestion(question.test_id, question._id, questionBody),
+        mutationKey: [
+            "update-question",
+            { questionId: question._id, body: questionFormData },
+        ],
+        onSuccess: (data) => {
+            console.log(data);
+            toast.success("Update question successfuly");
+            onAfterUpdate();
+        },
+        onError: (err) => {
+            if (err instanceof AxiosError) {
+                toast.error(err.response?.data.message);
+            }
+        },
+    });
+
     return (
         <>
             <div
-                className="bg-orange-100 p-2 text-center cursor-pointer hover:bg-orange-200"
+                className={`bg-orange-100 p-2 text-center cursor-pointer hover:bg-orange-200 ${
+                    question.content && "border border-orange-500"
+                }`}
                 onClick={() => setOpen(true)}
             >
                 Question {question.order}
@@ -130,18 +161,11 @@ const Question: React.FC<{ question: QuestionItf }> = ({ question }) => {
                                     value={questionFormData.level}
                                     onChange={handleInputChange}
                                 >
-                                    <option value={testLevels.EASY}>
-                                        {testLevels.EASY}
-                                    </option>
-                                    <option value={testLevels.MEDIUM}>
-                                        {testLevels.MEDIUM}
-                                    </option>
-                                    <option value={testLevels.HARD}>
-                                        {testLevels.HARD}
-                                    </option>
-                                    <option value={testLevels.VERY_HARD}>
-                                        {testLevels.VERY_HARD}
-                                    </option>
+                                    {Object.values(testLevels).map((level) => (
+                                        <option value={level} key={level}>
+                                            {level}
+                                        </option>
+                                    ))}
                                 </select>
                             </div>
                             <div className="flex items-end gap-2">
@@ -170,34 +194,54 @@ const Question: React.FC<{ question: QuestionItf }> = ({ question }) => {
                             </div>
                         </div>
                         <div className="grow">
-                            {questionFormData.type ===
-                                questionTypes.MULITPLE_CHOICES && (
-                                <MulitpleChoiceQuestion
-                                    content={
-                                        questionFormData.content as MultipleChoiceQuestionFormDataItf
-                                    }
-                                    onInputChange={handleInputChange}
-                                />
-                            )}
-                            {questionFormData.type ===
-                                questionTypes.FILL_GAPS && (
-                                <FillGapsQuestion
-                                    content={
-                                        questionFormData.content as FillGapsQuestionFormDataItf
-                                    }
-                                    onInputChange={handleInputChange}
-                                />
-                            )}
-                            {questionFormData.type ===
-                                questionTypes.MATCHING && (
-                                <MatchingQuestion
-                                    content={
-                                        questionFormData.content as MatchingQuestionFormDataItf
-                                    }
-                                    onInputChange={handleInputChange}
-                                />
-                            )}
+                            {questionFormData.content &&
+                                questionFormData.type ===
+                                    questionTypes.MULITPLE_CHOICES && (
+                                    <MulitpleChoiceQuestion
+                                        content={
+                                            questionFormData.content as MultipleChoiceQuestionFormDataItf
+                                        }
+                                        onContentChange={handleContentChange}
+                                    />
+                                )}
+                            {questionFormData.content &&
+                                questionFormData.type ===
+                                    questionTypes.FILL_GAPS && (
+                                    <FillGapsQuestion
+                                        content={
+                                            questionFormData.content as FillGapsQuestionFormDataItf
+                                        }
+                                        onContentChange={handleContentChange}
+                                    />
+                                )}
+                            {questionFormData.content &&
+                                questionFormData.type ===
+                                    questionTypes.MATCHING && (
+                                    <MatchingQuestion
+                                        content={
+                                            questionFormData.content as MatchingQuestionFormDataItf
+                                        }
+                                        onContentChange={handleContentChange}
+                                    />
+                                )}
                         </div>
+                    </div>
+                    <div className="mt-4 flex justify-end gap-3">
+                        <button
+                            className="text-white px-9 py-0.5 bg-gray-500"
+                            type="button"
+                            onClick={() => setOpen(false)}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            className="text-white bg-orange-600 px-9 py-0.5 hover:bg-orange-700"
+                            type="submit"
+                            disabled={isLoading}
+                            onClick={() => mutate(questionFormData)}
+                        >
+                            {!isLoading ? "Save" : "Saving..."}
+                        </button>
                     </div>
                 </Modal>
             )}
