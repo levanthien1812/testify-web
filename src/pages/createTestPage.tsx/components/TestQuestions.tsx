@@ -3,11 +3,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import { QuestionItf, TestItf, TestPartItf } from "../../../types/types";
 import Question from "./testQuestions/Question";
+import { getTest } from "../../../services/test";
+import { useQuery } from "react-query";
 
 const QuestionsByPart: React.FC<{
     part: TestPartItf;
     questions: QuestionItf[] | undefined;
-}> = ({ part, questions }) => {
+    onAfterUpdate: () => void;
+}> = ({ part, questions, onAfterUpdate }) => {
     const [open, setOpen] = useState<boolean>(true);
 
     return (
@@ -34,7 +37,11 @@ const QuestionsByPart: React.FC<{
                 {questions &&
                     questions.length > 0 &&
                     questions.map((question) => (
-                        <Question question={question} key={question._id} />
+                        <Question
+                            question={question}
+                            key={question._id}
+                            onAfterUpdate={onAfterUpdate}
+                        />
                     ))}
             </div>
         </div>
@@ -47,9 +54,26 @@ const TestQuestions: React.FC<{
     onBack: () => void;
     onNext: () => void;
 }> = ({ test, setTest, onBack, onNext }) => {
+    const { data, isFetching, refetch } = useQuery({
+        queryFn: async () => {
+            const res = await getTest(test._id);
+            return res.test;
+        },
+        onSuccess(data) {
+            setTest(data);
+        },
+        queryKey: [`get-test`, { testId: test._id }],
+        enabled: false,
+    });
+
     const handleBack = () => {};
 
     const handleNext = () => {};
+
+    const handleUpdate = () => {
+        refetch();
+    };
+
     return (
         <div className="px-20 py-12 shadow-2xl">
             <h2 className="text-center text-3xl">Test Questions</h2>
@@ -62,6 +86,7 @@ const TestQuestions: React.FC<{
                         questions={test.questions?.filter(
                             (question) => question.part_number === part.order
                         )}
+                        onAfterUpdate={handleUpdate}
                     />
                 ))}
             </div>

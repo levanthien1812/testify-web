@@ -120,7 +120,7 @@ export interface QuestionItf {
     test_id: string;
     score: number;
     part_number: number;
-    level?: (typeof testLevels)[keyof typeof testLevels];
+    level: (typeof testLevels)[keyof typeof testLevels];
     type: (typeof questionTypes)[keyof typeof questionTypes];
     content:
         | MultipleChoiceQuestionItf
@@ -135,7 +135,8 @@ export interface QuestionFormDataItf {
     content:
         | MultipleChoiceQuestionFormDataItf
         | FillGapsQuestionFormDataItf
-        | MatchingQuestionFormDataItf;
+        | MatchingQuestionFormDataItf
+        | null;
 }
 
 export interface TestItf extends TestFormDataItf {

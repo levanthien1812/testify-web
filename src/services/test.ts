@@ -1,6 +1,10 @@
 import { AxiosError } from "axios";
 import { authInstance } from "../config/axios";
-import { PartFormDataItf, TestFormDataItf } from "../types/types";
+import {
+    PartFormDataItf,
+    QuestionFormDataItf,
+    TestFormDataItf,
+} from "../types/types";
 import { toast } from "react-toastify";
 
 export const createTest = async (testFormData: TestFormDataItf) => {
@@ -31,6 +35,24 @@ export const addParts = async (
         const response = await authInstance.post(`/tests/${testId}/parts`, {
             parts: partsBody,
         });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updateQuestion = async (
+    testId: string,
+    questionId: string,
+    questionBody: QuestionFormDataItf
+) => {
+    try {
+        const response = await authInstance.patch(
+            `/tests/${testId}/questions/${questionId}`,
+            {
+                ...questionBody,
+            }
+        );
         return response.data;
     } catch (error) {
         throw error;
