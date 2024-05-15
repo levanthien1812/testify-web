@@ -1,52 +1,9 @@
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState } from "react";
-import { QuestionItf, TestItf, TestPartItf } from "../../../types/types";
-import Question from "./testQuestions/Question";
+import React from "react";
+import { TestItf } from "../../../types/types";
 import { getTest } from "../../../services/test";
 import { useQuery } from "react-query";
-
-const QuestionsByPart: React.FC<{
-    part: TestPartItf;
-    questions: QuestionItf[] | undefined;
-    onAfterUpdate: () => void;
-}> = ({ part, questions, onAfterUpdate }) => {
-    const [open, setOpen] = useState<boolean>(true);
-
-    return (
-        <div className="border border-gray-300 ">
-            <div
-                className="flex justify-between items-center px-4 py-2 bg-gray-300 cursor-pointer"
-                onClick={() => setOpen((prev) => !prev)}
-            >
-                <p className="text-lg">
-                    Part {part.order}: {part.name}{" "}
-                    <span className="text-gray-500">
-                        {" "}
-                        | Score: {part.score} | Questions: {part.num_questions}
-                    </span>
-                </p>
-                <FontAwesomeIcon
-                    icon={faChevronRight}
-                    className={`text-sm transition-all ${
-                        open ? "rotate-90" : "rotate-0"
-                    }`}
-                />
-            </div>
-            <div className="px-4 py-4 grid grid-cols-4 gap-2">
-                {questions &&
-                    questions.length > 0 &&
-                    questions.map((question) => (
-                        <Question
-                            question={question}
-                            key={question._id}
-                            onAfterUpdate={onAfterUpdate}
-                        />
-                    ))}
-            </div>
-        </div>
-    );
-};
+import QuestionsByPart from "./testQuestions/QuestionsByPart";
+import Question from "./testQuestions/Question";
 
 const TestQuestions: React.FC<{
     test: TestItf;
@@ -66,9 +23,13 @@ const TestQuestions: React.FC<{
         enabled: false,
     });
 
-    const handleBack = () => {};
+    const handleBack = () => {
+        onBack();
+    };
 
-    const handleNext = () => {};
+    const handleNext = () => {
+        onNext();
+    };
 
     const handleUpdate = () => {
         refetch();
@@ -79,16 +40,29 @@ const TestQuestions: React.FC<{
             <h2 className="text-center text-3xl">Test Questions</h2>
 
             <div className="space-y-3 mt-4">
-                {test.parts.map((part, index) => (
-                    <QuestionsByPart
-                        part={part}
-                        key={part.name}
-                        questions={test.questions?.filter(
-                            (question) => question.part_number === part.order
-                        )}
-                        onAfterUpdate={handleUpdate}
-                    />
-                ))}
+                {test.parts.length > 0 &&
+                    test.parts.map((part, index) => (
+                        <QuestionsByPart
+                            part={part}
+                            key={part.name}
+                            questions={test.questions?.filter(
+                                (question) =>
+                                    question.part_number === part.order
+                            )}
+                            onAfterUpdate={handleUpdate}
+                        />
+                    ))}
+                {test.parts.length === 0 && (
+                    <div className="px-4 py-4 grid grid-cols-4 gap-2">
+                        {test.questions?.map((question) => (
+                            <Question
+                                question={question}
+                                key={question._id}
+                                onAfterUpdate={handleUpdate}
+                            />
+                        ))}{" "}
+                    </div>
+                )}
             </div>
 
             <div className="flex justify-end items-center gap-3 mt-6 pt-4 border-t border-gray-300">
@@ -99,9 +73,11 @@ const TestQuestions: React.FC<{
                     Back
                 </button>
                 <button
-                    className="text-white bg-orange-600 px-12 py-1 hover:bg-orange-700"
+                    className="text-white bg-orange-600 px-12 py-1 hover:bg-orange-700 disabled:bg-gray-500"
                     onClick={handleNext}
-                    // disabled={isLoading}
+                    disabled={
+                        !test.questions?.every((question) => question.content)
+                    }
                 >
                     {/* {!isLoading ? "Next" : "Saving..."} */}
                     Next

@@ -101,7 +101,11 @@ const Question: React.FC<{
 
     const { mutate, isLoading } = useMutation({
         mutationFn: async (questionBody: QuestionFormDataItf) =>
-            await updateQuestion(question.test_id, question._id, questionBody),
+            await updateQuestion(
+                question.test_id,
+                question._id || question.id,
+                questionBody
+            ),
         mutationKey: [
             "update-question",
             { questionId: question._id, body: questionFormData },
@@ -117,6 +121,10 @@ const Question: React.FC<{
             }
         },
     });
+
+    const handleSaveQuestion = () => {
+        mutate(questionFormData);
+    };
 
     return (
         <>
@@ -238,7 +246,7 @@ const Question: React.FC<{
                             className="text-white bg-orange-600 px-9 py-0.5 hover:bg-orange-700"
                             type="submit"
                             disabled={isLoading}
-                            onClick={() => mutate(questionFormData)}
+                            onClick={handleSaveQuestion}
                         >
                             {!isLoading ? "Save" : "Saving..."}
                         </button>

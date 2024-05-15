@@ -121,7 +121,11 @@ const TestParts: React.FC<{
             await addParts(test._id, parts),
         mutationKey: ["add-parts", { body: test.parts }],
         onSuccess: (data) => {
-            setTest({ ...test, parts: data.test.parts });
+            setTest({
+                ...test,
+                parts: data.test.parts,
+                questions: data.test.questions,
+            });
             onNext();
         },
         onError: (err) => {
@@ -136,29 +140,33 @@ const TestParts: React.FC<{
     };
 
     const handleNext = () => {
-        onNext();
-        // const { error } = partSchema.validate(test.parts);
-        // if (!error) {
-        //     mutate(
-        //         test.parts.map((part) => {
-        //             delete part._id;
-        //             return part;
-        //         })
-        //     );
-        // } else {
-        //     toast.error(
-        //         error.details
-        //             .map((detail) => {
-        //                 return detail.message
-        //                     .replace(
-        //                         `[${detail.path[0]}].`,
-        //                         `Part ${(detail.path[0] as number) + 1}'s `
-        //                     )
-        //                     .replaceAll('"', "");
-        //             })
-        //             .join(".\n ")
-        //     );
-        // }
+        if (numParts === 1) {
+            onNext();
+            return;
+        }
+
+        const { error } = partSchema.validate(test.parts);
+        if (!error) {
+            mutate(
+                test.parts.map((part) => {
+                    delete part._id;
+                    return part;
+                })
+            );
+        } else {
+            toast.error(
+                error.details
+                    .map((detail) => {
+                        return detail.message
+                            .replace(
+                                `[${detail.path[0]}].`,
+                                `Part ${(detail.path[0] as number) + 1}'s `
+                            )
+                            .replaceAll('"', "");
+                    })
+                    .join(".\n ")
+            );
+        }
     };
 
     return (
@@ -166,6 +174,10 @@ const TestParts: React.FC<{
             <h2 className="text-center text-3xl">Test Parts Information</h2>
 
             <div className="space-y-3 mt-4">
+                <div className="flex gap-4">
+                    <p>Total score: {test.max_score}</p>
+                    <p>Total questions: {test.num_questions}</p>
+                </div>
                 {numParts > 1 &&
                     test.parts.map((part, index) => (
                         <PartItem
@@ -178,6 +190,14 @@ const TestParts: React.FC<{
                             }}
                         />
                     ))}
+                {numParts === 1 && (
+                    <div>
+                        <p>
+                            Your test doesn't have multiple parts so you can
+                            skip this section
+                        </p>
+                    </div>
+                )}
             </div>
 
             <div className="flex justify-end items-center gap-3 mt-6 pt-4 border-t border-gray-300">
