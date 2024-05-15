@@ -103,7 +103,7 @@ const CreateTestPage = () => {
                         onNext={() => setStep(2)}
                     />
                 )}
-                {step === 2 && test && numParts && numParts > 1 && (
+                {step === 2 && test && numParts && (
                     <TestParts
                         test={test}
                         setTest={setTest}

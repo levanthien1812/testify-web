@@ -5,6 +5,7 @@ import { createTest } from "../../../services/test";
 import { useMutation } from "react-query";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
+import { testFormDataSchema } from "../../../validations/test";
 
 const TestInfo: React.FC<{
     test: TestItf | null;
@@ -64,6 +65,7 @@ const TestInfo: React.FC<{
         e.preventDefault();
 
         if (test) {
+            // Add update test logic
             setTest(test);
             onNext();
             return;
@@ -86,6 +88,13 @@ const TestInfo: React.FC<{
             });
         }
     }, [test]);
+
+    useEffect(() => {
+        const { error } = testFormDataSchema.validate(testFormData);
+
+        if (!error) setIsFinished(true);
+        else setIsFinished(false);
+    }, [testFormData]);
 
     return (
         <div className="px-20 py-12 shadow-2xl">
@@ -240,9 +249,9 @@ const TestInfo: React.FC<{
                         Back
                     </button>
                     <button
-                        className="text-white bg-orange-600 px-12 py-1 hover:bg-orange-700"
+                        className="text-white bg-orange-600 px-12 py-1 hover:bg-orange-700 disabled:bg-gray-500"
                         type="submit"
-                        disabled={isLoading}
+                        disabled={isLoading || !isFinished}
                     >
                         {!isLoading ? "Next" : "Saving..."}
                     </button>

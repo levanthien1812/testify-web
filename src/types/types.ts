@@ -116,6 +116,7 @@ export interface MatchingQuestionItf extends MatchingQuestionFormDataItf {
 
 export interface QuestionItf {
     _id: string;
+    id: string;
     order: number;
     test_id: string;
     score: number;
