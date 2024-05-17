@@ -83,6 +83,7 @@ const Question: React.FC<{
                     ...questionFormData,
                     content: {
                         text: "",
+                        num_gaps: 1,
                     },
                 });
                 break;
