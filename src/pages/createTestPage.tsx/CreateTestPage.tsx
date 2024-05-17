@@ -12,7 +12,7 @@ import { generateArray } from "../../utils/array";
 const CreateTestPage = () => {
     const [test, setTest] = useState<TestItf | null>(null);
     const [numParts, setNumParts] = useState<number>(1);
-    const [step, setStep] = useState<1 | 2 | 3 | 4>(1);
+    const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
 
     const { testId } = useParams();
 
@@ -120,7 +120,14 @@ const CreateTestPage = () => {
                         onNext={() => setStep(4)}
                     />
                 )}
-                {step === 4 && <TestAnswers />}
+                {step === 4 && test && (
+                    <TestAnswers
+                        test={test}
+                        setTest={setTest}
+                        onBack={() => setStep(3)}
+                        onNext={() => setStep(5)}
+                    />
+                )}
             </div>
         </div>
     );

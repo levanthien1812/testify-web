@@ -3,12 +3,14 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 import { QuestionItf, TestItf, TestPartItf } from "../../../../types/types";
 import Question from "./Question";
+import Answer from "../testAnswers/Answer";
 
 const QuestionsByPart: React.FC<{
     part: TestPartItf;
     questions: QuestionItf[] | undefined;
     onAfterUpdate: () => void;
-}> = ({ part, questions, onAfterUpdate }) => {
+    withAnswer?: boolean;
+}> = ({ part, questions, onAfterUpdate, withAnswer = false }) => {
     const [open, setOpen] = useState<boolean>(true);
 
     return (
@@ -31,16 +33,28 @@ const QuestionsByPart: React.FC<{
                     }`}
                 />
             </div>
-            <div className="px-4 py-4 grid grid-cols-4 gap-2">
+            <div
+                className={`px-4 py-4 ${
+                    !withAnswer ? "grid grid-cols-4 gap-2" : "space-y-2"
+                } `}
+            >
                 {questions &&
                     questions.length > 0 &&
-                    questions.map((question) => (
-                        <Question
-                            question={question}
-                            key={question._id}
-                            onAfterUpdate={onAfterUpdate}
-                        />
-                    ))}
+                    questions.map((question) =>
+                        !withAnswer ? (
+                            <Question
+                                question={question}
+                                key={question._id}
+                                onAfterUpdate={onAfterUpdate}
+                            />
+                        ) : (
+                            <Answer
+                                question={question}
+                                key={question._id}
+                                onAfterUpdate={onAfterUpdate}
+                            />
+                        )
+                    )}
             </div>
         </div>
     );

@@ -22,12 +22,24 @@ const FillGapsQuestion: React.FC<{
     return (
         <>
             <div className="flex flex-col items-start">
-                <label htmlFor="content.text">Text: </label>
+                <label htmlFor="num_gaps">Number of gaps: </label>
+                <input
+                    type="number"
+                    name="num_gaps"
+                    id="num_gaps"
+                    min={1}
+                    className="border border-gray-500 px-2 py-1 w-full focus:border-orange-600 outline-none leading-5"
+                    value={content.num_gaps}
+                    onChange={handleInputChange}
+                    required
+                />
+            </div>
+            <div className="flex flex-col items-start mt-2">
+                <label htmlFor="text">Text: </label>
                 <input
                     type="text"
                     name="text"
                     id="text"
-                    min={0}
                     className="border border-gray-500 px-2 py-1 w-full focus:border-orange-600 outline-none leading-5 placeholder:italic"
                     value={content.text}
                     onChange={handleInputChange}

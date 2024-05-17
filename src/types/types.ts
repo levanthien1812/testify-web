@@ -78,14 +78,17 @@ export interface MultipleChoiceQuestionItf
         _id: string;
     }[];
     answer?: string[];
+    explaination?: string;
 }
 
 export interface FillGapsQuestionFormDataItf {
     text: string;
+    num_gaps: number;
 }
 
 export interface FillGapsQuestionItf extends FillGapsQuestionFormDataItf {
     answer?: string[];
+    explaination?: string;
 }
 
 export interface MatchingQuestionFormDataItf {
@@ -112,6 +115,7 @@ export interface MatchingQuestionItf extends MatchingQuestionFormDataItf {
         left: string;
         right: string;
     }[];
+    explaination?: string;
 }
 
 export interface QuestionItf {
@@ -147,4 +151,16 @@ export interface TestItf extends TestFormDataItf {
     taker_ids?: string[];
     is_finished: false;
     questions?: QuestionItf[];
+}
+
+export interface MultipleChoicesAnswerFormDataInf {
+    answer: string[];
+}
+
+export interface FillGapsAnswerFormDataInf {
+    answer: string[];
+}
+
+export interface MatchingAnswerFormDataInf {
+    answer: { left: string; right: string }[];
 }
