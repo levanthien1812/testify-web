@@ -87,6 +87,7 @@ export interface FillGapsQuestionFormDataItf {
 }
 
 export interface FillGapsQuestionItf extends FillGapsQuestionFormDataItf {
+    _id: string;
     answer?: string[];
     explaination?: string;
 }
@@ -164,3 +165,8 @@ export interface FillGapsAnswerFormDataInf {
 export interface MatchingAnswerFormDataInf {
     answer: { left: string; right: string }[];
 }
+
+export type AnswerFormData =
+    | MultipleChoicesAnswerFormDataInf
+    | FillGapsAnswerFormDataInf
+    | MatchingAnswerFormDataInf;

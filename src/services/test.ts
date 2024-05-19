@@ -1,6 +1,7 @@
 import { AxiosError } from "axios";
 import { authInstance } from "../config/axios";
 import {
+    AnswerFormData,
     PartFormDataItf,
     QuestionFormDataItf,
     TestFormDataItf,
@@ -53,6 +54,25 @@ export const updateQuestion = async (
                 ...questionBody,
             }
         );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const addAnswer = async (
+    testId: string,
+    questionId: string,
+    answerBody: AnswerFormData
+) => {
+    try {
+        const response = await authInstance.patch(
+            `/tests/${testId}/questions/${questionId}/answer`,
+            {
+                ...answerBody,
+            }
+        );
+
         return response.data;
     } catch (error) {
         throw error;
