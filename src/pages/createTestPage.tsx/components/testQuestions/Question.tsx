@@ -138,120 +138,138 @@ const Question: React.FC<{
                 Question {question.order}
             </div>
             {open && (
-                <Modal
-                    title={`Question ${question.order}`}
-                    onClose={() => setOpen(false)}
-                >
-                    <div className="w-[600px] flex gap-4">
-                        <div className="space-y-4 gap-4 w-1/3">
-                            <div className="flex items-end gap-2">
-                                <label htmlFor="score" className="w-1/5">
-                                    Score:{" "}
-                                </label>
-                                <input
-                                    type="number"
-                                    name="score"
-                                    id="score"
-                                    min={0}
-                                    className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow leading-5"
-                                    value={questionFormData.score}
-                                    onChange={handleInputChange}
-                                    required
-                                />
-                            </div>
-                            <div className="flex items-end gap-2">
-                                <label htmlFor="level" className="w-1/5">
-                                    Level:{" "}
-                                </label>
-                                <select
-                                    id="level"
-                                    className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow capitalize"
-                                    name="level"
-                                    value={questionFormData.level}
-                                    onChange={handleInputChange}
-                                >
-                                    {Object.values(testLevels).map((level) => (
-                                        <option value={level} key={level}>
-                                            {level}
-                                        </option>
-                                    ))}
-                                </select>
-                            </div>
-                            <div className="flex items-end gap-2">
-                                <label htmlFor="type" className="w-1/5">
-                                    Type:{" "}
-                                </label>
-                                <select
-                                    id="type"
-                                    className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow capitalize"
-                                    name="type"
-                                    value={questionFormData.type}
-                                    onChange={handleInputChange}
-                                >
-                                    <option
-                                        value={questionTypes.MULITPLE_CHOICES}
+                <Modal onClose={() => setOpen(false)}>
+                    <Modal.Header
+                        title={`Question ${question.order}`}
+                        onClose={() => setOpen(false)}
+                    />
+                    <Modal.Body>
+                        <div className="w-[600px] flex gap-4">
+                            <div className="space-y-4 gap-4 w-1/3">
+                                <div className="flex items-end gap-2">
+                                    <label htmlFor="score" className="w-1/5">
+                                        Score:{" "}
+                                    </label>
+                                    <input
+                                        type="number"
+                                        name="score"
+                                        id="score"
+                                        min={0}
+                                        className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow leading-5"
+                                        value={questionFormData.score}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
+                                <div className="flex items-end gap-2">
+                                    <label htmlFor="level" className="w-1/5">
+                                        Level:{" "}
+                                    </label>
+                                    <select
+                                        id="level"
+                                        className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow capitalize"
+                                        name="level"
+                                        value={questionFormData.level}
+                                        onChange={handleInputChange}
                                     >
-                                        {questionTypes.MULITPLE_CHOICES}
-                                    </option>
-                                    <option value={questionTypes.FILL_GAPS}>
-                                        {questionTypes.FILL_GAPS}
-                                    </option>
-                                    <option value={questionTypes.MATCHING}>
-                                        {questionTypes.MATCHING}
-                                    </option>
-                                </select>
+                                        {Object.values(testLevels).map(
+                                            (level) => (
+                                                <option
+                                                    value={level}
+                                                    key={level}
+                                                >
+                                                    {level}
+                                                </option>
+                                            )
+                                        )}
+                                    </select>
+                                </div>
+                                <div className="flex items-end gap-2">
+                                    <label htmlFor="type" className="w-1/5">
+                                        Type:{" "}
+                                    </label>
+                                    <select
+                                        id="type"
+                                        className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow capitalize"
+                                        name="type"
+                                        value={questionFormData.type}
+                                        onChange={handleInputChange}
+                                    >
+                                        <option
+                                            value={
+                                                questionTypes.MULITPLE_CHOICES
+                                            }
+                                        >
+                                            {questionTypes.MULITPLE_CHOICES}
+                                        </option>
+                                        <option value={questionTypes.FILL_GAPS}>
+                                            {questionTypes.FILL_GAPS}
+                                        </option>
+                                        <option value={questionTypes.MATCHING}>
+                                            {questionTypes.MATCHING}
+                                        </option>
+                                    </select>
+                                </div>
+                            </div>
+                            <div className="grow">
+                                {questionFormData.content &&
+                                    questionFormData.type ===
+                                        questionTypes.MULITPLE_CHOICES && (
+                                        <MulitpleChoiceQuestion
+                                            content={
+                                                questionFormData.content as MultipleChoiceQuestionFormDataItf
+                                            }
+                                            onContentChange={
+                                                handleContentChange
+                                            }
+                                        />
+                                    )}
+                                {questionFormData.content &&
+                                    questionFormData.type ===
+                                        questionTypes.FILL_GAPS && (
+                                        <FillGapsQuestion
+                                            content={
+                                                questionFormData.content as FillGapsQuestionFormDataItf
+                                            }
+                                            onContentChange={
+                                                handleContentChange
+                                            }
+                                        />
+                                    )}
+                                {questionFormData.content &&
+                                    questionFormData.type ===
+                                        questionTypes.MATCHING && (
+                                        <MatchingQuestion
+                                            content={
+                                                questionFormData.content as MatchingQuestionFormDataItf
+                                            }
+                                            onContentChange={
+                                                handleContentChange
+                                            }
+                                        />
+                                    )}
                             </div>
                         </div>
-                        <div className="grow">
-                            {questionFormData.content &&
-                                questionFormData.type ===
-                                    questionTypes.MULITPLE_CHOICES && (
-                                    <MulitpleChoiceQuestion
-                                        content={
-                                            questionFormData.content as MultipleChoiceQuestionFormDataItf
-                                        }
-                                        onContentChange={handleContentChange}
-                                    />
-                                )}
-                            {questionFormData.content &&
-                                questionFormData.type ===
-                                    questionTypes.FILL_GAPS && (
-                                    <FillGapsQuestion
-                                        content={
-                                            questionFormData.content as FillGapsQuestionFormDataItf
-                                        }
-                                        onContentChange={handleContentChange}
-                                    />
-                                )}
-                            {questionFormData.content &&
-                                questionFormData.type ===
-                                    questionTypes.MATCHING && (
-                                    <MatchingQuestion
-                                        content={
-                                            questionFormData.content as MatchingQuestionFormDataItf
-                                        }
-                                        onContentChange={handleContentChange}
-                                    />
-                                )}
+                    </Modal.Body>
+                    <Modal.Footer>
+                        <div className="flex justify-end gap-3">
+                            <button
+                                className="text-white px-9 py-0.5 bg-gray-500"
+                                type="button"
+                                onClick={() => setOpen(false)}
+                            >
+                                Cancel
+                            </button>
+                            <button
+                                className="text-white bg-orange-600 px-9 py-0.5 hover:bg-orange-700"
+                                type="submit"
+                                disabled={isLoading}
+                                onClick={handleSaveQuestion}
+                            >
+                                {!isLoading ? "Save" : "Saving..."}
+                            </button>
                         </div>
-                    </div>
-                    <div className="mt-4 flex justify-end gap-3">
-                        <button
-                            className="text-white px-9 py-0.5 bg-gray-500"
-                            type="button"
-                            onClick={() => setOpen(false)}
-                        >
-                            Cancel
-                        </button>
-                        <button
-                            className="text-white bg-orange-600 px-9 py-0.5 hover:bg-orange-700"
-                            type="submit"
-                            disabled={isLoading}
-                            onClick={handleSaveQuestion}
-                        >
-                            {!isLoading ? "Save" : "Saving..."}
-                        </button>
-                    </div>
+                    </Modal.Footer>
                 </Modal>
             )}
         </>

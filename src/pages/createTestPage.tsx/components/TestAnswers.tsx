@@ -24,6 +24,9 @@ const TestAnswers: React.FC<{
     return (
         <div className="px-20 py-12 shadow-2xl">
             <h2 className="text-center text-3xl">Test Answers</h2>
+            <p className="text-center">
+                You can skip this section and provide answers later
+            </p>
 
             <div className="space-y-3 mt-4">
                 {test.parts.length > 0 &&

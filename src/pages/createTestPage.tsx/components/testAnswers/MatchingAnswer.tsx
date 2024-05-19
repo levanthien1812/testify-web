@@ -1,16 +1,18 @@
-import React, { useState } from "react";
-import { MatchingQuestionItf } from "../../../../types/types";
+import React, { useEffect, useState } from "react";
+import { AnswerFormData, MatchingQuestionItf } from "../../../../types/types";
 import DraggableItem from "./DraggableItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
-const MatchingAnswer: React.FC<{
+type MatchingAnswerProps = {
     content: MatchingQuestionItf;
-}> = ({ content }) => {
+    onProvideAnswer: (answerBody: AnswerFormData) => void;
+};
+
+const MatchingAnswer = ({ content, onProvideAnswer }: MatchingAnswerProps) => {
     const [matchings, setMatchings] = useState<
         { left: string; right: string }[]
-    >([]);
-    console.log(matchings);
+    >(content.answer || []);
 
     const handleDrop = (item: { left: string; right: string }) => {
         console.log(item);
@@ -31,6 +33,15 @@ const MatchingAnswer: React.FC<{
         updatedMatchings.splice(index, 1);
         setMatchings(updatedMatchings);
     };
+
+    useEffect(() => {
+        if (
+            matchings.length > 0 &&
+            matchings.length !== content.answer?.length
+        ) {
+            onProvideAnswer({ answer: matchings });
+        }
+    }, [matchings]);
 
     return (
         <div className="px-2 py-2 border border-orange-600">

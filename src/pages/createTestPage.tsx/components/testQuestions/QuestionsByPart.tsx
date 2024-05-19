@@ -19,8 +19,10 @@ const QuestionsByPart: React.FC<{
                 className="flex justify-between items-center px-4 py-2 bg-gray-300 cursor-pointer"
                 onClick={() => setOpen((prev) => !prev)}
             >
-                <p className="text-lg">
-                    Part {part.order}: {part.name}{" "}
+                <p className="text-lg ">
+                    <span className="uppercase">
+                        Part {part.order}: {part.name}{" "}
+                    </span>
                     <span className="text-gray-500">
                         {" "}
                         | Score: {part.score} | Questions: {part.num_questions}

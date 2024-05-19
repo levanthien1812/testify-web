@@ -5,10 +5,10 @@ const Input: React.FC<{
     name: string;
     type?: string;
     value: string;
-    error?: string;
     placeholder?: string;
     required?: boolean;
     tabIndex?: number;
+    error?: string;
     setValue: Dispatch<SetStateAction<string>>;
 }> = ({
     labelText,
