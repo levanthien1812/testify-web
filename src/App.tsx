@@ -11,6 +11,7 @@ import ProtectedRoute from "./components/routes/ProtectedRoute";
 import { roles } from "./config/config";
 import HomePage from "./pages/homePage/HomePage";
 import CreateTestPage from "./pages/createTestPage.tsx/CreateTestPage";
+import TextEditor from "./pages/richTextEditor/TiptapEditor";
 
 const queryClient = new QueryClient();
 
@@ -49,6 +50,10 @@ function App() {
                         },
                     ],
                 },
+                {
+                    path: "/rich-text-editor",
+                    element: <TextEditor/>
+                }
             ],
         },
     ]);
