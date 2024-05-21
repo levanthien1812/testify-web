@@ -2,6 +2,7 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import { MultipleChoiceQuestionFormDataItf } from "../../../../types/types";
 import { generateArray } from "../../../../utils/array";
 import Option from "./Option";
+import TextEditor from "../../../richTextEditor/TiptapEditor";
 
 const MulitpleChoiceQuestion: React.FC<{
     content: MultipleChoiceQuestionFormDataItf;
@@ -9,6 +10,7 @@ const MulitpleChoiceQuestion: React.FC<{
 }> = ({ content, onContentChange }) => {
     const [mcqContent, setMcqContent] =
         useState<MultipleChoiceQuestionFormDataItf>(content);
+    const [text, setText] = useState<string>(content.text);
 
     const manipulateOptions = (action: (array: { text: string }[]) => void) => {
         const updatedContent = { ...mcqContent };
@@ -40,23 +42,14 @@ const MulitpleChoiceQuestion: React.FC<{
     };
 
     useEffect(() => {
-        onContentChange(mcqContent);
-    }, [mcqContent]);
+        onContentChange({ ...mcqContent, text });
+    }, [mcqContent, text]);
 
     return (
         <>
-            <div className="flex flex-col items-start">
+            <div className="flex flex-col">
                 <label htmlFor="text">Text: </label>
-                <input
-                    type="text"
-                    name="text"
-                    id="text"
-                    min={0}
-                    className="border border-gray-500 px-2 py-1 w-full focus:border-orange-600 outline-none leading-5"
-                    value={mcqContent.text}
-                    onChange={handleInputChange}
-                    required
-                />
+                <TextEditor content={text} setContent={setText} />
             </div>
             <div className="mt-2">
                 <p>Options</p>

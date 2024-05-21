@@ -145,7 +145,7 @@ const Question: React.FC<{
                     />
                     <Modal.Body>
                         <div className="w-[600px] flex gap-4">
-                            <div className="space-y-4 gap-4 w-1/3">
+                            <div className="space-y-4 gap-4 w-1/3 shrink-0">
                                 <div className="flex items-end gap-2">
                                     <label htmlFor="score" className="w-1/5">
                                         Score:{" "}
@@ -211,7 +211,7 @@ const Question: React.FC<{
                                     </select>
                                 </div>
                             </div>
-                            <div className="grow">
+                            <div className="grow overflow-hidden">
                                 {questionFormData.content &&
                                     questionFormData.type ===
                                         questionTypes.MULITPLE_CHOICES && (

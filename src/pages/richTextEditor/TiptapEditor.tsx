@@ -5,7 +5,7 @@ import ListItem from "@tiptap/extension-list-item";
 import TextStyle from "@tiptap/extension-text-style";
 import { EditorProvider, useCurrentEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { MouseEventHandler, ReactNode, useState } from "react";
+import { MouseEventHandler, ReactNode, useEffect, useState } from "react";
 import styles from "./editor.module.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -37,7 +37,7 @@ const EditorButton = ({
 }: EditorButtonProps) => {
     return (
         <button
-            className={`border w-9 justify-center text-nowrap flex items-center py-2 text-sm border-black ${
+            className={`border w-8 shrink-0 justify-center text-nowrap flex items-center py-2 text-sm border-black ${
                 className === "is-active"
                     ? "bg-orange-600 text-white"
                     : "bg-white text-black"
@@ -53,12 +53,18 @@ const EditorButton = ({
 const MenuBar = () => {
     const { editor } = useCurrentEditor();
 
+    useEffect(() => {
+        if (editor && editor.isEditable) {
+            editor.commands.focus();
+        }
+    }, [editor]);
+
     if (!editor) {
         return null;
     }
 
     return (
-        <div className="flex gap-1 items-start mb-2">
+        <div className="flex gap-1 items-start mb-2 overflow-x-scroll scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-300 hover:scrollbar-thumb-slate-400">
             <EditorButton
                 onClick={() => editor.chain().focus().toggleBold().run()}
                 disabled={!editor.can().chain().focus().toggleBold().run()}
@@ -158,9 +164,12 @@ const extensions = [
     }),
 ];
 
-const TextEditor = () => {
-    const [content, setContent] = useState("Hello my name is Thien");
+type TextEditorProps = {
+    content: string;
+    setContent: React.Dispatch<React.SetStateAction<string>>;
+};
 
+const TextEditor = ({ content, setContent }: TextEditorProps) => {
     return (
         <EditorProvider
             slotBefore={<MenuBar />}
@@ -168,6 +177,11 @@ const TextEditor = () => {
             content={content}
             onUpdate={(e) => {
                 setContent(e.editor.getHTML());
+            }}
+            editorProps={{
+                attributes: {
+                    class: "border border-black outline-none px-4 py-1 focus:border-orange-600 bg-white h-14",
+                },
             }}
         ></EditorProvider>
     );

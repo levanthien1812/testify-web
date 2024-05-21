@@ -50,10 +50,10 @@ function App() {
                         },
                     ],
                 },
-                {
-                    path: "/rich-text-editor",
-                    element: <TextEditor/>
-                }
+                // {
+                //     path: "/rich-text-editor",
+                //     element: <TextEditor/>
+                // }
             ],
         },
     ]);

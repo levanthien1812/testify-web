@@ -6,5 +6,7 @@ module.exports = {
             sans: ['"Abhaya Libre"', "sans-serif"],
         },
     },
-    plugins: [],
+    plugins: [
+        require('tailwind-scrollbar')
+    ],
 };
