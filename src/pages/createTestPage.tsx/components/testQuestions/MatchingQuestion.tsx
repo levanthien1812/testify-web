@@ -2,6 +2,7 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import { MatchingQuestionFormDataItf } from "../../../../types/types";
 import { generateArray } from "../../../../utils/array";
 import Option from "./Option";
+import TextEditor from "../../../richTextEditor/TiptapEditor";
 
 const MatchingQuestion: React.FC<{
     content: MatchingQuestionFormDataItf;
@@ -9,6 +10,7 @@ const MatchingQuestion: React.FC<{
 }> = ({ content, onContentChange }) => {
     const [mcqContent, setMcqContent] =
         useState<MatchingQuestionFormDataItf>(content);
+    const [text, setText] = useState<string>(content.text);
 
     const manipulateArray = (
         arrayName: "left_items" | "right_items",
@@ -51,23 +53,14 @@ const MatchingQuestion: React.FC<{
     };
 
     useEffect(() => {
-        onContentChange(mcqContent);
-    }, [mcqContent]);
+        onContentChange({...mcqContent, text});
+    }, [mcqContent, text]);
 
     return (
         <>
-            <div className="flex flex-col items-start">
+            <div className="flex flex-col">
                 <label htmlFor="text">Text: </label>
-                <input
-                    type="text"
-                    name="text"
-                    id="text"
-                    min={0}
-                    className="border border-gray-500 px-2 py-1 w-full focus:border-orange-600 outline-none leading-5 placeholder:italic"
-                    value={content.text}
-                    onChange={handleInputChange}
-                    required
-                />
+                <TextEditor content={text} setContent={setText} />
             </div>
             <div className="mt-2">
                 <p>Left part:</p>

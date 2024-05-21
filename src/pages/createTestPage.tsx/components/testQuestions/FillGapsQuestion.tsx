@@ -1,5 +1,6 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { FillGapsQuestionFormDataItf } from "../../../../types/types";
+import TextEditor from "../../../richTextEditor/TiptapEditor";
 
 const FillGapsQuestion: React.FC<{
     content: FillGapsQuestionFormDataItf;
@@ -7,6 +8,7 @@ const FillGapsQuestion: React.FC<{
 }> = ({ content, onContentChange }) => {
     const [mcqContent, setMcqContent] =
         useState<FillGapsQuestionFormDataItf>(content);
+    const [text, setText] = useState<string>(content.text);
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         let name = e.target.name;
@@ -16,8 +18,8 @@ const FillGapsQuestion: React.FC<{
     };
 
     useEffect(() => {
-        onContentChange(mcqContent);
-    }, [mcqContent]);
+        onContentChange({ ...mcqContent, text });
+    }, [mcqContent, text]);
 
     return (
         <>
@@ -34,18 +36,12 @@ const FillGapsQuestion: React.FC<{
                     required
                 />
             </div>
-            <div className="flex flex-col items-start mt-2">
+            <div className="flex flex-col mt-2">
                 <label htmlFor="text">Text: </label>
-                <input
-                    type="text"
-                    name="text"
-                    id="text"
-                    className="border border-gray-500 px-2 py-1 w-full focus:border-orange-600 outline-none leading-5 placeholder:italic"
-                    value={content.text}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="Include *** as mark of gaps"
-                />
+                <TextEditor content={text} setContent={setText} />
+                <p className="text-right text-sm italic">
+                    Note: Include *** as mark of gaps.
+                </p>
             </div>
         </>
     );
