@@ -1,5 +1,5 @@
 import { AxiosError } from "axios";
-import { authInstance } from "../config/axios";
+import { instance } from "../config/axios";
 import {
     AnswerFormData,
     PartFormDataItf,
@@ -10,7 +10,7 @@ import { toast } from "react-toastify";
 
 export const createTest = async (testFormData: TestFormDataItf) => {
     try {
-        const response = await authInstance.post("/tests", testFormData);
+        const response = await instance.post("/tests", testFormData);
         return response.data;
     } catch (error) {
         if (error instanceof AxiosError) {
@@ -21,7 +21,7 @@ export const createTest = async (testFormData: TestFormDataItf) => {
 
 export const getTest = async (testId: string) => {
     try {
-        const response = await authInstance.get(`/tests/${testId}`);
+        const response = await instance.get(`/tests/${testId}`);
         return response.data;
     } catch (error) {
         throw error;
@@ -33,7 +33,7 @@ export const addParts = async (
     partsBody: PartFormDataItf[]
 ) => {
     try {
-        const response = await authInstance.post(`/tests/${testId}/parts`, {
+        const response = await instance.post(`/tests/${testId}/parts`, {
             parts: partsBody,
         });
         return response.data;
@@ -48,7 +48,7 @@ export const updateQuestion = async (
     questionBody: QuestionFormDataItf
 ) => {
     try {
-        const response = await authInstance.patch(
+        const response = await instance.patch(
             `/tests/${testId}/questions/${questionId}`,
             {
                 ...questionBody,
@@ -66,7 +66,7 @@ export const addAnswer = async (
     answerBody: AnswerFormData
 ) => {
     try {
-        const response = await authInstance.patch(
+        const response = await instance.patch(
             `/tests/${testId}/questions/${questionId}/answer`,
             {
                 ...answerBody,
