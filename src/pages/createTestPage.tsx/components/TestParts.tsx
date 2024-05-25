@@ -1,18 +1,19 @@
-import React, { useCallback, useEffect } from "react";
+import React, { useCallback } from "react";
 import { PartFormDataItf, TestItf } from "../../../types/types";
 import { useMutation } from "react-query";
-import { addPart, validateParts } from "../../../services/test";
-import { partSchema } from "../../../validations/test";
+import { validateParts } from "../../../services/test";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import Part from "./testParts/Part";
 
-const TestParts: React.FC<{
+type SectionProps = {
     test: TestItf;
     onAfterUpdate: () => void;
     onBack: () => void;
     onNext: () => void;
-}> = ({ test, onAfterUpdate, onBack, onNext }) => {
+};
+
+const TestParts = ({ test, onAfterUpdate, onBack, onNext }: SectionProps) => {
     const { mutate, isLoading } = useMutation({
         mutationFn: async () => await validateParts(test._id),
         mutationKey: ["validate-parts", { testId: test._id }],

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { AnswerFormData, MatchingQuestionItf } from "../../../../types/types";
 import DraggableItem from "./DraggableItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -45,8 +45,12 @@ const MatchingAnswer = ({ content, onProvideAnswer }: MatchingAnswerProps) => {
 
     return (
         <div className="px-2 py-2 border border-orange-600">
-            <p className="font-bold">{content.text}</p>
-
+            <div
+                className=""
+                dangerouslySetInnerHTML={{
+                    __html: content.text,
+                }}
+            ></div>
             <div className="flex gap-3 w-full mt-2 px-2">
                 <div className="space-y-2 w-1/2">
                     {content.left_items.map((item) => (

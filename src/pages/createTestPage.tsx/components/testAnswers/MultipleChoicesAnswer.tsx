@@ -1,11 +1,5 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
-import {
-    AnswerFormData,
-    FillGapsAnswerFormDataInf,
-    MultipleChoiceQuestionItf,
-    MultipleChoicesAnswerFormDataInf,
-} from "../../../../types/types";
-import FillGapsAnswer from "./FillGapsAnswer";
+import { ChangeEvent, useState } from "react";
+import { AnswerFormData, MultipleChoiceQuestionItf } from "../../../../types/types";
 
 type MultipleChoicesAnswerProps = {
     content: MultipleChoiceQuestionItf;
@@ -33,7 +27,10 @@ const MultipleChoicesAnswer = ({
 
     return (
         <div className="px-2 py-2 border border-orange-600">
-            <p className="font-bold">{content.text}</p>
+            <div
+                className=""
+                dangerouslySetInnerHTML={{ __html: content.text }}
+            ></div>
 
             <div className="space-y-1 mt-2">
                 {content.options.map((option) => (

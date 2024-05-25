@@ -1,16 +1,11 @@
 import React, { useState } from "react";
 import {
     AnswerFormData,
-    FillGapsAnswerFormDataInf,
-    FillGapsQuestionFormDataItf,
     FillGapsQuestionItf,
-    MatchingAnswerFormDataInf,
     MatchingQuestionItf,
     MultipleChoiceQuestionItf,
-    MultipleChoicesAnswerFormDataInf,
     QuestionItf,
 } from "../../../../types/types";
-import Question from "../testQuestions/Question";
 import { questionTypes } from "../../../../config/config";
 import MultipleChoicesAnswer from "./MultipleChoicesAnswer";
 import FillGapsAnswer from "./FillGapsAnswer";

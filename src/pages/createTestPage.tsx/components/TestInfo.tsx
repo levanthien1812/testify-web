@@ -7,11 +7,19 @@ import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { testFormDataSchema } from "../../../validations/test";
 
-const TestInfo: React.FC<{
+type SectionProps = {
     test: TestItf | null;
     onAfterUpdate: (testId: string) => void;
+    onBack: () => void;
     onNext: () => void;
-}> = ({ test, onAfterUpdate, onNext }) => {
+};
+
+const TestInfo = ({
+    test,
+    onAfterUpdate,
+    onNext,
+    onBack,
+}: SectionProps) => {
     const [testFormData, setTestFormData] = useState<TestFormDataItf>({
         title: "",
         datetime: new Date(),

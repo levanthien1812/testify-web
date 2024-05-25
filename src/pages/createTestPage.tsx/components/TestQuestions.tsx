@@ -1,35 +1,21 @@
-import React, { useEffect, useState } from "react";
-import {
-    QuestionFormDataItf,
-    QuestionItf,
-    TestItf,
-} from "../../../types/types";
-import { getTest } from "../../../services/test";
-import { useQuery } from "react-query";
-import QuestionsByPart from "./testQuestions/QuestionsByPart";
-import Question from "./testQuestions/Question";
+import React, { useCallback, useMemo } from "react";
+import { QuestionFormDataItf, TestItf } from "../../../types/types";
 import { questionTypes, testLevels } from "../../../config/config";
+import Questions from "./testQuestions/Questions";
 
-const TestQuestions: React.FC<{
+type SectionProps = {
     test: TestItf;
-    setTest: React.Dispatch<React.SetStateAction<TestItf | null>>;
+    onAfterUpdate: () => void;
     onBack: () => void;
     onNext: () => void;
-}> = ({ test, setTest, onBack, onNext }) => {
-    const [questions, setQuestions] = useState<QuestionFormDataItf[]>([]);
+};
 
-    const { data, isFetching, refetch } = useQuery({
-        queryFn: async () => {
-            const res = await getTest(test._id);
-            return res.test;
-        },
-        onSuccess(data) {
-            setTest(data);
-        },
-        queryKey: [`get-test`, { testId: test._id }],
-        enabled: false,
-    });
-
+const TestQuestions = ({
+    test,
+    onAfterUpdate,
+    onBack,
+    onNext,
+}: SectionProps) => {
     const handleBack = () => {
         onBack();
     };
@@ -38,41 +24,57 @@ const TestQuestions: React.FC<{
         onNext();
     };
 
-    const handleUpdate = () => {
-        refetch();
-    };
+    const getQuestions = useCallback(
+        (partId?: string): QuestionFormDataItf[] => {
+            if (partId) {
+                const part = test.parts.find((part) => part._id === partId)!;
 
-    useEffect(() => {
-        if (!test.questions || test.questions.length === 0) {
-            let order = 1;
-
-            let initialQuestions: QuestionFormDataItf[] = test.parts.reduce(
-                (prev: QuestionFormDataItf[], curr) => {
-                    const questionsByPart: QuestionFormDataItf[] = Array(
-                        curr.num_questions
-                    ).map((item, index) => {
-                        const question: QuestionFormDataItf = {
+                return [
+                    ...part.questions!,
+                    ...[
+                        ...Array(part.num_questions - part.questions!.length),
+                    ].map((item, index) => {
+                        return {
                             score: 0,
                             level: testLevels.NONE,
                             type: questionTypes.MULITPLE_CHOICES,
                             content: null,
-                            order: order,
-                            part_number: curr.order,
+                            order: index + 1,
+                            part_id: part._id,
                         };
+                    }),
+                ];
+            } else {
+                return [
+                    ...test.questions!,
+                    ...[
+                        ...Array(test.num_questions - test.questions!.length),
+                    ].map((item, index) => {
+                        return {
+                            score: 0,
+                            level: testLevels.NONE,
+                            type: questionTypes.MULITPLE_CHOICES,
+                            content: null,
+                            order: index + 1,
+                        };
+                    }),
+                ];
+            }
+        },
+        [test.parts, test.questions]
+    );
 
-                        order++;
+    const isNextable = useMemo(() => {
+        if (test.parts.length > 0) {
+            const totalPartsQuestions = test.parts.reduce((prev, curr) => {
+                return curr.questions ? prev + curr.questions?.length : prev;
+            }, 0);
 
-                        return question;
-                    });
-
-                    return prev.concat(questionsByPart);
-                },
-                []
-            );
-
-            setQuestions(initialQuestions);
+            return totalPartsQuestions === test.num_questions;
+        } else {
+            return test.questions!.length === test.num_questions;
         }
-    }, [test]);
+    }, [test.parts, test.questions]);
 
     return (
         <div className="px-20 py-12 shadow-2xl">
@@ -80,39 +82,20 @@ const TestQuestions: React.FC<{
 
             <div className="space-y-3 mt-4">
                 {test.parts.length > 0 &&
-                    test.parts.map((part, index) => (
-                        <QuestionsByPart
+                    test.parts.map((part) => (
+                        <Questions
                             part={part}
                             key={part.name}
-                            questions={test.questions?.filter(
-                                (question) =>
-                                    question.part_number === part.order
-                            )}
-                            onAfterUpdate={handleUpdate}
+                            questions={getQuestions(part._id)}
+                            onAfterUpdate={onAfterUpdate}
                         />
                     ))}
-                {/* {test.parts.length > 0 &&
-                    test.parts.map((part, index) => (
-                        <QuestionsByPart
-                            part={part}
-                            key={part.name}
-                            questions={questions.filter(
-                                (question) =>
-                                    question.part_number === part.order
-                            )}
-                            onAfterUpdate={handleUpdate}
-                        />
-                    ))} */}
                 {test.parts.length === 0 && (
-                    <div className="px-4 py-4 grid grid-cols-4 gap-2">
-                        {test.questions?.map((question) => (
-                            <Question
-                                question={question}
-                                key={question._id}
-                                onAfterUpdate={handleUpdate}
-                            />
-                        ))}{" "}
-                    </div>
+                    <Questions
+                        onAfterUpdate={onAfterUpdate}
+                        testId={test._id}
+                        questions={getQuestions()}
+                    />
                 )}
             </div>
 
@@ -126,9 +109,7 @@ const TestQuestions: React.FC<{
                 <button
                     className="text-white bg-orange-600 px-12 py-1 hover:bg-orange-700 disabled:bg-gray-500"
                     onClick={handleNext}
-                    disabled={
-                        !test.questions?.every((question) => question.content)
-                    }
+                    disabled={!isNextable}
                 >
                     {/* {!isLoading ? "Next" : "Saving..."} */}
                     Next
