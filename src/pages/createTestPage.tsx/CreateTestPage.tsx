@@ -11,10 +11,11 @@ import { generateArray } from "../../utils/array";
 
 const CreateTestPage = () => {
     const [test, setTest] = useState<TestItf | null>(null);
-    const [numParts, setNumParts] = useState<number>(1);
     const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
 
-    const { testId } = useParams();
+    const { testIdParams } = useParams();
+    const [testId, setTestId] = useState<string | undefined>(testIdParams)
+
 
     const { data, isFetching, refetch } = useQuery({
         queryFn: async () => {
@@ -34,31 +35,8 @@ const CreateTestPage = () => {
     useEffect(() => {
         if (data) {
             setTest(data);
-            if (data.parts.length > 1) {
-                setNumParts(data.parts.length);
-            }
         } else setTest(null);
     }, [data]);
-
-    useEffect(() => {
-        if (numParts > 1 && step === 2) {
-            if (test && test.parts.length === 0) {
-                const nums = generateArray(numParts);
-
-                const initParts = nums.map((num) => {
-                    return {
-                        order: num,
-                        name: "",
-                        description: "",
-                        num_questions: 0,
-                        score: 0,
-                    };
-                });
-
-                setTest({ ...test, parts: initParts });
-            }
-        }
-    }, [numParts, step]);
 
     return (
         <div className="xl:w-2/3 md:w-5/6 mx-auto py-10">
@@ -97,19 +75,16 @@ const CreateTestPage = () => {
                 {step === 1 && (
                     <TestInfo
                         test={test}
-                        setTest={setTest}
-                        numParts={numParts}
-                        setNumParts={setNumParts}
                         onNext={() => setStep(2)}
+                        onAfterUpdate={(id) => setTestId(id)}
                     />
                 )}
-                {step === 2 && test && numParts && (
+                {step === 2 && test && (
                     <TestParts
                         test={test}
-                        setTest={setTest}
-                        numParts={numParts}
                         onBack={() => setStep(1)}
                         onNext={() => setStep(3)}
+                        onAfterUpdate={() => refetch()}
                     />
                 )}
                 {step === 3 && test && (

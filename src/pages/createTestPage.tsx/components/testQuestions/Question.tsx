@@ -23,16 +23,7 @@ const Question: React.FC<{
 }> = ({ question, onAfterUpdate }) => {
     const [open, setOpen] = useState<boolean>(false);
     const [questionFormData, setQuestionFormData] =
-        useState<QuestionFormDataItf>(
-            !question.content
-                ? {
-                      score: 0,
-                      level: testLevels.NONE,
-                      type: questionTypes.MULITPLE_CHOICES,
-                      content: null,
-                  }
-                : question
-        );
+        useState<QuestionFormDataItf >(question);
 
     const handleInputChange = (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement>

@@ -1,7 +1,7 @@
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
-import { QuestionItf, TestItf, TestPartItf } from "../../../../types/types";
+import { QuestionFormDataItf, QuestionItf, TestItf, TestPartItf } from "../../../../types/types";
 import Question from "./Question";
 import Answer from "../testAnswers/Answer";
 
@@ -42,11 +42,11 @@ const QuestionsByPart: React.FC<{
             >
                 {questions &&
                     questions.length > 0 &&
-                    questions.map((question) =>
+                    questions.map((question, index) =>
                         !withAnswer ? (
                             <Question
                                 question={question}
-                                key={question._id}
+                                key={index}
                                 onAfterUpdate={onAfterUpdate}
                             />
                         ) : (
@@ -57,6 +57,15 @@ const QuestionsByPart: React.FC<{
                             />
                         )
                     )}
+                {/* {!questions ||
+                    (questions.length === 0 &&
+                        Array(part.num_questions).map((item, index) => (
+                            <Question
+                                question={null}
+                                key={index}
+                                onAfterUpdate={onAfterUpdate}
+                            />
+                        )))} */}
             </div>
         </div>
     );

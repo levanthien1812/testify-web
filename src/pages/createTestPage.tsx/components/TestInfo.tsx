@@ -9,11 +9,9 @@ import { testFormDataSchema } from "../../../validations/test";
 
 const TestInfo: React.FC<{
     test: TestItf | null;
-    setTest: React.Dispatch<React.SetStateAction<TestItf | null>>;
-    numParts: number;
-    setNumParts: React.Dispatch<React.SetStateAction<number>>;
+    onAfterUpdate: (testId: string) => void;
     onNext: () => void;
-}> = ({ test, setTest, numParts, setNumParts, onNext }) => {
+}> = ({ test, onAfterUpdate, onNext }) => {
     const [testFormData, setTestFormData] = useState<TestFormDataItf>({
         title: "",
         datetime: new Date(),
@@ -22,6 +20,7 @@ const TestInfo: React.FC<{
         max_score: 10,
         num_questions: 0,
         level: testLevels.EASY,
+        num_parts: 1,
         code: "",
     });
 
@@ -32,7 +31,7 @@ const TestInfo: React.FC<{
             await createTest(testFormData),
         mutationKey: ["create-test", { body: testFormData }],
         onSuccess: (data) => {
-            setTest(data.test);
+            onAfterUpdate(data.test._id);
             onNext();
         },
         onError: (err) => {
@@ -66,7 +65,7 @@ const TestInfo: React.FC<{
 
         if (test) {
             // Add update test logic
-            setTest(test);
+
             onNext();
             return;
         }
@@ -85,6 +84,7 @@ const TestInfo: React.FC<{
                 num_questions: test.num_questions,
                 level: test.level,
                 code: test.code,
+                num_parts: test.num_parts,
             });
         }
     }, [test]);
@@ -185,8 +185,8 @@ const TestInfo: React.FC<{
                         id="num_parts"
                         name="num_parts"
                         className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow"
-                        value={numParts}
-                        onChange={(e) => setNumParts(parseInt(e.target.value))}
+                        value={testFormData.num_parts}
+                        onChange={handleInputChange}
                         required
                     />
                     <label htmlFor="num_questions" className="w-1/5 shrink-0">

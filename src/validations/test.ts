@@ -25,4 +25,5 @@ export const testFormDataSchema = Joi.object().keys({
     num_questions: Joi.number().required().min(1),
     level: Joi.string().valid(...Object.values(testLevels)),
     code: Joi.string().allow(""),
+    num_parts: Joi.number().min(1),
 });
