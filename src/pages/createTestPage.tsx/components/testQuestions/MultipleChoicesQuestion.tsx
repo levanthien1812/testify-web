@@ -1,6 +1,5 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { MultipleChoiceQuestionFormDataItf } from "../../../../types/types";
-import { generateArray } from "../../../../utils/array";
 import Option from "./Option";
 import TextEditor from "../../../richTextEditor/TiptapEditor";
 

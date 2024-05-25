@@ -4,7 +4,6 @@ import {
     MatchingQuestionFormDataItf,
     MultipleChoiceQuestionFormDataItf,
     QuestionFormDataItf,
-    QuestionItf,
 } from "../../../../types/types";
 import Modal from "../../../../components/modals/Modal";
 import { questionTypes, testLevels } from "../../../../config/config";
@@ -12,18 +11,18 @@ import MulitpleChoiceQuestion from "./MultipleChoicesQuestion";
 import FillGapsQuestion from "./FillGapsQuestion";
 import MatchingQuestion from "./MatchingQuestion";
 import { useMutation } from "react-query";
-import { updateQuestion } from "../../../../services/test";
+import { createQuestion } from "../../../../services/test";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const Question: React.FC<{
-    question: QuestionItf;
+    question: QuestionFormDataItf;
+    testId: string;
     onAfterUpdate: () => void;
-}> = ({ question, onAfterUpdate }) => {
+}> = ({ question, onAfterUpdate, testId }) => {
     const [open, setOpen] = useState<boolean>(false);
     const [questionFormData, setQuestionFormData] =
-        useState<QuestionFormDataItf >(question);
+        useState<QuestionFormDataItf>(question);
 
     const handleInputChange = (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -93,18 +92,11 @@ const Question: React.FC<{
 
     const { mutate, isLoading } = useMutation({
         mutationFn: async (questionBody: QuestionFormDataItf) =>
-            await updateQuestion(
-                question.test_id,
-                question._id || question.id,
-                questionBody
-            ),
-        mutationKey: [
-            "update-question",
-            { questionId: question._id, body: questionFormData },
-        ],
+            await createQuestion(testId, questionBody),
+        mutationKey: ["create-question", { body: questionFormData }],
         onSuccess: (data) => {
-            console.log(data);
-            toast.success("Update question successfuly");
+            toast.success("Create question successfuly");
+            setOpen(false);
             onAfterUpdate();
         },
         onError: (err) => {

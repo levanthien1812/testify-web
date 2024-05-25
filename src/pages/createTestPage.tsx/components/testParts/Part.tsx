@@ -6,12 +6,14 @@ import { useMutation } from "react-query";
 import { addPart } from "../../../../services/test";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
+import { partSchema } from "../../../../validations/test";
 
 const Part: React.FC<{
     testId: string;
     part: PartFormDataItf;
     onAfterUpdate: () => void;
 }> = ({ part, onAfterUpdate, testId }) => {
+    const [showSave, setShowSave] = useState(false);
     const [savable, setSavable] = useState<boolean>(false);
     const [open, setOpen] = useState<boolean>(true);
     const [partBody, setPartBody] = useState<PartFormDataItf>(part);
@@ -21,6 +23,7 @@ const Part: React.FC<{
             await addPart(testId, part),
         mutationKey: ["add-part", { body: part }],
         onSuccess: (data) => {
+            setShowSave(false);
             onAfterUpdate();
         },
         onError: (err) => {
@@ -39,6 +42,7 @@ const Part: React.FC<{
             value = parseInt(value);
         }
 
+        setShowSave(true);
         setPartBody({ ...partBody, [name]: value });
     };
 
@@ -47,8 +51,13 @@ const Part: React.FC<{
     };
 
     useEffect(() => {
-        // do some checking
-        setSavable(true);
+        const { error } = partSchema.validate(partBody);
+
+        if (!error) {
+            setSavable(true);
+        } else {
+            setSavable(false);
+        }
     }, [partBody]);
 
     return (
@@ -101,7 +110,6 @@ const Part: React.FC<{
                         </label>
                         <input
                             type="number"
-                            step={5}
                             min={0}
                             id="score"
                             name="score"
@@ -130,16 +138,17 @@ const Part: React.FC<{
                     </div>
                 </div>
             )}
-            {savable && (
+            {showSave && (
                 <div className="flex justify-end">
-                    <button className="px-4 py-0.5 bg-gray-600 text-white w-1/5 hover:bg-gray-500">
+                    {/* <button className="px-4 py-0.5 bg-gray-600 text-white w-1/5 hover:bg-gray-500">
                         Cancel
-                    </button>
+                    </button> */}
                     <button
-                        className="px-4 py-0.5 bg-orange-600 text-white w-1/5 hover:bg-orange-500 "
+                        className="px-4 py-0.5 bg-orange-600 text-white w-1/5 hover:bg-orange-500 disabled:bg-gray-500"
                         onClick={handleSavePart}
+                        disabled={!savable || isLoading}
                     >
-                        Save
+                        {isLoading ? "Saving..." : "Save"}
                     </button>
                 </div>
             )}

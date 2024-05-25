@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useState } from "react";
 import { AnswerFormData, FillGapsQuestionItf } from "../../../../types/types";
 import { generateArray } from "../../../../utils/array";
 
@@ -24,7 +24,12 @@ const FillGapsAnswer = ({ content, onProvideAnswer }: FillGapsAnswerProps) => {
 
     return (
         <div className="px-2 py-2 border border-orange-600">
-            <p className="font-bold">{content.text}</p>
+            <div
+                className=""
+                dangerouslySetInnerHTML={{
+                    __html: content.text.replaceAll("***", "___"),
+                }}
+            ></div>
 
             <div className="space-y-1 mt-2">
                 {generateArray(content.num_gaps).map((num) => (

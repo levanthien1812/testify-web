@@ -1,14 +1,16 @@
-import React from "react";
-import { TestItf } from "../../../types/types";
-import QuestionsByPart from "./testQuestions/QuestionsByPart";
+import React, { useCallback } from "react";
+import { QuestionItf, TestItf } from "../../../types/types";
 import Answer from "./testAnswers/Answer";
+import Questions from "./testQuestions/Questions";
 
-const TestAnswers: React.FC<{
+type SectionProps = {
     test: TestItf;
-    setTest: React.Dispatch<React.SetStateAction<TestItf | null>>;
+    onAfterUpdate: () => void;
     onBack: () => void;
     onNext: () => void;
-}> = ({ test, setTest, onBack, onNext }) => {
+};
+
+const TestAnswers = ({ test, onBack, onNext, onAfterUpdate }: SectionProps) => {
     const handleBack = () => {
         onBack();
     };
@@ -17,9 +19,18 @@ const TestAnswers: React.FC<{
         onNext();
     };
 
-    const handleUpdate = () => {
-        // refetch();
-    };
+    const getQuestions = useCallback(
+        (partId?: string): QuestionItf[] => {
+            if (partId) {
+                const part = test.parts.find((part) => part._id === partId)!;
+
+                return part.questions!;
+            } else {
+                return test.questions!;
+            }
+        },
+        [test.parts, test.questions]
+    );
 
     return (
         <div className="px-20 py-12 shadow-2xl">
@@ -31,24 +42,21 @@ const TestAnswers: React.FC<{
             <div className="space-y-3 mt-4">
                 {test.parts.length > 0 &&
                     test.parts.map((part, index) => (
-                        <QuestionsByPart
+                        <Questions
                             part={part}
                             key={part.name}
-                            questions={test.questions?.filter(
-                                (question) =>
-                                    question.part_number === part.order
-                            )}
-                            onAfterUpdate={handleUpdate}
+                            questions={getQuestions(part._id)}
+                            onAfterUpdate={onAfterUpdate}
                             withAnswer={true}
                         />
                     ))}
                 {test.parts.length === 0 && (
-                    <div className="px-4 py-4 grid grid-cols-4 gap-2">
-                        {test.questions?.map((question) => (
+                    <div className={`px-4 py-4 space-y-2`}>
+                        {getQuestions().map((question) => (
                             <Answer
                                 question={question}
                                 key={question._id}
-                                onAfterUpdate={handleUpdate}
+                                onAfterUpdate={onAfterUpdate}
                             />
                         ))}
                     </div>

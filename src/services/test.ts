@@ -49,18 +49,14 @@ export const validateParts = async (testId: string) => {
     }
 };
 
-export const updateQuestion = async (
+export const createQuestion = async (
     testId: string,
-    questionId: string,
     questionBody: QuestionFormDataItf
 ) => {
     try {
-        const response = await instance.patch(
-            `/tests/${testId}/questions/${questionId}`,
-            {
-                ...questionBody,
-            }
-        );
+        const response = await instance.post(`/tests/${testId}/questions`, {
+            ...questionBody,
+        });
         return response.data;
     } catch (error) {
         throw error;

@@ -26,35 +26,35 @@ instance.interceptors.request.use(
     }
 );
 
-instance.interceptors.response.use(
-    (response) => {
-        return response;
-    },
-    async (error) => {
-        const originalRequest = error.config;
+// instance.interceptors.response.use(
+//     (response) => {
+//         return response;
+//     },
+//     async (error) => {
+//         const originalRequest = error.config;
 
-        if (error.response.status === 403 && !originalRequest._retry) {
-            originalRequest._retry = true;
+//         if (error.response.status === 403 && !originalRequest._retry) {
+//             originalRequest._retry = true;
 
-            const token = Cookies.get("refresh_token");
+//             const token = Cookies.get("refresh_token");
 
-            if (!token) {
-            }
+//             if (!token) {
+//             }
 
-            const { access, refresh } = await refreshToken(token!);
+//             const { access, refresh } = await refreshToken(token!);
 
-            Cookies.set("access_token", access.token, {
-                expires: new Date(access.expire),
-            });
-            Cookies.set("refresh_token", refresh.token);
+//             Cookies.set("access_token", access.token, {
+//                 expires: new Date(access.expire),
+//             });
+//             Cookies.set("refresh_token", refresh.token);
 
-            instance.defaults.headers.common["Authorization"] =
-                "Bearer " + access.token;
-            // originalRequest.headers.Authorization = "Bearer " + access.token;
+//             instance.defaults.headers.common["Authorization"] =
+//                 "Bearer " + access.token;
+//             // originalRequest.headers.Authorization = "Bearer " + access.token;
 
-            return instance(originalRequest);
-        }
+//             return instance(originalRequest);
+//         }
 
-        return Promise.reject(error);
-    }
-);
+//         return Promise.reject(error);
+//     }
+// );

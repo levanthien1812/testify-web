@@ -60,7 +60,9 @@ export interface PartFormDataItf {
 }
 
 export interface TestPartItf extends PartFormDataItf {
-    _id?: string;
+    _id: string;
+    test_id: string;
+    questions?: QuestionItf[];
 }
 
 export interface MultipleChoiceQuestionFormDataItf {
@@ -129,6 +131,7 @@ export interface QuestionItf {
     part_number: number;
     level: (typeof testLevels)[keyof typeof testLevels];
     type: (typeof questionTypes)[keyof typeof questionTypes];
+    part_id?: string;
     content:
         | MultipleChoiceQuestionItf
         | FillGapsQuestionItf
@@ -140,7 +143,7 @@ export interface QuestionFormDataItf {
     level: (typeof testLevels)[keyof typeof testLevels];
     type: (typeof questionTypes)[keyof typeof questionTypes];
     order: number;
-    part_number: number;
+    part_id?: string;
     content:
         | MultipleChoiceQuestionFormDataItf
         | FillGapsQuestionFormDataItf
