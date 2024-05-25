@@ -1,9 +1,14 @@
-import React from "react";
-import { TestItf } from "../../../types/types";
+import React, { useEffect, useState } from "react";
+import {
+    QuestionFormDataItf,
+    QuestionItf,
+    TestItf,
+} from "../../../types/types";
 import { getTest } from "../../../services/test";
 import { useQuery } from "react-query";
 import QuestionsByPart from "./testQuestions/QuestionsByPart";
 import Question from "./testQuestions/Question";
+import { questionTypes, testLevels } from "../../../config/config";
 
 const TestQuestions: React.FC<{
     test: TestItf;
@@ -11,6 +16,8 @@ const TestQuestions: React.FC<{
     onBack: () => void;
     onNext: () => void;
 }> = ({ test, setTest, onBack, onNext }) => {
+    const [questions, setQuestions] = useState<QuestionFormDataItf[]>([]);
+
     const { data, isFetching, refetch } = useQuery({
         queryFn: async () => {
             const res = await getTest(test._id);
@@ -35,6 +42,38 @@ const TestQuestions: React.FC<{
         refetch();
     };
 
+    useEffect(() => {
+        if (!test.questions || test.questions.length === 0) {
+            let order = 1;
+
+            let initialQuestions: QuestionFormDataItf[] = test.parts.reduce(
+                (prev: QuestionFormDataItf[], curr) => {
+                    const questionsByPart: QuestionFormDataItf[] = Array(
+                        curr.num_questions
+                    ).map((item, index) => {
+                        const question: QuestionFormDataItf = {
+                            score: 0,
+                            level: testLevels.NONE,
+                            type: questionTypes.MULITPLE_CHOICES,
+                            content: null,
+                            order: order,
+                            part_number: curr.order,
+                        };
+
+                        order++;
+
+                        return question;
+                    });
+
+                    return prev.concat(questionsByPart);
+                },
+                []
+            );
+
+            setQuestions(initialQuestions);
+        }
+    }, [test]);
+
     return (
         <div className="px-20 py-12 shadow-2xl">
             <h2 className="text-center text-3xl">Test Questions</h2>
@@ -52,6 +91,18 @@ const TestQuestions: React.FC<{
                             onAfterUpdate={handleUpdate}
                         />
                     ))}
+                {/* {test.parts.length > 0 &&
+                    test.parts.map((part, index) => (
+                        <QuestionsByPart
+                            part={part}
+                            key={part.name}
+                            questions={questions.filter(
+                                (question) =>
+                                    question.part_number === part.order
+                            )}
+                            onAfterUpdate={handleUpdate}
+                        />
+                    ))} */}
                 {test.parts.length === 0 && (
                     <div className="px-4 py-4 grid grid-cols-4 gap-2">
                         {test.questions?.map((question) => (

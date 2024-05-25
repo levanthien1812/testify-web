@@ -28,14 +28,21 @@ export const getTest = async (testId: string) => {
     }
 };
 
-export const addParts = async (
-    testId: string,
-    partsBody: PartFormDataItf[]
-) => {
+export const addPart = async (testId: string, partBody: PartFormDataItf) => {
     try {
-        const response = await instance.post(`/tests/${testId}/parts`, {
-            parts: partsBody,
-        });
+        const response = await instance.post(
+            `/tests/${testId}/parts`,
+            partBody
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const validateParts = async (testId: string) => {
+    try {
+        const response = await instance.get(`/tests/${testId}/parts/validate`);
         return response.data;
     } catch (error) {
         throw error;

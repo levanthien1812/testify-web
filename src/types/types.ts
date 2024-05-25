@@ -46,6 +46,7 @@ export interface TestFormDataItf {
     duration: number;
     max_score: number;
     num_questions: number;
+    num_parts: number;
     level: (typeof testLevels)[keyof typeof testLevels];
     code: string;
 }
@@ -138,6 +139,8 @@ export interface QuestionFormDataItf {
     score: number;
     level: (typeof testLevels)[keyof typeof testLevels];
     type: (typeof questionTypes)[keyof typeof questionTypes];
+    order: number;
+    part_number: number;
     content:
         | MultipleChoiceQuestionFormDataItf
         | FillGapsQuestionFormDataItf
