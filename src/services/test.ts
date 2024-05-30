@@ -4,6 +4,7 @@ import {
     AnswerFormData,
     PartFormDataItf,
     QuestionFormDataItf,
+    TakerFormDataItf,
     TestFormDataItf,
 } from "../types/types";
 import { toast } from "react-toastify";
@@ -75,6 +76,47 @@ export const addAnswer = async (
                 ...answerBody,
             }
         );
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const createTakers = async (
+    testId: string,
+    takersBody: {
+        takers: TakerFormDataItf[];
+    }
+) => {
+    try {
+        const response = await instance.post(`/tests/${testId}/takers`, {
+            takersBody,
+        });
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getAvailableTakers = async (testId: string) => {
+    try {
+        const response = await instance.get(
+            `/tests/${testId}/takers/available`
+        );
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const assignTakers = async (testId: string, takers: string[]) => {
+    try {
+        const response = await instance.patch(`/tests/${testId}/takers`, {
+            taker_ids: takers,
+        });
 
         return response.data;
     } catch (error) {

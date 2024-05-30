@@ -155,7 +155,7 @@ export interface TestItf extends TestFormDataItf {
     _id: string;
     parts: TestPartItf[];
     maker_id: string;
-    taker_ids?: string[];
+    taker_ids: string[] | userItf[];
     is_finished: false;
     questions?: QuestionItf[];
 }
@@ -176,3 +176,13 @@ export type AnswerFormData =
     | MultipleChoicesAnswerFormDataInf
     | FillGapsAnswerFormDataInf
     | MatchingAnswerFormDataInf;
+
+export interface TakerFormDataItf {
+    name: string;
+    email: string;
+}
+
+export interface TakerItf extends TakerFormDataItf {
+    _id: string;
+    maker_id: string;
+}

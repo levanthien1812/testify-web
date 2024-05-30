@@ -5,12 +5,13 @@ import { createPortal } from "react-dom";
 
 type ModalProps = {
     children: ReactNode;
-    onClose?: () => void;
+    className?: string;
+    onClose: () => void;
 };
 
 type HeaderProps = {
     title: string;
-    onClose?: () => void;
+    onClose: () => void;
 };
 
 type BodyProps = {
@@ -21,14 +22,14 @@ type FooterProps = {
     children: ReactNode;
 };
 
-const Modal = ({ children, onClose }: ModalProps) => {
+const Modal = ({ children, onClose, className }: ModalProps) => {
     return createPortal(
         <>
             <div
-                className="absolute top-0 left-0 right-0 bottom-0 m-auto bg-black bg-opacity-15 shadow-md w-full h-full"
+                className={`absolute top-0 left-0 right-0 bottom-0 m-auto bg-black bg-opacity-15 shadow-md w-full h-full ${className}`}
                 onClick={onClose}
             ></div>
-            <div className="absolute top-0 left-0 right-0 bottom-0 m-auto bg-white shadow-md min-w-1/4 w-fit h-fit">
+            <div className="absolute top-0 left-0 right-0 bottom-0 m-auto bg-white shadow-md min-w-1/4 w-1/2 md:w-1/3 2xl:w-1/4 h-fit">
                 {children}
             </div>
         </>,
