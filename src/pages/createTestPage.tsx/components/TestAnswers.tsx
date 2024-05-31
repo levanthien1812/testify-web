@@ -73,9 +73,9 @@ const TestAnswers = ({ test, onBack, onNext, onAfterUpdate }: SectionProps) => {
                 <button
                     className="text-white bg-orange-600 px-12 py-1 hover:bg-orange-700 disabled:bg-gray-500"
                     onClick={handleNext}
-                    disabled={
-                        !test.questions?.every((question) => question.content)
-                    }
+                    // disabled={
+                    //     !test.questions?.every((question) => question.content)
+                    // }
                 >
                     {/* {!isLoading ? "Next" : "Saving..."} */}
                     Next

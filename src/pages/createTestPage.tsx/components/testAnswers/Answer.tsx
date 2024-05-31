@@ -27,7 +27,7 @@ const Answer: React.FC<{
             await addAnswer(question.test_id, question._id, answerBody),
         mutationKey: ["add-answer", { question_id: question._id }],
         onSuccess: (data) => {
-            setSavable(false)
+            setSavable(false);
             onAfterUpdate();
         },
         onError: (err) => {
@@ -48,11 +48,25 @@ const Answer: React.FC<{
 
     return (
         <div>
-            <p className="px-2 text-white bg-orange-600 w-fit">
+            <p
+                className={`px-2 text-white ${
+                    question.content.answer &&
+                    question.content.answer.length > 0
+                        ? "bg-gray-600"
+                        : "bg-orange-600"
+                } w-fit`}
+            >
                 Question {question.order}{" "}
                 <span className="italic">({question.score} points)</span> :
             </p>
-            <div>
+            <div
+                className={`px-2 py-2 border ${
+                    question.content.answer &&
+                    question.content.answer.length > 0
+                        ? "border-gray-600"
+                        : "border-orange-600"
+                }`}
+            >
                 {question.type === questionTypes.MULITPLE_CHOICES && (
                     <MultipleChoicesAnswer
                         content={question.content as MultipleChoiceQuestionItf}

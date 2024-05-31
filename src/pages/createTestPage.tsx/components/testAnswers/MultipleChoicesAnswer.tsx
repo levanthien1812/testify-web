@@ -1,5 +1,8 @@
 import { ChangeEvent, useState } from "react";
-import { AnswerFormData, MultipleChoiceQuestionItf } from "../../../../types/types";
+import {
+    AnswerFormData,
+    MultipleChoiceQuestionItf,
+} from "../../../../types/types";
 
 type MultipleChoicesAnswerProps = {
     content: MultipleChoiceQuestionItf;
@@ -26,7 +29,7 @@ const MultipleChoicesAnswer = ({
     };
 
     return (
-        <div className="px-2 py-2 border border-orange-600">
+        <>
             <div
                 className=""
                 dangerouslySetInnerHTML={{ __html: content.text }}
@@ -52,7 +55,7 @@ const MultipleChoicesAnswer = ({
                     </div>
                 ))}
             </div>
-        </div>
+        </>
     );
 };
 
