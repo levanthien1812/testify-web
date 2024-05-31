@@ -123,3 +123,15 @@ export const assignTakers = async (testId: string, takers: string[]) => {
         throw error;
     }
 };
+
+export const validateQuestions = async (testId: string) => {
+    try {
+        const response = await instance.get(
+            `/tests/${testId}/questions/validate`
+        );
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};

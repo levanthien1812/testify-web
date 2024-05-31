@@ -23,7 +23,7 @@ const FillGapsAnswer = ({ content, onProvideAnswer }: FillGapsAnswerProps) => {
     };
 
     return (
-        <div className="px-2 py-2 border border-orange-600">
+        <>
             <div
                 className=""
                 dangerouslySetInnerHTML={{
@@ -48,7 +48,7 @@ const FillGapsAnswer = ({ content, onProvideAnswer }: FillGapsAnswerProps) => {
                     </div>
                 ))}
             </div>
-        </div>
+        </>
     );
 };
 

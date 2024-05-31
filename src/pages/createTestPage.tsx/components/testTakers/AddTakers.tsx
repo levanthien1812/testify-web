@@ -52,7 +52,7 @@ const AddTakers = ({ onClose, testId, onAfterUpdate }: AddTakersProps) => {
                 )}
 
                 <button
-                    className="text-blue-600 underline mt-2 hover:font-bold"
+                    className="text-blue-600 hover:underline mt-2 hover:font-bold"
                     onClick={() => setIsCreateTaker(true)}
                 >
                     Create new takers

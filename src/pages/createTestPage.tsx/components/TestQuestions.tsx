@@ -2,6 +2,11 @@ import React, { useCallback, useMemo } from "react";
 import { QuestionFormDataItf, TestItf } from "../../../types/types";
 import { questionTypes, testLevels } from "../../../config/config";
 import Questions from "./testQuestions/Questions";
+import { validateQuestions } from "../../../services/test";
+import { on } from "events";
+import { AxiosError } from "axios";
+import { toast } from "react-toastify";
+import { useMutation } from "react-query";
 
 type SectionProps = {
     test: TestItf;
@@ -16,12 +21,27 @@ const TestQuestions = ({
     onBack,
     onNext,
 }: SectionProps) => {
+    const { mutate } = useMutation({
+        mutationFn: async () => {
+            return await validateQuestions(test._id);
+        },
+        mutationKey: ["validateQuestions", { testId: test._id }],
+        onSuccess: () => {
+            onNext();
+        },
+        onError: (err) => {
+            if (err instanceof AxiosError) {
+                toast.error(err.response?.data.message);
+            }
+        },
+    });
+
     const handleBack = () => {
         onBack();
     };
 
     const handleNext = () => {
-        onNext();
+        mutate();
     };
 
     const getQuestions = useCallback(

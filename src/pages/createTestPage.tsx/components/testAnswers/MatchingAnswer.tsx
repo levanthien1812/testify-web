@@ -44,7 +44,7 @@ const MatchingAnswer = ({ content, onProvideAnswer }: MatchingAnswerProps) => {
     }, [matchings]);
 
     return (
-        <div className="px-2 py-2 border border-orange-600">
+        <>
             <div
                 className=""
                 dangerouslySetInnerHTML={{
@@ -124,7 +124,7 @@ const MatchingAnswer = ({ content, onProvideAnswer }: MatchingAnswerProps) => {
                     ))}
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 
