@@ -2,9 +2,21 @@ import { Link, useNavigate } from "react-router-dom";
 import RecentTestItem from "./RecentTestItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { useMutation, useQuery } from "react-query";
+import { getTests } from "../../../services/test";
+import { TestItf } from "../../../types/types";
 
 const RecentTests = () => {
     const navigate = useNavigate();
+
+    const { data: tests } = useQuery({
+        queryKey: ["tests"],
+        queryFn: async () => {
+            const data = await getTests();
+            return data.tests;
+        },
+    });
+
     return (
         <div>
             <div>
@@ -17,11 +29,11 @@ const RecentTests = () => {
                 </button>
             </div>
 
-            <div className="flex gap-6 mt-3">
-                <RecentTestItem />
-                <RecentTestItem />
-                <RecentTestItem />
-                <RecentTestItem />
+            <div className="flex gap-6 mt-3 overflow-x-scroll scrollbar-thin pb-1">
+                {tests &&
+                    tests.map((test: TestItf) => {
+                        return <RecentTestItem test={test} key={test._id} />;
+                    })}
 
                 <Link
                     to={"/tests"}

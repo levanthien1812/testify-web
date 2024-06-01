@@ -21,7 +21,7 @@ const TestQuestions = ({
     onBack,
     onNext,
 }: SectionProps) => {
-    const { mutate } = useMutation({
+    const { mutate, isLoading } = useMutation({
         mutationFn: async () => {
             return await validateQuestions(test._id);
         },
@@ -131,8 +131,7 @@ const TestQuestions = ({
                     onClick={handleNext}
                     disabled={!isNextable}
                 >
-                    {/* {!isLoading ? "Next" : "Saving..."} */}
-                    Next
+                    {!isLoading ? "Next" : "Validating..."}
                 </button>
             </div>
         </div>

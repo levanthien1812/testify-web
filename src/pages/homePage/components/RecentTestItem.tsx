@@ -1,19 +1,26 @@
 import { faArrowRight, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
+import { TestItf } from "../../../types/types";
+import { format } from "date-fns";
 
-const RecentTestItem = () => {
+type RecentTestItemProps = {
+    test: TestItf;
+};
+
+const RecentTestItem = ({ test }: RecentTestItemProps) => {
+    const navigate = useNavigate();
     const [hover, setHover] = useState<boolean>(false);
     return (
         <div
-            className="shadow-md shadow-gray-200 relative overflow-hidden"
+            className="shadow-md shadow-gray-200 relative overflow-hidden w-fit shrink-0"
             onMouseOver={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
         >
             <div className="px-3 py-2 bg-gradient-to-br from-orange-200 to-orange-50 flex items-center gap-2">
-                <p className="text-lg font-bold">Listening test 1</p>
+                <p className="text-lg font-bold">{test.title}</p>
                 <div className="uppercase text-xs bg-green-600 text-white w-fit rounded-full px-1">
                     Finished
                 </div>
@@ -24,28 +31,28 @@ const RecentTestItem = () => {
                         className="text-xs text-orange-600 me-2"
                         icon={faStar}
                     />
-                    3 parts
+                    {test.num_parts} parts
                 </p>
                 <p>
                     <FontAwesomeIcon
                         className="text-xs text-orange-600 me-2"
                         icon={faStar}
                     />
-                    15 questions
+                    {test.num_questions} questions
                 </p>
                 <p>
                     <FontAwesomeIcon
                         className="text-xs text-orange-600 me-2"
                         icon={faStar}
                     />
-                    20 minutes
+                    {test.duration} minutes
                 </p>
                 <p>
                     <FontAwesomeIcon
                         className="text-xs text-orange-600 me-2"
                         icon={faStar}
                     />
-                    20/05/2024 16:30PM
+                    {format(new Date(test.datetime), "dd/MM/yyyy HH:mm")}
                 </p>
             </div>
 
@@ -62,6 +69,7 @@ const RecentTestItem = () => {
                     <motion.button
                         className="text-white font-bold text-sm uppercase bg-black py-1 px-3 rounded-full"
                         whileTap={{ scale: 1.1 }}
+                        onClick={() => navigate(`/tests/${test._id}/edit`)}
                     >
                         <span>View detail</span>
                         <FontAwesomeIcon icon={faArrowRight} className="ms-2" />

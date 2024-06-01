@@ -104,7 +104,7 @@ const TestParts = ({ test, onAfterUpdate, onBack, onNext }: SectionProps) => {
                     onClick={handleNext}
                     disabled={isLoading}
                 >
-                    {!isLoading ? "Next" : "Saving..."}
+                    {!isLoading ? "Next" : "Validating..."}
                 </button>
             </div>
         </div>
