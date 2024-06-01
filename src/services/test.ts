@@ -1,4 +1,3 @@
-import { AxiosError } from "axios";
 import { instance } from "../config/axios";
 import {
     AnswerFormData,
@@ -7,18 +6,25 @@ import {
     TakerFormDataItf,
     TestFormDataItf,
 } from "../types/types";
-import { toast } from "react-toastify";
 
 export const createTest = async (testFormData: TestFormDataItf) => {
     try {
         const response = await instance.post("/tests", testFormData);
         return response.data;
     } catch (error) {
-        if (error instanceof AxiosError) {
-            toast.error(error.response?.data.message);
-        }
+        throw error;
     }
 };
+
+export const getTests = async () => {
+    try {
+        const response = await instance.get("/tests");
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 
 export const getTest = async (testId: string) => {
     try {

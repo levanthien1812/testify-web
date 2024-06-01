@@ -18,6 +18,7 @@
     "@tiptap/pm": "^2.4.0",
     "@tiptap/react": "^2.4.0",
     "@tiptap/starter-kit": "^2.4.0",
+    "@types/date-fns": "^2.6.0",
     "@types/jest": "^27.5.2",
     "@types/js-cookie": "^3.0.6",
     "@types/node": "^16.18.96",
