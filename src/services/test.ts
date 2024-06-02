@@ -25,10 +25,21 @@ export const getTests = async () => {
     }
 };
 
-
 export const getTest = async (testId: string) => {
     try {
         const response = await instance.get(`/tests/${testId}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updateTest = async (
+    testId: string,
+    testFormData: TestFormDataItf
+) => {
+    try {
+        const response = await instance.patch(`/tests/${testId}`, testFormData);
         return response.data;
     } catch (error) {
         throw error;
@@ -39,6 +50,22 @@ export const addPart = async (testId: string, partBody: PartFormDataItf) => {
     try {
         const response = await instance.post(
             `/tests/${testId}/parts`,
+            partBody
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updatePart = async (
+    testId: string,
+    partId: string,
+    partBody: PartFormDataItf
+) => {
+    try {
+        const response = await instance.patch(
+            `/tests/${testId}/parts/${partId}`,
             partBody
         );
         return response.data;
@@ -64,6 +91,22 @@ export const createQuestion = async (
         const response = await instance.post(`/tests/${testId}/questions`, {
             ...questionBody,
         });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updateQuestion = async (
+    testId: string,
+    questionId: string,
+    questionBody: QuestionFormDataItf
+) => {
+    try {
+        const response = await instance.patch(
+            `/tests/${testId}/questions/${questionId}`,
+            questionBody
+        );
         return response.data;
     } catch (error) {
         throw error;

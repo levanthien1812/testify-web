@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { PartFormDataItf, TestItf } from "../../../types/types";
+import { PartFormDataItf, TestItf, TestPartItf } from "../../../types/types";
 import { useMutation } from "react-query";
 import { validateParts } from "../../../services/test";
 import { toast } from "react-toastify";
@@ -45,20 +45,14 @@ const TestParts = ({ test, onAfterUpdate, onBack, onNext }: SectionProps) => {
     };
 
     const getPart = useCallback(
-        (index: number): PartFormDataItf => {
+        (index: number): TestPartItf | null => {
             const partIndex = test.parts.findIndex(
                 (item) => item.order === index + 1
             );
             if (partIndex >= 0) {
                 return test.parts[partIndex];
             } else {
-                return {
-                    order: index + 1,
-                    name: "",
-                    description: "",
-                    num_questions: 0,
-                    score: 0,
-                };
+                return null;
             }
         },
         [test.parts]
@@ -77,6 +71,7 @@ const TestParts = ({ test, onAfterUpdate, onBack, onNext }: SectionProps) => {
                     [...Array(test.num_parts)].map((item, index) => (
                         <Part
                             key={index}
+                            index={index}
                             part={getPart(index)}
                             testId={test._id}
                             onAfterUpdate={handleAfterUpdate}

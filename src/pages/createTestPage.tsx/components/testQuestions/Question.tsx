@@ -4,6 +4,8 @@ import {
     MatchingQuestionFormDataItf,
     MultipleChoiceQuestionFormDataItf,
     QuestionFormDataItf,
+    QuestionItf,
+    TestPartItf,
 } from "../../../../types/types";
 import Modal from "../../../../components/modals/Modal";
 import { questionTypes, testLevels } from "../../../../config/config";
@@ -11,18 +13,49 @@ import MulitpleChoiceQuestion from "./MultipleChoicesQuestion";
 import FillGapsQuestion from "./FillGapsQuestion";
 import MatchingQuestion from "./MatchingQuestion";
 import { useMutation } from "react-query";
-import { createQuestion } from "../../../../services/test";
+import { createQuestion, updateQuestion } from "../../../../services/test";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 
-const Question: React.FC<{
-    question: QuestionFormDataItf;
+type QuestionProps = {
+    question: QuestionItf | null;
+    part?: TestPartItf;
+    index: number;
     testId: string;
     onAfterUpdate: () => void;
-}> = ({ question, onAfterUpdate, testId }) => {
+};
+
+const Question = ({
+    question,
+    onAfterUpdate,
+    testId,
+    part,
+    index,
+}: QuestionProps) => {
     const [open, setOpen] = useState<boolean>(false);
     const [questionFormData, setQuestionFormData] =
-        useState<QuestionFormDataItf>(question);
+        useState<QuestionFormDataItf>(
+            part
+                ? {
+                      score: 0,
+                      level: testLevels.NONE,
+                      type: question
+                          ? question.type
+                          : questionTypes.MULITPLE_CHOICES,
+                      content: null,
+                      order: index + 1,
+                      part_id: part._id,
+                  }
+                : {
+                      score: 0,
+                      level: testLevels.NONE,
+                      type: question
+                          ? question.type
+                          : questionTypes.MULITPLE_CHOICES,
+                      content: null,
+                      order: index + 1,
+                  }
+        );
 
     const handleInputChange = (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -52,7 +85,7 @@ const Question: React.FC<{
     };
 
     useEffect(() => {
-        if (question.content && questionFormData.type === question.type) {
+        if (question && questionFormData.type === question.type) {
             setQuestionFormData(question);
             return;
         }
@@ -88,9 +121,9 @@ const Question: React.FC<{
                 });
                 break;
         }
-    }, [questionFormData.type]);
+    }, [question, questionFormData.type]);
 
-    const { mutate, isLoading } = useMutation({
+    const { mutate: createQuestionMutate, isLoading } = useMutation({
         mutationFn: async (questionBody: QuestionFormDataItf) =>
             await createQuestion(testId, questionBody),
         mutationKey: ["create-question", { body: questionFormData }],
@@ -106,24 +139,47 @@ const Question: React.FC<{
         },
     });
 
+    const { mutate: updateQuestionMutate } = useMutation({
+        mutationFn: async (questionBody: QuestionFormDataItf) =>
+            await updateQuestion(testId, question!._id, questionBody),
+        mutationKey: [
+            "update-question",
+            { questionId: question!._id, body: questionFormData },
+        ],
+        onSuccess: (data) => {
+            toast.success("Update question successfuly");
+            setOpen(false);
+            onAfterUpdate();
+        },
+        onError: (err) => {
+            if (err instanceof AxiosError) {
+                toast.error(err.response?.data.message);
+            }
+        },
+    });
+
     const handleSaveQuestion = () => {
-        mutate(questionFormData);
+        if (!question) {
+            createQuestionMutate(questionFormData);
+        } else {
+            updateQuestionMutate(questionFormData);
+        }
     };
 
     return (
         <>
             <div
                 className={`bg-orange-100 p-2 text-center cursor-pointer hover:bg-orange-200 ${
-                    question.content && "border border-orange-500"
+                    question && "border border-orange-500"
                 }`}
                 onClick={() => setOpen(true)}
             >
-                Question {question.order}
+                Question {questionFormData.order}
             </div>
             {open && (
                 <Modal onClose={() => setOpen(false)}>
                     <Modal.Header
-                        title={`Question ${question.order}`}
+                        title={`Question ${questionFormData.order}`}
                         onClose={() => setOpen(false)}
                     />
                     <Modal.Body>

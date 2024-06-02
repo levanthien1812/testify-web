@@ -1,7 +1,7 @@
 import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { testLevels } from "../../../config/config";
 import { TestFormDataItf, TestItf } from "../../../types/types";
-import { createTest } from "../../../services/test";
+import { createTest, updateTest } from "../../../services/test";
 import { useMutation } from "react-query";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
@@ -14,12 +14,7 @@ type SectionProps = {
     onNext: () => void;
 };
 
-const TestInfo = ({
-    test,
-    onAfterUpdate,
-    onNext,
-    onBack,
-}: SectionProps) => {
+const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
     const [testFormData, setTestFormData] = useState<TestFormDataItf>({
         title: "",
         datetime: new Date(),
@@ -34,20 +29,40 @@ const TestInfo = ({
 
     const [isFinished, setIsFinished] = useState<boolean>(false);
 
-    const { mutate, isLoading, isError } = useMutation({
-        mutationFn: async (testFormData: TestFormDataItf) =>
-            await createTest(testFormData),
-        mutationKey: ["create-test", { body: testFormData }],
-        onSuccess: (data) => {
-            onAfterUpdate(data.test._id);
-            onNext();
-        },
-        onError: (err) => {
-            if (err instanceof AxiosError) {
-                toast.error(err.response?.data.message);
-            }
-        },
-    });
+    const { mutate: createTestMutate, isLoading: createTestLoading } =
+        useMutation({
+            mutationFn: async (testFormData: TestFormDataItf) =>
+                await createTest(testFormData),
+            mutationKey: ["create-test", { body: testFormData }],
+            onSuccess: (data) => {
+                onAfterUpdate(data.test._id);
+                onNext();
+            },
+            onError: (err) => {
+                if (err instanceof AxiosError) {
+                    toast.error(err.response?.data.message);
+                }
+            },
+        });
+
+    const { mutate: updateTestMutate, isLoading: updateTestLoading } =
+        useMutation({
+            mutationFn: async (testFormData: TestFormDataItf) =>
+                await updateTest(test!._id, testFormData),
+            mutationKey: [
+                "update-test",
+                { testId: test?._id, body: testFormData },
+            ],
+            onSuccess: (data) => {
+                onAfterUpdate(data.test.id);
+                onNext();
+            },
+            onError: (err) => {
+                if (err instanceof AxiosError) {
+                    toast.error(err.response?.data.message);
+                }
+            },
+        });
 
     const handleInputChange = (
         e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
@@ -72,13 +87,10 @@ const TestInfo = ({
         e.preventDefault();
 
         if (test) {
-            // Add update test logic
-
-            onNext();
-            return;
+            updateTestMutate(testFormData);
+        } else {
+            createTestMutate(testFormData);
         }
-
-        mutate(testFormData);
     };
 
     useEffect(() => {
@@ -259,9 +271,15 @@ const TestInfo = ({
                     <button
                         className="text-white bg-orange-600 px-12 py-1 hover:bg-orange-700 disabled:bg-gray-500"
                         type="submit"
-                        disabled={isLoading || !isFinished}
+                        disabled={
+                            createTestLoading ||
+                            updateTestLoading ||
+                            !isFinished
+                        }
                     >
-                        {!isLoading ? "Next" : "Saving..."}
+                        {!(createTestLoading || updateTestLoading)
+                            ? "Next"
+                            : "Saving..."}
                     </button>
                 </div>
             </form>

@@ -11,9 +11,9 @@ const Header = () => {
 
     return (
         <div className="bg-white px-12 py-3 flex justify-between items-center shadow-md">
-            <div>
+            <Link to={"/home"}>
                 <img src={logoTestify} alt="testify-logo" className="w-44" />
-            </div>
+            </Link>
             {!isAuthened && (
                 <div className="flex gap-6">
                     <button className="text-lg hover:font-bold hover:text-orange-600 active:text-xl">
