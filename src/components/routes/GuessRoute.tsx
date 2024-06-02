@@ -7,7 +7,7 @@ import { Navigate, Outlet } from "react-router";
 const GuessRoute: React.FC = () => {
     const user = useSelector((state: RootState) => state.auth.user);
 
-    if (user) {
+    if (user && user.role === "maker") {
         return <Navigate to={"/home"} />;
     }
 

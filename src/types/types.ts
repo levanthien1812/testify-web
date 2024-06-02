@@ -1,7 +1,7 @@
 import { questionTypes, roles, testLevels } from "../config/config";
 
 export interface userItf {
-    username: string;
+    username?: string;
     name: string;
     email: string;
     role: (typeof roles)[keyof typeof roles];
@@ -32,6 +32,10 @@ export interface RegisterBodyItf {
 export interface LoginBodyItf {
     email: string;
     password: string;
+}
+export interface LoginGoogleBodyItf {
+    email: string;
+    name?: string;
 }
 
 export interface LoginErrorItf {

@@ -13,14 +13,23 @@ const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
-        register(action, payload) {
-            console.log(payload)
-            const user: userItf = payload.payload.user
+        authenticate(action, payload) {
+            const user: userItf = payload.payload.user;
+            const tokens = payload.payload.tokens;
 
-            action.user = user
-            action.isAuthened = true
+            Cookies.set("user", JSON.stringify(user), {
+                expires: new Date(tokens.access.expires),
+            });
+            Cookies.set("access_token", tokens.access.token, {
+                expires: new Date(tokens.access.expires),
+            });
+            Cookies.set("refresh_token", tokens.refresh.token, {
+                expires: new Date(tokens.refresh.expires),
+            });
+
+            action.user = user;
+            action.isAuthened = true;
         },
-        login(action, payload) {},
     },
 });
 

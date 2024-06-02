@@ -71,7 +71,7 @@ const RegistePage = () => {
                     expires: new Date(tokens.refresh.expires),
                 });
 
-                dispatch(authActions.register({ user }));
+                dispatch(authActions.authenticate({ user, tokens }));
 
                 toast.success("Register successfuly. Welcome to our app!");
 
