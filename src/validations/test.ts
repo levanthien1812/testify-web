@@ -4,8 +4,8 @@ import { testLevels } from "../config/config";
 export const partSchema = Joi.object().keys({
     _id: Joi.string(),
     name: Joi.string().required(),
-    score: Joi.number().required(),
-    num_questions: Joi.number().required(),
+    score: Joi.number().required().min(0.0001),
+    num_questions: Joi.number().required().min(1),
     description: Joi.string(),
     order: Joi.number().required(),
 });

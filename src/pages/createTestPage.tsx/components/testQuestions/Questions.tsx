@@ -1,14 +1,18 @@
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
-import { QuestionFormDataItf, QuestionItf, TestPartItf } from "../../../../types/types";
+import {
+    QuestionFormDataItf,
+    QuestionItf,
+    TestPartItf,
+} from "../../../../types/types";
 import Question from "./Question";
 import Answer from "../testAnswers/Answer";
 
 const Questions: React.FC<{
     part?: TestPartItf;
     testId?: string;
-    questions: QuestionItf[] | QuestionFormDataItf[];
+    questions: (QuestionItf | null)[];
     onAfterUpdate: () => void;
     withAnswer?: boolean;
 }> = ({ part, questions, onAfterUpdate, testId, withAnswer = false }) => {
@@ -46,22 +50,19 @@ const Questions: React.FC<{
                     >
                         {questions &&
                             questions.length > 0 &&
-                            questions.map(
-                                (question, index) =>
-                                    !withAnswer ? (
-                                        <Question
-                                            question={
-                                                question as QuestionFormDataItf
-                                            }
-                                            testId={part.test_id}
-                                            key={index}
-                                            onAfterUpdate={onAfterUpdate}
-                                        />
-                                    )
-                                    : (
+                            questions.map((question, index) =>
+                                !withAnswer ? (
+                                    <Question
+                                        testId={testId!}
+                                        question={question}
+                                        key={index}
+                                        index={index}
+                                        onAfterUpdate={onAfterUpdate}
+                                    />
+                                ) : (
                                     <Answer
                                         question={question as QuestionItf}
-                                        key={question.content?.text}
+                                        key={question!.content?.text}
                                         onAfterUpdate={onAfterUpdate}
                                     />
                                 )
@@ -74,6 +75,7 @@ const Questions: React.FC<{
                     {questions.map((question, index) => (
                         <Question
                             question={question}
+                            index={index}
                             testId={testId!}
                             key={index}
                             onAfterUpdate={onAfterUpdate}

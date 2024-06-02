@@ -1,37 +1,61 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import { PartFormDataItf } from "../../../../types/types";
+import { PartFormDataItf, TestPartItf } from "../../../../types/types";
 import { useMutation } from "react-query";
-import { addPart } from "../../../../services/test";
+import { addPart, updatePart } from "../../../../services/test";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { partSchema } from "../../../../validations/test";
 
 const Part: React.FC<{
     testId: string;
-    part: PartFormDataItf;
+    index: number;
+    part: TestPartItf | null;
     onAfterUpdate: () => void;
-}> = ({ part, onAfterUpdate, testId }) => {
+}> = ({ part, onAfterUpdate, testId, index }) => {
     const [showSave, setShowSave] = useState(false);
     const [savable, setSavable] = useState<boolean>(false);
     const [open, setOpen] = useState<boolean>(true);
-    const [partBody, setPartBody] = useState<PartFormDataItf>(part);
-
-    const { mutate, isLoading } = useMutation({
-        mutationFn: async (part: PartFormDataItf) =>
-            await addPart(testId, part),
-        mutationKey: ["add-part", { body: part }],
-        onSuccess: (data) => {
-            setShowSave(false);
-            onAfterUpdate();
-        },
-        onError: (err) => {
-            if (err instanceof AxiosError) {
-                toast.error(err.response?.data.message);
-            }
-        },
+    const [partBody, setPartBody] = useState<PartFormDataItf>({
+        name: "",
+        order: index + 1,
+        description: "",
+        score: 0,
+        num_questions: 0,
     });
+
+    const { mutate: createPartMutate, isLoading: createPartLoading } =
+        useMutation({
+            mutationFn: async (partBody: PartFormDataItf) =>
+                await addPart(testId, partBody),
+            mutationKey: ["add-part", { body: part }],
+            onSuccess: (data) => {
+                setShowSave(false);
+                onAfterUpdate();
+            },
+            onError: (err) => {
+                if (err instanceof AxiosError) {
+                    toast.error(err.response?.data.message);
+                }
+            },
+        });
+
+    const { mutate: updatePartMutate, isLoading: updatePartLoading } =
+        useMutation({
+            mutationFn: async (partBody: PartFormDataItf) =>
+                await updatePart(testId, part!._id, partBody),
+            mutationKey: ["update-part", { partId: part!._id, body: part }],
+            onSuccess: (data) => {
+                setShowSave(false);
+                onAfterUpdate();
+            },
+            onError: (err) => {
+                if (err instanceof AxiosError) {
+                    toast.error(err.response?.data.message);
+                }
+            },
+        });
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         let name: string, value: string | number | Date;
@@ -47,7 +71,8 @@ const Part: React.FC<{
     };
 
     const handleSavePart = () => {
-        if (partBody) mutate(partBody);
+        if (!part) createPartMutate(partBody);
+        else updatePartMutate(partBody);
     };
 
     useEffect(() => {
@@ -59,6 +84,18 @@ const Part: React.FC<{
             setSavable(false);
         }
     }, [partBody]);
+
+    useEffect(() => {
+        if (part) {
+            setPartBody({
+                name: part.name,
+                description: part.description,
+                order: part.order,
+                score: part.score,
+                num_questions: part.num_questions,
+            });
+        }
+    }, [part]);
 
     return (
         <div className="">
@@ -146,9 +183,13 @@ const Part: React.FC<{
                     <button
                         className="px-4 py-0.5 bg-orange-600 text-white w-1/5 hover:bg-orange-500 disabled:bg-gray-500"
                         onClick={handleSavePart}
-                        disabled={!savable || isLoading}
+                        disabled={
+                            !savable || createPartLoading || updatePartLoading
+                        }
                     >
-                        {isLoading ? "Saving..." : "Save"}
+                        {createPartLoading || updatePartLoading
+                            ? "Saving..."
+                            : "Save"}
                     </button>
                 </div>
             )}

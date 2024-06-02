@@ -1,5 +1,9 @@
 import React, { useCallback, useMemo } from "react";
-import { QuestionFormDataItf, TestItf } from "../../../types/types";
+import {
+    QuestionFormDataItf,
+    QuestionItf,
+    TestItf,
+} from "../../../types/types";
 import { questionTypes, testLevels } from "../../../config/config";
 import Questions from "./testQuestions/Questions";
 import { validateQuestions } from "../../../services/test";
@@ -45,7 +49,7 @@ const TestQuestions = ({
     };
 
     const getQuestions = useCallback(
-        (partId?: string): QuestionFormDataItf[] => {
+        (partId?: string): (QuestionItf | null)[] => {
             if (partId) {
                 const part = test.parts.find((part) => part._id === partId)!;
 
@@ -54,14 +58,15 @@ const TestQuestions = ({
                     ...[
                         ...Array(part.num_questions - part.questions!.length),
                     ].map((item, index) => {
-                        return {
-                            score: 0,
-                            level: testLevels.NONE,
-                            type: questionTypes.MULITPLE_CHOICES,
-                            content: null,
-                            order: index + 1,
-                            part_id: part._id,
-                        };
+                        // return {
+                        //     score: 0,
+                        //     level: testLevels.NONE,
+                        //     type: questionTypes.MULITPLE_CHOICES,
+                        //     content: null,
+                        //     order: index + 1,
+                        //     part_id: part._id,
+                        // };
+                        return null;
                     }),
                 ];
             } else {
@@ -70,13 +75,14 @@ const TestQuestions = ({
                     ...[
                         ...Array(test.num_questions - test.questions!.length),
                     ].map((item, index) => {
-                        return {
-                            score: 0,
-                            level: testLevels.NONE,
-                            type: questionTypes.MULITPLE_CHOICES,
-                            content: null,
-                            order: index + 1,
-                        };
+                        // return {
+                        //     score: 0,
+                        //     level: testLevels.NONE,
+                        //     type: questionTypes.MULITPLE_CHOICES,
+                        //     content: null,
+                        //     order: index + 1,
+                        // };
+                        return null;
                     }),
                 ];
             }
