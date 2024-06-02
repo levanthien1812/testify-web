@@ -4,17 +4,25 @@ import { Link, useNavigate } from "react-router-dom";
 import {
     LoginBodyItf,
     LoginErrorItf,
+    LoginGoogleBodyItf,
     RegisterErrorItf,
 } from "../../types/types";
 import { useDispatch } from "react-redux";
 import { LoginSchema } from "../../validations/auth";
-import { login } from "../../services/auth";
+import { login, loginGoogle } from "../../services/auth";
 import { isSuccess } from "../../utils/response";
 import Cookies from "js-cookie";
 import { authActions } from "../../stores/auth";
 import { toast } from "react-toastify";
 import { roles } from "../../config/config";
 import { AxiosError } from "axios";
+import {
+    CredentialResponse,
+    GoogleCredentialResponse,
+    GoogleLogin,
+    useGoogleLogin,
+} from "@react-oauth/google";
+import { jwtDecode } from "jwt-decode";
 
 const LoginPage = () => {
     const [email, setEmail] = useState<string>("");
@@ -52,17 +60,43 @@ const LoginPage = () => {
             if (isSuccess(response)) {
                 const { user, tokens } = response.data;
 
-                Cookies.set("user", JSON.stringify(user), {
-                    expires: new Date(tokens.access.expires),
-                });
-                Cookies.set("access_token", tokens.access.token, {
-                    expires: new Date(tokens.access.expires),
-                });
-                Cookies.set("refresh_token", tokens.refresh.token, {
-                    expires: new Date(tokens.refresh.expires),
-                });
+                dispatch(authActions.authenticate({ user, tokens }));
 
-                dispatch(authActions.register({ user }));
+                toast.success("Login successfuly. Welcome back to our app!");
+
+                if (user.role === roles.MAKER) {
+                    navigate("/home");
+                }
+            }
+        } catch (error: unknown) {
+            if (error instanceof AxiosError) {
+                console.log(error);
+                toast.error(error.response?.data.message);
+            }
+        }
+    };
+
+    const handleLoginGoogle = async (
+        credentialResponse: CredentialResponse
+    ) => {
+        const credentialResponseDecoded: { [key: string]: string } = jwtDecode(
+            credentialResponse.credential!
+        );
+
+        const { name, email } = credentialResponseDecoded;
+
+        const loginGoogleBody: LoginGoogleBodyItf = {
+            email,
+            name,
+        };
+
+        try {
+            const response = await loginGoogle(loginGoogleBody);
+
+            if (isSuccess(response)) {
+                const { user, tokens } = response.data;
+
+                dispatch(authActions.authenticate({ user, tokens }));
 
                 toast.success("Login successfuly. Welcome back to our app!");
 
@@ -85,6 +119,23 @@ const LoginPage = () => {
                 className="bg-white px-4 pt-10 pb-6 mt-10 min-w-80 max-w-80 flex flex-col items-center shadow-xl"
             >
                 <h2 className="text-3xl">Login</h2>
+
+                <div className="px-8 text-center leading-5">
+                    If you are a test taker, please{" "}
+                    {/* <button
+                        type="button"
+                        className="text-orange-600 hover:underline"
+                        onClick={() => loginGoogle()}
+                    >
+                        login by google account
+                    </button> */}
+                    <GoogleLogin
+                        onSuccess={handleLoginGoogle}
+                        onError={() => {
+                            console.log("Login Failed");
+                        }}
+                    />
+                </div>
 
                 <div className="w-full mt-2 space-y-3">
                     <Input

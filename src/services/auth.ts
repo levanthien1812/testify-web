@@ -1,5 +1,9 @@
 import { instance } from "../config/axios";
-import { LoginBodyItf, RegisterBodyItf } from "../types/types";
+import {
+    LoginBodyItf,
+    LoginGoogleBodyItf,
+    RegisterBodyItf,
+} from "../types/types";
 
 export const register = async (registerBody: RegisterBodyItf) => {
     const response = await instance.post("/auth/register", registerBody);
@@ -9,6 +13,12 @@ export const register = async (registerBody: RegisterBodyItf) => {
 
 export const login = async (loginBody: LoginBodyItf) => {
     const response = await instance.post("/auth/login", loginBody);
+
+    return response;
+};
+
+export const loginGoogle = async (loginGoogleBody: LoginGoogleBodyItf) => {
+    const response = await instance.post("/auth/loginGoogle", loginGoogleBody);
 
     return response;
 };

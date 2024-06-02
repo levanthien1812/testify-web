@@ -1,4 +1,3 @@
-import React from "react";
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import GuessRoute from "./components/routes/GuessRoute";
@@ -11,7 +10,7 @@ import ProtectedRoute from "./components/routes/ProtectedRoute";
 import { roles } from "./config/config";
 import HomePage from "./pages/homePage/HomePage";
 import CreateTestPage from "./pages/createTestPage.tsx/CreateTestPage";
-import TextEditor from "./pages/richTextEditor/TiptapEditor";
+import { GoogleOAuthProvider } from "@react-oauth/google";
 
 const queryClient = new QueryClient();
 
