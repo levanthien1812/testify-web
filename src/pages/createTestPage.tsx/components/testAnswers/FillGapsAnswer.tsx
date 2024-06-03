@@ -1,13 +1,18 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import { AnswerFormData, FillGapsQuestionItf } from "../../../../types/types";
 import { generateArray } from "../../../../utils/array";
 
 type FillGapsAnswerProps = {
     content: FillGapsQuestionItf;
+    reset: boolean;
     onProvideAnswer: (answerBody: AnswerFormData) => void;
 };
 
-const FillGapsAnswer = ({ content, onProvideAnswer }: FillGapsAnswerProps) => {
+const FillGapsAnswer = ({
+    content,
+    onProvideAnswer,
+    reset,
+}: FillGapsAnswerProps) => {
     const [gaps, setGaps] = useState<string[]>(
         content.answer || Array(content.num_gaps).fill("")
     );
@@ -21,6 +26,11 @@ const FillGapsAnswer = ({ content, onProvideAnswer }: FillGapsAnswerProps) => {
             onProvideAnswer({ answer: updatedGaps });
         }
     };
+
+    useEffect(() => {
+        if (reset === true)
+            setGaps(content.answer || Array(content.num_gaps).fill(""));
+    }, [reset]);
 
     return (
         <>

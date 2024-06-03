@@ -123,40 +123,42 @@ const Question = ({
         }
     }, [question, questionFormData.type]);
 
-    const { mutate: createQuestionMutate, isLoading } = useMutation({
-        mutationFn: async (questionBody: QuestionFormDataItf) =>
-            await createQuestion(testId, questionBody),
-        mutationKey: ["create-question", { body: questionFormData }],
-        onSuccess: (data) => {
-            toast.success("Create question successfuly");
-            setOpen(false);
-            onAfterUpdate();
-        },
-        onError: (err) => {
-            if (err instanceof AxiosError) {
-                toast.error(err.response?.data.message);
-            }
-        },
-    });
+    const { mutate: createQuestionMutate, isLoading: createQuestionLoading } =
+        useMutation({
+            mutationFn: async (questionBody: QuestionFormDataItf) =>
+                await createQuestion(testId, questionBody),
+            mutationKey: ["create-question", { body: questionFormData }],
+            onSuccess: (data) => {
+                toast.success("Create question successfuly");
+                setOpen(false);
+                onAfterUpdate();
+            },
+            onError: (err) => {
+                if (err instanceof AxiosError) {
+                    toast.error(err.response?.data.message);
+                }
+            },
+        });
 
-    const { mutate: updateQuestionMutate } = useMutation({
-        mutationFn: async (questionBody: QuestionFormDataItf) =>
-            await updateQuestion(testId, question!._id, questionBody),
-        mutationKey: [
-            "update-question",
-            { questionId: question!._id, body: questionFormData },
-        ],
-        onSuccess: (data) => {
-            toast.success("Update question successfuly");
-            setOpen(false);
-            onAfterUpdate();
-        },
-        onError: (err) => {
-            if (err instanceof AxiosError) {
-                toast.error(err.response?.data.message);
-            }
-        },
-    });
+    const { mutate: updateQuestionMutate, isLoading: updateQuestionLoading } =
+        useMutation({
+            mutationFn: async (questionBody: QuestionFormDataItf) =>
+                await updateQuestion(testId, question!._id, questionBody),
+            mutationKey: [
+                "update-question",
+                { questionId: question!._id, body: questionFormData },
+            ],
+            onSuccess: (data) => {
+                toast.success("Update question successfuly");
+                setOpen(false);
+                onAfterUpdate();
+            },
+            onError: (err) => {
+                if (err instanceof AxiosError) {
+                    toast.error(err.response?.data.message);
+                }
+            },
+        });
 
     const handleSaveQuestion = () => {
         if (!question) {
@@ -302,10 +304,18 @@ const Question = ({
                             <button
                                 className="text-white bg-orange-600 px-9 py-0.5 hover:bg-orange-700"
                                 type="submit"
-                                disabled={isLoading}
+                                disabled={
+                                    createQuestionLoading ||
+                                    updateQuestionLoading
+                                }
                                 onClick={handleSaveQuestion}
                             >
-                                {!isLoading ? "Save" : "Saving..."}
+                                {!(
+                                    createQuestionLoading ||
+                                    updateQuestionLoading
+                                )
+                                    ? "Save"
+                                    : "Saving..."}
                             </button>
                         </div>
                     </Modal.Footer>

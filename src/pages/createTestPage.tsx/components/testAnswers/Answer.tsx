@@ -20,6 +20,7 @@ const Answer: React.FC<{
     onAfterUpdate: () => void;
 }> = ({ question, onAfterUpdate }) => {
     const [savable, setSavable] = useState<boolean>(false);
+    const [reset, setReset] = useState<boolean>(false);
     const [answerBody, setAnswerBody] = useState<AnswerFormData>();
 
     const { mutate, isLoading } = useMutation({
@@ -38,6 +39,7 @@ const Answer: React.FC<{
     });
 
     const handleProvideAnswer = (answerBody: AnswerFormData) => {
+        setReset(false);
         setAnswerBody(answerBody);
         setSavable(true);
     };
@@ -69,18 +71,21 @@ const Answer: React.FC<{
             >
                 {question.type === questionTypes.MULITPLE_CHOICES && (
                     <MultipleChoicesAnswer
+                        reset={reset}
                         content={question.content as MultipleChoiceQuestionItf}
                         onProvideAnswer={handleProvideAnswer}
                     />
                 )}
                 {question.type === questionTypes.FILL_GAPS && (
                     <FillGapsAnswer
+                        reset={reset}
                         content={question.content as FillGapsQuestionItf}
                         onProvideAnswer={handleProvideAnswer}
                     />
                 )}
                 {question.type === questionTypes.MATCHING && (
                     <MatchingAnswer
+                        reset={reset}
                         content={question.content as MatchingQuestionItf}
                         onProvideAnswer={handleProvideAnswer}
                     />
@@ -89,14 +94,21 @@ const Answer: React.FC<{
 
             {savable && (
                 <div className="flex justify-end">
-                    <button className="px-4 py-0.5 bg-gray-600 text-white w-1/5 hover:bg-gray-500">
+                    <button
+                        className="px-4 py-0.5 bg-gray-600 text-white w-1/5 hover:bg-gray-500"
+                        onClick={() => {
+                            setReset(true);
+                            setSavable(false);
+                        }}
+                    >
                         Cancel
                     </button>
                     <button
-                        className="px-4 py-0.5 bg-orange-600 text-white w-1/5 hover:bg-orange-500 "
+                        className="px-4 py-0.5 bg-orange-600 text-white w-1/5 hover:bg-orange-500 disabled:bg-orange-700"
                         onClick={handleSaveAnswer}
+                        disabled={isLoading}
                     >
-                        Save
+                        {isLoading ? "Saving..." : "Save"}
                     </button>
                 </div>
             )}

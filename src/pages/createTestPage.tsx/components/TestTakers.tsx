@@ -71,7 +71,7 @@ const TestTakers = ({ test, onAfterUpdate, onBack, onNext }: SectionProps) => {
                     onClick={onNext}
                     // disabled={!isNextable}
                 >
-                    Next
+                    Finish
                 </button>
             </div>
         </div>
