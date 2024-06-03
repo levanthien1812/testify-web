@@ -6,10 +6,15 @@ import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 type MatchingAnswerProps = {
     content: MatchingQuestionItf;
+    reset: boolean;
     onProvideAnswer: (answerBody: AnswerFormData) => void;
 };
 
-const MatchingAnswer = ({ content, onProvideAnswer }: MatchingAnswerProps) => {
+const MatchingAnswer = ({
+    content,
+    onProvideAnswer,
+    reset,
+}: MatchingAnswerProps) => {
     const [matchings, setMatchings] = useState<
         { left: string; right: string }[]
     >(content.answer || []);
@@ -42,6 +47,10 @@ const MatchingAnswer = ({ content, onProvideAnswer }: MatchingAnswerProps) => {
             onProvideAnswer({ answer: matchings });
         }
     }, [matchings]);
+
+    useEffect(() => {
+        if (reset === true) setMatchings(content.answer || []);
+    }, [reset]);
 
     return (
         <>

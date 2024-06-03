@@ -1,4 +1,4 @@
-import { ChangeEvent, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 import {
     AnswerFormData,
     MultipleChoiceQuestionItf,
@@ -6,19 +6,17 @@ import {
 
 type MultipleChoicesAnswerProps = {
     content: MultipleChoiceQuestionItf;
+    reset: boolean;
     onProvideAnswer: (answerBody: AnswerFormData) => void;
 };
 
 const MultipleChoicesAnswer = ({
     content,
+    reset,
     onProvideAnswer,
 }: MultipleChoicesAnswerProps) => {
     const [optionChosen, setOptionChosen] = useState<string>(
-        content.answer
-            ? content.answer.length > 0
-                ? content.answer[0]
-                : ""
-            : ""
+        content.answer && content.answer.length > 0 ? content.answer[0] : ""
     );
 
     const handleChangeRadio = (e: ChangeEvent<HTMLInputElement>) => {
@@ -27,6 +25,15 @@ const MultipleChoicesAnswer = ({
             onProvideAnswer({ answer: [e.target.value] });
         }
     };
+
+    useEffect(() => {
+        if (reset === true)
+            setOptionChosen(
+                content.answer && content.answer.length > 0
+                    ? content.answer[0]
+                    : ""
+            );
+    }, [reset]);
 
     return (
         <>
