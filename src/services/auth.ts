@@ -17,8 +17,8 @@ export const login = async (loginBody: LoginBodyItf) => {
     return response;
 };
 
-export const loginGoogle = async (loginGoogleBody: LoginGoogleBodyItf) => {
-    const response = await instance.post("/auth/loginGoogle", loginGoogleBody);
+export const loginGoogle = async (token: string) => {
+    const response = await instance.post("/auth/loginGoogle", { token });
 
     return response;
 };
