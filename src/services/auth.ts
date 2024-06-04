@@ -1,9 +1,5 @@
 import { instance } from "../config/axios";
-import {
-    LoginBodyItf,
-    LoginGoogleBodyItf,
-    RegisterBodyItf,
-} from "../types/types";
+import { LoginBodyItf, RegisterBodyItf } from "../types/types";
 
 export const register = async (registerBody: RegisterBodyItf) => {
     const response = await instance.post("/auth/register", registerBody);
@@ -29,4 +25,12 @@ export const refreshToken = async (refreshToken: string) => {
     });
 
     return response.data;
+};
+
+export const logout = async (refreshToken: string) => {
+    const response = await instance.post("/auth/logout", {
+        refreshToken: refreshToken,
+    });
+
+    return response;
 };
