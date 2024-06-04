@@ -1,28 +1,16 @@
-import React, { FormEvent, useState } from "react";
+import { FormEvent, useState } from "react";
 import Input from "./components/Input";
 import { Link, useNavigate } from "react-router-dom";
-import {
-    LoginBodyItf,
-    LoginErrorItf,
-    LoginGoogleBodyItf,
-    RegisterErrorItf,
-} from "../../types/types";
+import { LoginBodyItf, LoginErrorItf } from "../../types/types";
 import { useDispatch } from "react-redux";
 import { LoginSchema } from "../../validations/auth";
 import { login, loginGoogle } from "../../services/auth";
 import { isSuccess } from "../../utils/response";
-import Cookies from "js-cookie";
 import { authActions } from "../../stores/auth";
 import { toast } from "react-toastify";
 import { roles } from "../../config/config";
 import { AxiosError } from "axios";
-import {
-    CredentialResponse,
-    GoogleCredentialResponse,
-    GoogleLogin,
-    useGoogleLogin,
-} from "@react-oauth/google";
-import { jwtDecode } from "jwt-decode";
+import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 
 const LoginPage = () => {
     const [email, setEmail] = useState<string>("");
@@ -79,19 +67,9 @@ const LoginPage = () => {
     const handleLoginGoogle = async (
         credentialResponse: CredentialResponse
     ) => {
-        const credentialResponseDecoded: { [key: string]: string } = jwtDecode(
-            credentialResponse.credential!
-        );
-
-        const { name, email } = credentialResponseDecoded;
-
-        const loginGoogleBody: LoginGoogleBodyItf = {
-            email,
-            name,
-        };
 
         try {
-            const response = await loginGoogle(loginGoogleBody);
+            const response = await loginGoogle(credentialResponse.credential!);
 
             if (isSuccess(response)) {
                 const { user, tokens } = response.data;
@@ -106,7 +84,6 @@ const LoginPage = () => {
             }
         } catch (error: unknown) {
             if (error instanceof AxiosError) {
-                console.log(error);
                 toast.error(error.response?.data.message);
             }
         }
