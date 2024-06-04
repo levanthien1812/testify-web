@@ -30,6 +30,14 @@ const authSlice = createSlice({
             action.user = user;
             action.isAuthened = true;
         },
+
+        logout(action) {
+            action.user = null;
+            action.isAuthened = false;
+            Cookies.remove("user");
+            Cookies.remove("access_token");
+            Cookies.remove("refresh_token");
+        },
     },
 });
 
