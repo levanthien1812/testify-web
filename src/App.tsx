@@ -11,6 +11,8 @@ import { roles } from "./config/config";
 import HomePage from "./pages/homePage/HomePage";
 import CreateTestPage from "./pages/createTestPage.tsx/CreateTestPage";
 import { GoogleOAuthProvider } from "@react-oauth/google";
+import TakeTestPage from "./pages/takeTestPage.tsx/TakeTestPage";
+import NotFound from "./pages/others/NotFound";
 
 const queryClient = new QueryClient();
 
@@ -36,10 +38,6 @@ function App() {
                     element: <ProtectedRoute allowedRoles={[roles.MAKER]} />,
                     children: [
                         {
-                            path: "/home",
-                            element: <HomePage />,
-                        },
-                        {
                             path: "/tests/create",
                             element: <CreateTestPage />,
                         },
@@ -48,6 +46,32 @@ function App() {
                             element: <CreateTestPage />,
                         },
                     ],
+                },
+                {
+                    element: (
+                        <ProtectedRoute
+                            allowedRoles={[roles.MAKER, roles.TAKER]}
+                        />
+                    ),
+                    children: [
+                        {
+                            path: "/home",
+                            element: <HomePage />,
+                        },
+                    ],
+                },
+                {
+                    element: <ProtectedRoute allowedRoles={[roles.TAKER]} />,
+                    children: [
+                        {
+                            path: "/tests/:testId",
+                            element: <TakeTestPage />,
+                        },
+                    ],
+                },
+                {
+                    path: "*",
+                    element: <NotFound />,
                 },
             ],
         },

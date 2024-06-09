@@ -5,6 +5,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { TestItf } from "../../../types/types";
 import { format } from "date-fns";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../stores/rootState";
+import { roles } from "../../../config/config";
 
 type RecentTestItemProps = {
     test: TestItf;
@@ -13,6 +16,13 @@ type RecentTestItemProps = {
 const RecentTestItem = ({ test }: RecentTestItemProps) => {
     const navigate = useNavigate();
     const [hover, setHover] = useState<boolean>(false);
+    const user = useSelector((state: RootState) => state.auth.user);
+
+    const handleClickView = () => {
+        if (user!.role === roles.MAKER) navigate(`/tests/${test._id}/edit`);
+        else navigate(`/tests/${test._id}`);
+    };
+
     return (
         <div
             className="shadow-md shadow-gray-200 relative overflow-hidden w-fit shrink-0"
@@ -69,7 +79,7 @@ const RecentTestItem = ({ test }: RecentTestItemProps) => {
                     <motion.button
                         className="text-white font-bold text-sm uppercase bg-black py-1 px-3 rounded-full"
                         whileTap={{ scale: 1.1 }}
-                        onClick={() => navigate(`/tests/${test._id}/edit`)}
+                        onClick={handleClickView}
                     >
                         <span>View detail</span>
                         <FontAwesomeIcon icon={faArrowRight} className="ms-2" />

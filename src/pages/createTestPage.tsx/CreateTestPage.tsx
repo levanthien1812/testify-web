@@ -91,31 +91,31 @@ const CreateTestPage = () => {
                         test={test}
                         onBack={() => setStep(1)}
                         onNext={() => setStep(3)}
-                        onAfterUpdate={() => refetch()}
+                        onAfterUpdate={async () => await refetch()}
                     />
                 )}
                 {step === 3 && test && (
                     <TestQuestions
                         test={test}
-                        onAfterUpdate={() => refetch()}
                         onBack={() => setStep(2)}
                         onNext={() => setStep(4)}
+                        onAfterUpdate={async () => await refetch()}
                     />
                 )}
                 {step === 4 && test && (
                     <TestAnswers
                         test={test}
-                        onAfterUpdate={() => refetch()}
                         onBack={() => setStep(3)}
                         onNext={() => setStep(5)}
+                        onAfterUpdate={async () => await refetch()}
                     />
                 )}
                 {step === 5 && test && (
                     <TestTakers
                         test={test}
-                        onAfterUpdate={() => refetch()}
                         onBack={() => setStep(4)}
                         onNext={() => setStep(5)}
+                        onAfterUpdate={async () => await refetch()}
                     />
                 )}
             </div>
