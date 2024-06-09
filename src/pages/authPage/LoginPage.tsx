@@ -67,7 +67,6 @@ const LoginPage = () => {
     const handleLoginGoogle = async (
         credentialResponse: CredentialResponse
     ) => {
-
         try {
             const response = await loginGoogle(credentialResponse.credential!);
 
@@ -78,9 +77,7 @@ const LoginPage = () => {
 
                 toast.success("Login successfuly. Welcome back to our app!");
 
-                if (user.role === roles.MAKER) {
-                    navigate("/home");
-                }
+                navigate("/home");
             }
         } catch (error: unknown) {
             if (error instanceof AxiosError) {

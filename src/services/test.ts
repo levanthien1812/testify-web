@@ -5,6 +5,7 @@ import {
     QuestionFormDataItf,
     TakerFormDataItf,
     TestFormDataItf,
+    UserAnswer,
 } from "../types/types";
 
 export const createTest = async (testFormData: TestFormDataItf) => {
@@ -178,6 +179,21 @@ export const validateQuestions = async (testId: string) => {
         const response = await instance.get(
             `/tests/${testId}/questions/validate`
         );
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const createAnswers = async (
+    testId: string,
+    answersBody: UserAnswer[]
+) => {
+    try {
+        const response = await instance.post(`/tests/${testId}/answers`, {
+            answers: answersBody,
+        });
 
         return response.data;
     } catch (error) {

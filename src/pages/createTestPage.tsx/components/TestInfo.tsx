@@ -6,6 +6,7 @@ import { useMutation } from "react-query";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { testFormDataSchema } from "../../../validations/test";
+import { toZonedTime } from "date-fns-tz";
 
 type SectionProps = {
     test: TestItf | null;
@@ -78,7 +79,8 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
         ) {
             value = parseInt(value);
         } else if (name === "datetime") {
-            value = new Date(value);
+            value = toZonedTime(value, process.env.TZ!);
+            console.log(value);
         }
         setTestFormData({ ...testFormData, [name]: value });
     };
@@ -157,9 +159,7 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                         id="datetime"
                         name="datetime"
                         className="border border-gray-500 px-2 py-1 focus:border-orange-600 outline-none grow"
-                        value={
-                            testFormData.datetime.toISOString().split(".")[0]
-                        }
+                        value={testFormData.datetime.toISOString().slice(0, 16)}
                         onChange={handleInputChange}
                         required
                     />

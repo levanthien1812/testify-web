@@ -6,7 +6,7 @@ import { RootState } from "../../stores/rootState";
 import { toast } from "react-toastify";
 
 const ProtectedRoute: React.FC<{
-    allowedRoles: [String] | undefined;
+    allowedRoles: string[] | undefined;
 }> = ({ allowedRoles }) => {
     const user = useSelector((state: RootState) => state.auth.user);
     if (!user) {
@@ -16,8 +16,11 @@ const ProtectedRoute: React.FC<{
     if (allowedRoles) {
         if (!allowedRoles.includes(user?.role)) {
             toast.error("You are now allowed to access this page!");
+
+            return <Navigate to={"/home"} />;
         }
     }
+    
     return <Outlet />;
 };
 

@@ -190,3 +190,23 @@ export interface TakerItf extends TakerFormDataItf {
     _id: string;
     maker_id: string;
 }
+
+export interface UserMultipleChoicesAnswerFormDataInf {
+    question_id: string;
+    answer: string[];
+}
+
+export interface UserFillGapsAnswerFormDataInf {
+    question_id: string;
+    answer: string[];
+}
+
+export interface UserMatchingAnswerFormDataInf {
+    question_id: string;
+    answer: { left: string; right: string }[];
+}
+
+export type UserAnswer =
+    | UserMultipleChoicesAnswerFormDataInf
+    | UserFillGapsAnswerFormDataInf
+    | UserMatchingAnswerFormDataInf;
