@@ -20,4 +20,7 @@ export const testFormDataSchema = Joi.object().keys({
     level: Joi.string().valid(...Object.values(testLevels)),
     code: Joi.string().allow(""),
     num_parts: Joi.number().min(1),
+    close_time: Joi.date().optional(),
 });
+
+export const testSchema = Joi.object().keys({});

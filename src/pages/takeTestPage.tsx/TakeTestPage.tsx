@@ -5,14 +5,15 @@ import { getTest } from "../../services/test";
 import { TestItf } from "../../types/types";
 import { format } from "date-fns";
 import { AxiosError, HttpStatusCode } from "axios";
-import { toast } from "react-toastify";
 import DoingTest from "./DoingTest";
 import RemainingTime from "./components/RemainingTime";
+import { testStatus } from "../../config/config";
 
 const TakeTestPage = () => {
     const { testId } = useParams();
-    const [startable, setStartable] = React.useState(false);
-    const [started, setStarted] = React.useState(false);
+    const [status, setStatus] = useState<
+        "published" | "opened" | "started" | "ended" | "closed"
+    >();
     const [remainingTime, setRemainingTime] = React.useState(0);
     const [forbidden, setForbidden] = useState(false);
     const navigate = useNavigate();
@@ -39,47 +40,79 @@ const TakeTestPage = () => {
     });
 
     useEffect(() => {
-        let timer: NodeJS.Timeout;
-
         if (test) {
-            setRemainingTime(test.duration * 60);
+            if (test.status === testStatus.PUBLISHED) {
+                setStatus("published");
+                let timeUntilStart =
+                    new Date(test.datetime).getTime() - Date.now();
+                console.log(timeUntilStart);
 
-            timer = setInterval(() => {
-                if (
-                    new Date(test.datetime).getTime() - new Date().getTime() <=
-                    0
-                ) {
-                    setStartable(true);
-                } else {
-                    setStartable(false);
-                }
-            }, 1000);
+                let timer = setInterval(() => {
+                    timeUntilStart = timeUntilStart - 1000;
+                    if (timeUntilStart <= 0) {
+                        clearInterval(timer);
+                        setStatus("opened");
+                    }
+                }, 1000);
+            }
+
+            if (test.status === testStatus.OPENED) {
+                setStatus("opened");
+            }
+            if (test.status === testStatus.CLOSED) {
+                setStatus("closed");
+            }
+
+            setRemainingTime(test.duration * 60 * 1000);
+            if (test.close_time) {
+                let timeUntilClose =
+                    new Date(test.close_time).getTime() - Date.now();
+
+                let timer = setInterval(() => {
+                    timeUntilClose = timeUntilClose - 1000;
+                    if (timeUntilClose <= 0) {
+                        clearInterval(timer);
+                        setStatus("closed");
+                    }
+                }, 1000);
+            }
         }
-
-        return () => {
-            clearInterval(timer);
-        };
     }, [test]);
+
+    useEffect(() => {
+        console.log(remainingTime)
+        if (remainingTime <= 0) {
+            setRemainingTime(0);
+            setStatus("ended");
+        }
+    }, [remainingTime]);
 
     const handleStartTest = async () => {
         await refetch();
-        setStarted(true);
+        setStatus("started");
 
-        setInterval(() => {
-            setRemainingTime((prev) => prev - 1);
+        const timer = setInterval(() => {
+            setRemainingTime((prev) => prev - 1000);
+
+            // let newRemainingTime = remainingTime - 1000;
+            // if (newRemainingTime <= 0) {
+            //     setRemainingTime(0);
+            //     clearInterval(timer);
+            //     setStatus("ended");
+            // }
         }, 1000);
     };
 
     return (
         <div className="w-[840px] mx-auto mt-6 bg-white shadow-lg">
-            {test && started && (
+            {test && status === "started" && (
                 <RemainingTime
                     remainingTime={remainingTime}
-                    totalTime={test.duration * 60}
+                    totalTime={test.duration * 60 * 1000}
                 />
             )}
             <div className=" py-8 px-8">
-                {!started && test && (
+                {status !== "started" && test && (
                     <div className="">
                         <p className="text-center text-[44px]">{test.title}</p>
 
@@ -140,15 +173,27 @@ const TakeTestPage = () => {
                                 </p>
                             </div>
                         )}
-                        <div className="flex justify-center">
-                            <button
-                                className="bg-orange-600 text-white py-2 mt-4 px-16 font-bold uppercase hover:bg-orange-700 disabled:bg-gray-600"
-                                disabled={!startable}
-                                onClick={handleStartTest}
-                            >
-                                Start test
-                            </button>
-                        </div>
+                        {(status === "published" || status === "opened") && (
+                            <div className="flex justify-center">
+                                <button
+                                    className="bg-orange-600 text-white py-2 mt-4 px-16 font-bold uppercase hover:bg-orange-700 disabled:bg-gray-600"
+                                    disabled={status === "published"}
+                                    onClick={handleStartTest}
+                                >
+                                    Start test
+                                </button>
+                            </div>
+                        )}
+                        {status === "closed" && (
+                            <div className="flex justify-center mt-2">
+                                <p className="text-xl">Test is closed</p>
+                            </div>
+                        )}
+                        {status === "ended" && (
+                            <div className="flex justify-center mt-2">
+                                <p>Test is ended</p>
+                            </div>
+                        )}
                     </div>
                 )}
                 {isLoading && (
@@ -177,7 +222,9 @@ const TakeTestPage = () => {
                         </div>
                     </div>
                 )}
-                {started && test && <DoingTest test={test} />}
+                {status === "started" && remainingTime >= 0 && test && (
+                    <DoingTest test={test} remainingTime={remainingTime} />
+                )}
             </div>
         </div>
     );

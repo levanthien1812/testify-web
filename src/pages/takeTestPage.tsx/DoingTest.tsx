@@ -17,9 +17,10 @@ import { toast } from "react-toastify";
 
 type DoingTestProps = {
     test: TestItf;
+    remainingTime: number;
 };
 
-const DoingTest = ({ test }: DoingTestProps) => {
+const DoingTest = ({ test, remainingTime }: DoingTestProps) => {
     const [answers, setAnswers] = useState<UserAnswer[]>([]);
     const [submittable, setSubmittable] = useState(false);
 
@@ -52,8 +53,13 @@ const DoingTest = ({ test }: DoingTestProps) => {
         },
     });
 
+    useEffect(() => {
+        if (remainingTime <= 0) {
+            mutate();
+        }
+    }, [remainingTime])
+
     const handleSubmit = () => {
-        console.log(answers);
         mutate();
     };
 
