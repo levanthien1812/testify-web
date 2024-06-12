@@ -3,6 +3,10 @@ import { TestItf } from "../../../types/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import Takers from "./testTakers/Takers";
+import { useMutation } from "react-query";
+import { updateTest } from "../../../services/test";
+import { AxiosError } from "axios";
+import { toast } from "react-toastify";
 
 type SectionProps = {
     test: TestItf;
@@ -15,6 +19,25 @@ const TestTakers = ({ test, onAfterUpdate, onBack, onNext }: SectionProps) => {
     const [shareOption, setShareOption] = useState<"restricted" | "anyone">(
         "restricted"
     );
+
+    const { mutate, isLoading } = useMutation({
+        mutationFn: async () => {
+            await updateTest(test._id, { share_option: shareOption });
+        },
+        mutationKey: ["updateTest", { body: { share_option: shareOption } }],
+        onSuccess: () => {
+            onAfterUpdate();
+        },
+        onError: (err) => {
+            if (err instanceof AxiosError) {
+                toast.error(err.response?.data.message);
+            }
+        },
+    });
+
+    const handleNext = () => {
+        mutate();
+    };
 
     return (
         <div className="px-20 py-12 shadow-2xl">
@@ -68,8 +91,8 @@ const TestTakers = ({ test, onAfterUpdate, onBack, onNext }: SectionProps) => {
                 </button>
                 <button
                     className="text-white bg-orange-600 px-12 py-1 hover:bg-orange-700 disabled:bg-gray-500"
-                    onClick={onNext}
-                    // disabled={!isNextable}
+                    onClick={handleNext}
+                    disabled={isLoading}
                 >
                     Finish
                 </button>

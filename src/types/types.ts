@@ -1,4 +1,4 @@
-import { questionTypes, roles, testLevels } from "../config/config";
+import { questionTypes, roles, testLevels, testStatus } from "../config/config";
 
 export interface userItf {
     username?: string;
@@ -53,6 +53,29 @@ export interface TestFormDataItf {
     num_parts: number;
     level: (typeof testLevels)[keyof typeof testLevels];
     code: string;
+    close_time?: Date;
+    share_option?: "restricted" | "anyone";
+}
+export interface TestItf extends TestFormDataItf {
+    _id: string;
+    parts: TestPartItf[];
+    maker_id: string;
+    taker_ids: string[] | userItf[];
+    is_finished: false;
+    questions?: QuestionItf[];
+    status: typeof testStatus[keyof typeof testStatus];
+}
+export interface UpdateTestFormDataItf {
+    title?: string;
+    datetime?: Date;
+    description?: string;
+    duration?: number;
+    max_score?: number;
+    num_questions?: number;
+    num_parts?: number;
+    level?: (typeof testLevels)[keyof typeof testLevels];
+    code?: string;
+    share_option?: "restricted" | "anyone";
 }
 
 export interface PartFormDataItf {
@@ -153,15 +176,6 @@ export interface QuestionFormDataItf {
         | FillGapsQuestionFormDataItf
         | MatchingQuestionFormDataItf
         | null;
-}
-
-export interface TestItf extends TestFormDataItf {
-    _id: string;
-    parts: TestPartItf[];
-    maker_id: string;
-    taker_ids: string[] | userItf[];
-    is_finished: false;
-    questions?: QuestionItf[];
 }
 
 export interface MultipleChoicesAnswerFormDataInf {

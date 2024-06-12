@@ -146,7 +146,7 @@ const Question = ({
                 await updateQuestion(testId, question!._id, questionBody),
             mutationKey: [
                 "update-question",
-                { questionId: question!._id, body: questionFormData },
+                { questionId: question?._id, body: questionFormData },
             ],
             onSuccess: (data) => {
                 toast.success("Update question successfuly");

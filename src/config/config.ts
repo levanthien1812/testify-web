@@ -17,3 +17,13 @@ export const questionTypes = {
     FILL_GAPS: "fill in the gaps",
     MATCHING: "matching",
 };
+
+export const testStatus = {
+    DRAFT: "draft",
+    PUBLISHABLE: "publishable",
+    PUBLISHED: "published",
+    OPENED: "opened",
+    STARTED: "started",
+    ENDED: "ended",
+    CLOSED: "closed",
+};

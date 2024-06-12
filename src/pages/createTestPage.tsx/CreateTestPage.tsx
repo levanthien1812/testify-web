@@ -7,7 +7,6 @@ import { TestItf } from "../../types/types";
 import { useParams } from "react-router";
 import { useQuery } from "react-query";
 import { getTest } from "../../services/test";
-import { generateArray } from "../../utils/array";
 import TestTakers from "./components/TestTakers";
 
 const CreateTestPage = () => {

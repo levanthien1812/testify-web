@@ -5,6 +5,7 @@ import {
     QuestionFormDataItf,
     TakerFormDataItf,
     TestFormDataItf,
+    UpdateTestFormDataItf,
     UserAnswer,
 } from "../types/types";
 
@@ -37,7 +38,7 @@ export const getTest = async (testId: string) => {
 
 export const updateTest = async (
     testId: string,
-    testFormData: TestFormDataItf
+    testFormData: UpdateTestFormDataItf
 ) => {
     try {
         const response = await instance.patch(`/tests/${testId}`, testFormData);

@@ -6,7 +6,9 @@ import { useMutation } from "react-query";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { testFormDataSchema } from "../../../validations/test";
-import { toZonedTime } from "date-fns-tz";
+import { formatTimezone } from "../../../utils/time";
+import moment from "moment-timezone";
+import _ from "lodash";
 
 type SectionProps = {
     test: TestItf | null;
@@ -25,8 +27,11 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
         num_questions: 0,
         level: testLevels.EASY,
         num_parts: 1,
+        close_time: new Date(),
         code: "",
     });
+
+    const [allowCloseTime, setAllowCloseTime] = useState(true);
 
     const [isFinished, setIsFinished] = useState<boolean>(false);
 
@@ -78,9 +83,8 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
             )
         ) {
             value = parseInt(value);
-        } else if (name === "datetime") {
-            value = toZonedTime(value, process.env.TZ!);
-            console.log(value);
+        } else if (["datetime", "close_time"].includes(name)) {
+            value = new Date(value);
         }
         setTestFormData({ ...testFormData, [name]: value });
     };
@@ -89,9 +93,17 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
         e.preventDefault();
 
         if (test) {
-            updateTestMutate(testFormData);
+            updateTestMutate(
+                allowCloseTime
+                    ? testFormData
+                    : _.omit(testFormData, ["close_time"])
+            );
         } else {
-            createTestMutate(testFormData);
+            createTestMutate(
+                allowCloseTime
+                    ? testFormData
+                    : _.omit(testFormData, ["close_time"])
+            );
         }
     };
 
@@ -107,7 +119,16 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                 level: test.level,
                 code: test.code,
                 num_parts: test.num_parts,
+                close_time: test.close_time
+                    ? new Date(test.close_time)
+                    : new Date(),
             });
+
+            if (test.close_time) {
+                setAllowCloseTime(true);
+            } else {
+                setAllowCloseTime(false);
+            }
         }
     }, [test]);
 
@@ -152,14 +173,14 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                 </div>
                 <div className="flex gap-4 items-end mt-4">
                     <label htmlFor="datetime" className="w-1/5">
-                        Test date & time:{" "}
+                        Start time:{" "}
                     </label>
                     <input
                         type="datetime-local"
                         id="datetime"
                         name="datetime"
                         className="border border-gray-500 px-2 py-1 focus:border-orange-600 outline-none grow"
-                        value={testFormData.datetime.toISOString().slice(0, 16)}
+                        value={formatTimezone(testFormData.datetime)}
                         onChange={handleInputChange}
                         required
                     />
@@ -192,6 +213,26 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                         value={testFormData.max_score}
                         onChange={handleInputChange}
                         required
+                    />
+                </div>
+                <div className="flex gap-4 items-end mt-4">
+                    <div className="w-1/5">
+                        <label htmlFor="datetime">Close time: </label>
+                        <input
+                            type="checkbox"
+                            checked={allowCloseTime}
+                            onChange={() => setAllowCloseTime(!allowCloseTime)}
+                        />
+                    </div>
+
+                    <input
+                        type="datetime-local"
+                        id="close_time"
+                        name="close_time"
+                        className="border border-gray-500 px-2 py-1 focus:border-orange-600 outline-none grow disabled:bg-gray-100 disabled:cursor-not-allowed"
+                        value={formatTimezone(testFormData.close_time!)}
+                        onChange={handleInputChange}
+                        disabled={!allowCloseTime}
                     />
                 </div>
                 <div className="flex gap-4 items-end mt-4">
