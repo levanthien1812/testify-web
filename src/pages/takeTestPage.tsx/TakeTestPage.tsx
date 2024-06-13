@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router";
-import { getTest } from "../../services/test";
-import { TestItf } from "../../types/types";
+import { getSubmission, getTest } from "../../services/test";
+import { TestItf, TestResultItf } from "../../types/types";
 import { format } from "date-fns";
 import { AxiosError, HttpStatusCode } from "axios";
 import DoingTest from "./DoingTest";
 import RemainingTime from "./components/RemainingTime";
 import { testStatus } from "../../config/config";
+import { toast } from "react-toastify";
+import { formatTime } from "../../utils/time";
+import TestInfo from "./components/TestInfo";
+import Forbidden from "./components/Forbidden";
+import Submission from "./components/Submission";
 
 const TakeTestPage = () => {
     const { testId } = useParams();
@@ -16,12 +21,13 @@ const TakeTestPage = () => {
     >();
     const [remainingTime, setRemainingTime] = React.useState(0);
     const [forbidden, setForbidden] = useState(false);
+    const [startTime, setStartTime] = useState(new Date());
     const navigate = useNavigate();
 
     const {
-        isLoading,
+        isLoading: isLoadingTest,
         data: test,
-        refetch,
+        refetch: refetchTest,
     } = useQuery<TestItf>({
         queryFn: async () => {
             const responseData = await getTest(testId!);
@@ -37,6 +43,23 @@ const TakeTestPage = () => {
             }
         },
         retry: false,
+    });
+
+    const {
+        isLoading: isLoadingSubmission,
+        data: submission,
+        refetch: refetchSubmission,
+    } = useQuery<TestResultItf>({
+        queryFn: async () => {
+            const responseData = await getSubmission(testId!);
+            return responseData.submission;
+        },
+        queryKey: ["test_submission", { test_id: testId }],
+        onError: (error) => {
+            if (error instanceof AxiosError) {
+                toast.error(error.response?.data.message);
+            }
+        },
     });
 
     useEffect(() => {
@@ -72,7 +95,7 @@ const TakeTestPage = () => {
                     timeUntilClose = timeUntilClose - 1000;
                     if (timeUntilClose <= 0) {
                         clearInterval(timer);
-                        setStatus("closed");
+                        if (status !== "started") setStatus("closed");
                     }
                 }, 1000);
             }
@@ -80,7 +103,6 @@ const TakeTestPage = () => {
     }, [test]);
 
     useEffect(() => {
-        console.log(remainingTime)
         if (remainingTime <= 0) {
             setRemainingTime(0);
             setStatus("ended");
@@ -88,92 +110,22 @@ const TakeTestPage = () => {
     }, [remainingTime]);
 
     const handleStartTest = async () => {
-        await refetch();
         setStatus("started");
+        setStartTime(new Date());
+        await refetchTest();
 
         const timer = setInterval(() => {
             setRemainingTime((prev) => prev - 1000);
-
-            // let newRemainingTime = remainingTime - 1000;
-            // if (newRemainingTime <= 0) {
-            //     setRemainingTime(0);
-            //     clearInterval(timer);
-            //     setStatus("ended");
-            // }
         }, 1000);
     };
 
     return (
         <div className="w-[840px] mx-auto mt-6 bg-white shadow-lg">
-            {test && status === "started" && (
-                <RemainingTime
-                    remainingTime={remainingTime}
-                    totalTime={test.duration * 60 * 1000}
-                />
-            )}
-            <div className=" py-8 px-8">
-                {status !== "started" && test && (
-                    <div className="">
-                        <p className="text-center text-[44px]">{test.title}</p>
-
-                        <p className="text-xl text-center mt-2">
-                            Duration:{" "}
-                            <span className=" font-bold text-orange-600 underline">
-                                {test.duration} minutes
-                            </span>
-                        </p>
-
-                        <p className="text-xl text-center mt-2">
-                            Parts:{" "}
-                            <span className=" font-bold text-orange-600 underline"></span>{" "}
-                            {test.parts.length}
-                        </p>
-
-                        <p className="text-xl text-center mt-2">
-                            Questions:{" "}
-                            <span className=" font-bold text-orange-600 underline"></span>{" "}
-                            {test.questions
-                                ? test.questions.length
-                                : test.parts.reduce(
-                                      (acc, part) =>
-                                          acc + part.questions!.length,
-                                      0
-                                  )}
-                        </p>
-
-                        <p className="text-xl text-center mt-2">
-                            Max score: {test.max_score}
-                        </p>
-
-                        {test.level && (
-                            <p className="text-xl text-center mt-2">
-                                Level:{" "}
-                                <span className="capitalize">{test.level}</span>
-                            </p>
-                        )}
-
-                        <p className="text-xl text-center mt-2">
-                            Time begin:{" "}
-                            <span className="font-bold px-2 text-orange-600 underline">
-                                {format(
-                                    new Date(test.datetime),
-                                    "dd/MM/yyyy HH:mm"
-                                )}
-                            </span>
-                        </p>
-
-                        {test.description && (
-                            <div className="bg-gray-100 px-6 py-4 mt-2">
-                                <p className="text-lg">
-                                    Description:{" "}
-                                    <span className="italic">
-                                        {" "}
-                                        {test.description}
-                                    </span>
-                                </p>
-                            </div>
-                        )}
-                        {(status === "published" || status === "opened") && (
+            {status !== "started" && test && (
+                <div className="py-8 px-8">
+                    <TestInfo test={test} />
+                    {(status === "published" || status === "opened") &&
+                        !submission && (
                             <div className="flex justify-center">
                                 <button
                                     className="bg-orange-600 text-white py-2 mt-4 px-16 font-bold uppercase hover:bg-orange-700 disabled:bg-gray-600"
@@ -184,48 +136,36 @@ const TakeTestPage = () => {
                                 </button>
                             </div>
                         )}
-                        {status === "closed" && (
-                            <div className="flex justify-center mt-2">
-                                <p className="text-xl">Test is closed</p>
-                            </div>
-                        )}
-                        {status === "ended" && (
-                            <div className="flex justify-center mt-2">
-                                <p>Test is ended</p>
-                            </div>
-                        )}
-                    </div>
-                )}
-                {isLoading && (
-                    <p className="text-center text-xl">
-                        Loading test's information...
-                    </p>
-                )}
-                {!isLoading && forbidden && (
-                    <div className="flex flex-col items-center">
-                        <p className="text-center text-xl">
-                            You are not allowed to take this test
-                        </p>
-                        <div className="flex gap-2">
-                            <button
-                                className="bg-orange-600 text-white mt-4 px-8 py-1"
-                                onClick={() => navigate(-1)}
-                            >
-                                Back
-                            </button>
-                            <button
-                                className="bg-orange-600 text-white mt-4 px-8 py-1"
-                                onClick={() => navigate("/home")}
-                            >
-                                Home
-                            </button>
+                    {status === "closed" && (
+                        <div className="flex justify-center mt-2">
+                            <p className="text-xl">Test is closed</p>
                         </div>
-                    </div>
-                )}
-                {status === "started" && remainingTime >= 0 && test && (
-                    <DoingTest test={test} remainingTime={remainingTime} />
-                )}
-            </div>
+                    )}
+                    {status === "ended" && (
+                        <div className="flex justify-center mt-2">
+                            <p>Test is ended</p>
+                        </div>
+                    )}
+                </div>
+            )}
+            {(isLoadingTest || isLoadingSubmission) && (
+                <p className="text-center text-xl py-8 px-8">
+                    Loading test's information...
+                </p>
+            )}
+            {!isLoadingTest && forbidden && <Forbidden />}
+            {status === "started" && remainingTime >= 0 && test && (
+                <DoingTest
+                    test={test}
+                    remainingTime={remainingTime}
+                    startTime={startTime}
+                    onAfterSubmit={async () => {
+                        await refetchTest();
+                        await refetchSubmission();
+                    }}
+                />
+            )}
+            {submission && <Submission submission={submission} />}
         </div>
     );
 };

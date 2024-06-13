@@ -1,6 +1,7 @@
 import moment from "moment-timezone";
 
 export function formatTime(seconds: number) {
+    seconds = Math.round(seconds)
     // Calculate hours, minutes, and seconds
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
