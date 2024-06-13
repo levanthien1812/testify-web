@@ -65,18 +65,6 @@ export interface TestItf extends TestFormDataItf {
     questions?: QuestionItf[];
     status: typeof testStatus[keyof typeof testStatus];
 }
-export interface UpdateTestFormDataItf {
-    title?: string;
-    datetime?: Date;
-    description?: string;
-    duration?: number;
-    max_score?: number;
-    num_questions?: number;
-    num_parts?: number;
-    level?: (typeof testLevels)[keyof typeof testLevels];
-    code?: string;
-    share_option?: "restricted" | "anyone";
-}
 
 export interface PartFormDataItf {
     name: string;
@@ -224,3 +212,15 @@ export type UserAnswer =
     | UserMultipleChoicesAnswerFormDataInf
     | UserFillGapsAnswerFormDataInf
     | UserMatchingAnswerFormDataInf;
+
+
+export interface TestResultItf {
+    taker_id: string;
+    test_id: string;
+    score: number;
+    correct_answers: number;
+    wrong_answers: number;
+    remark?: string;
+    start_time: Date;
+    submit_time: Date;
+}

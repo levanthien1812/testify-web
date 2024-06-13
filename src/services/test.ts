@@ -5,7 +5,6 @@ import {
     QuestionFormDataItf,
     TakerFormDataItf,
     TestFormDataItf,
-    UpdateTestFormDataItf,
     UserAnswer,
 } from "../types/types";
 
@@ -38,7 +37,7 @@ export const getTest = async (testId: string) => {
 
 export const updateTest = async (
     testId: string,
-    testFormData: UpdateTestFormDataItf
+    testFormData: Partial<TestFormDataItf>
 ) => {
     try {
         const response = await instance.patch(`/tests/${testId}`, testFormData);
@@ -187,14 +186,26 @@ export const validateQuestions = async (testId: string) => {
     }
 };
 
-export const createAnswers = async (
+export const submitAnswers = async (
     testId: string,
-    answersBody: UserAnswer[]
+    answers: UserAnswer[],
+    startTime: Date
 ) => {
     try {
-        const response = await instance.post(`/tests/${testId}/answers`, {
-            answers: answersBody,
+        const response = await instance.post(`/tests/${testId}/submission`, {
+            answers,
+            startTime,
         });
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getSubmission = async (testId: string) => {
+    try {
+        const response = await instance.get(`/tests/${testId}/submission`);
 
         return response.data;
     } catch (error) {
