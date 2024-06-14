@@ -1,5 +1,5 @@
-import React, { ChangeEvent, FormEvent, useEffect, useState } from "react";
-import { testLevels } from "../../../config/config";
+import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { publicAnswersOptions, testLevels } from "../../../config/config";
 import { TestFormDataItf, TestItf } from "../../../types/types";
 import { createTest, updateTest } from "../../../services/test";
 import { useMutation } from "react-query";
@@ -7,8 +7,7 @@ import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { testFormDataSchema } from "../../../validations/test";
 import { formatTimezone } from "../../../utils/time";
-import moment from "moment-timezone";
-import _ from "lodash";
+import _, { set } from "lodash";
 
 type SectionProps = {
     test: TestItf | null;
@@ -29,10 +28,11 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
         num_parts: 1,
         close_time: new Date(),
         code: "",
+        public_answers_option: publicAnswersOptions.SPECIFIC_DATE,
+        public_answers_date: new Date(),
     });
 
     const [allowCloseTime, setAllowCloseTime] = useState(true);
-
     const [isFinished, setIsFinished] = useState<boolean>(false);
 
     const { mutate: createTestMutate, isLoading: createTestLoading } =
@@ -122,6 +122,10 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                 close_time: test.close_time
                     ? new Date(test.close_time)
                     : new Date(),
+                public_answers_option: test.public_answers_option,
+                public_answers_date: test.public_answers_date
+                    ? new Date(test.public_answers_date)
+                    : new Date(),
             });
 
             if (test.close_time) {
@@ -131,6 +135,14 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
             }
         }
     }, [test]);
+
+    useEffect(() => {
+        setTestFormData({
+            ...testFormData,
+            close_time: testFormData.datetime,
+            public_answers_date: testFormData.datetime,
+        });
+    }, [testFormData.datetime]);
 
     useEffect(() => {
         const { error } = testFormDataSchema.validate(testFormData);
@@ -300,6 +312,69 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                         </option>
                     </select>
                 </div>
+
+                <div className="flex gap-4 items-end mt-4">
+                    <label
+                        htmlFor="public_answers_option"
+                        className="w-1/5 whitespace-nowrap overflow-hidden text-ellipsis"
+                    >
+                        Public answers options:{" "}
+                    </label>
+                    <select
+                        id="public_answers_option"
+                        className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow capitalize"
+                        name="public_answers_option"
+                        value={testFormData.public_answers_option}
+                        onChange={handleInputChange}
+                    >
+                        <option
+                            value={publicAnswersOptions.AFTER_TAKER_SUBMISSION}
+                        >
+                            {publicAnswersOptions.AFTER_TAKER_SUBMISSION}
+                        </option>
+                        <option
+                            value={
+                                publicAnswersOptions.AFTER_ALL_TAKER_SUBMISSIONS
+                            }
+                        >
+                            {publicAnswersOptions.AFTER_ALL_TAKER_SUBMISSIONS}
+                        </option>
+                        <option value={publicAnswersOptions.SPECIFIC_DATE}>
+                            {publicAnswersOptions.SPECIFIC_DATE}
+                        </option>
+                        {allowCloseTime && (
+                            <option
+                                value={publicAnswersOptions.AFTER_CLOSE_TIME}
+                            >
+                                {publicAnswersOptions.AFTER_CLOSE_TIME}
+                            </option>
+                        )}
+                    </select>
+                </div>
+
+                {testFormData.public_answers_option ===
+                    publicAnswersOptions.SPECIFIC_DATE &&
+                    testFormData.public_answers_date && (
+                        <div className="flex gap-4 items-end mt-4">
+                            <label
+                                htmlFor="public_answers_date"
+                                className="w-1/5 whitespace-nowrap overflow-hidden text-ellipsis"
+                            >
+                                Public answers date:{" "}
+                            </label>
+                            <input
+                                type="datetime-local"
+                                id="public_answers_date"
+                                name="public_answers_date"
+                                className="border border-gray-500 px-2 py-1 focus:border-orange-600 outline-none grow"
+                                value={formatTimezone(
+                                    testFormData.public_answers_date
+                                )}
+                                onChange={handleInputChange}
+                                required
+                            />
+                        </div>
+                    )}
 
                 <div className="flex justify-end items-center gap-3 mt-6 pt-4 border-t border-gray-300">
                     <button

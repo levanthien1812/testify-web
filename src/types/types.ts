@@ -1,4 +1,10 @@
-import { questionTypes, roles, testLevels, testStatus } from "../config/config";
+import {
+    publicAnswersOptions,
+    questionTypes,
+    roles,
+    testLevels,
+    testStatus,
+} from "../config/config";
 
 export interface userItf {
     username?: string;
@@ -55,6 +61,8 @@ export interface TestFormDataItf {
     code: string;
     close_time?: Date;
     share_option?: "restricted" | "anyone";
+    public_answers_option: (typeof publicAnswersOptions)[keyof typeof publicAnswersOptions];
+    public_answers_date?: Date;
 }
 export interface TestItf extends TestFormDataItf {
     _id: string;
@@ -63,7 +71,7 @@ export interface TestItf extends TestFormDataItf {
     taker_ids: string[] | userItf[];
     is_finished: false;
     questions?: QuestionItf[];
-    status: typeof testStatus[keyof typeof testStatus];
+    status: (typeof testStatus)[keyof typeof testStatus];
 }
 
 export interface PartFormDataItf {
@@ -212,7 +220,6 @@ export type UserAnswer =
     | UserMultipleChoicesAnswerFormDataInf
     | UserFillGapsAnswerFormDataInf
     | UserMatchingAnswerFormDataInf;
-
 
 export interface TestResultItf {
     taker_id: string;

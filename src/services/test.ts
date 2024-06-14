@@ -26,9 +26,16 @@ export const getTests = async () => {
     }
 };
 
-export const getTest = async (testId: string) => {
+export const getTest = async (
+    testId: string,
+    options?: { with_answers?: boolean }
+) => {
     try {
-        const response = await instance.get(`/tests/${testId}`);
+        const response = await instance.get(
+            `/tests/${testId}${
+                options && options.with_answers ? "?with_answers=true" : ""
+            }`
+        );
         return response.data;
     } catch (error) {
         throw error;

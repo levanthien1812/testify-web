@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { testLevels } from "../config/config";
+import { publicAnswersOptions, testLevels } from "../config/config";
 
 export const partSchema = Joi.object().keys({
     _id: Joi.string(),
@@ -21,6 +21,10 @@ export const testFormDataSchema = Joi.object().keys({
     code: Joi.string().allow(""),
     num_parts: Joi.number().min(1),
     close_time: Joi.date().optional(),
+    public_answers_option: Joi.string().valid(
+        ...Object.values(publicAnswersOptions)
+    ),
+    public_answers_date: Joi.date().optional(),
 });
 
 export const testSchema = Joi.object().keys({});
