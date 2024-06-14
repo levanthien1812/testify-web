@@ -1,13 +1,23 @@
 import { format } from "date-fns";
 import React from "react";
 import { formatTime } from "../../../utils/time";
-import { TestResultItf } from "../../../types/types";
+import { TestItf, TestResultItf } from "../../../types/types";
 
 type SubmissionProps = {
+    test: TestItf;
     submission: TestResultItf;
+    onRefetchTest: () => void;
 };
 
-const Submission = ({ submission }: SubmissionProps) => {
+const Submission = ({ submission, test, onRefetchTest }: SubmissionProps) => {
+    const [viewDetail, setViewDetail] = React.useState(false);
+
+    const handleViewDetail = () => {
+        setViewDetail(!viewDetail);
+        onRefetchTest();
+    };
+
+
     return (
         <div className="border-t px-8 py-4">
             <p className="text-lg">Your submission</p>
@@ -29,6 +39,12 @@ const Submission = ({ submission }: SubmissionProps) => {
             <p>Score: {submission.score}</p>
             <p>Correct answers: {submission.correct_answers}</p>
             <p>Wrong answers: {submission.wrong_answers}</p>
+            <button
+                className="bg-orange-600 text-white px-8 py-0.5 mt-0.5"
+                onClick={handleViewDetail}
+            >
+                View detail
+            </button>
         </div>
     );
 };

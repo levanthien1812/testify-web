@@ -22,28 +22,6 @@ const TakeTestPage = () => {
     const [remainingTime, setRemainingTime] = React.useState(0);
     const [forbidden, setForbidden] = useState(false);
     const [startTime, setStartTime] = useState(new Date());
-    const navigate = useNavigate();
-
-    const {
-        isLoading: isLoadingTest,
-        data: test,
-        refetch: refetchTest,
-    } = useQuery<TestItf>({
-        queryFn: async () => {
-            const responseData = await getTest(testId!);
-            return responseData.test;
-        },
-        queryKey: ["test", testId],
-        onError: (error) => {
-            if (
-                error instanceof AxiosError &&
-                error.response?.status === HttpStatusCode.Forbidden
-            ) {
-                setForbidden(true);
-            }
-        },
-        retry: false,
-    });
 
     const {
         isLoading: isLoadingSubmission,
@@ -62,13 +40,35 @@ const TakeTestPage = () => {
         },
     });
 
+    const {
+        isLoading: isLoadingTest,
+        data: test,
+        refetch: refetchTest,
+    } = useQuery<TestItf>({
+        queryFn: async () => {
+            const responseData = await getTest(testId!, {
+                with_answers: !!submission,
+            });
+            return responseData.test;
+        },
+        queryKey: ["test", testId],
+        onError: (error) => {
+            if (
+                error instanceof AxiosError &&
+                error.response?.status === HttpStatusCode.Forbidden
+            ) {
+                setForbidden(true);
+            }
+        },
+        retry: false,
+    });
+
     useEffect(() => {
-        if (test) {
+        if (test && status !== "started") {
             if (test.status === testStatus.PUBLISHED) {
                 setStatus("published");
                 let timeUntilStart =
                     new Date(test.datetime).getTime() - Date.now();
-                console.log(timeUntilStart);
 
                 let timer = setInterval(() => {
                     timeUntilStart = timeUntilStart - 1000;
@@ -95,7 +95,7 @@ const TakeTestPage = () => {
                     timeUntilClose = timeUntilClose - 1000;
                     if (timeUntilClose <= 0) {
                         clearInterval(timer);
-                        if (status !== "started") setStatus("closed");
+                        setStatus("closed");
                     }
                 }, 1000);
             }
@@ -110,9 +110,9 @@ const TakeTestPage = () => {
     }, [remainingTime]);
 
     const handleStartTest = async () => {
+        await refetchTest();
         setStatus("started");
         setStartTime(new Date());
-        await refetchTest();
 
         const timer = setInterval(() => {
             setRemainingTime((prev) => prev - 1000);
@@ -143,7 +143,7 @@ const TakeTestPage = () => {
                     )}
                     {status === "ended" && (
                         <div className="flex justify-center mt-2">
-                            <p>Test is ended</p>
+                            <p className="text-xl">Test is ended</p>
                         </div>
                     )}
                 </div>
@@ -162,10 +162,17 @@ const TakeTestPage = () => {
                     onAfterSubmit={async () => {
                         await refetchTest();
                         await refetchSubmission();
+                        setStatus("ended");
                     }}
                 />
             )}
-            {submission && <Submission submission={submission} />}
+            {submission && test && !isLoadingSubmission && (
+                <Submission
+                    submission={submission}
+                    test={test}
+                    onRefetchTest={refetchTest}
+                />
+            )}
         </div>
     );
 };

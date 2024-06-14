@@ -42,16 +42,19 @@ const FillGapsAnswer = ({
             ></div>
 
             <div className="space-y-1 mt-2">
-                {generateArray(content.num_gaps).map((num) => (
-                    <div className="flex gap-3 items-end ps-2" key={num}>
-                        <label htmlFor={`gap${num}`} className="text-nowrap">
-                            Gap {num}:
+                {[...Array(content.num_gaps)].map((num, index) => (
+                    <div className="flex gap-3 items-end ps-2" key={index + 1}>
+                        <label
+                            htmlFor={`gap${index + 1}`}
+                            className="text-nowrap"
+                        >
+                            Gap {index + 1}:
                         </label>
                         <input
                             type="text"
-                            name={`gap-${num}`}
-                            value={gaps[num - 1]}
-                            id={`gap-${num}`}
+                            name={`gap-${index + 1}`}
+                            value={gaps[index]}
+                            id={`gap-${index + 1}`}
                             onChange={handleFillGap}
                             className="border border-gray-500 px-2 py-1 grow focus:border-orange-600 outline-none leading-5"
                         />
