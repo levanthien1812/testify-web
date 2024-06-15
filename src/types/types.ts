@@ -155,6 +155,7 @@ export interface QuestionItf {
     level: (typeof testLevels)[keyof typeof testLevels];
     type: (typeof questionTypes)[keyof typeof questionTypes];
     part_id?: string;
+    answer?: AnswerItf;
     content:
         | MultipleChoiceQuestionItf
         | FillGapsQuestionItf
@@ -174,22 +175,44 @@ export interface QuestionFormDataItf {
         | null;
 }
 
-export interface MultipleChoicesAnswerFormDataInf {
+export type AnswerItf = {
+    _id: string;
+    date: Date;
+    content: MultipleChoicesAnswerItf | FillGapsAnswerItf | MatchingAnswerItf;
+};
+
+export interface MultipleChoicesAnswerFormDataItf {
     answer: string[];
 }
 
-export interface FillGapsAnswerFormDataInf {
+export interface MultipleChoicesAnswerItf
+    extends MultipleChoicesAnswerFormDataItf {
+    _id: string;
+    answer_id?: string;
+}
+
+export interface FillGapsAnswerFormDataItf {
     answer: string[];
 }
 
-export interface MatchingAnswerFormDataInf {
+export interface FillGapsAnswerItf extends FillGapsAnswerFormDataItf {
+    _id: string;
+    answer_id?: string;
+}
+
+export interface MatchingAnswerFormDataItf {
     answer: { left: string; right: string }[];
 }
 
+export interface MatchingAnswerItf extends MatchingAnswerFormDataItf {
+    _id: string;
+    answer_id?: string;
+}
+
 export type AnswerFormData =
-    | MultipleChoicesAnswerFormDataInf
-    | FillGapsAnswerFormDataInf
-    | MatchingAnswerFormDataInf;
+    | MultipleChoicesAnswerFormDataItf
+    | FillGapsAnswerFormDataItf
+    | MatchingAnswerFormDataItf;
 
 export interface TakerFormDataItf {
     name: string;
@@ -201,25 +224,25 @@ export interface TakerItf extends TakerFormDataItf {
     maker_id: string;
 }
 
-export interface UserMultipleChoicesAnswerFormDataInf {
+export interface UserMultipleChoicesAnswerFormDataItf {
     question_id: string;
     answer: string[];
 }
 
-export interface UserFillGapsAnswerFormDataInf {
+export interface UserFillGapsAnswerFormDataItf {
     question_id: string;
     answer: string[];
 }
 
-export interface UserMatchingAnswerFormDataInf {
+export interface UserMatchingAnswerFormDataItf {
     question_id: string;
     answer: { left: string; right: string }[];
 }
 
 export type UserAnswer =
-    | UserMultipleChoicesAnswerFormDataInf
-    | UserFillGapsAnswerFormDataInf
-    | UserMatchingAnswerFormDataInf;
+    | UserMultipleChoicesAnswerFormDataItf
+    | UserFillGapsAnswerFormDataItf
+    | UserMatchingAnswerFormDataItf;
 
 export interface TestResultItf {
     taker_id: string;

@@ -1,24 +1,27 @@
-import { ChangeEvent, useEffect, useState } from "react";
-import { AnswerFormData, FillGapsQuestionItf, QuestionItf } from "../../../types/types";
+import { useMemo } from "react";
+import { FillGapsAnswerItf, FillGapsQuestionItf } from "../../../types/types";
 
 type FillGapsAnswerProps = {
-    question: QuestionItf;
+    content: FillGapsQuestionItf;
+    userAnswer: FillGapsAnswerItf;
 };
 
-const FillGapsAnswer = ({ question }: FillGapsAnswerProps) => {
-    const [gaps, setGaps] = useState<string[]>([]);
+const FillGapsAnswer = ({ content, userAnswer }: FillGapsAnswerProps) => {
+    const gaps = useMemo(() => {
+        return userAnswer.answer;
+    }, [userAnswer]);
 
     return (
         <>
             <div
                 className=""
                 dangerouslySetInnerHTML={{
-                    __html: question.content.text.replaceAll("***", "___"),
+                    __html: content.text.replaceAll("***", "___"),
                 }}
             ></div>
 
             <div className="space-y-1 mt-2">
-                {[...Array(question.content)].map((num, index) => (
+                {[...Array(content.num_gaps)].map((num, index) => (
                     <div className="flex gap-3 items-end ps-2" key={index + 1}>
                         <label
                             htmlFor={`gap${index + 1}`}

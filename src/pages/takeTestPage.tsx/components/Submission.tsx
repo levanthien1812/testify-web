@@ -2,21 +2,21 @@ import { format } from "date-fns";
 import React from "react";
 import { formatTime } from "../../../utils/time";
 import { TestItf, TestResultItf } from "../../../types/types";
+import Answer from "./Answer";
 
 type SubmissionProps = {
     test: TestItf;
     submission: TestResultItf;
-    onRefetchTest: () => void;
+    onViewDetail: () => void;
 };
 
-const Submission = ({ submission, test, onRefetchTest }: SubmissionProps) => {
+const Submission = ({ submission, test, onViewDetail }: SubmissionProps) => {
     const [viewDetail, setViewDetail] = React.useState(false);
 
     const handleViewDetail = () => {
-        setViewDetail(!viewDetail);
-        onRefetchTest();
+        setViewDetail(true);
+        onViewDetail();
     };
-
 
     return (
         <div className="border-t px-8 py-4">
@@ -45,6 +45,41 @@ const Submission = ({ submission, test, onRefetchTest }: SubmissionProps) => {
             >
                 View detail
             </button>
+
+            {viewDetail && (
+                <>
+                    {test.num_parts > 1 &&
+                        test.parts.map((part) => {
+                            return (
+                                <div key={part._id} className="">
+                                    <div className="text-lg bg-gray-200 px-4 py-1">
+                                        <span className="underline">
+                                            Part {part.order}:
+                                        </span>{" "}
+                                        <span className="uppercase">
+                                            {" "}
+                                            {part.name}
+                                        </span>
+                                    </div>
+
+                                    <div>
+                                        {part.questions &&
+                                            part.questions.map((question) => (
+                                                <Answer
+                                                    question={question}
+                                                    key={question._id}
+                                                />
+                                            ))}
+                                    </div>
+                                </div>
+                            );
+                        })}
+                    {test.num_parts <= 1 &&
+                        test.questions!.map((question) => (
+                            <Answer question={question} key={question._id} />
+                        ))}
+                </>
+            )}
         </div>
     );
 };

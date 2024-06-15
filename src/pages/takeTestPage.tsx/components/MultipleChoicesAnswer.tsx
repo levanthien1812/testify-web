@@ -1,39 +1,23 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { useMemo } from "react";
 import {
-    AnswerFormData,
     MultipleChoiceQuestionItf,
+    MultipleChoicesAnswerItf,
 } from "../../../types/types";
 
 type MultipleChoicesAnswerProps = {
     content: MultipleChoiceQuestionItf;
-    reset: boolean;
-    onProvideAnswer: (answerBody: AnswerFormData) => void;
+    userAnswer: MultipleChoicesAnswerItf;
 };
 
 const MultipleChoicesAnswer = ({
     content,
-    reset,
-    onProvideAnswer,
+    userAnswer,
 }: MultipleChoicesAnswerProps) => {
-    const [optionChosen, setOptionChosen] = useState<string>(
-        content.answer && content.answer.length > 0 ? content.answer[0] : ""
-    );
-
-    const handleChangeRadio = (e: ChangeEvent<HTMLInputElement>) => {
-        if (e.target.value) {
-            setOptionChosen(e.target.value);
-            onProvideAnswer({ answer: [e.target.value] });
-        }
-    };
-
-    useEffect(() => {
-        if (reset === true)
-            setOptionChosen(
-                content.answer && content.answer.length > 0
-                    ? content.answer[0]
-                    : ""
-            );
-    }, [reset]);
+    const optionChosen = useMemo(() => {
+        return userAnswer.answer && userAnswer.answer.length > 0
+            ? userAnswer.answer[0]
+            : "";
+    }, [userAnswer]);
 
     return (
         <>
@@ -53,7 +37,6 @@ const MultipleChoicesAnswer = ({
                             name={content._id}
                             value={option._id}
                             id={option._id}
-                            onChange={handleChangeRadio}
                             checked={optionChosen === option._id}
                         />
                         <label htmlFor={option._id} className="grow">

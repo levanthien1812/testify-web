@@ -16,6 +16,7 @@ import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import RemainingTime from "./components/RemainingTime";
 import Swal from "sweetalert2";
+import Question from "./components/Question";
 
 type DoingTestProps = {
     test: TestItf;
@@ -24,7 +25,12 @@ type DoingTestProps = {
     onAfterSubmit: () => void;
 };
 
-const DoingTest = ({ test, remainingTime, startTime,onAfterSubmit }: DoingTestProps) => {
+const DoingTest = ({
+    test,
+    remainingTime,
+    startTime,
+    onAfterSubmit,
+}: DoingTestProps) => {
     const [answers, setAnswers] = useState<UserAnswer[]>([]);
     const [submittable, setSubmittable] = useState(false);
     const [confirmSubmit, setConfirmSubmit] = useState(false);
@@ -54,7 +60,7 @@ const DoingTest = ({ test, remainingTime, startTime,onAfterSubmit }: DoingTestPr
         onSuccess: (data) => {
             console.log(data);
             toast.success("Answers submitted successfully");
-            onAfterSubmit()
+            onAfterSubmit();
         },
         onError: (error) => {
             if (error instanceof AxiosError) {
@@ -79,7 +85,7 @@ const DoingTest = ({ test, remainingTime, startTime,onAfterSubmit }: DoingTestPr
             cancelButtonText: "No",
         }).then((result) => {
             if (result.isConfirmed) {
-                mutate()
+                mutate();
             } else if (result.dismiss === Swal.DismissReason.cancel) {
                 return;
             }
@@ -114,7 +120,7 @@ const DoingTest = ({ test, remainingTime, startTime,onAfterSubmit }: DoingTestPr
             />
             <div className="py-8 px-8">
                 <div className="space-y-1">
-                    {test.parts &&
+                    {test.num_parts > 1 &&
                         test.parts.map((part) => {
                             return (
                                 <div key={part._id} className="">
@@ -131,77 +137,26 @@ const DoingTest = ({ test, remainingTime, startTime,onAfterSubmit }: DoingTestPr
                                     <div>
                                         {part.questions &&
                                             part.questions.map((question) => (
-                                                <div
-                                                    className="px-4 py-2"
+                                                <Question
+                                                    question={question}
                                                     key={question._id}
-                                                >
-                                                    <div>
-                                                        Question{" "}
-                                                        {question.order}:{" "}
-                                                    </div>
-                                                    {question.type ===
-                                                        questionTypes.MULITPLE_CHOICES && (
-                                                        <MultipleChoicesQuestion
-                                                            content={
-                                                                question.content as MultipleChoiceQuestionItf
-                                                            }
-                                                            onProvideAnswer={(
-                                                                answer
-                                                            ) =>
-                                                                handleProvideAnswer(
-                                                                    {
-                                                                        question_id:
-                                                                            question._id,
-                                                                        answer: answer,
-                                                                    }
-                                                                )
-                                                            }
-                                                        />
-                                                    )}
-                                                    {question.type ===
-                                                        questionTypes.FILL_GAPS && (
-                                                        <FillGapsQuestion
-                                                            content={
-                                                                question.content as FillGapsQuestionItf
-                                                            }
-                                                            onProvideAnswer={(
-                                                                answer
-                                                            ) =>
-                                                                handleProvideAnswer(
-                                                                    {
-                                                                        question_id:
-                                                                            question._id,
-                                                                        answer: answer,
-                                                                    }
-                                                                )
-                                                            }
-                                                        />
-                                                    )}
-                                                    {question.type ===
-                                                        questionTypes.MATCHING && (
-                                                        <MatchingQuestion
-                                                            content={
-                                                                question.content as MatchingQuestionItf
-                                                            }
-                                                            onProvideAnswer={(
-                                                                answer
-                                                            ) =>
-                                                                handleProvideAnswer(
-                                                                    {
-                                                                        question_id:
-                                                                            question._id,
-                                                                        answer: answer,
-                                                                    }
-                                                                )
-                                                            }
-                                                        />
-                                                    )}
-                                                </div>
+                                                    onProvideAnswer={
+                                                        handleProvideAnswer
+                                                    }
+                                                />
                                             ))}
                                     </div>
                                 </div>
                             );
                         })}
+                    {test.num_parts <= 1 &&
+                        test.questions!.map((question) => (
+                            <Question
+                                question={question}
+                                key={question._id}
+                                onProvideAnswer={handleProvideAnswer}
+                            />
+                        ))}
 
                     <div className="flex justify-center">
                         <button

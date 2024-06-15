@@ -22,6 +22,7 @@ const TakeTestPage = () => {
     const [remainingTime, setRemainingTime] = React.useState(0);
     const [forbidden, setForbidden] = useState(false);
     const [startTime, setStartTime] = useState(new Date());
+    const [withAnswers, setWithAnswers] = useState(false);
 
     const {
         isLoading: isLoadingSubmission,
@@ -45,13 +46,13 @@ const TakeTestPage = () => {
         data: test,
         refetch: refetchTest,
     } = useQuery<TestItf>({
+        queryKey: ["test", testId, { with_answers: withAnswers }],
         queryFn: async () => {
             const responseData = await getTest(testId!, {
-                with_answers: !!submission,
+                with_answers: withAnswers,
             });
             return responseData.test;
         },
-        queryKey: ["test", testId],
         onError: (error) => {
             if (
                 error instanceof AxiosError &&
@@ -170,7 +171,9 @@ const TakeTestPage = () => {
                 <Submission
                     submission={submission}
                     test={test}
-                    onRefetchTest={refetchTest}
+                    onViewDetail={() => {
+                        setWithAnswers(true);
+                    }}
                 />
             )}
         </div>

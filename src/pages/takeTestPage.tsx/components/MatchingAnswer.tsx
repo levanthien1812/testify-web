@@ -1,56 +1,18 @@
-import { useEffect, useState } from "react";
-import { AnswerFormData, MatchingQuestionItf } from "../../../types/types";
+import { useMemo } from "react";
+import { MatchingAnswerItf, MatchingQuestionItf } from "../../../types/types";
 import DraggableItem from "../../createTestPage.tsx/components/testAnswers/DraggableItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 type MatchingAnswerProps = {
     content: MatchingQuestionItf;
-    reset: boolean;
-    onProvideAnswer: (answerBody: AnswerFormData) => void;
+    userAnswer: MatchingAnswerItf;
 };
 
-const MatchingAnswer = ({
-    content,
-    onProvideAnswer,
-    reset,
-}: MatchingAnswerProps) => {
-    const [matchings, setMatchings] = useState<
-        { left: string; right: string }[]
-    >(content.answer || []);
-
-    const handleDrop = (item: { left: string; right: string }) => {
-        console.log(item);
-        const index = matchings.findIndex((matching) => {
-            return matching.left === item.left && matching.right === item.right;
-        });
-
-        if (index < 0) {
-            setMatchings([...matchings, item]);
-        }
-    };
-
-    const handleDeleteMatching = (leftItemId: string) => {
-        let updatedMatchings = [...matchings];
-        const index = matchings.findIndex(
-            (matching) => matching.left === leftItemId
-        );
-        updatedMatchings.splice(index, 1);
-        setMatchings(updatedMatchings);
-    };
-
-    useEffect(() => {
-        if (
-            matchings.length > 0 &&
-            matchings.length !== content.answer?.length
-        ) {
-            onProvideAnswer({ answer: matchings });
-        }
-    }, [matchings]);
-
-    useEffect(() => {
-        if (reset === true) setMatchings(content.answer || []);
-    }, [reset]);
+const MatchingAnswer = ({ content, userAnswer }: MatchingAnswerProps) => {
+    const matchings = useMemo(() => {
+        return userAnswer.answer || [];
+    }, [userAnswer]);
 
     return (
         <>
@@ -66,13 +28,9 @@ const MatchingAnswer = ({
                         <DraggableItem
                             item={item}
                             key={item._id}
-                            onDrop={handleDrop}
+                            onDrop={() => {}}
                             part="left"
-                            draggable={
-                                matchings.findIndex(
-                                    (matching) => item._id === matching.left
-                                ) < 0
-                            }
+                            draggable={false}
                         />
                     ))}
                 </div>
@@ -81,13 +39,9 @@ const MatchingAnswer = ({
                         <DraggableItem
                             item={item}
                             key={item._id}
-                            onDrop={handleDrop}
+                            onDrop={() => {}}
                             part="right"
-                            draggable={
-                                matchings.findIndex(
-                                    (matching) => item._id === matching.right
-                                ) < 0
-                            }
+                            draggable={false}
                         />
                     ))}
                 </div>
@@ -121,14 +75,6 @@ const MatchingAnswer = ({
                                     )?.text
                                 }
                             </span>
-                            <button
-                                onClick={() =>
-                                    handleDeleteMatching(matching.left)
-                                }
-                                className="absolute top-1 right-4 hover:font-bold"
-                            >
-                                Clear
-                            </button>
                         </div>
                     ))}
                 </div>
