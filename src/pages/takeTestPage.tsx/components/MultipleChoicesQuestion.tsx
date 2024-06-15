@@ -2,7 +2,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import {
     AnswerFormData,
     MultipleChoiceQuestionItf,
-    UserMultipleChoicesAnswerFormDataInf,
+    UserMultipleChoicesAnswerFormDataItf,
 } from "../../../types/types";
 
 type MultipleChoicesQuestionProps = {

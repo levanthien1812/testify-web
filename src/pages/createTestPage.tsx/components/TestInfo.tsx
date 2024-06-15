@@ -145,6 +145,19 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
     }, [testFormData.datetime]);
 
     useEffect(() => {
+        if (
+            testFormData.public_answers_option ===
+                publicAnswersOptions.AFTER_CLOSE_TIME &&
+            testFormData.close_time
+        ) {
+            setTestFormData({
+                ...testFormData,
+                public_answers_date: testFormData.close_time,
+            });
+        }
+    }, [testFormData.public_answers_option, testFormData.close_time]);
+
+    useEffect(() => {
         const { error } = testFormDataSchema.validate(testFormData);
 
         if (!error) setIsFinished(true);
