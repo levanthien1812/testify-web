@@ -21,18 +21,13 @@ const TestInfo = ({ test }: TestInfoProps) => {
             <p className="text-xl text-center mt-2">
                 Parts:{" "}
                 <span className=" font-bold text-orange-600 underline"></span>{" "}
-                {test.parts.length}
+                {test.num_parts}
             </p>
 
             <p className="text-xl text-center mt-2">
                 Questions:{" "}
                 <span className=" font-bold text-orange-600 underline"></span>{" "}
-                {test.questions
-                    ? test.questions.length
-                    : test.parts.reduce(
-                          (acc, part) => acc + part.questions!.length,
-                          0
-                      )}
+                {test.num_questions}
             </p>
 
             <p className="text-xl text-center mt-2">

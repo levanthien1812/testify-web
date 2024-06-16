@@ -7,6 +7,7 @@ import { useMutation } from "react-query";
 import { updateTest } from "../../../services/test";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
+import { useNavigate } from "react-router";
 
 type SectionProps = {
     test: TestItf;
@@ -19,6 +20,7 @@ const TestTakers = ({ test, onAfterUpdate, onBack, onNext }: SectionProps) => {
     const [shareOption, setShareOption] = useState<"restricted" | "anyone">(
         "restricted"
     );
+    const navigate = useNavigate();
 
     const { mutate, isLoading } = useMutation({
         mutationFn: async () => {
@@ -37,6 +39,7 @@ const TestTakers = ({ test, onAfterUpdate, onBack, onNext }: SectionProps) => {
 
     const handleNext = () => {
         mutate();
+        navigate("/home");
     };
 
     return (

@@ -45,7 +45,10 @@ const Part: React.FC<{
         useMutation({
             mutationFn: async (partBody: PartFormDataItf) =>
                 await updatePart(testId, part!._id, partBody),
-            mutationKey: ["update-part", { partId: part!._id, body: part }],
+            mutationKey: [
+                "update-part",
+                { partId: part && part._id, body: part },
+            ],
             onSuccess: (data) => {
                 setShowSave(false);
                 onAfterUpdate();

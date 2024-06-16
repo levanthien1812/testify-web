@@ -30,9 +30,11 @@ const RecentTestItem = ({ test }: RecentTestItemProps) => {
             onMouseLeave={() => setHover(false)}
         >
             <div className="px-3 py-2 bg-gradient-to-br from-orange-200 to-orange-50 flex items-center gap-2">
-                <p className="text-lg font-bold">{test.title}</p>
+                <p className="text-lg font-bold w-44 overflow-hidden text-ellipsis text-nowrap">
+                    {test.title}
+                </p>
                 <div className="uppercase text-xs bg-green-600 text-white w-fit rounded-full px-1">
-                    Finished
+                    {test.status}
                 </div>
             </div>
             <div className="px-3 py-3">

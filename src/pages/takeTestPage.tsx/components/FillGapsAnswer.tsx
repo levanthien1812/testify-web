@@ -34,7 +34,14 @@ const FillGapsAnswer = ({ content, userAnswer }: FillGapsAnswerProps) => {
                             name={`gap-${index + 1}`}
                             value={gaps[index]}
                             id={`gap-${index + 1}`}
-                            className="border border-gray-500 px-2 py-1 grow focus:border-orange-600 outline-none leading-5"
+                            className={`border ${
+                                !content.answer
+                                    ? "border-gray-500 text-black"
+                                    : userAnswer.answer[index] ===
+                                      content.answer[index]
+                                    ? "border-blue-600 text-blue"
+                                    : "border-red-600 text-red"
+                            } px-2 py-1 grow focus:border-orange-600 outline-none leading-5`}
                         />
                     </div>
                 ))}
