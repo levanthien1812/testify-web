@@ -14,6 +14,18 @@ const MatchingAnswer = ({ content, userAnswer }: MatchingAnswerProps) => {
         return userAnswer.answer || [];
     }, [userAnswer]);
 
+    const isCorrectMatching = (matching: { left: string; right: string }) => {
+        if (content.answer) {
+            return content.answer.find(
+                (answer) =>
+                    answer.left === matching.left &&
+                    answer.right === matching.right
+            );
+        } else {
+            return false;
+        }
+    };
+
     return (
         <>
             <div
@@ -53,7 +65,13 @@ const MatchingAnswer = ({ content, userAnswer }: MatchingAnswerProps) => {
                     {matchings.map((matching) => (
                         <div
                             key={matching.left}
-                            className="bg-gray-200 px-4 py-1 flex items-center gap-2 relative"
+                            className={`${
+                                !content.answer
+                                    ? "bg-gray-100"
+                                    : isCorrectMatching(matching)
+                                    ? "bg-blue-100"
+                                    : "bg-red-100"
+                            } px-4 py-1 flex items-center gap-2 relative`}
                         >
                             <span>
                                 {

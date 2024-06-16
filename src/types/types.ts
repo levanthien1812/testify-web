@@ -179,6 +179,7 @@ export type AnswerItf = {
     _id: string;
     date: Date;
     content: MultipleChoicesAnswerItf | FillGapsAnswerItf | MatchingAnswerItf;
+    score?: number
 };
 
 export interface MultipleChoicesAnswerFormDataItf {

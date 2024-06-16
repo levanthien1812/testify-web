@@ -89,7 +89,7 @@ const MatchingQuestion = ({
                     {matchings.map((matching) => (
                         <div
                             key={matching.left}
-                            className="bg-gray-200 px-4 py-1 flex items-center gap-2 relative"
+                            className="bg-gray-100 px-4 py-1 flex items-center gap-2 relative"
                         >
                             <span>
                                 {

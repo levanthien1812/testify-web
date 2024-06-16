@@ -43,11 +43,11 @@ const Submission = ({ submission, test, onViewDetail }: SubmissionProps) => {
                 className="bg-orange-600 text-white px-8 py-0.5 mt-0.5"
                 onClick={handleViewDetail}
             >
-                View detail
+                {!viewDetail ? "View detail" : "Hide detail"}
             </button>
 
             {viewDetail && (
-                <>
+                <div className="mt-4">
                     {test.num_parts > 1 &&
                         test.parts.map((part) => {
                             return (
@@ -78,7 +78,7 @@ const Submission = ({ submission, test, onViewDetail }: SubmissionProps) => {
                         test.questions!.map((question) => (
                             <Answer question={question} key={question._id} />
                         ))}
-                </>
+                </div>
             )}
         </div>
     );

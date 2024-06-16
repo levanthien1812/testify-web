@@ -11,10 +11,10 @@ type MultipleChoicesAnswerProps = {
 
 const MultipleChoicesAnswer = ({
     content,
-    userAnswer,
+    userAnswer ,
 }: MultipleChoicesAnswerProps) => {
     const optionChosen = useMemo(() => {
-        return userAnswer.answer && userAnswer.answer.length > 0
+        return userAnswer && userAnswer.answer.length > 0
             ? userAnswer.answer[0]
             : "";
     }, [userAnswer]);
@@ -37,9 +37,31 @@ const MultipleChoicesAnswer = ({
                             name={content._id}
                             value={option._id}
                             id={option._id}
-                            checked={optionChosen === option._id}
+                            checked={
+                                content.answer
+                                    ? content.answer[0] === option._id
+                                    : option._id === optionChosen
+                            }
+                            className={
+                                content.answer &&
+                                content.answer[0] === option._id
+                                    ? "accent-blue-600"
+                                    : "accent-red-600"
+                            }
                         />
-                        <label htmlFor={option._id} className="grow">
+                        <label
+                            htmlFor={option._id}
+                            className={`grow ${
+                                content.answer &&
+                                content.answer[0] === option._id &&
+                                "text-blue-600"
+                            } ${
+                                content.answer &&
+                                content.answer[0] !== option._id &&
+                                optionChosen === option._id &&
+                                "text-red-600"
+                            }`}
+                        >
                             {option.text}
                         </label>
                     </div>

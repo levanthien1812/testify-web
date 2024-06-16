@@ -1,4 +1,10 @@
-import React, { useEffect, useState } from "react";
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
 import { useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router";
 import { getSubmission, getTest } from "../../services/test";
@@ -19,10 +25,13 @@ const TakeTestPage = () => {
     const [status, setStatus] = useState<
         "published" | "opened" | "started" | "ended" | "closed"
     >();
-    const [remainingTime, setRemainingTime] = React.useState(0);
+    const [remainingTime, setRemainingTime] = React.useState(100000000);
     const [forbidden, setForbidden] = useState(false);
     const [startTime, setStartTime] = useState(new Date());
     const [withAnswers, setWithAnswers] = useState(false);
+    const closeIntervalRef = useRef<NodeJS.Timer | null>(null);
+    const openIntervalRef = useRef<NodeJS.Timer | null>(null);
+    const remainingIntervalRef = useRef<NodeJS.Timer | null>(null);
 
     const {
         isLoading: isLoadingSubmission,
@@ -33,7 +42,7 @@ const TakeTestPage = () => {
             const responseData = await getSubmission(testId!);
             return responseData.submission;
         },
-        queryKey: ["test_submission", { test_id: testId }],
+        queryKey: ["test-submission", { test_id: testId }],
         onError: (error) => {
             if (error instanceof AxiosError) {
                 toast.error(error.response?.data.message);
@@ -65,57 +74,95 @@ const TakeTestPage = () => {
     });
 
     useEffect(() => {
-        if (test && status !== "started") {
-            if (test.status === testStatus.PUBLISHED) {
-                setStatus("published");
-                let timeUntilStart =
-                    new Date(test.datetime).getTime() - Date.now();
+        if (test) {
+            if (status !== "started") {
+                if (
+                    test.status === testStatus.PUBLISHED ||
+                    test.status === testStatus.PUBLISHABLE
+                ) {
+                    setStatus("published");
+                }
 
-                let timer = setInterval(() => {
-                    timeUntilStart = timeUntilStart - 1000;
-                    if (timeUntilStart <= 0) {
-                        clearInterval(timer);
-                        setStatus("opened");
-                    }
-                }, 1000);
-            }
+                if (test.status === testStatus.OPENED) {
+                    setStatus("opened");
+                }
+                if (test.status === testStatus.CLOSED) {
+                    setStatus("closed");
+                }
 
-            if (test.status === testStatus.OPENED) {
-                setStatus("opened");
-            }
-            if (test.status === testStatus.CLOSED) {
-                setStatus("closed");
-            }
-
-            setRemainingTime(test.duration * 60 * 1000);
-            if (test.close_time) {
-                let timeUntilClose =
-                    new Date(test.close_time).getTime() - Date.now();
-
-                let timer = setInterval(() => {
-                    timeUntilClose = timeUntilClose - 1000;
-                    if (timeUntilClose <= 0) {
-                        clearInterval(timer);
-                        setStatus("closed");
-                    }
-                }, 1000);
+                setRemainingTime(test.duration * 60 * 1000);
             }
         }
     }, [test]);
 
     useEffect(() => {
+        if (test) {
+            if (status === "published") {
+                let timeUntilStart =
+                    new Date(test.datetime).getTime() - Date.now();
+                if (timeUntilStart > 0 && !openIntervalRef.current) {
+                    openIntervalRef.current = setInterval(() => {
+                        console.log(timeUntilStart);
+                        timeUntilStart -= 1000;
+                        if (timeUntilStart <= 0) {
+                            setStatus("opened");
+                            clearInterval(openIntervalRef.current!);
+                        }
+                    }, 1000);
+                }
+            }
+
+            if (
+                (status === "opened" || status === "published") &&
+                test.close_time
+            ) {
+                let timeUntilClose =
+                    new Date(test.close_time).getTime() - Date.now();
+                if (timeUntilClose > 0 && !closeIntervalRef.current) {
+                    closeIntervalRef.current = setInterval(() => {
+                        console.log(status);
+                        timeUntilClose -= 1000;
+                        if (timeUntilClose - 1000 <= 0) {
+                            setStatus((prev) =>
+                                prev !== "started" ? "closed" : prev
+                            );
+                            clearInterval(closeIntervalRef.current!);
+                        }
+                    }, 1000);
+                }
+            }
+        }
+    }, [status]);
+
+    useEffect(() => {
         if (remainingTime <= 0) {
             setRemainingTime(0);
+            if (remainingIntervalRef.current)
+                clearInterval(remainingIntervalRef.current);
             setStatus("ended");
         }
     }, [remainingTime]);
+
+    useEffect(() => {
+        return () => {
+            if (closeIntervalRef.current) {
+                clearInterval(closeIntervalRef.current);
+            }
+            if (openIntervalRef.current) {
+                clearInterval(openIntervalRef.current);
+            }
+            if (remainingIntervalRef.current) {
+                clearInterval(remainingIntervalRef.current);
+            }
+        };
+    }, []);
 
     const handleStartTest = async () => {
         await refetchTest();
         setStatus("started");
         setStartTime(new Date());
 
-        const timer = setInterval(() => {
+        remainingIntervalRef.current = setInterval(() => {
             setRemainingTime((prev) => prev - 1000);
         }, 1000);
     };

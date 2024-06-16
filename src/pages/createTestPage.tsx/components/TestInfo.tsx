@@ -345,13 +345,6 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                         >
                             {publicAnswersOptions.AFTER_TAKER_SUBMISSION}
                         </option>
-                        <option
-                            value={
-                                publicAnswersOptions.AFTER_ALL_TAKER_SUBMISSIONS
-                            }
-                        >
-                            {publicAnswersOptions.AFTER_ALL_TAKER_SUBMISSIONS}
-                        </option>
                         <option value={publicAnswersOptions.SPECIFIC_DATE}>
                             {publicAnswersOptions.SPECIFIC_DATE}
                         </option>

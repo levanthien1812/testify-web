@@ -20,7 +20,14 @@ type QuestionProps = {
 const Answer = ({ question }: QuestionProps) => {
     return (
         <div className="px-4 py-2" key={question._id}>
-            <div>Question {question.order}: </div>
+            <div>
+                <span className="underline">Question {question.order}:</span>{" "}
+                {question.content.answer && (
+                    <span className="font-bold italic">
+                        ({question.answer!.score} points)
+                    </span>
+                )}
+            </div>
             {question.type === questionTypes.MULITPLE_CHOICES && (
                 <MultipleChoicesAnswer
                     content={question.content as MultipleChoiceQuestionItf}
