@@ -219,3 +219,13 @@ export const getSubmission = async (testId: string) => {
         throw error;
     }
 };
+
+export const getSubmissions = async (testId: string) => {
+    try {
+        const response = await instance.get(`/tests/${testId}/submissions`);
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};

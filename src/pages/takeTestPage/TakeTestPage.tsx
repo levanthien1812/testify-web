@@ -8,7 +8,7 @@ import React, {
 import { useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router";
 import { getSubmission, getTest } from "../../services/test";
-import { TestItf, TestResultItf } from "../../types/types";
+import { TestItf, SubmissionItf } from "../../types/types";
 import { format } from "date-fns";
 import { AxiosError, HttpStatusCode } from "axios";
 import DoingTest from "./DoingTest";
@@ -37,7 +37,7 @@ const TakeTestPage = () => {
         isLoading: isLoadingSubmission,
         data: submission,
         refetch: refetchSubmission,
-    } = useQuery<TestResultItf>({
+    } = useQuery<SubmissionItf>({
         queryFn: async () => {
             const responseData = await getSubmission(testId!);
             return responseData.submission;

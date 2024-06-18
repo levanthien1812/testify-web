@@ -1,12 +1,12 @@
 import { format } from "date-fns";
 import React from "react";
 import { formatTime } from "../../../utils/time";
-import { TestItf, TestResultItf } from "../../../types/types";
+import { TestItf, SubmissionItf } from "../../../types/types";
 import Answer from "./Answer";
 
 type SubmissionProps = {
     test: TestItf;
-    submission: TestResultItf;
+    submission: SubmissionItf;
     onViewDetail: () => void;
 };
 
@@ -36,9 +36,13 @@ const Submission = ({ submission, test, onViewDetail }: SubmissionProps) => {
                 )}{" "}
             </p>
 
-            <p>Score: {submission.score}</p>
-            <p>Correct answers: {submission.correct_answers}</p>
-            <p>Wrong answers: {submission.wrong_answers}</p>
+            {submission.score && <p>Score: {submission.score}</p>}
+            {submission.correct_answers && (
+                <p>Correct answers: {submission.correct_answers}</p>
+            )}
+            {submission.wrong_answers && (
+                <p>Wrong answers: {submission.wrong_answers}</p>
+            )}
             <button
                 className="bg-orange-600 text-white px-8 py-0.5 mt-0.5"
                 onClick={handleViewDetail}

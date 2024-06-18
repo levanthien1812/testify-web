@@ -7,7 +7,7 @@ import { TestItf } from "../../../types/types";
 import { format } from "date-fns";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
-import { roles } from "../../../config/config";
+import { roles, testStatus } from "../../../config/config";
 
 type RecentTestItemProps = {
     test: TestItf;
@@ -19,8 +19,16 @@ const RecentTestItem = ({ test }: RecentTestItemProps) => {
     const user = useSelector((state: RootState) => state.auth.user);
 
     const handleClickView = () => {
-        if (user!.role === roles.MAKER) navigate(`/tests/${test._id}/edit`);
-        else navigate(`/tests/${test._id}`);
+        if (user!.role === roles.MAKER) {
+            if (
+                test.status === testStatus.DRAFT ||
+                test.status === testStatus.PUBLISHABLE
+            )
+                navigate(`/tests/${test._id}/edit`);
+            else navigate(`/tests/${test._id}`);
+        } else {
+            navigate(`/tests/${test._id}`);
+        }
     };
 
     return (
