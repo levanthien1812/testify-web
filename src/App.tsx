@@ -11,12 +11,17 @@ import { roles } from "./config/config";
 import HomePage from "./pages/homePage/HomePage";
 import CreateTestPage from "./pages/createTestPage.tsx/CreateTestPage";
 import { GoogleOAuthProvider } from "@react-oauth/google";
-import TakeTestPage from "./pages/takeTestPage.tsx/TakeTestPage";
+import TakeTestPage from "./pages/takeTestPage/TakeTestPage";
 import NotFound from "./pages/others/NotFound";
+import { useSelector } from "react-redux";
+import { RootState } from "./stores/rootState";
+import ViewTestPage from "./pages/viewTestPage/ViewTestPage";
 
 const queryClient = new QueryClient();
 
 function App() {
+    const user = useSelector((state: RootState) => state.auth.user);
+
     const router = createBrowserRouter([
         {
             element: <MainLayout />,
@@ -58,16 +63,20 @@ function App() {
                             path: "/home",
                             element: <HomePage />,
                         },
+                        {
+                            path: "/tests/:testId",
+                            element:
+                                user?.role === roles.MAKER ? (
+                                    <ViewTestPage />
+                                ) : (
+                                    <TakeTestPage />
+                                ),
+                        },
                     ],
                 },
                 {
                     element: <ProtectedRoute allowedRoles={[roles.TAKER]} />,
-                    children: [
-                        {
-                            path: "/tests/:testId",
-                            element: <TakeTestPage />,
-                        },
-                    ],
+                    children: [],
                 },
                 {
                     path: "*",

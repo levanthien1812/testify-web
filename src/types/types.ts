@@ -179,7 +179,7 @@ export type AnswerItf = {
     _id: string;
     date: Date;
     content: MultipleChoicesAnswerItf | FillGapsAnswerItf | MatchingAnswerItf;
-    score?: number
+    score?: number;
 };
 
 export interface MultipleChoicesAnswerFormDataItf {
@@ -245,12 +245,13 @@ export type UserAnswer =
     | UserFillGapsAnswerFormDataItf
     | UserMatchingAnswerFormDataItf;
 
-export interface TestResultItf {
-    taker_id: string;
+export interface SubmissionItf {
+    _id: string;
+    taker_id: string | Omit<userItf, "role">;
     test_id: string;
-    score: number;
-    correct_answers: number;
-    wrong_answers: number;
+    score?: number;
+    correct_answers?: number;
+    wrong_answers?: number;
     remark?: string;
     start_time: Date;
     submit_time: Date;

@@ -19,19 +19,6 @@ const TestAnswers = ({ test, onBack, onNext, onAfterUpdate }: SectionProps) => {
         onNext();
     };
 
-    const getQuestions = useCallback(
-        (partId?: string): QuestionItf[] => {
-            if (partId) {
-                const part = test.parts.find((part) => part._id === partId)!;
-
-                return part.questions!;
-            } else {
-                return test.questions!;
-            }
-        },
-        [test.parts, test.questions]
-    );
-
     return (
         <div className="px-20 py-12 shadow-2xl">
             <h2 className="text-center text-3xl">Test Answers</h2>
@@ -41,18 +28,18 @@ const TestAnswers = ({ test, onBack, onNext, onAfterUpdate }: SectionProps) => {
 
             <div className="space-y-3 mt-4">
                 {test.parts.length > 0 &&
-                    test.parts.map((part, index) => (
+                    test.parts.map((part) => (
                         <Questions
                             part={part}
                             key={part.name}
-                            questions={getQuestions(part._id)}
+                            questions={part.questions!}
                             onAfterUpdate={onAfterUpdate}
                             withAnswer={true}
                         />
                     ))}
                 {test.parts.length === 0 && (
                     <div className={`px-4 py-4 space-y-2`}>
-                        {getQuestions().map((question) => (
+                        {test.questions!.map((question) => (
                             <Answer
                                 question={question}
                                 key={question._id}
