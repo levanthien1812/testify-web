@@ -1,6 +1,7 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { FillGapsQuestionFormDataItf } from "../../../../types/types";
 import TextEditor from "../../../richTextEditor/TiptapEditor";
+import { useCurrentEditor } from "@tiptap/react";
 
 const FillGapsQuestion: React.FC<{
     content: FillGapsQuestionFormDataItf;
@@ -38,9 +39,14 @@ const FillGapsQuestion: React.FC<{
             </div>
             <div className="flex flex-col mt-2">
                 <label htmlFor="text">Text: </label>
-                <TextEditor content={text} setContent={setText} />
-                <p className="text-right text-sm italic">
-                    Note: Include *** as mark of gaps.
+                <TextEditor
+                    content={text}
+                    setContent={setText}
+                    withInsertGapButton={true}
+                />
+                <p className="text-right text-sm italic mt-2">
+                    Place the cursor somewhere in the text and click Insert Gap
+                    button{" "}
                 </p>
             </div>
         </>
