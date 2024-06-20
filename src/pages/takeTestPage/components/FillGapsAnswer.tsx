@@ -3,12 +3,12 @@ import { FillGapsAnswerItf, FillGapsQuestionItf } from "../../../types/types";
 
 type FillGapsAnswerProps = {
     content: FillGapsQuestionItf;
-    userAnswer: FillGapsAnswerItf;
+    userAnswer: FillGapsAnswerItf | null;
 };
 
 const FillGapsAnswer = ({ content, userAnswer }: FillGapsAnswerProps) => {
     const gaps = useMemo(() => {
-        return userAnswer.answer;
+        return userAnswer ? userAnswer.answer : content.answer || [];
     }, [userAnswer]);
 
     return (
@@ -35,13 +35,14 @@ const FillGapsAnswer = ({ content, userAnswer }: FillGapsAnswerProps) => {
                             value={gaps[index]}
                             id={`gap-${index + 1}`}
                             className={`border ${
-                                !content.answer
-                                    ? "border-gray-500 text-black"
-                                    : userAnswer.answer[index] ===
+                                userAnswer && content.answer
+                                    ? userAnswer.answer[index] ===
                                       content.answer[index]
-                                    ? "border-blue-600 text-blue"
-                                    : "border-red-600 text-red"
+                                        ? "border-blue-600 text-blue"
+                                        : "border-red-600 text-red"
+                                    : "border-gray-500 text-black"
                             } px-2 py-1 grow focus:border-orange-600 outline-none leading-5`}
+                            readOnly
                         />
                     </div>
                 ))}

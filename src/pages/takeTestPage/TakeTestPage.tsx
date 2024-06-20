@@ -28,7 +28,7 @@ const TakeTestPage = () => {
     const [remainingTime, setRemainingTime] = React.useState(100000000);
     const [forbidden, setForbidden] = useState(false);
     const [startTime, setStartTime] = useState(new Date());
-    const [withAnswers, setWithAnswers] = useState(false);
+    const [withUserAnswers, setWithUserAnswers] = useState(false);
     const closeIntervalRef = useRef<NodeJS.Timer | null>(null);
     const openIntervalRef = useRef<NodeJS.Timer | null>(null);
     const remainingIntervalRef = useRef<NodeJS.Timer | null>(null);
@@ -55,10 +55,10 @@ const TakeTestPage = () => {
         data: test,
         refetch: refetchTest,
     } = useQuery<TestItf>({
-        queryKey: ["test", testId, { with_answers: withAnswers }],
+        queryKey: ["test", testId, { with_user_answers: withUserAnswers }],
         queryFn: async () => {
             const responseData = await getTest(testId!, {
-                with_answers: withAnswers,
+                with_user_answers: withUserAnswers,
             });
             return responseData.test;
         },
@@ -219,7 +219,7 @@ const TakeTestPage = () => {
                     submission={submission}
                     test={test}
                     onViewDetail={() => {
-                        setWithAnswers(true);
+                        setWithUserAnswers(true);
                     }}
                 />
             )}
