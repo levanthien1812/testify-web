@@ -2,6 +2,7 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import { MultipleChoiceQuestionFormDataItf } from "../../../../types/types";
 import Option from "./Option";
 import TextEditor from "../../../richTextEditor/TiptapEditor";
+import { toast } from "react-toastify";
 
 const MulitpleChoiceQuestion: React.FC<{
     content: MultipleChoiceQuestionFormDataItf;
@@ -33,10 +34,18 @@ const MulitpleChoiceQuestion: React.FC<{
     };
 
     const handleAddOption = () => {
+        if (mcqContent.options.length >= 10) {
+            toast.warning("Maximum 10 options are allowed");
+            return;
+        }
         manipulateOptions((arr) => arr.push({ text: "" }));
     };
 
     const handleDeleteOption = (index: number) => {
+        if (mcqContent.options.length <= 2) {
+            toast.warning("Minimum 2 options are required");
+            return;
+        }
         manipulateOptions((arr) => arr.splice(index, 1));
     };
 

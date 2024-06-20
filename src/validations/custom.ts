@@ -1,4 +1,5 @@
 import { CustomHelpers } from "joi";
+import { FillGapsQuestionFormDataItf } from "../types/types";
 
 export const password = (value: string, helpers: CustomHelpers) => {
     if (value.length < 8) {
@@ -11,5 +12,22 @@ export const password = (value: string, helpers: CustomHelpers) => {
             custom: "password must contain at least 1 letter and 1 number",
         });
     }
+    return value;
+};
+
+export const numGaps = (
+    value: FillGapsQuestionFormDataItf,
+    helpers: CustomHelpers
+) => {
+    const { text, num_gaps } = value;
+
+    const gapCount = (text.match(/___/g) || []).length;
+
+    if (gapCount !== num_gaps) {
+        return helpers.message({
+            custom: "Number of gaps in text does not equal to num_gaps",
+        });
+    }
+
     return value;
 };

@@ -3,10 +3,14 @@ import "./styles.scss";
 import Color from "@tiptap/extension-color";
 import ListItem from "@tiptap/extension-list-item";
 import TextStyle from "@tiptap/extension-text-style";
-import { EditorProvider, useCurrentEditor } from "@tiptap/react";
+import {
+    Editor,
+    EditorContextValue,
+    EditorProvider,
+    useCurrentEditor,
+} from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { MouseEventHandler, ReactNode, useEffect, useState } from "react";
-import styles from "./editor.module.css";
+import { MouseEventHandler, ReactNode, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faA,
@@ -16,7 +20,6 @@ import {
     faItalic,
     faListOl,
     faListUl,
-    faParagraph,
     faRedo,
     faStrikethrough,
     faUndo,
@@ -37,7 +40,7 @@ const EditorButton = ({
 }: EditorButtonProps) => {
     return (
         <button
-            className={`border w-8 shrink-0 justify-center text-nowrap flex items-center py-2 text-sm border-black ${
+            className={`border w-fit px-2 min-w-8 shrink-0 justify-center text-nowrap flex items-center py-2 text-sm leading-none border-black active:bg-orange-600 active:text-white ${
                 className === "is-active"
                     ? "bg-orange-600 text-white"
                     : "bg-white text-black"
@@ -50,7 +53,11 @@ const EditorButton = ({
     );
 };
 
-const MenuBar = () => {
+const MenuBar = ({
+    withInsertGapButton = false,
+}: {
+    withInsertGapButton: boolean;
+}) => {
     const { editor } = useCurrentEditor();
 
     useEffect(() => {
@@ -65,6 +72,18 @@ const MenuBar = () => {
 
     return (
         <div className="flex gap-1 items-start mb-2 overflow-x-scroll scrollbar-thin scrollbar-track-transparent scrollbar-thumb-slate-300 hover:scrollbar-thumb-slate-400">
+            {withInsertGapButton && (
+                <EditorButton
+                    onClick={() =>
+                        editor.chain().focus().insertContent("___").run()
+                    }
+                    disabled={
+                        !editor.can().chain().focus().insertContent("___").run()
+                    }
+                >
+                    Insert Gap
+                </EditorButton>
+            )}
             <EditorButton
                 onClick={() => editor.chain().focus().toggleBold().run()}
                 disabled={!editor.can().chain().focus().toggleBold().run()}
@@ -94,12 +113,6 @@ const MenuBar = () => {
                 <FontAwesomeIcon icon={faCode} />
             </EditorButton>
 
-            <EditorButton
-                onClick={() => editor.chain().focus().setParagraph().run()}
-                className={editor.isActive("paragraph") ? "is-active" : ""}
-            >
-                <FontAwesomeIcon icon={faParagraph} />
-            </EditorButton>
             <EditorButton
                 onClick={() => editor.chain().focus().toggleBulletList().run()}
                 className={editor.isActive("bulletList") ? "is-active" : ""}
@@ -167,12 +180,17 @@ const extensions = [
 type TextEditorProps = {
     content: string;
     setContent: React.Dispatch<React.SetStateAction<string>>;
+    withInsertGapButton?: boolean;
 };
 
-const TextEditor = ({ content, setContent }: TextEditorProps) => {
+const TextEditor = ({
+    content,
+    setContent,
+    withInsertGapButton = false,
+}: TextEditorProps) => {
     return (
         <EditorProvider
-            slotBefore={<MenuBar />}
+            slotBefore={<MenuBar withInsertGapButton={withInsertGapButton} />}
             extensions={extensions}
             content={content}
             onUpdate={(e) => {

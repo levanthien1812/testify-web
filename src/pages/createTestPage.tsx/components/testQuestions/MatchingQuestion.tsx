@@ -2,6 +2,7 @@ import React, { ChangeEvent, useEffect, useState } from "react";
 import { MatchingQuestionFormDataItf } from "../../../../types/types";
 import Option from "./Option";
 import TextEditor from "../../../richTextEditor/TiptapEditor";
+import { toast } from "react-toastify";
 
 const MatchingQuestion: React.FC<{
     content: MatchingQuestionFormDataItf;
@@ -42,17 +43,25 @@ const MatchingQuestion: React.FC<{
     };
 
     const handleAddOption = () => {
+        if (mcqContent.left_items.length >= 10) {
+            toast.warning("You can't add more than 10 options");
+            return;
+        }
         manipulateArray("left_items", (arr) => arr.push({ text: "" }));
         manipulateArray("right_items", (arr) => arr.push({ text: "" }));
     };
 
     const handleDeleteOption = (index: number) => {
+        if (mcqContent.left_items.length <= 2) {
+            toast.warning("You can't delete more than 2 options");
+            return;
+        }
         manipulateArray("left_items", (arr) => arr.splice(index, 1));
         manipulateArray("right_items", (arr) => arr.splice(index, 1));
     };
 
     useEffect(() => {
-        onContentChange({...mcqContent, text});
+        onContentChange({ ...mcqContent, text });
     }, [mcqContent, text]);
 
     return (

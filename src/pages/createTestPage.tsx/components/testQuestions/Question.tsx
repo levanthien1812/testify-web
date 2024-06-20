@@ -16,6 +16,8 @@ import { useMutation } from "react-query";
 import { createQuestion, updateQuestion } from "../../../../services/test";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
+import { mulitpleChoicesQuestionSchema } from "../../../../validations/test";
+import { questionTypeToQuestionSchema } from "../../../../utils/mapping";
 
 type QuestionProps = {
     question: QuestionItf | null;
@@ -37,7 +39,7 @@ const Question = ({
         useState<QuestionFormDataItf>(
             part
                 ? {
-                      score: 0,
+                      score: 1,
                       level: testLevels.NONE,
                       type: question
                           ? question.type
@@ -47,7 +49,7 @@ const Question = ({
                       part_id: part._id,
                   }
                 : {
-                      score: 0,
+                      score: 1,
                       level: testLevels.NONE,
                       type: question
                           ? question.type
@@ -161,6 +163,16 @@ const Question = ({
         });
 
     const handleSaveQuestion = () => {
+        const questionSchema = questionTypeToQuestionSchema.get(
+            questionFormData.type
+        )!;
+        const { error } = questionSchema.validate(questionFormData.content);
+
+        if (error) {
+            toast.error(error.message);
+            return;
+        }
+
         if (!question) {
             createQuestionMutate(questionFormData);
         } else {

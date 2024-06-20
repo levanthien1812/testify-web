@@ -1,5 +1,6 @@
 import Joi from "joi";
 import { publicAnswersOptions, testLevels } from "../config/config";
+import { numGaps } from "./custom";
 
 export const partSchema = Joi.object().keys({
     _id: Joi.string(),
@@ -25,6 +26,31 @@ export const testFormDataSchema = Joi.object().keys({
         ...Object.values(publicAnswersOptions)
     ),
     public_answers_date: Joi.date().optional(),
+});
+
+export const fillGapsQuestionSchema = Joi.object()
+    .keys({
+        text: Joi.string().required(),
+        num_gaps: Joi.number().required().min(1),
+    })
+    .custom(numGaps);
+
+export const mulitpleChoicesQuestionSchema = Joi.object().keys({
+    text: Joi.string().required(),
+    allow_multiple: Joi.boolean().optional(),
+    options: Joi.array().items({
+        text: Joi.string().required(),
+    }),
+});
+
+export const matchingQuestionSchema = Joi.object().keys({
+    text: Joi.string().required(),
+    left_items: Joi.array().items({
+        text: Joi.string().required(),
+    }),
+    right_items: Joi.array().items({
+        text: Joi.string().required(),
+    }),
 });
 
 export const testSchema = Joi.object().keys({});
