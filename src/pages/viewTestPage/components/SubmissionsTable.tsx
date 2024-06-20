@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { SubmissionItf, userItf } from "../../types/types";
+import { SubmissionItf, userItf } from "../../../types/types";
 import {
     useReactTable,
     getCoreRowModel,
@@ -11,9 +11,9 @@ import {
     ColumnFiltersState,
 } from "@tanstack/react-table";
 import { format } from "date-fns";
-import { formatTime } from "../../utils/time";
-import { Link } from "react-router-dom";
+import { formatTime } from "../../../utils/time";
 import _ from "lodash";
+import TakerSubmissionDetail from "./TakerSubmissionDetail";
 
 type SubmissionsTableProps = {
     submissions: SubmissionItf[];
@@ -102,6 +102,7 @@ const SubmissionsTable = ({ submissions }: SubmissionsTableProps) => {
 
     const [enableFilter, setEnableFilter] = useState(false);
     const [filters, setFilters] = useState<ColumnFiltersState>([]);
+    const [selectedTakerId, setSelectedTakerId] = useState<string | null>();
 
     const table = useReactTable({
         columns: columns,
@@ -128,7 +129,7 @@ const SubmissionsTable = ({ submissions }: SubmissionsTableProps) => {
         onColumnFiltersChange: setFilters,
     });
 
-    console.log(table.getHeaderGroups()[0].headers[0].column);
+    // console.log(table.getHeaderGroups()[0].headers[0].column);
 
     return (
         <div>
@@ -212,12 +213,17 @@ const SubmissionsTable = ({ submissions }: SubmissionsTableProps) => {
                                 </td>
                             ))}
                             <td className="text-center py-1 px-1 border border-slate-400">
-                                <Link
-                                    to={`test/${row.original.test_id}/submissions/${row.original._id}`}
+                                <button
                                     className="text-sm bg-orange-600 text-white px-3 py-0.5 hover:bg-orange-700"
+                                    onClick={() =>
+                                        setSelectedTakerId(
+                                            (row.original.taker_id as userItf)
+                                                .id
+                                        )
+                                    }
                                 >
                                     Detail
-                                </Link>
+                                </button>
                             </td>
                         </tr>
                     ))}
@@ -266,6 +272,19 @@ const SubmissionsTable = ({ submissions }: SubmissionsTableProps) => {
                     ))}
                 </select>
             </div>
+            {selectedTakerId && (
+                <TakerSubmissionDetail
+                    submission={
+                        submissions.find(
+                            (submission) =>
+                                (submission.taker_id as Omit<userItf, "role">)
+                                    .id === selectedTakerId
+                        )!
+                    }
+                    takerId={selectedTakerId}
+                    onClose={() => setSelectedTakerId(null)}
+                />
+            )}
         </div>
     );
 };

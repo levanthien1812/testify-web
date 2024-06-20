@@ -28,13 +28,29 @@ export const getTests = async () => {
 
 export const getTest = async (
     testId: string,
-    options?: { with_answers?: boolean }
+    options?: { with_user_answers?: boolean }
 ) => {
     try {
         const response = await instance.get(
             `/tests/${testId}${
-                options && options.with_answers ? "?with_answers=true" : ""
+                options && options.with_user_answers
+                    ? "?with_user_answers=true"
+                    : ""
             }`
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getTestWithTakerAnswers = async (
+    testId: string,
+    takerId: string
+) => {
+    try {
+        const response = await instance.get(
+            `/tests/${testId}/submissions/${takerId}`
         );
         return response.data;
     } catch (error) {

@@ -24,7 +24,11 @@ const Answer = ({ question }: QuestionProps) => {
                 <span className="underline">Question {question.order}:</span>{" "}
                 {question.content.answer && (
                     <span className="font-bold italic">
-                        ({question.answer!.score} points)
+                        (
+                        {question.answer
+                            ? question.answer.score
+                            : question.score}{" "}
+                        points)
                     </span>
                 )}
             </div>
@@ -32,20 +36,31 @@ const Answer = ({ question }: QuestionProps) => {
                 <MultipleChoicesAnswer
                     content={question.content as MultipleChoiceQuestionItf}
                     userAnswer={
-                        question.answer!.content as MultipleChoicesAnswerItf
+                        question.answer
+                            ? (question.answer
+                                  .content as MultipleChoicesAnswerItf)
+                            : null
                     }
                 />
             )}
             {question.type === questionTypes.FILL_GAPS && (
                 <FillGapsAnswer
                     content={question.content as FillGapsQuestionItf}
-                    userAnswer={question.answer!.content as FillGapsAnswerItf}
+                    userAnswer={
+                        question.answer
+                            ? (question.answer.content as FillGapsAnswerItf)
+                            : null
+                    }
                 />
             )}
             {question.type === questionTypes.MATCHING && (
                 <MatchingAnswer
                     content={question.content as MatchingQuestionItf}
-                    userAnswer={question.answer!.content as MatchingAnswerItf}
+                    userAnswer={
+                        question.answer
+                            ? (question.answer.content as MatchingAnswerItf)
+                            : null
+                    }
                 />
             )}
         </div>

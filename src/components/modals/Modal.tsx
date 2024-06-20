@@ -26,10 +26,12 @@ const Modal = ({ children, onClose, className }: ModalProps) => {
     return createPortal(
         <>
             <div
-                className={`absolute top-0 left-0 right-0 bottom-0 m-auto bg-black bg-opacity-15 shadow-md w-full h-full ${className}`}
+                className={`absolute top-0 left-0 right-0 bottom-0 m-auto bg-black bg-opacity-15 shadow-md w-full h-full`}
                 onClick={onClose}
             ></div>
-            <div className="absolute top-0 left-0 right-0 bottom-0 m-auto bg-white shadow-md w-fit min-w-40 md:min-w-80 2xl:min-w-[500px] h-fit">
+            <div
+                className={`absolute top-0 left-0 right-0 bottom-0 m-auto bg-white shadow-md w-fit h-fit min-w-40 md:min-w-80 2xl:min-w-[500px] ${className}`}
+            >
                 {children}
             </div>
         </>,
@@ -51,7 +53,11 @@ Modal.Header = ({ title, onClose }: HeaderProps) => {
 };
 
 Modal.Body = ({ children }: BodyProps) => {
-    return <div className="px-4 py-6">{children}</div>;
+    return (
+        <div className="px-4 py-6 max-h-[70vh] overflow-y-scroll">
+            {children}
+        </div>
+    );
 };
 
 Modal.Footer = ({ children }: FooterProps) => {

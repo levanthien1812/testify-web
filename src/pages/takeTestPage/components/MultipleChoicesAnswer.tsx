@@ -6,16 +6,18 @@ import {
 
 type MultipleChoicesAnswerProps = {
     content: MultipleChoiceQuestionItf;
-    userAnswer: MultipleChoicesAnswerItf;
+    userAnswer: MultipleChoicesAnswerItf | null;
 };
 
 const MultipleChoicesAnswer = ({
     content,
-    userAnswer ,
+    userAnswer,
 }: MultipleChoicesAnswerProps) => {
     const optionChosen = useMemo(() => {
         return userAnswer && userAnswer.answer.length > 0
             ? userAnswer.answer[0]
+            : content.answer
+            ? content.answer[0]
             : "";
     }, [userAnswer]);
 
@@ -43,23 +45,30 @@ const MultipleChoicesAnswer = ({
                                     : option._id === optionChosen
                             }
                             className={
-                                content.answer &&
-                                content.answer[0] === option._id
-                                    ? "accent-blue-600"
-                                    : "accent-red-600"
+                                userAnswer
+                                    ? content.answer &&
+                                      content.answer[0] === option._id
+                                        ? "accent-blue-600"
+                                        : "accent-red-600"
+                                    : ""
                             }
+                            readOnly
                         />
                         <label
                             htmlFor={option._id}
                             className={`grow ${
-                                content.answer &&
-                                content.answer[0] === option._id &&
-                                "text-blue-600"
+                                userAnswer
+                                    ? content.answer &&
+                                      content.answer[0] === option._id &&
+                                      "text-blue-600"
+                                    : ""
                             } ${
-                                content.answer &&
-                                content.answer[0] !== option._id &&
-                                optionChosen === option._id &&
-                                "text-red-600"
+                                userAnswer
+                                    ? content.answer &&
+                                      content.answer[0] !== option._id &&
+                                      optionChosen === option._id &&
+                                      "text-red-600"
+                                    : ""
                             }`}
                         >
                             {option.text}

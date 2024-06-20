@@ -6,12 +6,12 @@ import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 type MatchingAnswerProps = {
     content: MatchingQuestionItf;
-    userAnswer: MatchingAnswerItf;
+    userAnswer: MatchingAnswerItf | null;
 };
 
 const MatchingAnswer = ({ content, userAnswer }: MatchingAnswerProps) => {
     const matchings = useMemo(() => {
-        return userAnswer.answer || [];
+        return userAnswer ? userAnswer.answer || [] : content.answer || [];
     }, [userAnswer]);
 
     const isCorrectMatching = (matching: { left: string; right: string }) => {
@@ -66,11 +66,11 @@ const MatchingAnswer = ({ content, userAnswer }: MatchingAnswerProps) => {
                         <div
                             key={matching.left}
                             className={`${
-                                !content.answer
-                                    ? "bg-gray-100"
-                                    : isCorrectMatching(matching)
-                                    ? "bg-blue-100"
-                                    : "bg-red-100"
+                                content.answer && userAnswer
+                                    ? isCorrectMatching(matching)
+                                        ? "bg-blue-100"
+                                        : "bg-red-100"
+                                    : "bg-gray-100"
                             } px-4 py-1 flex items-center gap-2 relative`}
                         >
                             <span>
