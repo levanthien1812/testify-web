@@ -1,15 +1,15 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { MultipleChoiceQuestionFormDataItf } from "../../../../types/types";
+import { MultipleChoiceQuestionBodyItf } from "../../../../types/types";
 import Option from "./Option";
 import TextEditor from "../../../richTextEditor/TiptapEditor";
 import { toast } from "react-toastify";
 
 const MulitpleChoiceQuestion: React.FC<{
-    content: MultipleChoiceQuestionFormDataItf;
-    onContentChange: (content: MultipleChoiceQuestionFormDataItf) => void;
+    content: MultipleChoiceQuestionBodyItf;
+    onContentChange: (content: MultipleChoiceQuestionBodyItf) => void;
 }> = ({ content, onContentChange }) => {
     const [mcqContent, setMcqContent] =
-        useState<MultipleChoiceQuestionFormDataItf>(content);
+        useState<MultipleChoiceQuestionBodyItf>(content);
     const [text, setText] = useState<string>(content.text);
 
     const manipulateOptions = (action: (array: { text: string }[]) => void) => {

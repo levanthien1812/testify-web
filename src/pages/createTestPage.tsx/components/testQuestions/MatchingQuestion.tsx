@@ -1,26 +1,26 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { MatchingQuestionFormDataItf } from "../../../../types/types";
+import { MatchingQuestionBodyItf } from "../../../../types/types";
 import Option from "./Option";
 import TextEditor from "../../../richTextEditor/TiptapEditor";
 import { toast } from "react-toastify";
 
 const MatchingQuestion: React.FC<{
-    content: MatchingQuestionFormDataItf;
-    onContentChange: (content: MatchingQuestionFormDataItf) => void;
+    content: MatchingQuestionBodyItf;
+    onContentChange: (content: MatchingQuestionBodyItf) => void;
 }> = ({ content, onContentChange }) => {
-    const [mcqContent, setMcqContent] =
-        useState<MatchingQuestionFormDataItf>(content);
+    const [mqContent, setMqContent] =
+        useState<MatchingQuestionBodyItf>(content);
     const [text, setText] = useState<string>(content.text);
 
     const manipulateArray = (
         arrayName: "left_items" | "right_items",
         action: (array: { text: string }[]) => void
     ) => {
-        const updatedContent = { ...mcqContent };
+        const updatedContent = { ...mqContent };
         const updatedArray = updatedContent[arrayName];
         action(updatedArray);
         updatedContent[arrayName] = updatedArray;
-        setMcqContent(updatedContent);
+        setMqContent(updatedContent);
     };
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -38,12 +38,12 @@ const MatchingQuestion: React.FC<{
                 (arr) => (arr[parseInt(index)].text = value)
             );
         } else {
-            setMcqContent({ ...mcqContent, [name]: value });
+            setMqContent({ ...mqContent, [name]: value });
         }
     };
 
     const handleAddOption = () => {
-        if (mcqContent.left_items.length >= 10) {
+        if (mqContent.left_items.length >= 10) {
             toast.warning("You can't add more than 10 options");
             return;
         }
@@ -52,7 +52,7 @@ const MatchingQuestion: React.FC<{
     };
 
     const handleDeleteOption = (index: number) => {
-        if (mcqContent.left_items.length <= 2) {
+        if (mqContent.left_items.length <= 2) {
             toast.warning("You can't delete more than 2 options");
             return;
         }
@@ -61,8 +61,8 @@ const MatchingQuestion: React.FC<{
     };
 
     useEffect(() => {
-        onContentChange({ ...mcqContent, text });
-    }, [mcqContent, text]);
+        onContentChange({ ...mqContent, text });
+    }, [mqContent, text]);
 
     return (
         <>

@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { PartFormDataItf, TestItf, TestPartItf } from "../../../types/types";
+import { PartBodyItf, TestItf, TestPartItf } from "../../../types/types";
 import { useMutation } from "react-query";
 import { validateParts } from "../../../services/test";
 import { toast } from "react-toastify";

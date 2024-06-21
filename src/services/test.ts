@@ -1,16 +1,16 @@
 import { instance } from "../config/axios";
 import {
-    AnswerFormData,
-    PartFormDataItf,
-    QuestionFormDataItf,
-    TakerFormDataItf,
-    TestFormDataItf,
+    AnswerBody,
+    PartBodyItf,
+    QuestionBodyItf,
+    TakerBodyItf,
+    TestBodyItf,
     UserAnswer,
 } from "../types/types";
 
-export const createTest = async (testFormData: TestFormDataItf) => {
+export const createTest = async (testBody: TestBodyItf) => {
     try {
-        const response = await instance.post("/tests", testFormData);
+        const response = await instance.post("/tests", testBody);
         return response.data;
     } catch (error) {
         throw error;
@@ -60,17 +60,26 @@ export const getTestWithTakerAnswers = async (
 
 export const updateTest = async (
     testId: string,
-    testFormData: Partial<TestFormDataItf>
+    testBody: Partial<TestBodyItf>
 ) => {
     try {
-        const response = await instance.patch(`/tests/${testId}`, testFormData);
+        const response = await instance.patch(`/tests/${testId}`, testBody);
         return response.data;
     } catch (error) {
         throw error;
     }
 };
 
-export const addPart = async (testId: string, partBody: PartFormDataItf) => {
+export const publishTest = async (testId: string) => {
+    try {
+        const response = await instance.patch(`/tests/${testId}/publish`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const addPart = async (testId: string, partBody: PartBodyItf) => {
     try {
         const response = await instance.post(
             `/tests/${testId}/parts`,
@@ -85,7 +94,7 @@ export const addPart = async (testId: string, partBody: PartFormDataItf) => {
 export const updatePart = async (
     testId: string,
     partId: string,
-    partBody: PartFormDataItf
+    partBody: PartBodyItf
 ) => {
     try {
         const response = await instance.patch(
@@ -109,7 +118,7 @@ export const validateParts = async (testId: string) => {
 
 export const createQuestion = async (
     testId: string,
-    questionBody: QuestionFormDataItf
+    questionBody: QuestionBodyItf
 ) => {
     try {
         const response = await instance.post(`/tests/${testId}/questions`, {
@@ -124,7 +133,7 @@ export const createQuestion = async (
 export const updateQuestion = async (
     testId: string,
     questionId: string,
-    questionBody: QuestionFormDataItf
+    questionBody: QuestionBodyItf
 ) => {
     try {
         const response = await instance.patch(
@@ -140,7 +149,7 @@ export const updateQuestion = async (
 export const addAnswer = async (
     testId: string,
     questionId: string,
-    answerBody: AnswerFormData
+    answerBody: AnswerBody
 ) => {
     try {
         const response = await instance.patch(
@@ -159,7 +168,7 @@ export const addAnswer = async (
 export const createTakers = async (
     testId: string,
     takersBody: {
-        takers: TakerFormDataItf[];
+        takers: TakerBodyItf[];
     }
 ) => {
     try {

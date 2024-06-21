@@ -4,19 +4,23 @@ import TestInfo from "./components/TestInfo";
 import TestParts from "./components/TestParts";
 import TestAnswers from "./components/TestAnswers";
 import { TestItf } from "../../types/types";
-import { useParams } from "react-router";
-import { useQuery } from "react-query";
-import { getTest } from "../../services/test";
+import { useNavigate, useParams } from "react-router";
+import { useMutation, useQuery } from "react-query";
+import { getTest, publishTest, updateTest } from "../../services/test";
 import TestTakers from "./components/TestTakers";
+import { testStatus } from "../../config/config";
+import { AxiosError } from "axios";
+import { toast } from "react-toastify";
 
 const CreateTestPage = () => {
     const [test, setTest] = useState<TestItf | null>(null);
     const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
+    const navigate = useNavigate();
 
     const { testId: testIdParam } = useParams();
     const [testId, setTestId] = useState<string | undefined>(testIdParam);
 
-    const { data, isFetching, refetch } = useQuery({
+    const { data, isLoading, refetch } = useQuery({
         queryFn: async () => {
             const res = await getTest(testId!);
             return res.test;
@@ -24,6 +28,28 @@ const CreateTestPage = () => {
         queryKey: [`get-test`, { testId }],
         enabled: false,
     });
+
+    const { mutate: publishTestMutate, isLoading: publishTestLoading } =
+        useMutation({
+            mutationFn: async () => {
+                await publishTest(testId!);
+            },
+            mutationKey: [
+                `update-test`,
+                testId,
+                { body: { status: testStatus.PUBLISHED } },
+            ],
+            onSuccess: () => {
+                toast.success("Test published");
+                navigate("/home");
+                refetch();
+            },
+            onError: (err) => {
+                if (err instanceof AxiosError) {
+                    toast.error(err.response?.data.message);
+                }
+            },
+        });
 
     useEffect(() => {
         if (testId) {
@@ -76,7 +102,18 @@ const CreateTestPage = () => {
                     );
                 })}
             </div>
-            <div className="2xl:w-3/5 w-4/5 mx-auto my-6">
+            <div className="2xl:w-3/5 w-4/5 mx-auto my-6 relative">
+                {test && test.status === testStatus.PUBLISHABLE && (
+                    <div className="absolute top-0 left-0 w-full h-0 flex items-center justify-center">
+                        <button
+                            className="bg-orange-600 hover:bg-orange-700 shadow-md text-white px-8 py-1 rounded-full uppercase disabled:bg-gray-600"
+                            onClick={() => publishTestMutate()}
+                            disabled={publishTestLoading}
+                        >
+                            Publish test
+                        </button>
+                    </div>
+                )}
                 {step === 1 && (
                     <TestInfo
                         test={test}

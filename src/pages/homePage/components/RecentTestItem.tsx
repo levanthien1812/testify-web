@@ -1,6 +1,6 @@
 import { faArrowRight, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState } from "react";
+import React, { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { TestItf } from "../../../types/types";
@@ -31,6 +31,23 @@ const RecentTestItem = ({ test }: RecentTestItemProps) => {
         }
     };
 
+    const statusColor = useMemo(() => {
+        switch (test.status) {
+            case testStatus.DRAFT:
+                return "bg-yellow-500";
+            case testStatus.PUBLISHABLE:
+                return "bg-cyan-600";
+            case testStatus.PUBLISHED:
+                return "bg-blue-600";
+            case testStatus.OPENED:
+                return "bg-green-600";
+            case testStatus.CLOSED:
+                return "bg-gray-600";
+            default:
+                return "bg-gray-600";
+        }
+    }, [test.status]);
+
     return (
         <div
             className="shadow-md shadow-gray-200 relative overflow-hidden w-fit shrink-0"
@@ -41,14 +58,16 @@ const RecentTestItem = ({ test }: RecentTestItemProps) => {
                 <p className="text-lg font-bold w-44 overflow-hidden text-ellipsis text-nowrap">
                     {test.title}
                 </p>
-                <div className="uppercase text-xs bg-green-600 text-white w-fit rounded-full px-1">
+                <div
+                    className={`uppercase text-xs ${statusColor} text-white w-fit rounded-full px-1`}
+                >
                     {test.status}
                 </div>
             </div>
             <div className="px-3 py-3">
                 <p>
                     <FontAwesomeIcon
-                        className="text-xs text-orange-600 me-2"
+                        className="text-xs text--600 me-2"
                         icon={faStar}
                     />
                     {test.num_parts} parts

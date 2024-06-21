@@ -41,11 +41,20 @@ const TestInfo = ({ test }: TestInfoProps) => {
             )}
 
             <p className="text-xl text-center mt-2">
-                Time begin:{" "}
+                Time start:{" "}
                 <span className="font-bold px-2 text-orange-600 underline">
                     {format(new Date(test.datetime), "dd/MM/yyyy HH:mm")}
                 </span>
             </p>
+
+            {test.close_time && (
+                <p className="text-xl text-center mt-2">
+                    Time close:{" "}
+                    <span className="font-bold px-2 text-orange-600 underline">
+                        {format(new Date(test.close_time), "dd/MM/yyyy HH:mm")}
+                    </span>
+                </p>
+            )}
 
             {test.description && (
                 <div className="bg-gray-100 px-6 py-4 mt-2">

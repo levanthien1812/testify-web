@@ -1,6 +1,6 @@
 import { ChangeEvent, useState } from "react";
 import Modal from "../../../../components/modals/Modal";
-import { TakerFormDataItf } from "../../../../types/types";
+import { TakerBodyItf } from "../../../../types/types";
 import { useMutation } from "react-query";
 import { createTakers } from "../../../../services/test";
 import { AxiosError } from "axios";
@@ -17,12 +17,12 @@ const CreateTakers = ({
     onClose,
     onAfterUpdate,
 }: CreateTakersProps) => {
-    const [takers, setTakers] = useState<TakerFormDataItf[]>([
+    const [takers, setTakers] = useState<TakerBodyItf[]>([
         { name: "", email: "" },
     ]);
 
     const { mutate, isLoading } = useMutation({
-        mutationFn: async (takersBody: TakerFormDataItf[]) => {
+        mutationFn: async (takersBody: TakerBodyItf[]) => {
             const data = await createTakers(testId, { takers: takersBody });
 
             return data;

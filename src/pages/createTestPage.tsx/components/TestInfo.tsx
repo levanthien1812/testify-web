@@ -1,11 +1,11 @@
 import { ChangeEvent, FormEvent, useEffect, useState } from "react";
 import { publicAnswersOptions, testLevels } from "../../../config/config";
-import { TestFormDataItf, TestItf } from "../../../types/types";
+import { TestBodyItf, TestItf } from "../../../types/types";
 import { createTest, updateTest } from "../../../services/test";
 import { useMutation } from "react-query";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
-import { testFormDataSchema } from "../../../validations/test";
+import { testBodySchema } from "../../../validations/test";
 import { formatTimezone } from "../../../utils/time";
 import _, { set } from "lodash";
 
@@ -17,7 +17,7 @@ type SectionProps = {
 };
 
 const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
-    const [testFormData, setTestFormData] = useState<TestFormDataItf>({
+    const [testBody, setTestBody] = useState<TestBodyItf>({
         title: "",
         datetime: new Date(),
         description: "",
@@ -37,9 +37,9 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
 
     const { mutate: createTestMutate, isLoading: createTestLoading } =
         useMutation({
-            mutationFn: async (testFormData: TestFormDataItf) =>
-                await createTest(testFormData),
-            mutationKey: ["create-test", { body: testFormData }],
+            mutationFn: async (testBody: TestBodyItf) =>
+                await createTest(testBody),
+            mutationKey: ["create-test", { body: testBody }],
             onSuccess: (data) => {
                 onAfterUpdate(data.test._id);
                 onNext();
@@ -53,12 +53,9 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
 
     const { mutate: updateTestMutate, isLoading: updateTestLoading } =
         useMutation({
-            mutationFn: async (testFormData: TestFormDataItf) =>
-                await updateTest(test!._id, testFormData),
-            mutationKey: [
-                "update-test",
-                { testId: test?._id, body: testFormData },
-            ],
+            mutationFn: async (testBody: TestBodyItf) =>
+                await updateTest(test!._id, testBody),
+            mutationKey: ["update-test", { testId: test?._id, body: testBody }],
             onSuccess: (data) => {
                 onAfterUpdate(data.test.id);
                 onNext();
@@ -86,7 +83,7 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
         } else if (["datetime", "close_time"].includes(name)) {
             value = new Date(value);
         }
-        setTestFormData({ ...testFormData, [name]: value });
+        setTestBody({ ...testBody, [name]: value });
     };
 
     const handleSubmit = async (e: FormEvent) => {
@@ -94,22 +91,18 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
 
         if (test) {
             updateTestMutate(
-                allowCloseTime
-                    ? testFormData
-                    : _.omit(testFormData, ["close_time"])
+                allowCloseTime ? testBody : _.omit(testBody, ["close_time"])
             );
         } else {
             createTestMutate(
-                allowCloseTime
-                    ? testFormData
-                    : _.omit(testFormData, ["close_time"])
+                allowCloseTime ? testBody : _.omit(testBody, ["close_time"])
             );
         }
     };
 
     useEffect(() => {
         if (test) {
-            setTestFormData({
+            setTestBody({
                 title: test.title,
                 datetime: new Date(test.datetime),
                 description: test.description,
@@ -137,32 +130,32 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
     }, [test]);
 
     useEffect(() => {
-        setTestFormData({
-            ...testFormData,
-            close_time: testFormData.datetime,
-            public_answers_date: testFormData.datetime,
+        setTestBody({
+            ...testBody,
+            close_time: testBody.datetime,
+            public_answers_date: testBody.datetime,
         });
-    }, [testFormData.datetime]);
+    }, [testBody.datetime]);
 
     useEffect(() => {
         if (
-            testFormData.public_answers_option ===
+            testBody.public_answers_option ===
                 publicAnswersOptions.AFTER_CLOSE_TIME &&
-            testFormData.close_time
+            testBody.close_time
         ) {
-            setTestFormData({
-                ...testFormData,
-                public_answers_date: testFormData.close_time,
+            setTestBody({
+                ...testBody,
+                public_answers_date: testBody.close_time,
             });
         }
-    }, [testFormData.public_answers_option, testFormData.close_time]);
+    }, [testBody.public_answers_option, testBody.close_time]);
 
     useEffect(() => {
-        const { error } = testFormDataSchema.validate(testFormData);
+        const { error } = testBodySchema.validate(testBody);
 
         if (!error) setIsFinished(true);
         else setIsFinished(false);
-    }, [testFormData]);
+    }, [testBody]);
 
     return (
         <div className="px-20 py-12 shadow-2xl">
@@ -178,7 +171,7 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                         name="title"
                         id="title"
                         className="border border-gray-500 px-2 py-1 focus:border-orange-600 outline-none grow"
-                        value={testFormData.title}
+                        value={testBody.title}
                         onChange={handleInputChange}
                         required
                     />
@@ -192,7 +185,7 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                         id="description"
                         name="description"
                         className="border border-gray-500 px-2 py-1 focus:border-orange-600 outline-none grow"
-                        value={testFormData.description}
+                        value={testBody.description}
                         onChange={handleInputChange}
                     />
                 </div>
@@ -205,7 +198,7 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                         id="datetime"
                         name="datetime"
                         className="border border-gray-500 px-2 py-1 focus:border-orange-600 outline-none grow"
-                        value={formatTimezone(testFormData.datetime)}
+                        value={formatTimezone(testBody.datetime)}
                         onChange={handleInputChange}
                         required
                     />
@@ -221,7 +214,7 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                         id="duration"
                         name="duration"
                         className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow"
-                        value={testFormData.duration}
+                        value={testBody.duration}
                         onChange={handleInputChange}
                         required
                     />
@@ -235,7 +228,7 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                         id="max_score"
                         name="max_score"
                         className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow"
-                        value={testFormData.max_score}
+                        value={testBody.max_score}
                         onChange={handleInputChange}
                         required
                     />
@@ -255,7 +248,7 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                         id="close_time"
                         name="close_time"
                         className="border border-gray-500 px-2 py-1 focus:border-orange-600 outline-none grow disabled:bg-gray-100 disabled:cursor-not-allowed"
-                        value={formatTimezone(testFormData.close_time!)}
+                        value={formatTimezone(testBody.close_time!)}
                         onChange={handleInputChange}
                         disabled={!allowCloseTime}
                     />
@@ -271,7 +264,7 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                         id="num_parts"
                         name="num_parts"
                         className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow"
-                        value={testFormData.num_parts}
+                        value={testBody.num_parts}
                         onChange={handleInputChange}
                         required
                     />
@@ -285,7 +278,7 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                         id="num_questions"
                         name="num_questions"
                         className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow"
-                        value={testFormData.num_questions}
+                        value={testBody.num_questions}
                         onChange={handleInputChange}
                     />
                 </div>
@@ -298,7 +291,7 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                         id="code"
                         name="code"
                         className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow"
-                        value={testFormData.code}
+                        value={testBody.code}
                         onChange={handleInputChange}
                     />
                     <label htmlFor="level" className="w-1/5 shrink-0">
@@ -308,7 +301,7 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                         id="level"
                         className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow capitalize"
                         name="level"
-                        value={testFormData.level}
+                        value={testBody.level}
                         onChange={handleInputChange}
                     >
                         <option value={testLevels.EASY}>
@@ -337,7 +330,7 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                         id="public_answers_option"
                         className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow capitalize"
                         name="public_answers_option"
-                        value={testFormData.public_answers_option}
+                        value={testBody.public_answers_option}
                         onChange={handleInputChange}
                     >
                         <option
@@ -358,9 +351,9 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                     </select>
                 </div>
 
-                {testFormData.public_answers_option ===
+                {testBody.public_answers_option ===
                     publicAnswersOptions.SPECIFIC_DATE &&
-                    testFormData.public_answers_date && (
+                    testBody.public_answers_date && (
                         <div className="flex gap-4 items-end mt-4">
                             <label
                                 htmlFor="public_answers_date"
@@ -374,7 +367,7 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                                 name="public_answers_date"
                                 className="border border-gray-500 px-2 py-1 focus:border-orange-600 outline-none grow"
                                 value={formatTimezone(
-                                    testFormData.public_answers_date
+                                    testBody.public_answers_date
                                 )}
                                 onChange={handleInputChange}
                                 required

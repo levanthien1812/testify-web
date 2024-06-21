@@ -1,9 +1,5 @@
 import React, { useCallback, useMemo } from "react";
-import {
-    QuestionFormDataItf,
-    QuestionItf,
-    TestItf,
-} from "../../../types/types";
+import { QuestionBodyItf, QuestionItf, TestItf } from "../../../types/types";
 import { questionTypes, testLevels } from "../../../config/config";
 import Questions from "./testQuestions/Questions";
 import { validateQuestions } from "../../../services/test";
@@ -57,33 +53,14 @@ const TestQuestions = ({
                     ...part.questions!,
                     ...[
                         ...Array(part.num_questions - part.questions!.length),
-                    ].map((item, index) => {
-                        // return {
-                        //     score: 0,
-                        //     level: testLevels.NONE,
-                        //     type: questionTypes.MULITPLE_CHOICES,
-                        //     content: null,
-                        //     order: index + 1,
-                        //     part_id: part._id,
-                        // };
-                        return null;
-                    }),
+                    ].map(() => null),
                 ];
             } else {
                 return [
                     ...test.questions!,
                     ...[
                         ...Array(test.num_questions - test.questions!.length),
-                    ].map((item, index) => {
-                        // return {
-                        //     score: 0,
-                        //     level: testLevels.NONE,
-                        //     type: questionTypes.MULITPLE_CHOICES,
-                        //     content: null,
-                        //     order: index + 1,
-                        // };
-                        return null;
-                    }),
+                    ].map(() => null),
                 ];
             }
         },
