@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import { PartFormDataItf, TestPartItf } from "../../../../types/types";
+import { PartBodyItf, TestPartItf } from "../../../../types/types";
 import { useMutation } from "react-query";
 import { addPart, updatePart } from "../../../../services/test";
 import { AxiosError } from "axios";
@@ -17,7 +17,7 @@ const Part: React.FC<{
     const [showSave, setShowSave] = useState(false);
     const [savable, setSavable] = useState<boolean>(false);
     const [open, setOpen] = useState<boolean>(true);
-    const [partBody, setPartBody] = useState<PartFormDataItf>({
+    const [partBody, setPartBody] = useState<PartBodyItf>({
         name: "",
         order: index + 1,
         description: "",
@@ -27,7 +27,7 @@ const Part: React.FC<{
 
     const { mutate: createPartMutate, isLoading: createPartLoading } =
         useMutation({
-            mutationFn: async (partBody: PartFormDataItf) =>
+            mutationFn: async (partBody: PartBodyItf) =>
                 await addPart(testId, partBody),
             mutationKey: ["add-part", { body: part }],
             onSuccess: (data) => {
@@ -43,7 +43,7 @@ const Part: React.FC<{
 
     const { mutate: updatePartMutate, isLoading: updatePartLoading } =
         useMutation({
-            mutationFn: async (partBody: PartFormDataItf) =>
+            mutationFn: async (partBody: PartBodyItf) =>
                 await updatePart(testId, part!._id, partBody),
             mutationKey: [
                 "update-part",

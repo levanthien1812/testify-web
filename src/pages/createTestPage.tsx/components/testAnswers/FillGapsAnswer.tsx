@@ -1,11 +1,11 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import { AnswerFormData, FillGapsQuestionItf } from "../../../../types/types";
+import { AnswerBody, FillGapsQuestionItf } from "../../../../types/types";
 import { generateArray } from "../../../../utils/array";
 
 type FillGapsAnswerProps = {
     content: FillGapsQuestionItf;
     reset: boolean;
-    onProvideAnswer: (answerBody: AnswerFormData) => void;
+    onProvideAnswer: (answerBody: AnswerBody) => void;
 };
 
 const FillGapsAnswer = ({

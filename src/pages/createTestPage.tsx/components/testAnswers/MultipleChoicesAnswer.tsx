@@ -1,13 +1,10 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import {
-    AnswerFormData,
-    MultipleChoiceQuestionItf,
-} from "../../../../types/types";
+import { AnswerBody, MultipleChoiceQuestionItf } from "../../../../types/types";
 
 type MultipleChoicesAnswerProps = {
     content: MultipleChoiceQuestionItf;
     reset: boolean;
-    onProvideAnswer: (answerBody: AnswerFormData) => void;
+    onProvideAnswer: (answerBody: AnswerBody) => void;
 };
 
 const MultipleChoicesAnswer = ({

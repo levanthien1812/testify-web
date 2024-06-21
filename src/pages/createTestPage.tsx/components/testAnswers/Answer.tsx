@@ -1,10 +1,11 @@
 import React, { useState } from "react";
 import {
-    AnswerFormData,
+    AnswerBody,
     FillGapsQuestionItf,
     MatchingQuestionItf,
     MultipleChoiceQuestionItf,
     QuestionItf,
+    ResponseQuestionItf,
 } from "../../../../types/types";
 import { questionTypes } from "../../../../config/config";
 import MultipleChoicesAnswer from "./MultipleChoicesAnswer";
@@ -14,6 +15,7 @@ import { useMutation } from "react-query";
 import { addAnswer } from "../../../../services/test";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
+import ResponseAnswer from "./ResponseAnswer";
 
 const Answer: React.FC<{
     question: QuestionItf;
@@ -21,10 +23,10 @@ const Answer: React.FC<{
 }> = ({ question, onAfterUpdate }) => {
     const [savable, setSavable] = useState<boolean>(false);
     const [reset, setReset] = useState<boolean>(false);
-    const [answerBody, setAnswerBody] = useState<AnswerFormData>();
+    const [answerBody, setAnswerBody] = useState<AnswerBody>();
 
     const { mutate, isLoading } = useMutation({
-        mutationFn: async (answerBody: AnswerFormData) =>
+        mutationFn: async (answerBody: AnswerBody) =>
             await addAnswer(question.test_id, question._id, answerBody),
         mutationKey: ["add-answer", { question_id: question._id }],
         onSuccess: (data) => {
@@ -38,7 +40,7 @@ const Answer: React.FC<{
         },
     });
 
-    const handleProvideAnswer = (answerBody: AnswerFormData) => {
+    const handleProvideAnswer = (answerBody: AnswerBody) => {
         setReset(false);
         setAnswerBody(answerBody);
         setSavable(true);
@@ -88,6 +90,11 @@ const Answer: React.FC<{
                         reset={reset}
                         content={question.content as MatchingQuestionItf}
                         onProvideAnswer={handleProvideAnswer}
+                    />
+                )}
+                {question.type === questionTypes.RESPONSE && (
+                    <ResponseAnswer
+                        content={question.content as ResponseQuestionItf}
                     />
                 )}
             </div>

@@ -1,5 +1,5 @@
 import { CustomHelpers } from "joi";
-import { FillGapsQuestionFormDataItf } from "../types/types";
+import { FillGapsQuestionBodyItf } from "../types/types";
 
 export const password = (value: string, helpers: CustomHelpers) => {
     if (value.length < 8) {
@@ -16,7 +16,7 @@ export const password = (value: string, helpers: CustomHelpers) => {
 };
 
 export const numGaps = (
-    value: FillGapsQuestionFormDataItf,
+    value: FillGapsQuestionBodyItf,
     helpers: CustomHelpers
 ) => {
     const { text, num_gaps } = value;

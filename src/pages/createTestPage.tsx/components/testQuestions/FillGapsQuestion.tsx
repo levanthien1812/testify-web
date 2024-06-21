@@ -1,26 +1,26 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { FillGapsQuestionFormDataItf } from "../../../../types/types";
+import { FillGapsQuestionBodyItf } from "../../../../types/types";
 import TextEditor from "../../../richTextEditor/TiptapEditor";
 import { useCurrentEditor } from "@tiptap/react";
 
 const FillGapsQuestion: React.FC<{
-    content: FillGapsQuestionFormDataItf;
-    onContentChange: (content: FillGapsQuestionFormDataItf) => void;
+    content: FillGapsQuestionBodyItf;
+    onContentChange: (content: FillGapsQuestionBodyItf) => void;
 }> = ({ content, onContentChange }) => {
-    const [mcqContent, setMcqContent] =
-        useState<FillGapsQuestionFormDataItf>(content);
+    const [fgqContent, setFgqContent] =
+        useState<FillGapsQuestionBodyItf>(content);
     const [text, setText] = useState<string>(content.text);
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
         let name = e.target.name;
         let value = e.target.value;
 
-        setMcqContent({ ...mcqContent, [name]: value });
+        setFgqContent({ ...fgqContent, [name]: value });
     };
 
     useEffect(() => {
-        onContentChange({ ...mcqContent, text });
-    }, [mcqContent, text]);
+        onContentChange({ ...fgqContent, text });
+    }, [fgqContent, text]);
 
     return (
         <>

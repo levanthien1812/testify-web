@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { AnswerFormData, MatchingQuestionItf } from "../../../../types/types";
+import { AnswerBody, MatchingQuestionItf } from "../../../../types/types";
 import DraggableItem from "./DraggableItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
@@ -7,7 +7,7 @@ import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 type MatchingAnswerProps = {
     content: MatchingQuestionItf;
     reset: boolean;
-    onProvideAnswer: (answerBody: AnswerFormData) => void;
+    onProvideAnswer: (answerBody: AnswerBody) => void;
 };
 
 const MatchingAnswer = ({

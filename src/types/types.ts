@@ -49,7 +49,7 @@ export interface LoginErrorItf {
     password?: string;
 }
 
-export interface TestFormDataItf {
+export interface TestBodyItf {
     title: string;
     datetime: Date;
     description: string;
@@ -64,7 +64,7 @@ export interface TestFormDataItf {
     public_answers_option: (typeof publicAnswersOptions)[keyof typeof publicAnswersOptions];
     public_answers_date?: Date;
 }
-export interface TestItf extends TestFormDataItf {
+export interface TestItf extends TestBodyItf {
     _id: string;
     parts: TestPartItf[];
     maker_id: string;
@@ -74,7 +74,7 @@ export interface TestItf extends TestFormDataItf {
     status: (typeof testStatus)[keyof typeof testStatus];
 }
 
-export interface PartFormDataItf {
+export interface PartBodyItf {
     name: string;
     score: number;
     description: string;
@@ -82,13 +82,13 @@ export interface PartFormDataItf {
     order: number;
 }
 
-export interface TestPartItf extends PartFormDataItf {
+export interface TestPartItf extends PartBodyItf {
     _id: string;
     test_id: string;
     questions?: QuestionItf[];
 }
 
-export interface MultipleChoiceQuestionFormDataItf {
+export interface MultipleChoiceQuestionBodyItf {
     text: string;
     allow_multiple: boolean;
     options: {
@@ -97,7 +97,7 @@ export interface MultipleChoiceQuestionFormDataItf {
 }
 
 export interface MultipleChoiceQuestionItf
-    extends MultipleChoiceQuestionFormDataItf {
+    extends MultipleChoiceQuestionBodyItf {
     _id: string;
     options: {
         text: string;
@@ -107,18 +107,18 @@ export interface MultipleChoiceQuestionItf
     explaination?: string;
 }
 
-export interface FillGapsQuestionFormDataItf {
+export interface FillGapsQuestionBodyItf {
     text: string;
     num_gaps: number;
 }
 
-export interface FillGapsQuestionItf extends FillGapsQuestionFormDataItf {
+export interface FillGapsQuestionItf extends FillGapsQuestionBodyItf {
     _id: string;
     answer?: string[];
     explaination?: string;
 }
 
-export interface MatchingQuestionFormDataItf {
+export interface MatchingQuestionBodyItf {
     text: string;
     left_items: {
         text: string;
@@ -128,7 +128,7 @@ export interface MatchingQuestionFormDataItf {
     }[];
 }
 
-export interface MatchingQuestionItf extends MatchingQuestionFormDataItf {
+export interface MatchingQuestionItf extends MatchingQuestionBodyItf {
     _id: string;
     left_items: {
         _id: string;
@@ -142,6 +142,19 @@ export interface MatchingQuestionItf extends MatchingQuestionFormDataItf {
         left: string;
         right: string;
     }[];
+    explaination?: string;
+}
+
+export interface ResponseQuestionBodyItf {
+    text: string;
+    minLength?: number;
+    maxLength?: number;
+    image?: string;
+}
+
+export interface ResponseQuestionItf extends ResponseQuestionBodyItf {
+    _id: string;
+    answer?: string;
     explaination?: string;
 }
 
@@ -159,19 +172,21 @@ export interface QuestionItf {
     content:
         | MultipleChoiceQuestionItf
         | FillGapsQuestionItf
-        | MatchingQuestionItf;
+        | MatchingQuestionItf
+        | ResponseQuestionItf;
 }
 
-export interface QuestionFormDataItf {
+export interface QuestionBodyItf {
     score: number;
     level: (typeof testLevels)[keyof typeof testLevels];
     type: (typeof questionTypes)[keyof typeof questionTypes];
     order: number;
     part_id?: string;
     content:
-        | MultipleChoiceQuestionFormDataItf
-        | FillGapsQuestionFormDataItf
-        | MatchingQuestionFormDataItf
+        | MultipleChoiceQuestionBodyItf
+        | FillGapsQuestionBodyItf
+        | MatchingQuestionBodyItf
+        | ResponseQuestionBodyItf
         | null;
 }
 
@@ -182,68 +197,83 @@ export type AnswerItf = {
     score?: number;
 };
 
-export interface MultipleChoicesAnswerFormDataItf {
+export interface MultipleChoicesAnswerBodyItf {
     answer: string[];
 }
 
-export interface MultipleChoicesAnswerItf
-    extends MultipleChoicesAnswerFormDataItf {
+export interface MultipleChoicesAnswerItf extends MultipleChoicesAnswerBodyItf {
     _id: string;
     answer_id?: string;
 }
 
-export interface FillGapsAnswerFormDataItf {
+export interface FillGapsAnswerBodyItf {
     answer: string[];
 }
 
-export interface FillGapsAnswerItf extends FillGapsAnswerFormDataItf {
+export interface FillGapsAnswerItf extends FillGapsAnswerBodyItf {
     _id: string;
     answer_id?: string;
 }
 
-export interface MatchingAnswerFormDataItf {
+export interface MatchingAnswerBodyItf {
     answer: { left: string; right: string }[];
 }
 
-export interface MatchingAnswerItf extends MatchingAnswerFormDataItf {
+export interface MatchingAnswerItf extends MatchingAnswerBodyItf {
     _id: string;
     answer_id?: string;
 }
 
-export type AnswerFormData =
-    | MultipleChoicesAnswerFormDataItf
-    | FillGapsAnswerFormDataItf
-    | MatchingAnswerFormDataItf;
+export interface ResponseAnswerBodyItf {
+    answer: string;
+}
 
-export interface TakerFormDataItf {
+export interface ResponseAnswerItf extends ResponseAnswerBodyItf {
+    _id: string;
+    answer_id?: string;
+}
+
+export type AnswerBody =
+    | MultipleChoicesAnswerBodyItf
+    | FillGapsAnswerBodyItf
+    | MatchingAnswerBodyItf
+    | ResponseAnswerBodyItf;
+
+export interface TakerBodyItf {
     name: string;
     email: string;
 }
 
-export interface TakerItf extends TakerFormDataItf {
+export interface TakerItf extends TakerBodyItf {
     _id: string;
     maker_id: string;
 }
 
-export interface UserMultipleChoicesAnswerFormDataItf {
+export interface UserMultipleChoicesAnswerBodyItf {
     question_id: string;
     answer: string[];
 }
 
-export interface UserFillGapsAnswerFormDataItf {
+export interface UserFillGapsAnswerBodyItf {
     question_id: string;
     answer: string[];
 }
 
-export interface UserMatchingAnswerFormDataItf {
+export interface UserMatchingAnswerBodyItf {
     question_id: string;
     answer: { left: string; right: string }[];
 }
 
+export interface UserResponseAnswerBodyItf {
+    question_id: string;
+    answer: string;
+}
+
 export type UserAnswer =
-    | UserMultipleChoicesAnswerFormDataItf
-    | UserFillGapsAnswerFormDataItf
-    | UserMatchingAnswerFormDataItf;
+    | UserMultipleChoicesAnswerBodyItf
+    | UserFillGapsAnswerBodyItf
+    | UserMatchingAnswerBodyItf
+    | UserResponseAnswerBodyItf;
 
 export interface SubmissionItf {
     _id: string;

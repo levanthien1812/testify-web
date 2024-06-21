@@ -11,7 +11,7 @@ export const partSchema = Joi.object().keys({
     order: Joi.number().required(),
 });
 
-export const testFormDataSchema = Joi.object().keys({
+export const testBodySchema = Joi.object().keys({
     title: Joi.string().required().trim(),
     datetime: Joi.date(),
     description: Joi.string().allow(""),
@@ -33,24 +33,49 @@ export const fillGapsQuestionSchema = Joi.object()
         text: Joi.string().required(),
         num_gaps: Joi.number().required().min(1),
     })
-    .custom(numGaps);
+    .custom(numGaps)
+    .unknown(true);
 
-export const mulitpleChoicesQuestionSchema = Joi.object().keys({
-    text: Joi.string().required(),
-    allow_multiple: Joi.boolean().optional(),
-    options: Joi.array().items({
+export const mulitpleChoicesQuestionSchema = Joi.object()
+    .keys({
         text: Joi.string().required(),
-    }),
-});
+        allow_multiple: Joi.boolean().optional(),
+        options: Joi.array().items(
+            Joi.object()
+                .keys({
+                    text: Joi.string().required(),
+                })
+                .unknown(true)
+        ),
+    })
+    .unknown(true);
 
-export const matchingQuestionSchema = Joi.object().keys({
-    text: Joi.string().required(),
-    left_items: Joi.array().items({
+export const matchingQuestionSchema = Joi.object()
+    .keys({
         text: Joi.string().required(),
-    }),
-    right_items: Joi.array().items({
+        left_items: Joi.array().items(
+            Joi.object()
+                .keys({
+                    text: Joi.string().required(),
+                })
+                .unknown(true)
+        ),
+        right_items: Joi.array().items(
+            Joi.object()
+                .keys({
+                    text: Joi.string().required(),
+                })
+                .unknown(true)
+        ),
+    })
+    .unknown(true);
+
+export const responseQuestionSchema = Joi.object()
+    .keys({
         text: Joi.string().required(),
-    }),
-});
+        minLength: Joi.number().optional().min(1),
+        maxLength: Joi.number().optional().min(1),
+    })
+    .unknown(true);
 
 export const testSchema = Joi.object().keys({});
