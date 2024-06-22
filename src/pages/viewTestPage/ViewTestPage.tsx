@@ -7,15 +7,25 @@ import { useParams } from "react-router";
 import TestInfo from "../takeTestPage/components/TestInfo";
 import SubmissionsTable from "./components/SubmissionsTable";
 import { useState } from "react";
-import Modal from "../../components/modals/Modal";
+import Modal, {
+    ModalBody,
+    ModalFooter,
+    ModalHeader,
+} from "../../components/modals/Modal";
 import TestQuestionsAndAnswers from "../takeTestPage/components/TestQuestionsAndAnswers";
+import TestAnswers from "../createTestPage.tsx/components/TestAnswers";
 
 const ViewTestPage = () => {
     const { testId } = useParams();
     const [viewQuestionsAndAnswers, setViewQuestionsAndAnswers] =
         useState(false);
+    const [viewProvideAnswers, setViewProvideAnswers] = useState(false);
 
-    const { isLoading: isLoadingTest, data: test } = useQuery<TestItf>({
+    const {
+        isLoading: isLoadingTest,
+        data: test,
+        refetch: refetchTest,
+    } = useQuery<TestItf>({
         queryKey: ["test", testId],
         queryFn: async () => {
             const responseData = await getTest(testId!);
@@ -79,16 +89,42 @@ const ViewTestPage = () => {
                     onClose={() => setViewQuestionsAndAnswers(false)}
                     className="w-5/6 md:w-2/3"
                 >
-                    <Modal.Header
-                        title="Questions and Answers"
-                        onClose={() => setViewQuestionsAndAnswers(false)}
-                    />
-                    <Modal.Body>
+                    <ModalHeader title="Questions and Answers" />
+                    <ModalBody>
+                        {test.are_answers_provided === false && (
+                            <div className="bg-orange-200 px-8 py-2">
+                                Please answer all questions{" "}
+                                <button
+                                    className="underline hover:font-bold"
+                                    onClick={() => {
+                                        setViewQuestionsAndAnswers(false);
+                                        setViewProvideAnswers(true);
+                                    }}
+                                >
+                                    here
+                                </button>
+                            </div>
+                        )}
                         <TestQuestionsAndAnswers test={test} />
-                    </Modal.Body>
-                    <Modal.Footer>
+                    </ModalBody>
+                    <ModalFooter>
                         <button>Cancel</button>
-                    </Modal.Footer>
+                    </ModalFooter>
+                </Modal>
+            )}
+
+            {viewProvideAnswers && test && (
+                <Modal onClose={() => setViewProvideAnswers(false)}>
+                    <ModalHeader title="Provide Answers" />
+                    <ModalBody>
+                        <TestAnswers
+                            onAfterUpdate={() => refetchTest()}
+                            test={test}
+                            onBack={() => {}}
+                            onNext={() => {}}
+                        />
+                    </ModalBody>
+                    <ModalFooter></ModalFooter>
                 </Modal>
             )}
         </div>

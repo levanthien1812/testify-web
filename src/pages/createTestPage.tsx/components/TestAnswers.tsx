@@ -1,7 +1,8 @@
-import React, { useCallback } from "react";
-import { QuestionItf, TestItf } from "../../../types/types";
+import { useMemo } from "react";
+import { TestItf } from "../../../types/types";
 import Answer from "./testAnswers/Answer";
 import Questions from "./testQuestions/Questions";
+import { testStatus } from "../../../config/config";
 
 type SectionProps = {
     test: TestItf;
@@ -19,14 +20,29 @@ const TestAnswers = ({ test, onBack, onNext, onAfterUpdate }: SectionProps) => {
         onNext();
     };
 
-    return (
-        <div className="px-20 py-12 shadow-2xl">
-            <h2 className="text-center text-3xl">Test Answers</h2>
-            <p className="text-center">
-                You can skip this section and provide answers later
-            </p>
+    const isProvideInAdvance = useMemo(() => {
+        return (
+            test.status === testStatus.DRAFT ||
+            test.status === testStatus.PUBLISHABLE
+        );
+    }, [test.status]);
 
-            <div className="space-y-3 mt-4">
+    return (
+        <div
+            className={
+                isProvideInAdvance ? "px-20 py-12 shadow-2xl" : "px-8 py-4"
+            }
+        >
+            {isProvideInAdvance && (
+                <>
+                    <h2 className="text-center text-3xl">Test Answers</h2>
+                    <p className="text-center">
+                        You can skip this section and provide answers later
+                    </p>
+                </>
+            )}
+
+            <div className={`space-y-3 ${isProvideInAdvance && "mt-4"}`}>
                 {test.parts.length > 0 &&
                     test.parts.map((part) => (
                         <Questions
@@ -50,24 +66,22 @@ const TestAnswers = ({ test, onBack, onNext, onAfterUpdate }: SectionProps) => {
                 )}
             </div>
 
-            <div className="flex justify-end items-center gap-3 mt-6 pt-4 border-t border-gray-300">
-                <button
-                    className="text-white bg-orange-600 px-12 py-1 disabled:bg-gray-500"
-                    onClick={handleBack}
-                >
-                    Back
-                </button>
-                <button
-                    className="text-white bg-orange-600 px-12 py-1 hover:bg-orange-700 disabled:bg-gray-500"
-                    onClick={handleNext}
-                    // disabled={
-                    //     !test.questions?.every((question) => question.content)
-                    // }
-                >
-                    {/* {!isLoading ? "Next" : "Saving..."} */}
-                    Next
-                </button>
-            </div>
+            {isProvideInAdvance && (
+                <div className="flex justify-end items-center gap-3 mt-6 pt-4 border-t border-gray-300">
+                    <button
+                        className="text-white bg-orange-600 px-12 py-1 disabled:bg-gray-500"
+                        onClick={handleBack}
+                    >
+                        Back
+                    </button>
+                    <button
+                        className="text-white bg-orange-600 px-12 py-1 hover:bg-orange-700 disabled:bg-gray-500"
+                        onClick={handleNext}
+                    >
+                        Next
+                    </button>
+                </div>
+            )}
         </div>
     );
 };

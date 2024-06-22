@@ -85,7 +85,7 @@ const SubmissionsTable = ({ submissions }: SubmissionsTableProps) => {
                 filterFn: "inNumberRange",
             },
             {
-                header: "Total answers",
+                header: "Wrong answers",
                 accessorKey: "wrong_answers",
                 sortingFn: "alphanumeric",
                 filterFn: "inNumberRange",

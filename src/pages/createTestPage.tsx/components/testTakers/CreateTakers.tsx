@@ -1,5 +1,9 @@
 import { ChangeEvent, useState } from "react";
-import Modal from "../../../../components/modals/Modal";
+import Modal, {
+    ModalBody,
+    ModalFooter,
+    ModalHeader,
+} from "../../../../components/modals/Modal";
 import { TakerBodyItf } from "../../../../types/types";
 import { useMutation } from "react-query";
 import { createTakers } from "../../../../services/test";
@@ -61,8 +65,8 @@ const CreateTakers = ({
 
     return (
         <Modal onClose={onClose}>
-            <Modal.Header title="Create takers" onClose={onClose} />
-            <Modal.Body>
+            <ModalHeader title="Create takers" />
+            <ModalBody>
                 <div className="">
                     <div className="space-y-2">
                         {[...Array(takers.length)].map((item, index) => (
@@ -110,26 +114,17 @@ const CreateTakers = ({
                         </label>
                     </div>
                 </div>
-            </Modal.Body>
-            <Modal.Footer>
-                <div className="flex justify-end gap-3">
-                    <button
-                        className="text-white px-9 py-0.5 bg-gray-500"
-                        type="button"
-                        onClick={onClose}
-                    >
-                        Cancel
-                    </button>
-                    <button
-                        className="text-white bg-orange-600 px-9 py-0.5 hover:bg-orange-700"
-                        type="submit"
-                        disabled={isLoading}
-                        onClick={handleSave}
-                    >
-                        {!isLoading ? "Save" : "Saving..."}
-                    </button>
-                </div>
-            </Modal.Footer>
+            </ModalBody>
+            <ModalFooter>
+                <button
+                    className="text-white bg-orange-600 px-9 py-0.5 hover:bg-orange-700"
+                    type="submit"
+                    disabled={isLoading}
+                    onClick={handleSave}
+                >
+                    {!isLoading ? "Save" : "Saving..."}
+                </button>
+            </ModalFooter>
         </Modal>
     );
 };

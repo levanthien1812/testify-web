@@ -4,12 +4,14 @@ import {
     MatchingQuestionItf,
     MultipleChoiceQuestionItf,
     QuestionItf,
+    ResponseQuestionItf,
     UserAnswer,
 } from "../../../types/types";
 import MultipleChoicesQuestion from "./MultipleChoicesQuestion";
 import FillGapsQuestion from "./FillGapsQuestion";
 import MatchingQuestion from "./MatchingQuestion";
 import { questionTypes } from "../../../config/config";
+import ResponseQuestion from "./ResponseQuestion";
 
 type QuestionProps = {
     question: QuestionItf;
@@ -45,6 +47,17 @@ const Question = ({ question, onProvideAnswer }: QuestionProps) => {
             {question.type === questionTypes.MATCHING && (
                 <MatchingQuestion
                     content={question.content as MatchingQuestionItf}
+                    onProvideAnswer={(answer) =>
+                        onProvideAnswer({
+                            question_id: question._id,
+                            answer: answer,
+                        })
+                    }
+                />
+            )}
+            {question.type === questionTypes.RESPONSE && (
+                <ResponseQuestion
+                    content={question.content as ResponseQuestionItf}
                     onProvideAnswer={(answer) =>
                         onProvideAnswer({
                             question_id: question._id,

@@ -1,6 +1,6 @@
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { ReactElement, ReactNode } from "react";
+import React, { ReactNode } from "react";
 import { createPortal } from "react-dom";
 
 type ModalProps = {
@@ -11,7 +11,6 @@ type ModalProps = {
 
 type HeaderProps = {
     title: string;
-    onClose: () => void;
 };
 
 type BodyProps = {
@@ -19,12 +18,16 @@ type BodyProps = {
 };
 
 type FooterProps = {
-    children: ReactNode;
+    children?: ReactNode;
 };
+
+const ModalContext = React.createContext<Pick<ModalProps, "onClose"> | null>(
+    null
+);
 
 const Modal = ({ children, onClose, className }: ModalProps) => {
     return createPortal(
-        <>
+        <ModalContext.Provider value={{ onClose }}>
             <div
                 className={`absolute top-0 left-0 right-0 bottom-0 m-auto bg-black bg-opacity-15 shadow-md w-full h-full`}
                 onClick={onClose}
@@ -34,17 +37,19 @@ const Modal = ({ children, onClose, className }: ModalProps) => {
             >
                 {children}
             </div>
-        </>,
+        </ModalContext.Provider>,
         document.getElementById("modal")!
     );
 };
-Modal.Header = ({ title, onClose }: HeaderProps) => {
+export const ModalHeader = ({ title }: HeaderProps) => {
+    const props = React.useContext(ModalContext);
+
     return (
         <div className="flex justify-between px-4 py-2 border-b items-center">
             <p className="text-2xl">{title}</p>
             <button
                 className="bg-gray-200 hover:bg-gray-300 w-5 h-5 flex justify-center items-center"
-                onClick={onClose}
+                onClick={props?.onClose}
             >
                 <FontAwesomeIcon icon={faTimes} className="text-sm" />
             </button>
@@ -52,7 +57,7 @@ Modal.Header = ({ title, onClose }: HeaderProps) => {
     );
 };
 
-Modal.Body = ({ children }: BodyProps) => {
+export const ModalBody = ({ children }: BodyProps) => {
     return (
         <div className="px-4 py-6 max-h-[70vh] overflow-y-scroll">
             {children}
@@ -60,8 +65,21 @@ Modal.Body = ({ children }: BodyProps) => {
     );
 };
 
-Modal.Footer = ({ children }: FooterProps) => {
-    return <div className="px-4 py-3 border-t">{children}</div>;
+export const ModalFooter = ({ children: additionalButtons }: FooterProps) => {
+    const props = React.useContext(ModalContext!);
+
+    return (
+        <div className="px-4 py-3 gap-3 border-t flex items-center justify-end">
+            <button
+                className="text-white px-9 py-0.5 bg-gray-500"
+                type="button"
+                onClick={props?.onClose}
+            >
+                Cancel
+            </button>
+            {additionalButtons}
+        </div>
+    );
 };
 
 export default Modal;
