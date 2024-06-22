@@ -8,7 +8,7 @@ import {
     ResponseQuestionBodyItf,
     TestPartItf,
 } from "../../../../types/types";
-import Modal from "../../../../components/modals/Modal";
+import Modal, { ModalBody, ModalFooter, ModalHeader } from "../../../../components/modals/Modal";
 import { questionTypes, testLevels } from "../../../../config/config";
 import MulitpleChoiceQuestion from "./MultipleChoicesQuestion";
 import FillGapsQuestion from "./FillGapsQuestion";
@@ -204,11 +204,8 @@ const Question = ({
             </div>
             {open && (
                 <Modal onClose={() => setOpen(false)}>
-                    <Modal.Header
-                        title={`Question ${questionBody.order}`}
-                        onClose={() => setOpen(false)}
-                    />
-                    <Modal.Body>
+                    <ModalHeader title={`Question ${questionBody.order}`} />
+                    <ModalBody>
                         <div className="w-[600px] flex gap-4">
                             <div className="space-y-4 gap-4 w-1/3 shrink-0">
                                 <div className="flex items-end gap-2">
@@ -322,34 +319,21 @@ const Question = ({
                                 </div>
                             )}
                         </div>
-                    </Modal.Body>
-                    <Modal.Footer>
-                        <div className="flex justify-end gap-3">
-                            <button
-                                className="text-white px-9 py-0.5 bg-gray-500"
-                                type="button"
-                                onClick={() => setOpen(false)}
-                            >
-                                Cancel
-                            </button>
-                            <button
-                                className="text-white bg-orange-600 px-9 py-0.5 hover:bg-orange-700"
-                                type="submit"
-                                disabled={
-                                    createQuestionLoading ||
-                                    updateQuestionLoading
-                                }
-                                onClick={handleSaveQuestion}
-                            >
-                                {!(
-                                    createQuestionLoading ||
-                                    updateQuestionLoading
-                                )
-                                    ? "Save"
-                                    : "Saving..."}
-                            </button>
-                        </div>
-                    </Modal.Footer>
+                    </ModalBody>
+                    <ModalFooter>
+                        <button
+                            className="text-white bg-orange-600 px-9 py-0.5 hover:bg-orange-700"
+                            type="submit"
+                            disabled={
+                                createQuestionLoading || updateQuestionLoading
+                            }
+                            onClick={handleSaveQuestion}
+                        >
+                            {!(createQuestionLoading || updateQuestionLoading)
+                                ? "Save"
+                                : "Saving..."}
+                        </button>
+                    </ModalFooter>
                 </Modal>
             )}
         </>

@@ -7,11 +7,14 @@ import {
     MultipleChoiceQuestionItf,
     MultipleChoicesAnswerItf,
     QuestionItf,
+    ResponseAnswerItf,
+    ResponseQuestionItf,
 } from "../../../types/types";
 import { questionTypes } from "../../../config/config";
 import MultipleChoicesAnswer from "./MultipleChoicesAnswer";
 import FillGapsAnswer from "./FillGapsAnswer";
 import MatchingAnswer from "./MatchingAnswer";
+import ResponseAnswer from "./ResponseAnswer";
 
 type QuestionProps = {
     question: QuestionItf;
@@ -59,6 +62,16 @@ const Answer = ({ question }: QuestionProps) => {
                     userAnswer={
                         question.answer
                             ? (question.answer.content as MatchingAnswerItf)
+                            : null
+                    }
+                />
+            )}
+            {question.type === questionTypes.RESPONSE && (
+                <ResponseAnswer
+                    content={question.content as ResponseQuestionItf}
+                    userAnswer={
+                        question.answer
+                            ? (question.answer.content as ResponseAnswerItf)
                             : null
                     }
                 />

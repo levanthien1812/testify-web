@@ -4,7 +4,11 @@ import { SubmissionItf, TestItf, userItf } from "../../../types/types";
 import { getTest, getTestWithTakerAnswers } from "../../../services/test";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
-import Modal from "../../../components/modals/Modal";
+import Modal, {
+    ModalBody,
+    ModalFooter,
+    ModalHeader,
+} from "../../../components/modals/Modal";
 import TestQuestionsAndAnswers from "../../takeTestPage/components/TestQuestionsAndAnswers";
 import { useParams } from "react-router";
 import { format } from "date-fns";
@@ -23,7 +27,7 @@ const TakerSubmissionDetail = ({
     const { testId } = useParams();
     useMemo(() => {
         if (submission) {
-            console.log(submission)
+            console.log(submission);
         }
     }, [testId]);
 
@@ -46,11 +50,8 @@ const TakerSubmissionDetail = ({
         });
     return (
         <Modal onClose={onClose} className="w-5/6 md:w-2/3">
-            <Modal.Header
-                title={`Taker's submissions detail`}
-                onClose={onClose}
-            />
-            <Modal.Body>
+            <ModalHeader title={`Taker's submissions detail`} />
+            <ModalBody>
                 {submission && (
                     <div className="grid grid-cols-3 gap-2 bg-orange-100 p-4 border border-orange-600">
                         <p>
@@ -92,10 +93,8 @@ const TakerSubmissionDetail = ({
                 {testWithAnswers && (
                     <TestQuestionsAndAnswers test={testWithAnswers} />
                 )}
-            </Modal.Body>
-            <Modal.Footer>
-                <button>Cancel</button>
-            </Modal.Footer>
+            </ModalBody>
+            <ModalFooter></ModalFooter>
         </Modal>
     );
 };

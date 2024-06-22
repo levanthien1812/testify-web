@@ -67,7 +67,7 @@ const RecentTestItem = ({ test }: RecentTestItemProps) => {
             <div className="px-3 py-3">
                 <p>
                     <FontAwesomeIcon
-                        className="text-xs text--600 me-2"
+                        className="text-xs text-orange-600 me-2"
                         icon={faStar}
                     />
                     {test.num_parts} parts

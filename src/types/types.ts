@@ -69,7 +69,7 @@ export interface TestItf extends TestBodyItf {
     parts: TestPartItf[];
     maker_id: string;
     taker_ids: string[] | userItf[];
-    is_finished: false;
+    are_answers_provided: boolean;
     questions?: QuestionItf[];
     status: (typeof testStatus)[keyof typeof testStatus];
 }
@@ -193,7 +193,11 @@ export interface QuestionBodyItf {
 export type AnswerItf = {
     _id: string;
     date: Date;
-    content: MultipleChoicesAnswerItf | FillGapsAnswerItf | MatchingAnswerItf;
+    content:
+        | MultipleChoicesAnswerItf
+        | FillGapsAnswerItf
+        | MatchingAnswerItf
+        | ResponseAnswerItf;
     score?: number;
 };
 
