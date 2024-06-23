@@ -49,7 +49,7 @@ const TakerSubmissionDetail = ({
             retry: false,
         });
     return (
-        <Modal onClose={onClose} className="w-5/6 md:w-2/3">
+        <Modal onClose={onClose} className="w-5/6 md:w-2/3 lg:w-1/2">
             <ModalHeader title={`Taker's submissions detail`} />
             <ModalBody>
                 {submission && (

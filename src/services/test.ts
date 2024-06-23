@@ -1,6 +1,7 @@
 import { instance } from "../config/axios";
 import {
     AnswerBody,
+    AnswerItf,
     PartBodyItf,
     QuestionBodyItf,
     TakerBodyItf,
@@ -248,6 +249,23 @@ export const getSubmission = async (testId: string) => {
 export const getSubmissions = async (testId: string) => {
     try {
         const response = await instance.get(`/tests/${testId}/submissions`);
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updateTakerAnswer = async (
+    testId: string,
+    answerId: string,
+    answerBody: Pick<AnswerItf, "score">
+) => {
+    try {
+        const response = await instance.patch(
+            `/tests/${testId}/answers/${answerId}`,
+            answerBody
+        );
 
         return response.data;
     } catch (error) {
