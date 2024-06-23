@@ -34,3 +34,11 @@ export const publicAnswersOptions = {
     AFTER_CLOSE_TIME: "after test's close time",
     SPECIFIC_DATE: "specific date",
 };
+
+export const autoScoreTypes = [
+    questionTypes.FILL_GAPS,
+    questionTypes.MATCHING,
+    questionTypes.MULITPLE_CHOICES,
+];
+
+export const manualScoreTypes = [questionTypes.RESPONSE];

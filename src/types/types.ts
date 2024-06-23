@@ -168,7 +168,7 @@ export interface QuestionItf {
     level: (typeof testLevels)[keyof typeof testLevels];
     type: (typeof questionTypes)[keyof typeof questionTypes];
     part_id?: string;
-    answer?: AnswerItf;
+    answer?: AnswerItf; // user_answer
     content:
         | MultipleChoiceQuestionItf
         | FillGapsQuestionItf

@@ -68,7 +68,7 @@ const MatchingAnswer = ({ content, userAnswer }: MatchingAnswerProps) => {
                             className={`${
                                 content.answer && userAnswer
                                     ? isCorrectMatching(matching)
-                                        ? "bg-blue-100"
+                                        ? "bg-green-100"
                                         : "bg-red-100"
                                     : "bg-gray-100"
                             } px-4 py-1 flex items-center gap-2 relative`}

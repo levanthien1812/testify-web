@@ -56,36 +56,60 @@ const TakerSubmissionDetail = ({
                     <div className="grid grid-cols-3 gap-2 bg-orange-100 p-4 border border-orange-600">
                         <p>
                             Taker's name:{" "}
-                            {
-                                (submission.taker_id as Omit<userItf, "role">)
-                                    .name
-                            }
+                            <span className="font-bold">
+                                {
+                                    (
+                                        submission.taker_id as Omit<
+                                            userItf,
+                                            "role"
+                                        >
+                                    ).name
+                                }
+                            </span>
                         </p>
                         <p className="col-span-2">
-                            Taker's email:
-                            {
-                                (submission.taker_id as Omit<userItf, "role">)
-                                    .email
-                            }
+                            Taker's email:{" "}
+                            <span className="font-bold">
+                                {
+                                    (
+                                        submission.taker_id as Omit<
+                                            userItf,
+                                            "role"
+                                        >
+                                    ).email
+                                }
+                            </span>
                         </p>
                         <p>
-                            {" "}
                             Start time:{" "}
-                            {format(
-                                new Date(submission.start_time),
-                                "dd/MM/yyyy HH:mm:ss"
-                            )}
+                            <span className="font-bold">
+                                {format(
+                                    new Date(submission.start_time),
+                                    "dd/MM/yyyy HH:mm:ss"
+                                )}
+                            </span>
                         </p>
                         <p className="col-span-2">
-                            {" "}
                             Submit time:{" "}
-                            {format(
-                                new Date(submission.submit_time),
-                                "dd/MM/yyyy HH:mm:ss"
-                            )}
+                            <span className="font-bold">
+                                {format(
+                                    new Date(submission.submit_time),
+                                    "dd/MM/yyyy HH:mm:ss"
+                                )}
+                            </span>
                         </p>
-                        <p>Correct answers: {submission.correct_answers}</p>
-                        <p>Wrong answers: {submission.wrong_answers}</p>
+                        <p>
+                            Correct answers:{" "}
+                            <span className="font-bold">
+                                {submission.correct_answers}
+                            </span>
+                        </p>
+                        <p>
+                            Wrong answers:{" "}
+                            <span className="font-bold">
+                                {submission.wrong_answers}
+                            </span>
+                        </p>
                         <p className="font-bold"> Score: {submission.score}</p>
                     </div>
                 )}

@@ -48,7 +48,7 @@ const MultipleChoicesAnswer = ({
                                 userAnswer
                                     ? content.answer &&
                                       content.answer[0] === option._id
-                                        ? "accent-blue-600"
+                                        ? "accent-green-600"
                                         : "accent-red-600"
                                     : ""
                             }
@@ -60,7 +60,7 @@ const MultipleChoicesAnswer = ({
                                 userAnswer
                                     ? content.answer &&
                                       content.answer[0] === option._id &&
-                                      "text-blue-600"
+                                      "text-green-600"
                                     : ""
                             } ${
                                 userAnswer

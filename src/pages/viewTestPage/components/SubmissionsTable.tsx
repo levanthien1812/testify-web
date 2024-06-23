@@ -14,12 +14,15 @@ import { format } from "date-fns";
 import { formatTime } from "../../../utils/time";
 import _ from "lodash";
 import TakerSubmissionDetail from "./TakerSubmissionDetail";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faRotateRight } from "@fortawesome/free-solid-svg-icons";
 
 type SubmissionsTableProps = {
     submissions: SubmissionItf[];
+    refetch: () => void;
 };
 
-const SubmissionsTable = ({ submissions }: SubmissionsTableProps) => {
+const SubmissionsTable = ({ submissions, refetch }: SubmissionsTableProps) => {
     const columns = useMemo<ColumnDef<SubmissionItf>[]>(
         () => [
             {
@@ -133,7 +136,13 @@ const SubmissionsTable = ({ submissions }: SubmissionsTableProps) => {
 
     return (
         <div>
-            <div className="flex justify-end">
+            <div className="flex justify-end items-center gap-3">
+                <button onClick={refetch}>
+                    <FontAwesomeIcon
+                        className="text-gray-600 active:text-orange-600"
+                        icon={faRotateRight}
+                    />
+                </button>
                 <button
                     className="bg-orange-600 text-white hover:bg-orange-700 px-4"
                     onClick={(e) => {
