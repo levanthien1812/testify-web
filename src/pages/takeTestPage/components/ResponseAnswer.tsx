@@ -12,7 +12,7 @@ const ResponseAnswer = ({ content, userAnswer }: ResponseAnswerProps) => {
     }, [userAnswer]);
 
     return (
-        <>
+        <div>
             <div
                 className=""
                 dangerouslySetInnerHTML={{
@@ -27,9 +27,8 @@ const ResponseAnswer = ({ content, userAnswer }: ResponseAnswerProps) => {
                 value={response}
                 className="border border-gray-500 px-2 py-1 grow focus:border-orange-600 outline-none leading-5 w-full"
                 rows={6}
-                placeholder="Write your answer here..."
             ></textarea>
-        </>
+        </div>
     );
 };
 

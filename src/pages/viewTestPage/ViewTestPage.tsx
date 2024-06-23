@@ -39,9 +39,11 @@ const ViewTestPage = () => {
         retry: false,
     });
 
-    const { isLoading: isLoadingSubmissions, data: submissions } = useQuery<
-        SubmissionItf[]
-    >({
+    const {
+        isLoading: isLoadingSubmissions,
+        data: submissions,
+        refetch: refetchSubmissions,
+    } = useQuery<SubmissionItf[]>({
         queryKey: ["test-submissions", testId],
         queryFn: async () => {
             const responseData = await getSubmissions(testId!);
@@ -75,7 +77,7 @@ const ViewTestPage = () => {
                 {submissions && (
                     <div className="space-y-1 mt-2">
                         {submissions.length > 0 && (
-                            <SubmissionsTable submissions={submissions} />
+                            <SubmissionsTable submissions={submissions} refetch={refetchSubmissions}/>
                         )}
                         {submissions.length === 0 && (
                             <p className="text-center">No submission found.</p>
@@ -105,11 +107,22 @@ const ViewTestPage = () => {
                                 </button>
                             </div>
                         )}
+                        {test.are_answers_provided === true && (
+                            <div className="flex justify-end">
+                                <button
+                                    className="bg-orange-600 text-white px-4 shadow-md"
+                                    onClick={() => {
+                                        setViewQuestionsAndAnswers(false);
+                                        setViewProvideAnswers(true);
+                                    }}
+                                >
+                                    Update answers
+                                </button>
+                            </div>
+                        )}
                         <TestQuestionsAndAnswers test={test} />
                     </ModalBody>
-                    <ModalFooter>
-                        <button>Cancel</button>
-                    </ModalFooter>
+                    <ModalFooter></ModalFooter>
                 </Modal>
             )}
 

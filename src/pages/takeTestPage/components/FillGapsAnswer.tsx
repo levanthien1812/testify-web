@@ -38,7 +38,7 @@ const FillGapsAnswer = ({ content, userAnswer }: FillGapsAnswerProps) => {
                                 userAnswer && content.answer
                                     ? userAnswer.answer[index] ===
                                       content.answer[index]
-                                        ? "border-blue-600 text-blue"
+                                        ? "border-green-600 text-blue"
                                         : "border-red-600 text-red"
                                     : "border-gray-500 text-black"
                             } px-2 py-1 grow focus:border-orange-600 outline-none leading-5`}
