@@ -15,20 +15,58 @@ import MultipleChoicesAnswer from "./MultipleChoicesAnswer";
 import FillGapsAnswer from "./FillGapsAnswer";
 import MatchingAnswer from "./MatchingAnswer";
 import ResponseAnswer from "./ResponseAnswer";
+import { useMutation } from "react-query";
+import { updateTakerAnswer } from "../../../services/test";
+import { AxiosError } from "axios";
+import { toast } from "react-toastify";
 
 type QuestionProps = {
     question: QuestionItf;
 };
 
 const Answer = ({ question }: QuestionProps) => {
-    const [manualScore, setManualScore] = useState<number | null>(null);
+    const [manualScore, setManualScore] = useState<number>(0);
 
     const needManualScore = useMemo(() => {
         return (
             manualScoreTypes.includes(question.type) &&
-            (!question.answer || !question.answer.score)
+            question.answer &&
+            !question.answer.score
         );
     }, [question.type]);
+
+    const { mutate: updateScoreMutate, isLoading: updateScoreLoading } =
+        useMutation({
+            mutationFn: async () => {
+                const data = await updateTakerAnswer(
+                    question.test_id,
+                    question.answer!._id,
+                    { score: manualScore! }
+                );
+
+                return data;
+            },
+            mutationKey: [
+                "updateTakerAnswer",
+                { answer_id: question.answer?._id },
+            ],
+            onSuccess: () => {},
+            onError: (error) => {
+                if (error instanceof AxiosError) {
+                    toast.error(error.response?.data.message);
+                }
+            },
+        });
+
+    const handleUpdateScore = () => {
+        if (manualScore > question.score) {
+            setManualScore(0);
+            return toast.error(
+                "Please enter a score less than the question score"
+            );
+        }
+        updateScoreMutate();
+    };
 
     return (
         <div
@@ -38,33 +76,27 @@ const Answer = ({ question }: QuestionProps) => {
         >
             <div>
                 <span className="underline">Question {question.order}:</span>{" "}
-                {question.content.answer && (
-                    <>
-                        <span className="font-bold italic">
-                            (
-                            {question.answer
-                                ? question.answer.score
-                                : question.score}{" "}
-                            points)
-                        </span>{" "}
-                        {question.answer !== undefined && (
-                            <span className="font-bold italic">
-                                {question.answer !== null ? (
-                                    question.answer.score! > 0 ? (
-                                        <span className="text-green-600">
-                                            Correct ✅
-                                        </span>
-                                    ) : (
-                                        <span className="text-red-600">
-                                            Wrong ❌
-                                        </span>
-                                    )
-                                ) : (
-                                    "No answer"
-                                )}
-                            </span>
+                <span className="font-bold italic">
+                    (
+                    {question.answer
+                        ? `${question.answer.score}/${question.score}`
+                        : question.score}{" "}
+                    points)
+                </span>{" "}
+                {question.answer !== undefined && (
+                    <span className="font-bold italic">
+                        {question.answer !== null ? (
+                            question.answer.score! > 0 ? (
+                                <span className="text-green-600">
+                                    Correct ✅
+                                </span>
+                            ) : (
+                                <span className="text-red-600">Wrong ❌</span>
+                            )
+                        ) : (
+                            "No answer"
                         )}
-                    </>
+                    </span>
                 )}
             </div>
             {question.type === questionTypes.MULITPLE_CHOICES && (
@@ -117,10 +149,18 @@ const Answer = ({ question }: QuestionProps) => {
                         name="manualScore"
                         id="manualScore"
                         className="border border-gray-500 px-2 py-1 grow focus:border-orange-600 outline-none leading-5 ms-2"
+                        value={manualScore}
+                        onChange={(e) =>
+                            setManualScore(parseInt(e.target.value))
+                        }
                     />
 
-                    <button className="bg-orange-600 text-white px-4 py-0.5 ms-2 hover:bg-orange-700">
-                        Save
+                    <button
+                        className="bg-orange-600 text-white px-4 py-0.5 ms-2 hover:bg-orange-700"
+                        onClick={handleUpdateScore}
+                        disabled={updateScoreLoading}
+                    >
+                        {updateScoreLoading ? "Saving..." : "Save"}
                     </button>
                 </div>
             )}
