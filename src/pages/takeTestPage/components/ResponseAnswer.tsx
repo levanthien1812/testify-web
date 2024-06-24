@@ -8,7 +8,13 @@ type ResponseAnswerProps = {
 
 const ResponseAnswer = ({ content, userAnswer }: ResponseAnswerProps) => {
     const response = useMemo(() => {
-        return userAnswer ? userAnswer.answer : "";
+        if (userAnswer === undefined) {
+            return content.answer;
+        } else if (userAnswer !== null) {
+            return userAnswer.answer;
+        }
+
+        return "";
     }, [userAnswer]);
 
     return (

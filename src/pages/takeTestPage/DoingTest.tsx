@@ -1,15 +1,5 @@
-import React, { useEffect, useState } from "react";
-import {
-    FillGapsQuestionItf,
-    MatchingQuestionItf,
-    MultipleChoiceQuestionItf,
-    TestItf,
-    UserAnswer,
-} from "../../types/types";
-import { questionTypes } from "../../config/config";
-import MultipleChoicesQuestion from "./components/MultipleChoicesQuestion";
-import FillGapsQuestion from "./components/FillGapsQuestion";
-import MatchingQuestion from "./components/MatchingQuestion";
+import { useEffect, useState } from "react";
+import { TestItf, UserAnswer } from "../../types/types";
 import { useMutation } from "react-query";
 import { submitAnswers } from "../../services/test";
 import { AxiosError } from "axios";
@@ -158,7 +148,7 @@ const DoingTest = ({
                             />
                         ))}
 
-                    <div className="flex justify-center">
+                    <div className="flex flex-col items-center justify-center">
                         <button
                             className="bg-orange-600 text-white px-20 py-1.5 hover:bg-orange-700 uppercase disabled:bg-gray-600 disabled:cursor-not-allowed"
                             onClick={handleSubmit}
@@ -166,6 +156,9 @@ const DoingTest = ({
                         >
                             {isLoading ? "Submitting..." : "Submit"}
                         </button>
+                        <p className="text-sm text-gray-500 italic mt-1">
+                            Make sure you have completed all the questions
+                        </p>
                     </div>
                 </div>
             </div>

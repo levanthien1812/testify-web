@@ -66,7 +66,7 @@ const Part: React.FC<{
         value = e.target.value;
 
         if (["score", "num_questions"].includes(name)) {
-            value = parseInt(value);
+            value = parseFloat(value);
         }
 
         setShowSave(true);

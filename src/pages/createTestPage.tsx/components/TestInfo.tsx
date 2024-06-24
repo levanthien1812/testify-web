@@ -74,11 +74,9 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
         name = e.target.name;
         value = e.target.value;
 
-        if (
-            ["duration", "max_score", "num_parts", "num_questions"].includes(
-                name
-            )
-        ) {
+        if (["duration", "max_score"].includes(name)) {
+            value = parseFloat(value);
+        } else if (["num_parts", "num_questions"].includes(name)) {
             value = parseInt(value);
         } else if (["datetime", "close_time"].includes(name)) {
             value = new Date(value);

@@ -8,7 +8,15 @@ type FillGapsAnswerProps = {
 
 const FillGapsAnswer = ({ content, userAnswer }: FillGapsAnswerProps) => {
     const gaps = useMemo(() => {
-        return userAnswer ? userAnswer.answer : content.answer || [];
+        if (userAnswer === undefined) {
+            return content.answer || [];
+        } else if (userAnswer !== null) {
+            return userAnswer.answer || [];
+        }
+
+        return [];
+
+        // return userAnswer ? userAnswer.answer : content.answer || [];
     }, [userAnswer]);
 
     return (

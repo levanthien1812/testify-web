@@ -13,12 +13,21 @@ const MultipleChoicesAnswer = ({
     content,
     userAnswer,
 }: MultipleChoicesAnswerProps) => {
+    console.log(userAnswer);
     const optionChosen = useMemo(() => {
-        return userAnswer && userAnswer.answer.length > 0
-            ? userAnswer.answer[0]
-            : content.answer
-            ? content.answer[0]
-            : "";
+        if (userAnswer === undefined && content.answer) {
+            return content.answer[0];
+        } else if (userAnswer !== null && userAnswer.answer) {
+            return userAnswer.answer[0];
+        }
+
+        return "";
+
+        // return userAnswer && userAnswer.answer.length > 0
+        //     ? userAnswer.answer[0]
+        //     : content.answer
+        //     ? content.answer[0]
+        //     : "";
     }, [userAnswer]);
 
     return (
@@ -39,11 +48,7 @@ const MultipleChoicesAnswer = ({
                             name={content._id}
                             value={option._id}
                             id={option._id}
-                            checked={
-                                content.answer
-                                    ? content.answer[0] === option._id
-                                    : option._id === optionChosen
-                            }
+                            checked={optionChosen === option._id}
                             className={
                                 userAnswer
                                     ? content.answer &&

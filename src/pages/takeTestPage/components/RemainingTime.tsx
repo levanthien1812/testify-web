@@ -21,7 +21,7 @@ const RemainingTime = ({ remainingTime, totalTime }: RemainingTimeProps) => {
                 className="h-full py-0.5 bg-orange-600 text-center text-white"
                 style={{ width: `${(remainingTime / totalTime) * 100}%` }}
             >
-                {hover && formatTime(remainingTime)}
+                {hover && formatTime(remainingTime / 1000)}
             </div>
         </motion.div>
     );

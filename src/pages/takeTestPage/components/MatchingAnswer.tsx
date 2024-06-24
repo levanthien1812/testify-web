@@ -11,7 +11,15 @@ type MatchingAnswerProps = {
 
 const MatchingAnswer = ({ content, userAnswer }: MatchingAnswerProps) => {
     const matchings = useMemo(() => {
-        return userAnswer ? userAnswer.answer || [] : content.answer || [];
+        if (userAnswer === undefined) {
+            return content.answer || [];
+        } else if (userAnswer !== null) {
+            return userAnswer.answer || [];
+        }
+
+        return [];
+
+        // return userAnswer ? userAnswer.answer || [] : content.answer || [];
     }, [userAnswer]);
 
     const isCorrectMatching = (matching: { left: string; right: string }) => {
