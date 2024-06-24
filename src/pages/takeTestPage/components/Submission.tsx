@@ -15,7 +15,7 @@ const Submission = ({ submission, test, onViewDetail }: SubmissionProps) => {
     const [viewDetail, setViewDetail] = React.useState(false);
 
     const handleViewDetail = () => {
-        setViewDetail(true);
+        setViewDetail((prev) => !prev);
         onViewDetail();
     };
 

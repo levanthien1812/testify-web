@@ -67,7 +67,7 @@ const Question = ({
         value = e.target.value;
 
         if (["score"].includes(name)) {
-            value = parseInt(value);
+            value = parseFloat(value);
         }
 
         setQuestionBody({

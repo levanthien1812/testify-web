@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
     FillGapsAnswerItf,
     FillGapsQuestionItf,
@@ -10,7 +10,7 @@ import {
     ResponseAnswerItf,
     ResponseQuestionItf,
 } from "../../../types/types";
-import { manualScoreTypes, questionTypes } from "../../../config/config";
+import { manualScoreTypes, questionTypes, roles } from "../../../config/config";
 import MultipleChoicesAnswer from "./MultipleChoicesAnswer";
 import FillGapsAnswer from "./FillGapsAnswer";
 import MatchingAnswer from "./MatchingAnswer";
@@ -19,21 +19,23 @@ import { useMutation } from "react-query";
 import { updateTakerAnswer } from "../../../services/test";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../stores/rootState";
 
 type QuestionProps = {
     question: QuestionItf;
 };
 
 const Answer = ({ question }: QuestionProps) => {
-    const [manualScore, setManualScore] = useState<number>(0);
+    const [manualScore, setManualScore] = useState<number>(
+        question.answer ? question.answer.score || 0 : 0
+    );
+    const [isUpdatingScore, setIsUpdatingScore] = useState<boolean>(false);
+    const user = useSelector((state: RootState) => state.auth.user);
 
     const needManualScore = useMemo(() => {
-        return (
-            manualScoreTypes.includes(question.type) &&
-            question.answer &&
-            !question.answer.score
-        );
-    }, [question.type]);
+        return manualScoreTypes.includes(question.type);
+    }, [question]);
 
     const { mutate: updateScoreMutate, isLoading: updateScoreLoading } =
         useMutation({
@@ -71,7 +73,9 @@ const Answer = ({ question }: QuestionProps) => {
     return (
         <div
             className={`px-4 py-2 ${
-                needManualScore ? "bg-orange-100" : "bg-white"
+                needManualScore && question.answer && !question.answer.score
+                    ? "bg-orange-100"
+                    : "bg-white"
             }`}
         >
             <div>
@@ -83,7 +87,7 @@ const Answer = ({ question }: QuestionProps) => {
                         : question.score}{" "}
                     points)
                 </span>{" "}
-                {question.answer !== undefined && (
+                {question.answer !== undefined && !needManualScore && (
                     <span className="font-bold italic">
                         {question.answer !== null ? (
                             question.answer.score! > 0 ? (
@@ -141,27 +145,61 @@ const Answer = ({ question }: QuestionProps) => {
                 />
             )}
 
-            {needManualScore && (
+            {user?.role === roles.MAKER && needManualScore && (
                 <div className="border-t pt-2 border-gray-400 border-dashed">
-                    <label htmlFor="manualScore">Score: </label>
-                    <input
-                        type="number"
-                        name="manualScore"
-                        id="manualScore"
-                        className="border border-gray-500 px-2 py-1 grow focus:border-orange-600 outline-none leading-5 ms-2"
-                        value={manualScore}
-                        onChange={(e) =>
-                            setManualScore(parseInt(e.target.value))
-                        }
-                    />
+                    {((question.answer && !question.answer.score) ||
+                        isUpdatingScore) && (
+                        <>
+                            <label htmlFor="manualScore">Score: </label>
+                            <input
+                                type="number"
+                                name="manualScore"
+                                id="manualScore"
+                                step={0.01}
+                                min={0.0}
+                                max={question.score}
+                                className="border border-gray-500 px-2 grow focus:border-orange-600 outline-none leading-6 ms-2"
+                                value={manualScore}
+                                onChange={(e) =>
+                                    setManualScore(parseFloat(e.target.value))
+                                }
+                            />
 
-                    <button
-                        className="bg-orange-600 text-white px-4 py-0.5 ms-2 hover:bg-orange-700"
-                        onClick={handleUpdateScore}
-                        disabled={updateScoreLoading}
-                    >
-                        {updateScoreLoading ? "Saving..." : "Save"}
-                    </button>
+                            <button
+                                className="bg-orange-600 text-white px-4 ms-2 hover:bg-orange-700"
+                                onClick={handleUpdateScore}
+                                disabled={updateScoreLoading}
+                            >
+                                {updateScoreLoading ? "Saving..." : "Save"}
+                            </button>
+
+                            {isUpdatingScore && (
+                                <button
+                                    className="ms-2 bg-gray-300 px-4 hover:bg-gray-400"
+                                    onClick={() => {
+                                        setManualScore(
+                                            question.answer
+                                                ? question.answer.score || 0
+                                                : 0
+                                        );
+                                        setIsUpdatingScore(false);
+                                    }}
+                                >
+                                    Cancel
+                                </button>
+                            )}
+                        </>
+                    )}
+                    {question.answer &&
+                        question.answer.score &&
+                        !isUpdatingScore && (
+                            <button
+                                className="bg-orange-600 text-white px-4 ms-2 hover:bg-orange-700"
+                                onClick={() => setIsUpdatingScore(true)}
+                            >
+                                Update score
+                            </button>
+                        )}
                 </div>
             )}
         </div>
