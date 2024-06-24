@@ -18,7 +18,7 @@ const authSlice = createSlice({
             const tokens = payload.payload.tokens;
 
             Cookies.set("user", JSON.stringify(user), {
-                expires: new Date(tokens.access.expires),
+                expires: new Date(tokens.refresh.expires),
             });
             Cookies.set("access_token", tokens.access.token, {
                 expires: new Date(tokens.access.expires),
