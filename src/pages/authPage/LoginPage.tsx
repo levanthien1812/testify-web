@@ -21,7 +21,6 @@ const LoginPage = () => {
     const navigate = useNavigate();
 
     const handleLogin = async (e: FormEvent) => {
-        console.log(e);
         e.preventDefault();
         setError(null);
 
@@ -88,10 +87,7 @@ const LoginPage = () => {
 
     return (
         <div className="h-screen bg-orange-600 flex justify-center items-start">
-            <form
-                onSubmit={handleLogin}
-                className="bg-white px-4 pt-10 pb-6 mt-10 min-w-80 max-w-80 flex flex-col items-center shadow-xl"
-            >
+            <div className="bg-white px-4 pt-10 pb-6 mt-10 min-w-80 max-w-80 flex flex-col items-center shadow-xl">
                 <h2 className="text-3xl">Login</h2>
 
                 <div className="px-8 text-center leading-5">
@@ -135,6 +131,7 @@ const LoginPage = () => {
                 </div>
 
                 <button
+                    onClick={handleLogin}
                     type="submit"
                     className="text-white bg-orange-600 w-full py-1 mt-6 hover:bg-orange-700"
                 >
@@ -149,7 +146,7 @@ const LoginPage = () => {
                         register
                     </Link>
                 </p>
-            </form>
+            </div>
         </div>
     );
 };

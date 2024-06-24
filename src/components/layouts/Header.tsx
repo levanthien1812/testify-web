@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import logoTestify from "./../../assets/images/logo-testify.png";
 import { Link } from "react-router-dom";
 import { useSelector } from "react-redux";
@@ -39,7 +39,7 @@ const Header = () => {
         mutate();
     };
 
-    useMemo(() => {
+    useEffect(() => {
         if (isLoading) {
             toast.loading("Logging out...");
         } else {
