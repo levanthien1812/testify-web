@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux";
 import { authActions } from "../../stores/auth";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
+import Button from "../../pages/authPage/components/Button";
 
 const Header = () => {
     const { user, isAuthened } = useSelector((state: RootState) => state.auth);
@@ -54,12 +55,12 @@ const Header = () => {
             </Link>
             {!isAuthened && (
                 <div className="flex gap-6">
-                    <button className="text-lg hover:font-bold hover:text-orange-600 active:text-xl">
+                    <Button className="text-lg">
                         <Link to={"/register"}>Register</Link>
-                    </button>
-                    <button className="text-lg hover:font-bold hover:text-orange-600 active:text-xl">
+                    </Button>
+                    <Button className="text-lg">
                         <Link to={"/login"}>Login</Link>
-                    </button>
+                    </Button>
                 </div>
             )}
             {isAuthened && user && (
@@ -76,12 +77,13 @@ const Header = () => {
 
                     {showActions && (
                         <div className="absolute mt-2 bg-white shadow-md px-2 py-2 w-full">
-                            <button
-                                className="hover:bg-gray-100 px-2 py-1 w-full"
+                            <Button
+                                primary={false}
+                                className="w-full"
                                 onClick={handleLogout}
                             >
                                 Logout
-                            </button>
+                            </Button>
                         </div>
                     )}
                 </div>

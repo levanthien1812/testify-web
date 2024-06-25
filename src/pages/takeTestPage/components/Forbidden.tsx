@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router";
+import Button from "../../authPage/components/Button";
 
 const Forbidden = () => {
     const navigate = useNavigate();
@@ -9,19 +10,9 @@ const Forbidden = () => {
             <p className="text-center text-xl">
                 You are not allowed to take this test
             </p>
-            <div className="flex gap-2">
-                <button
-                    className="bg-orange-600 text-white mt-4 px-8 py-1"
-                    onClick={() => navigate(-1)}
-                >
-                    Back
-                </button>
-                <button
-                    className="bg-orange-600 text-white mt-4 px-8 py-1"
-                    onClick={() => navigate("/home")}
-                >
-                    Home
-                </button>
+            <div className="flex gap-2 mt-4">
+                <Button onClick={() => navigate(-1)}>Back</Button>
+                <Button onClick={() => navigate("/home")}>Home</Button>
             </div>
         </div>
     );

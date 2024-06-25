@@ -3,6 +3,7 @@ import { MultipleChoiceQuestionBodyItf } from "../../../../types/types";
 import Option from "./Option";
 import TextEditor from "../../../richTextEditor/TiptapEditor";
 import { toast } from "react-toastify";
+import Button from "../../../authPage/components/Button";
 
 const MulitpleChoiceQuestion: React.FC<{
     content: MultipleChoiceQuestionBodyItf;
@@ -73,12 +74,13 @@ const MulitpleChoiceQuestion: React.FC<{
                         />
                     ))}
 
-                    <button
-                        className="border border-gray-500 w-full py-0.5 bg-gray-200 hover:bg-gray-300"
+                    <Button
+                        primary={false}
+                        className="w-full"
                         onClick={handleAddOption}
                     >
                         Add option
-                    </button>
+                    </Button>
                 </div>
             </div>
         </>

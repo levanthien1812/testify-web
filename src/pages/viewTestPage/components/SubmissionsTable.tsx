@@ -16,6 +16,7 @@ import _ from "lodash";
 import TakerSubmissionDetail from "./TakerSubmissionDetail";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRotateRight } from "@fortawesome/free-solid-svg-icons";
+import Button from "../../authPage/components/Button";
 
 type SubmissionsTableProps = {
     submissions: SubmissionItf[];
@@ -143,8 +144,8 @@ const SubmissionsTable = ({ submissions, refetch }: SubmissionsTableProps) => {
                         icon={faRotateRight}
                     />
                 </button>
-                <button
-                    className="bg-orange-600 text-white hover:bg-orange-700 px-4"
+                <Button
+                    size="sm"
                     onClick={(e) => {
                         if (!enableFilter) {
                             setEnableFilter(true);
@@ -154,7 +155,7 @@ const SubmissionsTable = ({ submissions, refetch }: SubmissionsTableProps) => {
                     }}
                 >
                     {!enableFilter ? "Filter columns" : "Clear all filters"}
-                </button>
+                </Button>
             </div>
             <table className="w-full mt-2">
                 <thead>
@@ -222,8 +223,8 @@ const SubmissionsTable = ({ submissions, refetch }: SubmissionsTableProps) => {
                                 </td>
                             ))}
                             <td className="text-center py-1 px-1 border border-slate-400">
-                                <button
-                                    className="text-sm bg-orange-600 text-white px-3 py-0.5 hover:bg-orange-700"
+                                <Button
+                                    size="sm"
                                     onClick={() =>
                                         setSelectedTakerId(
                                             (row.original.taker_id as userItf)
@@ -232,7 +233,7 @@ const SubmissionsTable = ({ submissions, refetch }: SubmissionsTableProps) => {
                                     }
                                 >
                                     Detail
-                                </button>
+                                </Button>
                             </td>
                         </tr>
                     ))}

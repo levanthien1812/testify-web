@@ -7,6 +7,7 @@ import { addPart, updatePart } from "../../../../services/test";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { partSchema } from "../../../../validations/test";
+import Button from "../../../authPage/components/Button";
 
 const Part: React.FC<{
     testId: string;
@@ -183,8 +184,8 @@ const Part: React.FC<{
                     {/* <button className="px-4 py-0.5 bg-gray-600 text-white w-1/5 hover:bg-gray-500">
                         Cancel
                     </button> */}
-                    <button
-                        className="px-4 py-0.5 bg-orange-600 text-white w-1/5 hover:bg-orange-500 disabled:bg-gray-500"
+                    <Button
+                        className="w-1/5"
                         onClick={handleSavePart}
                         disabled={
                             !savable || createPartLoading || updatePartLoading
@@ -193,7 +194,7 @@ const Part: React.FC<{
                         {createPartLoading || updatePartLoading
                             ? "Saving..."
                             : "Save"}
-                    </button>
+                    </Button>
                 </div>
             )}
         </div>

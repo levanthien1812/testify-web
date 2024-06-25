@@ -11,6 +11,7 @@ import { useDispatch } from "react-redux";
 import { authActions } from "../../stores/auth";
 import Cookies from "js-cookie";
 import { roles } from "../../config/config";
+import Button from "./components/Button";
 
 const RegistePage = () => {
     const [name, setName] = useState<string>("");
@@ -89,11 +90,7 @@ const RegistePage = () => {
 
     return (
         <div className="h-screen bg-orange-600 flex justify-center items-start">
-            <form
-                onSubmit={handleRegister}
-                method="post"
-                className="bg-white px-4 pt-10 pb-6 mt-10 min-w-80 max-w-80 flex flex-col items-center shadow-xl shrink-0"
-            >
+            <div className="bg-white px-4 pt-10 pb-6 mt-10 min-w-80 max-w-80 flex flex-col items-center shadow-xl shrink-0">
                 <h2 className="text-3xl">Register</h2>
                 <p className="text-center leading-5 text-gray-500 text-[14px] italic">
                     Lorem ipsum dolor, sit amet consectetur adipisicing elit.
@@ -151,12 +148,13 @@ const RegistePage = () => {
                     />
                 </div>
 
-                <button
-                    type="submit"
-                    className="text-white bg-orange-600 w-full py-1 mt-6 hover:bg-orange-700"
+                <Button
+                    onClick={handleRegister}
+                    className="w-full mt-6"
+                    size="lg"
                 >
                     Register
-                </button>
+                </Button>
                 <p className="text-sm mt-1">
                     Already have account? Please{" "}
                     <Link
@@ -166,7 +164,7 @@ const RegistePage = () => {
                         login
                     </Link>
                 </p>
-            </form>
+            </div>
         </div>
     );
 };

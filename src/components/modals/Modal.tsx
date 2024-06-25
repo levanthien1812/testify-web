@@ -2,6 +2,7 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { ReactNode } from "react";
 import { createPortal } from "react-dom";
+import Button from "../../pages/authPage/components/Button";
 
 type ModalProps = {
     children: ReactNode;
@@ -70,13 +71,9 @@ export const ModalFooter = ({ children: additionalButtons }: FooterProps) => {
 
     return (
         <div className="px-4 py-3 gap-3 border-t flex items-center justify-end">
-            <button
-                className="text-white px-9 py-0.5 bg-gray-500"
-                type="button"
-                onClick={props?.onClose}
-            >
+            <Button primary={false} type="button" onClick={props?.onClose}>
                 Cancel
-            </button>
+            </Button>
             {additionalButtons}
         </div>
     );

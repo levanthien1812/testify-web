@@ -5,6 +5,7 @@ import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { useMutation, useQuery } from "react-query";
 import { getTests } from "../../../services/test";
 import { TestItf } from "../../../types/types";
+import Button from "../../authPage/components/Button";
 
 const RecentTests = () => {
     const navigate = useNavigate();
@@ -21,12 +22,13 @@ const RecentTests = () => {
         <div>
             <div>
                 <h2 className="text-2xl inline-block">Recent tests</h2>
-                <button
-                    className="ms-3 bg-orange-500 text-white px-3 py-0 hover:bg-orange-600 border-2 border-orange-600"
+                <Button
+                    size="sm"
+                    className="ms-3"
                     onClick={() => navigate("/tests/create")}
                 >
                     Create test
-                </button>
+                </Button>
             </div>
 
             <div className="flex gap-6 mt-3 overflow-x-scroll scrollbar-thin pb-1">

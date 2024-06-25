@@ -14,6 +14,7 @@ import Modal, {
 } from "../../components/modals/Modal";
 import TestQuestionsAndAnswers from "../takeTestPage/components/TestQuestionsAndAnswers";
 import TestAnswers from "../createTestPage.tsx/components/TestAnswers";
+import Button from "../authPage/components/Button";
 
 const ViewTestPage = () => {
     const { testId } = useParams();
@@ -77,7 +78,10 @@ const ViewTestPage = () => {
                 {submissions && (
                     <div className="space-y-1 mt-2">
                         {submissions.length > 0 && (
-                            <SubmissionsTable submissions={submissions} refetch={refetchSubmissions}/>
+                            <SubmissionsTable
+                                submissions={submissions}
+                                refetch={refetchSubmissions}
+                            />
                         )}
                         {submissions.length === 0 && (
                             <p className="text-center">No submission found.</p>
@@ -109,15 +113,15 @@ const ViewTestPage = () => {
                         )}
                         {test.are_answers_provided === true && (
                             <div className="flex justify-end">
-                                <button
-                                    className="bg-orange-600 text-white px-4 shadow-md"
+                                <Button
+                                    size="sm"
                                     onClick={() => {
                                         setViewQuestionsAndAnswers(false);
                                         setViewProvideAnswers(true);
                                     }}
                                 >
                                     Update answers
-                                </button>
+                                </Button>
                             </div>
                         )}
                         <TestQuestionsAndAnswers test={test} />

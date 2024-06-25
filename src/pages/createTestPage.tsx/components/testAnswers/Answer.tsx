@@ -16,6 +16,7 @@ import { addAnswer } from "../../../../services/test";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import ResponseAnswer from "./ResponseAnswer";
+import Button from "../../../authPage/components/Button";
 
 const Answer: React.FC<{
     question: QuestionItf;
@@ -101,22 +102,23 @@ const Answer: React.FC<{
 
             {savable && (
                 <div className="flex justify-end">
-                    <button
-                        className="px-4 py-0.5 bg-gray-600 text-white w-1/5 hover:bg-gray-500"
+                    <Button
+                        className="w-1/5"
+                        primary={false}
                         onClick={() => {
                             setReset(true);
                             setSavable(false);
                         }}
                     >
                         Cancel
-                    </button>
-                    <button
-                        className="px-4 py-0.5 bg-orange-600 text-white w-1/5 hover:bg-orange-500 disabled:bg-orange-700"
+                    </Button>
+                    <Button
+                        className="w-1/5"
                         onClick={handleSaveAnswer}
                         disabled={isLoading}
                     >
                         {isLoading ? "Saving..." : "Save"}
-                    </button>
+                    </Button>
                 </div>
             )}
         </div>

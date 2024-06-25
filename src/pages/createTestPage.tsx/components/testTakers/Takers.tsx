@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import AddTakers from "./AddTakers";
 import { TestItf, userItf } from "../../../../types/types";
+import Button from "../../../authPage/components/Button";
 
 type TakersProps = {
     test: TestItf;
@@ -46,14 +47,16 @@ const Takers = ({ test, onAfterUpdate }: TakersProps) => {
                         </button>
                     </div>
                 ))}
-                <button
-                    className="px-4 py-2 w-full bg-gray-200 hover:bg-gray-300 flex justify-center items-center"
+                <Button
+                    size="lg"
+                    primary={false}
+                    className="w-full"
                     onClick={() => {
                         setIsAddingTakers(true);
                     }}
                 >
                     Add
-                </button>
+                </Button>
             </div>
             {isAddingTakers && (
                 <AddTakers
