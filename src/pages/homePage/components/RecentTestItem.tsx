@@ -8,6 +8,7 @@ import { format } from "date-fns";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
 import { roles, testStatus } from "../../../config/config";
+import Button from "../../authPage/components/Button";
 
 type RecentTestItemProps = {
     test: TestItf;
@@ -97,7 +98,7 @@ const RecentTestItem = ({ test }: RecentTestItemProps) => {
 
             {hover && (
                 <motion.div
-                    className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-30 flex justify-center items-center"
+                    className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-20 flex justify-center items-center"
                     initial={{
                         rotateX: 30,
                         translateY: 20,
@@ -105,14 +106,10 @@ const RecentTestItem = ({ test }: RecentTestItemProps) => {
                     }}
                     animate={{ rotateX: 0, translateY: 0, scale: 1 }}
                 >
-                    <motion.button
-                        className="text-white font-bold text-sm uppercase bg-black py-1 px-3 rounded-full"
-                        whileTap={{ scale: 1.1 }}
-                        onClick={handleClickView}
-                    >
+                    <Button onClick={handleClickView} className="shadow-none">
                         <span>View detail</span>
                         <FontAwesomeIcon icon={faArrowRight} className="ms-2" />
-                    </motion.button>
+                    </Button>
                 </motion.div>
             )}
         </div>

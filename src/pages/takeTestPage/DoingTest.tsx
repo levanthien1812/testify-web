@@ -7,6 +7,7 @@ import { toast } from "react-toastify";
 import RemainingTime from "./components/RemainingTime";
 import Swal from "sweetalert2";
 import Question from "./components/Question";
+import Button from "../authPage/components/Button";
 
 type DoingTestProps = {
     test: TestItf;
@@ -149,13 +150,13 @@ const DoingTest = ({
                         ))}
 
                     <div className="flex flex-col items-center justify-center">
-                        <button
-                            className="bg-orange-600 text-white px-20 py-1.5 hover:bg-orange-700 uppercase disabled:bg-gray-600 disabled:cursor-not-allowed"
+                        <Button
+                            size="lg"
                             onClick={handleSubmit}
                             disabled={!submittable || isLoading}
                         >
                             {isLoading ? "Submitting..." : "Submit"}
-                        </button>
+                        </Button>
                         <p className="text-sm text-gray-500 italic mt-1">
                             Make sure you have completed all the questions
                         </p>

@@ -11,6 +11,7 @@ import { toast } from "react-toastify";
 import { roles } from "../../config/config";
 import { AxiosError } from "axios";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
+import Button from "./components/Button";
 
 const LoginPage = () => {
     const [email, setEmail] = useState<string>("");
@@ -92,13 +93,6 @@ const LoginPage = () => {
 
                 <div className="px-8 text-center leading-5">
                     If you are a test taker, please{" "}
-                    {/* <button
-                        type="button"
-                        className="text-orange-600 hover:underline"
-                        onClick={() => loginGoogle()}
-                    >
-                        login by google account
-                    </button> */}
                     <GoogleLogin
                         onSuccess={handleLoginGoogle}
                         onError={() => {
@@ -130,13 +124,9 @@ const LoginPage = () => {
                     />
                 </div>
 
-                <button
-                    onClick={handleLogin}
-                    type="submit"
-                    className="text-white bg-orange-600 w-full py-1 mt-6 hover:bg-orange-700"
-                >
+                <Button onClick={handleLogin} className="w-full mt-6" size="lg">
                     Login
-                </button>
+                </Button>
                 <p className="text-sm mt-1">
                     Don't have account? Please{" "}
                     <Link

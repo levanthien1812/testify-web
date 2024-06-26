@@ -8,7 +8,11 @@ import {
     ResponseQuestionBodyItf,
     TestPartItf,
 } from "../../../../types/types";
-import Modal, { ModalBody, ModalFooter, ModalHeader } from "../../../../components/modals/Modal";
+import Modal, {
+    ModalBody,
+    ModalFooter,
+    ModalHeader,
+} from "../../../../components/modals/Modal";
 import { questionTypes, testLevels } from "../../../../config/config";
 import MulitpleChoiceQuestion from "./MultipleChoicesQuestion";
 import FillGapsQuestion from "./FillGapsQuestion";
@@ -19,6 +23,7 @@ import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { questionTypeToQuestionSchema } from "../../../../utils/mapping";
 import ResponseQuestion from "./ResponseQuestion";
+import Button from "../../../authPage/components/Button";
 
 type QuestionProps = {
     question: QuestionItf | null;
@@ -321,9 +326,7 @@ const Question = ({
                         </div>
                     </ModalBody>
                     <ModalFooter>
-                        <button
-                            className="text-white bg-orange-600 px-9 py-0.5 hover:bg-orange-700"
-                            type="submit"
+                        <Button
                             disabled={
                                 createQuestionLoading || updateQuestionLoading
                             }
@@ -332,7 +335,7 @@ const Question = ({
                             {!(createQuestionLoading || updateQuestionLoading)
                                 ? "Save"
                                 : "Saving..."}
-                        </button>
+                        </Button>
                     </ModalFooter>
                 </Modal>
             )}

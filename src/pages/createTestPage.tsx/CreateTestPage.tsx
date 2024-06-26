@@ -11,6 +11,7 @@ import TestTakers from "./components/TestTakers";
 import { testStatus } from "../../config/config";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
+import Button from "../authPage/components/Button";
 
 const CreateTestPage = () => {
     const [test, setTest] = useState<TestItf | null>(null);
@@ -105,13 +106,14 @@ const CreateTestPage = () => {
             <div className="2xl:w-3/5 w-4/5 mx-auto my-6 relative">
                 {test && test.status === testStatus.PUBLISHABLE && (
                     <div className="absolute top-0 left-0 w-full h-0 flex items-center justify-center">
-                        <button
-                            className="bg-orange-600 hover:bg-orange-700 shadow-md text-white px-8 py-1 rounded-full uppercase disabled:bg-gray-600"
+                        <Button
+                            className=" uppercase"
+                            size="lg"
                             onClick={() => publishTestMutate()}
                             disabled={publishTestLoading}
                         >
                             Publish test
-                        </button>
+                        </Button>
                     </div>
                 )}
                 {step === 1 && (

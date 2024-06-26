@@ -19,6 +19,7 @@ import { formatTime } from "../../utils/time";
 import TestInfo from "./components/TestInfo";
 import Forbidden from "./components/Forbidden";
 import Submission from "./components/Submission";
+import Button from "../authPage/components/Button";
 
 const TakeTestPage = () => {
     const { testId } = useParams();
@@ -175,13 +176,13 @@ const TakeTestPage = () => {
                     {(status === "published" || status === "opened") &&
                         !submission && (
                             <div className="flex justify-center">
-                                <button
-                                    className="bg-orange-600 text-white py-2 mt-4 px-16 font-bold uppercase hover:bg-orange-700 disabled:bg-gray-600"
+                                <Button
+                                    size="lg"
                                     disabled={status === "published"}
                                     onClick={handleStartTest}
                                 >
                                     Start test
-                                </button>
+                                </Button>
                             </div>
                         )}
                     {status === "closed" && (

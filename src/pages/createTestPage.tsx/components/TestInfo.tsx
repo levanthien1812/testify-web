@@ -8,6 +8,7 @@ import { toast } from "react-toastify";
 import { testBodySchema } from "../../../validations/test";
 import { formatTimezone } from "../../../utils/time";
 import _, { set } from "lodash";
+import Button from "../../authPage/components/Button";
 
 type SectionProps = {
     test: TestItf | null;
@@ -159,7 +160,7 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
         <div className="px-20 py-12 shadow-2xl">
             <h2 className="text-center text-3xl">Test Information</h2>
 
-            <form className="mt-4 " onSubmit={handleSubmit}>
+            <div className="mt-4 ">
                 <div className="flex gap-4 items-end">
                     <label htmlFor="title" className="w-1/5">
                         Test title:{" "}
@@ -374,28 +375,24 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                     )}
 
                 <div className="flex justify-end items-center gap-3 mt-6 pt-4 border-t border-gray-300">
-                    <button
-                        className="text-white bg-orange-600 px-12 py-1 disabled:bg-gray-500"
-                        type="button"
-                        disabled
-                    >
+                    <Button size="lg" disabled>
                         Back
-                    </button>
-                    <button
-                        className="text-white bg-orange-600 px-12 py-1 hover:bg-orange-700 disabled:bg-gray-500"
-                        type="submit"
+                    </Button>
+                    <Button
+                        size="lg"
                         disabled={
                             createTestLoading ||
                             updateTestLoading ||
                             !isFinished
                         }
+                        onClick={handleSubmit}
                     >
                         {!(createTestLoading || updateTestLoading)
                             ? "Next"
                             : "Saving..."}
-                    </button>
+                    </Button>
                 </div>
-            </form>
+            </div>
         </div>
     );
 };

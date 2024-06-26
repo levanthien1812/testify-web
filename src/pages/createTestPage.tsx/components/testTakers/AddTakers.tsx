@@ -10,6 +10,7 @@ import { useMutation } from "react-query";
 import { assignTakers } from "../../../../services/test";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
+import Button from "../../../authPage/components/Button";
 
 type AddTakersProps = {
     onClose: () => void;
@@ -74,14 +75,9 @@ const AddTakers = ({ onClose, testId, onAfterUpdate }: AddTakersProps) => {
                 )}
             </ModalBody>
             <ModalFooter>
-                <button
-                    className="text-white bg-orange-600 px-9 py-0.5 hover:bg-orange-700"
-                    type="submit"
-                    disabled={isLoading}
-                    onClick={handleSave}
-                >
+                <Button disabled={isLoading} onClick={handleSave}>
                     {!isLoading ? "Save" : "Saving..."}
-                </button>
+                </Button>
             </ModalFooter>
         </Modal>
     );

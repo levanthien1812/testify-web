@@ -5,6 +5,7 @@ import { validateParts } from "../../../services/test";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import Part from "./testParts/Part";
+import Button from "../../authPage/components/Button";
 
 type SectionProps = {
     test: TestItf;
@@ -88,19 +89,12 @@ const TestParts = ({ test, onAfterUpdate, onBack, onNext }: SectionProps) => {
             </div>
 
             <div className="flex justify-end items-center gap-3 mt-6 pt-4 border-t border-gray-300">
-                <button
-                    className="text-white bg-orange-600 px-12 py-1 disabled:bg-gray-500"
-                    onClick={handleBack}
-                >
+                <Button size="lg" onClick={handleBack}>
                     Back
-                </button>
-                <button
-                    className="text-white bg-orange-600 px-12 py-1 hover:bg-orange-700"
-                    onClick={handleNext}
-                    disabled={isLoading}
-                >
+                </Button>
+                <Button size="lg" onClick={handleNext} disabled={isLoading}>
                     {!isLoading ? "Next" : "Validating..."}
-                </button>
+                </Button>
             </div>
         </div>
     );

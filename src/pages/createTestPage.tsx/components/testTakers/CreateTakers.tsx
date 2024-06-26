@@ -9,6 +9,7 @@ import { useMutation } from "react-query";
 import { createTakers } from "../../../../services/test";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
+import Button from "../../../authPage/components/Button";
 
 type CreateTakersProps = {
     testId: string;
@@ -96,12 +97,14 @@ const CreateTakers = ({
                         ))}
                     </div>
 
-                    <button
-                        className="py-0 mt-2 w-full bg-gray-200 hover:bg-gray-300 flex justify-center items-center"
+                    <Button
+                        primary={false}
+                        size="sm"
+                        className="mt-2 w-full"
                         onClick={handleAdd}
                     >
                         Add
-                    </button>
+                    </Button>
 
                     <div className="flex gap-1 items-center mt-2">
                         <input
@@ -116,14 +119,9 @@ const CreateTakers = ({
                 </div>
             </ModalBody>
             <ModalFooter>
-                <button
-                    className="text-white bg-orange-600 px-9 py-0.5 hover:bg-orange-700"
-                    type="submit"
-                    disabled={isLoading}
-                    onClick={handleSave}
-                >
+                <Button disabled={isLoading} onClick={handleSave}>
                     {!isLoading ? "Save" : "Saving..."}
-                </button>
+                </Button>
             </ModalFooter>
         </Modal>
     );

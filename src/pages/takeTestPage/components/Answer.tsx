@@ -21,6 +21,7 @@ import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
+import Button from "../../authPage/components/Button";
 
 type QuestionProps = {
     question: QuestionItf;
@@ -165,17 +166,18 @@ const Answer = ({ question }: QuestionProps) => {
                                 }
                             />
 
-                            <button
-                                className="bg-orange-600 text-white px-4 ms-2 hover:bg-orange-700"
+                            <Button
                                 onClick={handleUpdateScore}
                                 disabled={updateScoreLoading}
                             >
                                 {updateScoreLoading ? "Saving..." : "Save"}
-                            </button>
+                            </Button>
 
                             {isUpdatingScore && (
-                                <button
-                                    className="ms-2 bg-gray-300 px-4 hover:bg-gray-400"
+                                <Button
+                                    primary={false}
+                                    className="ms-2"
+                                    size="sm"
                                     onClick={() => {
                                         setManualScore(
                                             question.answer
@@ -186,19 +188,19 @@ const Answer = ({ question }: QuestionProps) => {
                                     }}
                                 >
                                     Cancel
-                                </button>
+                                </Button>
                             )}
                         </>
                     )}
                     {question.answer &&
                         question.answer.score &&
                         !isUpdatingScore && (
-                            <button
-                                className="bg-orange-600 text-white px-4 ms-2 hover:bg-orange-700"
+                            <Button
+                                size="sm"
                                 onClick={() => setIsUpdatingScore(true)}
                             >
                                 Update score
-                            </button>
+                            </Button>
                         )}
                 </div>
             )}

@@ -3,6 +3,7 @@ import { TestItf } from "../../../types/types";
 import Answer from "./testAnswers/Answer";
 import Questions from "./testQuestions/Questions";
 import { testStatus } from "../../../config/config";
+import Button from "../../authPage/components/Button";
 
 type SectionProps = {
     test: TestItf;
@@ -68,18 +69,12 @@ const TestAnswers = ({ test, onBack, onNext, onAfterUpdate }: SectionProps) => {
 
             {isProvideInAdvance && (
                 <div className="flex justify-end items-center gap-3 mt-6 pt-4 border-t border-gray-300">
-                    <button
-                        className="text-white bg-orange-600 px-12 py-1 disabled:bg-gray-500"
-                        onClick={handleBack}
-                    >
+                    <Button size="lg" onClick={handleBack}>
                         Back
-                    </button>
-                    <button
-                        className="text-white bg-orange-600 px-12 py-1 hover:bg-orange-700 disabled:bg-gray-500"
-                        onClick={handleNext}
-                    >
+                    </Button>
+                    <Button size="lg" onClick={handleNext}>
                         Next
-                    </button>
+                    </Button>
                 </div>
             )}
         </div>
