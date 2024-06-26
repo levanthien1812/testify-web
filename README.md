@@ -2,9 +2,9 @@
 
 <!-- PROJECT LOGO -->
 <br />
-<div align="center">othneildrew/Best-README-Template
+<div align="center">
   <a href="https://github.com/levanthien1812/testify-web">
-    <img src="src/assets/images/logo-testify.png" alt="Logo" width="180" height="180">
+    <img src="src/assets/images/logo-testify.png" alt="Logo" width="180">
   </a>
 
   <h3 align="center">TESTIFY</h3>
@@ -32,4 +32,4 @@ Welcome to the Test Creation Website project! This application is designed to st
 
 ## DB Diagram
 
-![mermaid-diagram-2023-10-09-181023](https://dbdiagram.io/d/667ba6969939893dae48144a)
+<img src="src/assets/images/testiy-db-diagram.png" alt="db-diagram">
