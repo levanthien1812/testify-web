@@ -5,6 +5,10 @@ import Select from "../../../components/elements/Select";
 import { formatTimezone } from "../../../utils/time";
 import { FilterState } from "../../../types/types";
 import { Link } from "react-router-dom";
+import { testStatus } from "../../../config/config";
+import _ from "lodash";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faFilter } from "@fortawesome/free-solid-svg-icons";
 
 type FilterProps = {
     filter: FilterState;
@@ -20,7 +24,11 @@ const Filter = ({ filter, setFilter }: FilterProps) => {
             {!showFilter && (
                 <div className="flex justify-end gap-2">
                     <Button onClick={() => setShowFilter(true)} size="sm">
-                        Filter
+                        Filter{" "}
+                        <FontAwesomeIcon
+                            icon={faFilter}
+                            className="text-sm ms-1"
+                        />
                     </Button>
                     <Link to="/tests/create">
                         <Button onClick={() => setShowFilter(true)} size="sm">
@@ -35,6 +43,7 @@ const Filter = ({ filter, setFilter }: FilterProps) => {
                         <div>
                             <label htmlFor="sort">Sort by: </label>
                             <Select
+                                sizing="sm"
                                 id="sort"
                                 name="sort"
                                 value={filter.sort || "title"}
@@ -63,6 +72,7 @@ const Filter = ({ filter, setFilter }: FilterProps) => {
                         <div>
                             <label htmlFor="order">Order: </label>
                             <Select
+                                sizing="sm"
                                 id="order"
                                 name="order"
                                 value={filter.order || "asc"}
@@ -113,13 +123,46 @@ const Filter = ({ filter, setFilter }: FilterProps) => {
                                 }
                             />
                         </div>
+                        <div>
+                            <label htmlFor="status">Status: </label>
+                            <Select
+                                sizing="sm"
+                                name="status"
+                                value={filter.status || testStatus.PUBLISHED}
+                                onChange={(e) => {
+                                    setFilter({
+                                        ...filter,
+                                        status: e.target.value,
+                                    });
+                                }}
+                                options={Object.values(testStatus).map(
+                                    (status) => ({
+                                        value: status,
+                                        label: _.capitalize(status),
+                                    })
+                                )}
+                            />
+                        </div>
                     </div>
                     <div className="flex gap-2 mt-2 justify-end border-t border-gray-300 pt-2 border-dashed">
+                        {Object.keys(filter).length > 0 && (
+                            <button
+                                className="me-5 hover:underline"
+                                onClick={() =>
+                                    setFilter((prev) => ({
+                                        page: prev.page,
+                                        limit: prev.limit,
+                                    }))
+                                }
+                            >
+                                Clear filters
+                            </button>
+                        )}
                         <button
                             className="me-5 hover:underline"
                             onClick={() => setShowFilter(false)}
                         >
-                            Hide filter
+                            Hide filters
                         </button>
                         <Input
                             sizing="sm"

@@ -18,14 +18,18 @@ const Select = ({
     return (
         <select
             className={`border border-gray-500 ${
-                sizing === "sm" && "px-1 py-0"
+                sizing === "sm" && "px-1 py-0.5"
             } ${
-                sizing === "md" && "px-2 py-1"
-            } focus:border-orange-600 outline-none ${className}`}
+                sizing === "md" && "px-2 py-1.5"
+            } focus:border-orange-600 outline-none disabled:bg-gray-100 disabled:cursor-not-allowed ${className}`}
             {...props}
         >
             {options.map((option) => (
-                <option key={option.value} value={option.value} className="py-1">
+                <option
+                    key={option.value}
+                    value={option.value}
+                    className="py-1"
+                >
                     {option.label}
                 </option>
             ))}
