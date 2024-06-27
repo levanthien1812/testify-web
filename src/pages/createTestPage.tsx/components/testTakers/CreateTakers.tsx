@@ -9,7 +9,8 @@ import { useMutation } from "react-query";
 import { createTakers } from "../../../../services/test";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
-import Button from "../../../authPage/components/Button";
+import Button from "../../../../components/elements/Button";
+import Input from "../../../../components/elements/Input";
 
 type CreateTakersProps = {
     testId: string;
@@ -75,18 +76,18 @@ const CreateTakers = ({
                                 className="flex justify-between gap-2"
                                 key={index}
                             >
-                                <input
+                                <Input
                                     type="text"
-                                    className="border border-gray-500 px-2 py-1 focus:border-orange-600 outline-none placeholder:italic grow"
+                                    className="grow"
                                     placeholder="Name"
                                     required
                                     name={`name_${index}`}
                                     value={takers[index].name}
                                     onChange={handleInputChange}
                                 />
-                                <input
+                                <Input
                                     type="email"
-                                    className="border border-gray-500 px-2 py-1 focus:border-orange-600 outline-none placeholder:italic grow"
+                                    className="grow"
                                     placeholder="Email"
                                     required
                                     name={`email_${index}`}

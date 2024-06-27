@@ -2,6 +2,7 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { ChangeEvent, useState } from "react";
 import { motion } from "framer-motion";
+import Input from "../../../../components/elements/Input";
 
 const Option: React.FC<{
     index: number;
@@ -25,12 +26,12 @@ const Option: React.FC<{
             >
                 Option {index + 1}
             </label>
-            <input
+            <Input
                 type="text"
                 name={name}
                 id={name}
                 min={0}
-                className="px-2 py-1 w-full focus:border-orange-600 outline-none leading-5"
+                className="w-full border-none"
                 value={value.text}
                 onChange={onInputChange}
                 required

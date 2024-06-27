@@ -16,6 +16,7 @@ import NotFound from "./pages/others/NotFound";
 import { useSelector } from "react-redux";
 import { RootState } from "./stores/rootState";
 import ViewTestPage from "./pages/viewTestPage/ViewTestPage";
+import TestsPage from "./pages/testsPage/TestsPage";
 
 const queryClient = new QueryClient();
 
@@ -62,6 +63,10 @@ function App() {
                         {
                             path: "/home",
                             element: <HomePage />,
+                        },
+                        {
+                            path: "/tests",
+                            element: <TestsPage />,
                         },
                         {
                             path: "/tests/:testId",

@@ -8,7 +8,8 @@ import { updateTest } from "../../../services/test";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
-import Button from "../../authPage/components/Button";
+import Button from "../../../components/elements/Button";
+import Select from "../../../components/elements/Select";
 
 type SectionProps = {
     test: TestItf;
@@ -51,9 +52,9 @@ const TestTakers = ({ test, onAfterUpdate, onBack, onNext }: SectionProps) => {
                 and do it.
             </p>
 
-            <div className="mt-4 px-8 py-4 bg-orange-100">
+            <div className="mt-4 px-8 py-4 bg-orange-100 space-x-2">
                 <label htmlFor="share-select">Share the test with: </label>
-                <select
+                <Select
                     name="share-select"
                     id="share-select"
                     value={shareOption}
@@ -62,15 +63,11 @@ const TestTakers = ({ test, onAfterUpdate, onBack, onNext }: SectionProps) => {
                             e.target.value as "anyone" | "restricted"
                         )
                     }
-                    className="ms-2 px-4 py-2 focus:outline-orange-500"
-                >
-                    <option value="anyone" className="px-4 py-2">
-                        Anyone with the link
-                    </option>
-                    <option value="restricted" className="px-4 py-2">
-                        Restricted
-                    </option>
-                </select>
+                    options={[
+                        { value: "anyone", label: "Anyone with the link" },
+                        { value: "restricted", label: "Restricted" },
+                    ]}
+                />
                 <div className="flex items-center gap-2 mt-1">
                     <FontAwesomeIcon icon={faInfoCircle} />
 

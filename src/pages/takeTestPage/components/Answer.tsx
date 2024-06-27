@@ -21,7 +21,8 @@ import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
-import Button from "../../authPage/components/Button";
+import Button from "../../../components/elements/Button";
+import Input from "../../../components/elements/Input";
 
 type QuestionProps = {
     question: QuestionItf;
@@ -147,19 +148,20 @@ const Answer = ({ question }: QuestionProps) => {
             )}
 
             {user?.role === roles.MAKER && needManualScore && (
-                <div className="border-t pt-2 border-gray-400 border-dashed">
+                <div className="border-t pt-2 border-gray-400 border-dashed space-x-2">
                     {((question.answer && !question.answer.score) ||
                         isUpdatingScore) && (
                         <>
                             <label htmlFor="manualScore">Score: </label>
-                            <input
+                            <Input
                                 type="number"
                                 name="manualScore"
                                 id="manualScore"
                                 step={0.01}
                                 min={0.0}
                                 max={question.score}
-                                className="border border-gray-500 px-2 grow focus:border-orange-600 outline-none leading-6 ms-2"
+                                className="grow "
+                                sizing="sm"
                                 value={manualScore}
                                 onChange={(e) =>
                                     setManualScore(parseFloat(e.target.value))
@@ -169,6 +171,7 @@ const Answer = ({ question }: QuestionProps) => {
                             <Button
                                 onClick={handleUpdateScore}
                                 disabled={updateScoreLoading}
+                                size="sm"
                             >
                                 {updateScoreLoading ? "Saving..." : "Save"}
                             </Button>
@@ -176,7 +179,6 @@ const Answer = ({ question }: QuestionProps) => {
                             {isUpdatingScore && (
                                 <Button
                                     primary={false}
-                                    className="ms-2"
                                     size="sm"
                                     onClick={() => {
                                         setManualScore(

@@ -4,7 +4,7 @@ import { formatTime } from "../../../utils/time";
 import { TestItf, SubmissionItf } from "../../../types/types";
 import Answer from "./Answer";
 import SubmissionDetail from "./TestQuestionsAndAnswers";
-import Button from "../../authPage/components/Button";
+import Button from "../../../components/elements/Button";
 
 type SubmissionProps = {
     test: TestItf;

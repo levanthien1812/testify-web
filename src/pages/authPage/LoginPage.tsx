@@ -1,5 +1,4 @@
 import { FormEvent, useState } from "react";
-import Input from "./components/Input";
 import { Link, useNavigate } from "react-router-dom";
 import { LoginBodyItf, LoginErrorItf } from "../../types/types";
 import { useDispatch } from "react-redux";
@@ -11,7 +10,8 @@ import { toast } from "react-toastify";
 import { roles } from "../../config/config";
 import { AxiosError } from "axios";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
-import Button from "./components/Button";
+import Button from "../../components/elements/Button";
+import AuthInput from "./AuthInput";
 
 const LoginPage = () => {
     const [email, setEmail] = useState<string>("");
@@ -102,22 +102,22 @@ const LoginPage = () => {
                 </div>
 
                 <div className="w-full mt-2 space-y-3">
-                    <Input
+                    <AuthInput
                         labelText="Email"
                         name="email"
                         type="email"
                         value={email}
-                        setValue={setEmail}
+                        onChange={(e) => setEmail(e.target.value)}
                         required={true}
                         error={error?.email}
                         tabIndex={1}
                     />
-                    <Input
+                    <AuthInput
                         labelText="Password"
                         name="password"
                         type="password"
                         value={password}
-                        setValue={setPassword}
+                        onChange={(e) => setPassword(e.target.value)}
                         required={true}
                         error={error?.password}
                         tabIndex={2}

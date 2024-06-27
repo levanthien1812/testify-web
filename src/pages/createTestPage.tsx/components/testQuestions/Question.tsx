@@ -23,7 +23,9 @@ import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { questionTypeToQuestionSchema } from "../../../../utils/mapping";
 import ResponseQuestion from "./ResponseQuestion";
-import Button from "../../../authPage/components/Button";
+import Button from "../../../../components/elements/Button";
+import Input from "../../../../components/elements/Input";
+import Select from "../../../../components/elements/Select";
 
 type QuestionProps = {
     question: QuestionItf | null;
@@ -217,12 +219,12 @@ const Question = ({
                                     <label htmlFor="score" className="w-1/5">
                                         Score:{" "}
                                     </label>
-                                    <input
+                                    <Input
                                         type="number"
                                         name="score"
                                         id="score"
                                         min={0}
-                                        className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow leading-5"
+                                        className="w-0 grow"
                                         value={questionBody.score}
                                         onChange={handleInputChange}
                                         required
@@ -232,47 +234,37 @@ const Question = ({
                                     <label htmlFor="level" className="w-1/5">
                                         Level:{" "}
                                     </label>
-                                    <select
+                                    <Select
                                         id="level"
-                                        className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow capitalize"
+                                        className="grow capitalize"
                                         name="level"
                                         value={questionBody.level}
                                         onChange={handleInputChange}
-                                    >
-                                        {Object.values(testLevels).map(
-                                            (level) => (
-                                                <option
-                                                    value={level}
-                                                    key={level}
-                                                >
-                                                    {level}
-                                                </option>
-                                            )
+                                        options={Object.values(testLevels).map(
+                                            (level) => ({
+                                                label: level,
+                                                value: level,
+                                            })
                                         )}
-                                    </select>
+                                    />
                                 </div>
                                 <div className="flex items-end gap-2">
                                     <label htmlFor="type" className="w-1/5">
                                         Type:{" "}
                                     </label>
-                                    <select
+                                    <Select
                                         id="type"
-                                        className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow capitalize"
+                                        className="grow capitalize"
                                         name="type"
                                         value={questionBody.type}
                                         onChange={handleInputChange}
-                                    >
-                                        {Object.values(questionTypes).map(
-                                            (questionType) => (
-                                                <option
-                                                    value={questionType}
-                                                    key={questionType}
-                                                >
-                                                    {questionType}
-                                                </option>
-                                            )
-                                        )}
-                                    </select>
+                                        options={Object.values(
+                                            questionTypes
+                                        ).map((type) => ({
+                                            label: type,
+                                            value: type,
+                                        }))}
+                                    />
                                 </div>
                             </div>
                             {questionBody.content && (

@@ -16,7 +16,7 @@ import { addAnswer } from "../../../../services/test";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import ResponseAnswer from "./ResponseAnswer";
-import Button from "../../../authPage/components/Button";
+import Button from "../../../../components/elements/Button";
 
 const Answer: React.FC<{
     question: QuestionItf;
