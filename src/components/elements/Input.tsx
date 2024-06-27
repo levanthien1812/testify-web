@@ -12,7 +12,7 @@ const Input = ({ className, sizing = "md", ...props }: InputProps) => {
             className={`border border-gray-500 ${
                 sizing === "md" && "px-2 py-1"
             } ${
-                sizing === "sm" && "px-2 py-0"
+                sizing === "sm" && "px-1 py-0"
             } focus:border-orange-600 outline-none placeholder:italic disabled:bg-gray-100 disabled:cursor-not-allowed ${className}`}
             {...props}
         />

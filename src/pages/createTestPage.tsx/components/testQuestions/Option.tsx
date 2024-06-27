@@ -20,18 +20,21 @@ const Option: React.FC<{
             onMouseOver={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
         >
-            <label
-                htmlFor={name}
-                className="text-nowrap px-2 bg-orange-500 text-white"
-            >
-                Option {index + 1}
-            </label>
+            <div className="flex">
+                <label
+                    htmlFor={name}
+                    className="text-nowrap px-2 bg-orange-500 text-white"
+                >
+                    Option {index + 1}
+                </label>
+            </div>
+
             <Input
                 type="text"
                 name={name}
                 id={name}
                 min={0}
-                className="w-full border-none"
+                className="grow border-none"
                 value={value.text}
                 onChange={onInputChange}
                 required

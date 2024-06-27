@@ -292,14 +292,17 @@ export interface SubmissionItf {
 }
 
 export type FilterState = {
+    page: number;
+    limit: number;
     search?: string;
     sort?: string;
     order?: string;
     date_from?: Date;
     date_to?: Date;
+    status?: (typeof testStatus)[keyof typeof testStatus];
 };
 
 export type TestRequestFilter = Pick<
     FilterState,
-    "search" | "sort" | "date_from" | "date_to"
+    "search" | "sort" | "date_from" | "date_to" | "status"
 >;
