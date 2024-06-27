@@ -1,5 +1,6 @@
 import { useMemo } from "react";
 import { FillGapsAnswerItf, FillGapsQuestionItf } from "../../../types/types";
+import Input from "../../../components/elements/Input";
 
 type FillGapsAnswerProps = {
     content: FillGapsQuestionItf;
@@ -37,7 +38,7 @@ const FillGapsAnswer = ({ content, userAnswer }: FillGapsAnswerProps) => {
                         >
                             Gap {index + 1}:
                         </label>
-                        <input
+                        <Input
                             type="text"
                             name={`gap-${index + 1}`}
                             value={gaps[index]}
@@ -49,7 +50,7 @@ const FillGapsAnswer = ({ content, userAnswer }: FillGapsAnswerProps) => {
                                         ? "border-green-600 text-blue"
                                         : "border-red-600 text-red"
                                     : "border-gray-500 text-black"
-                            } px-2 py-1 grow focus:border-orange-600 outline-none leading-5`}
+                            } grow`}
                             readOnly
                         />
                     </div>

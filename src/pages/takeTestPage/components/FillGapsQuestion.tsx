@@ -1,6 +1,7 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import { AnswerBody, FillGapsQuestionItf } from "../../../types/types";
 import { generateArray } from "../../../utils/array";
+import Input from "../../../components/elements/Input";
 
 type FillGapsQuestionProps = {
     content: FillGapsQuestionItf;
@@ -41,13 +42,13 @@ const FillGapsQuestion = ({
                         >
                             Gap {index + 1}:
                         </label>
-                        <input
+                        <Input
                             type="text"
                             name={`gap-${index + 1}`}
                             value={gaps[index]}
                             id={`gap-${index + 1}`}
                             onChange={handleFillGap}
-                            className="border border-gray-500 px-2 py-1 grow focus:border-orange-600 outline-none leading-5"
+                            className="grow"
                         />
                     </div>
                 ))}

@@ -1,6 +1,6 @@
 import React, { FormEvent, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import Input from "./components/Input";
+import Input from "../../components/elements/Input";
 import { RegisterBodyItf, RegisterErrorItf } from "../../types/types";
 import { registerSchema } from "../../validations/auth";
 import { register } from "../../services/auth";
@@ -11,7 +11,8 @@ import { useDispatch } from "react-redux";
 import { authActions } from "../../stores/auth";
 import Cookies from "js-cookie";
 import { roles } from "../../config/config";
-import Button from "./components/Button";
+import Button from "../../components/elements/Button";
+import AuthInput from "./AuthInput";
 
 const RegistePage = () => {
     const [name, setName] = useState<string>("");
@@ -98,50 +99,50 @@ const RegistePage = () => {
                 </p>
 
                 <div className="w-full mt-2 space-y-3">
-                    <Input
+                    <AuthInput
                         labelText="Name"
                         name="name"
                         value={name}
-                        setValue={setName}
+                        onChange={(e) => setName(e.target.value)}
                         placeholder="Eg. Christopher Jenedy"
                         error={error?.name}
                         tabIndex={1}
                     />
-                    <Input
+                    <AuthInput
                         labelText="Email"
                         name="email"
                         type="email"
                         value={email}
-                        setValue={setEmail}
+                        onChange={(e) => setEmail(e.target.value)}
                         placeholder="Eg. jenedy123@gmail.com"
                         error={error?.email}
                         tabIndex={2}
                     />
-                    <Input
+                    <AuthInput
                         labelText="Username"
                         name="username"
                         value={username}
-                        setValue={setUsername}
+                        onChange={(e) => setUsername(e.target.value)}
                         placeholder="Eg. jenedy123"
                         error={error?.username}
                         tabIndex={3}
                     />
-                    <Input
+                    <AuthInput
                         labelText="Password"
                         name="password"
                         type="password"
                         value={password}
-                        setValue={setPassword}
+                        onChange={(e) => setPassword(e.target.value)}
                         placeholder="********"
                         error={error?.password}
                         tabIndex={4}
                     />
-                    <Input
+                    <AuthInput
                         labelText="Password confirmation"
                         type="password"
                         name="passwordConfirm"
                         value={passwordConfirm}
-                        setValue={setPasswordConfirm}
+                        onChange={(e) => setPasswordConfirm(e.target.value)}
                         placeholder="********"
                         error={error?.password_confirm}
                         tabIndex={5}

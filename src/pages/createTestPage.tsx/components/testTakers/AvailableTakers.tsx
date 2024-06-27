@@ -5,6 +5,7 @@ import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
 import { on } from "events";
+import Input from "../../../../components/elements/Input";
 
 type AvailableTakersProps = {
     testId: string;
@@ -89,12 +90,12 @@ const AvailableTakers = ({ testId, onAfterSelect }: AvailableTakersProps) => {
                     </label>
                 </div>
                 <div className="grow">
-                    <input
+                    <Input
                         type="text"
                         name="search"
                         id="search"
                         placeholder="Search takers"
-                        className="border w-full border-gray-500 px-2 py-0 focus:border-orange-600 outline-none placeholder:italic grow"
+                        className="w-full grow"
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />

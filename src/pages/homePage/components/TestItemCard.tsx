@@ -8,13 +8,13 @@ import { format } from "date-fns";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
 import { roles, testStatus } from "../../../config/config";
-import Button from "../../authPage/components/Button";
+import Button from "../../../components/elements/Button";
 
-type RecentTestItemProps = {
+type TestItemCardProps = {
     test: TestItf;
 };
 
-const RecentTestItem = ({ test }: RecentTestItemProps) => {
+const TestItemCard = ({ test }: TestItemCardProps) => {
     const navigate = useNavigate();
     const [hover, setHover] = useState<boolean>(false);
     const user = useSelector((state: RootState) => state.auth.user);
@@ -51,7 +51,7 @@ const RecentTestItem = ({ test }: RecentTestItemProps) => {
 
     return (
         <div
-            className="shadow-md shadow-gray-200 relative overflow-hidden w-fit shrink-0"
+            className="shadow-md shadow-gray-200 relative overflow-hidden shrink-0 h-full w-full"
             onMouseOver={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
         >
@@ -60,19 +60,21 @@ const RecentTestItem = ({ test }: RecentTestItemProps) => {
                     {test.title}
                 </p>
                 <div
-                    className={`uppercase text-xs ${statusColor} text-white w-fit rounded-full px-1`}
+                    className={`uppercase text-xs ${statusColor} text-white w-fit px-1`}
                 >
                     {test.status}
                 </div>
             </div>
             <div className="px-3 py-3">
-                <p>
-                    <FontAwesomeIcon
-                        className="text-xs text-orange-600 me-2"
-                        icon={faStar}
-                    />
-                    {test.num_parts} parts
-                </p>
+                {test.num_parts > 1 && (
+                    <p>
+                        <FontAwesomeIcon
+                            className="text-xs text-orange-600 me-2"
+                            icon={faStar}
+                        />
+                        {test.num_parts} parts
+                    </p>
+                )}
                 <p>
                     <FontAwesomeIcon
                         className="text-xs text-orange-600 me-2"
@@ -98,7 +100,7 @@ const RecentTestItem = ({ test }: RecentTestItemProps) => {
 
             {hover && (
                 <motion.div
-                    className="absolute top-0 left-0 w-full h-full bg-black bg-opacity-20 flex justify-center items-center"
+                    className="absolute top-0 left-0 w-full h-full bg-white bg-opacity-60 flex justify-center items-center"
                     initial={{
                         rotateX: 30,
                         translateY: 20,
@@ -116,4 +118,4 @@ const RecentTestItem = ({ test }: RecentTestItemProps) => {
     );
 };
 
-export default RecentTestItem;
+export default TestItemCard;

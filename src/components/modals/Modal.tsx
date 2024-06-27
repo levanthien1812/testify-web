@@ -2,7 +2,7 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { ReactNode } from "react";
 import { createPortal } from "react-dom";
-import Button from "../../pages/authPage/components/Button";
+import Button from "../elements/Button";
 
 type ModalProps = {
     children: ReactNode;

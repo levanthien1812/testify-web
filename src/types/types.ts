@@ -290,3 +290,16 @@ export interface SubmissionItf {
     start_time: Date;
     submit_time: Date;
 }
+
+export type FilterState = {
+    search?: string;
+    sort?: string;
+    order?: string;
+    date_from?: Date;
+    date_to?: Date;
+};
+
+export type TestRequestFilter = Pick<
+    FilterState,
+    "search" | "sort" | "date_from" | "date_to"
+>;

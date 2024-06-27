@@ -1,9 +1,9 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { MatchingQuestionBodyItf } from "../../../../types/types";
 import Option from "./Option";
-import TextEditor from "../../../richTextEditor/TiptapEditor";
+import TextEditor from "../../../../components/richTextEditor/TiptapEditor";
 import { toast } from "react-toastify";
-import Button from "../../../authPage/components/Button";
+import Button from "../../../../components/elements/Button";
 
 const MatchingQuestion: React.FC<{
     content: MatchingQuestionBodyItf;

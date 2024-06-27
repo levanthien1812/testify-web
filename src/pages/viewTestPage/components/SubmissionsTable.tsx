@@ -16,7 +16,9 @@ import _ from "lodash";
 import TakerSubmissionDetail from "./TakerSubmissionDetail";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRotateRight } from "@fortawesome/free-solid-svg-icons";
-import Button from "../../authPage/components/Button";
+import Button from "../../../components/elements/Button";
+import Input from "../../../components/elements/Input";
+import Select from "../../../components/elements/Select";
 
 type SubmissionsTableProps = {
     submissions: SubmissionItf[];
@@ -182,7 +184,7 @@ const SubmissionsTable = ({ submissions, refetch }: SubmissionsTableProps) => {
                                         : ""}
                                     {enableFilter &&
                                         header.column.getCanFilter() && (
-                                            <input
+                                            <Input
                                                 value={
                                                     (header.column.getFilterValue() as string) ??
                                                     ""
@@ -195,7 +197,8 @@ const SubmissionsTable = ({ submissions, refetch }: SubmissionsTableProps) => {
                                                         e.target.value
                                                     );
                                                 }}
-                                                className="w-full border border-slate-300 px-2 py-0.5 focus:border-orange-600 outline-none grow leading-5"
+                                                className="w-full border-slate-300"
+                                                sizing="sm"
                                             />
                                         )}
                                 </th>
@@ -268,19 +271,19 @@ const SubmissionsTable = ({ submissions, refetch }: SubmissionsTableProps) => {
                 >
                     {">>"}
                 </button>
-                <select
+                <Select
                     value={table.getState().pagination.pageSize}
                     onChange={(e) => {
                         table.setPageSize(Number(e.target.value));
                     }}
-                    className="border border-orange-600 "
-                >
-                    {[10, 20, 30, 40, 50].map((pageSize) => (
-                        <option key={pageSize} value={pageSize}>
-                            {pageSize}
-                        </option>
-                    ))}
-                </select>
+                    sizing="sm"
+                    options={
+                        [10, 20, 30, 40, 50].map((pageSize) => ({
+                            value: pageSize,
+                            label: pageSize,
+                        }))
+                    }
+                />
             </div>
             {selectedTakerId && (
                 <TakerSubmissionDetail

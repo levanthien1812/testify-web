@@ -14,7 +14,7 @@ import Modal, {
 } from "../../components/modals/Modal";
 import TestQuestionsAndAnswers from "../takeTestPage/components/TestQuestionsAndAnswers";
 import TestAnswers from "../createTestPage.tsx/components/TestAnswers";
-import Button from "../authPage/components/Button";
+import Button from "../../components/elements/Button";
 
 const ViewTestPage = () => {
     const { testId } = useParams();

@@ -6,6 +6,7 @@ import {
     QuestionBodyItf,
     TakerBodyItf,
     TestBodyItf,
+    TestRequestFilter,
     UserAnswer,
 } from "../types/types";
 
@@ -18,9 +19,11 @@ export const createTest = async (testBody: TestBodyItf) => {
     }
 };
 
-export const getTests = async () => {
+export const getTests = async (filter?: TestRequestFilter | null) => {
     try {
-        const response = await instance.get("/tests");
+        const response = await instance.get("/tests", {
+            params: filter,
+        });
         return response.data;
     } catch (error) {
         throw error;

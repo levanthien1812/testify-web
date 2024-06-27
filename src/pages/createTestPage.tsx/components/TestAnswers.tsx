@@ -3,7 +3,7 @@ import { TestItf } from "../../../types/types";
 import Answer from "./testAnswers/Answer";
 import Questions from "./testQuestions/Questions";
 import { testStatus } from "../../../config/config";
-import Button from "../../authPage/components/Button";
+import Button from "../../../components/elements/Button";
 
 type SectionProps = {
     test: TestItf;

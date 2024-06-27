@@ -5,7 +5,7 @@ import { validateParts } from "../../../services/test";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import Part from "./testParts/Part";
-import Button from "../../authPage/components/Button";
+import Button from "../../../components/elements/Button";
 
 type SectionProps = {
     test: TestItf;

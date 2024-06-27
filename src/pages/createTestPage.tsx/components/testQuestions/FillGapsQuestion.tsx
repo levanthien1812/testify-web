@@ -1,7 +1,8 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
 import { FillGapsQuestionBodyItf } from "../../../../types/types";
-import TextEditor from "../../../richTextEditor/TiptapEditor";
+import TextEditor from "../../../../components/richTextEditor/TiptapEditor";
 import { useCurrentEditor } from "@tiptap/react";
+import Input from "../../../../components/elements/Input";
 
 const FillGapsQuestion: React.FC<{
     content: FillGapsQuestionBodyItf;
@@ -26,12 +27,12 @@ const FillGapsQuestion: React.FC<{
         <>
             <div className="flex flex-col items-start">
                 <label htmlFor="num_gaps">Number of gaps: </label>
-                <input
+                <Input
                     type="number"
                     name="num_gaps"
                     id="num_gaps"
                     min={1}
-                    className="border border-gray-500 px-2 py-1 w-full focus:border-orange-600 outline-none leading-5"
+                    className="w-full"
                     value={content.num_gaps}
                     onChange={handleInputChange}
                     required

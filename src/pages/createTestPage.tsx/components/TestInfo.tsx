@@ -8,7 +8,9 @@ import { toast } from "react-toastify";
 import { testBodySchema } from "../../../validations/test";
 import { formatTimezone } from "../../../utils/time";
 import _, { set } from "lodash";
-import Button from "../../authPage/components/Button";
+import Button from "../../../components/elements/Button";
+import Input from "../../../components/elements/Input";
+import Select from "../../../components/elements/Select";
 
 type SectionProps = {
     test: TestItf | null;
@@ -165,11 +167,11 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                     <label htmlFor="title" className="w-1/5">
                         Test title:{" "}
                     </label>
-                    <input
+                    <Input
                         type="text"
                         name="title"
                         id="title"
-                        className="border border-gray-500 px-2 py-1 focus:border-orange-600 outline-none grow"
+                        className="grow"
                         value={testBody.title}
                         onChange={handleInputChange}
                         required
@@ -179,11 +181,11 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                     <label htmlFor="description" className="w-1/5">
                         Test description:{" "}
                     </label>
-                    <input
+                    <Input
                         type="text"
                         id="description"
                         name="description"
-                        className="border border-gray-500 px-2 py-1 focus:border-orange-600 outline-none grow"
+                        className="grow"
                         value={testBody.description}
                         onChange={handleInputChange}
                     />
@@ -192,11 +194,11 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                     <label htmlFor="datetime" className="w-1/5">
                         Start time:{" "}
                     </label>
-                    <input
+                    <Input
                         type="datetime-local"
                         id="datetime"
                         name="datetime"
-                        className="border border-gray-500 px-2 py-1 focus:border-orange-600 outline-none grow"
+                        className="grow"
                         value={formatTimezone(testBody.datetime)}
                         onChange={handleInputChange}
                         required
@@ -206,13 +208,13 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                     <label htmlFor="duration" className="w-1/5 shrink-0">
                         Duration (mins):{" "}
                     </label>
-                    <input
+                    <Input
                         type="number"
                         step={5}
                         min={0}
                         id="duration"
                         name="duration"
-                        className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow"
+                        className="grow w-0"
                         value={testBody.duration}
                         onChange={handleInputChange}
                         required
@@ -220,13 +222,13 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                     <label htmlFor="max_score" className="w-1/5 shrink-0">
                         Max score:{" "}
                     </label>
-                    <input
+                    <Input
                         type="number"
                         step={1}
                         min={0}
                         id="max_score"
                         name="max_score"
-                        className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow"
+                        className="grow w-0"
                         value={testBody.max_score}
                         onChange={handleInputChange}
                         required
@@ -242,11 +244,11 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                         />
                     </div>
 
-                    <input
+                    <Input
                         type="datetime-local"
                         id="close_time"
                         name="close_time"
-                        className="border border-gray-500 px-2 py-1 focus:border-orange-600 outline-none grow disabled:bg-gray-100 disabled:cursor-not-allowed"
+                        className="grow"
                         value={formatTimezone(testBody.close_time!)}
                         onChange={handleInputChange}
                         disabled={!allowCloseTime}
@@ -256,13 +258,13 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                     <label htmlFor="num_parts" className="w-1/5 shrink-0">
                         Number of parts:{" "}
                     </label>
-                    <input
+                    <Input
                         type="number"
                         step={1}
                         min={0}
                         id="num_parts"
                         name="num_parts"
-                        className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow"
+                        className="grow w-0"
                         value={testBody.num_parts}
                         onChange={handleInputChange}
                         required
@@ -270,13 +272,13 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                     <label htmlFor="num_questions" className="w-1/5 shrink-0">
                         Num of questions:{" "}
                     </label>
-                    <input
+                    <Input
                         type="number"
                         step={1}
                         min={0}
                         id="num_questions"
                         name="num_questions"
-                        className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow"
+                        className="grow w-0"
                         value={testBody.num_questions}
                         onChange={handleInputChange}
                     />
@@ -285,37 +287,28 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                     <label htmlFor="code" className="w-1/5 shrink-0">
                         Test code:{" "}
                     </label>
-                    <input
+                    <Input
                         type="text"
                         id="code"
                         name="code"
-                        className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow"
+                        className="grow w-0"
                         value={testBody.code}
                         onChange={handleInputChange}
                     />
                     <label htmlFor="level" className="w-1/5 shrink-0">
                         Level:{" "}
                     </label>
-                    <select
+                    <Select
                         id="level"
-                        className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow capitalize"
+                        className="grow w-0 capitalize"
                         name="level"
                         value={testBody.level}
                         onChange={handleInputChange}
-                    >
-                        <option value={testLevels.EASY}>
-                            {testLevels.EASY}
-                        </option>
-                        <option value={testLevels.MEDIUM}>
-                            {testLevels.MEDIUM}
-                        </option>
-                        <option value={testLevels.HARD}>
-                            {testLevels.HARD}
-                        </option>
-                        <option value={testLevels.VERY_HARD}>
-                            {testLevels.VERY_HARD}
-                        </option>
-                    </select>
+                        options={Object.values(testLevels).map((level) => ({
+                            label: level,
+                            value: level,
+                        }))}
+                    />
                 </div>
 
                 <div className="flex gap-4 items-end mt-4">
@@ -325,29 +318,17 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                     >
                         Public answers options:{" "}
                     </label>
-                    <select
+                    <Select
                         id="public_answers_option"
-                        className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow capitalize"
+                        className="w-0 grow capitalize"
                         name="public_answers_option"
                         value={testBody.public_answers_option}
                         onChange={handleInputChange}
-                    >
-                        <option
-                            value={publicAnswersOptions.AFTER_TAKER_SUBMISSION}
-                        >
-                            {publicAnswersOptions.AFTER_TAKER_SUBMISSION}
-                        </option>
-                        <option value={publicAnswersOptions.SPECIFIC_DATE}>
-                            {publicAnswersOptions.SPECIFIC_DATE}
-                        </option>
-                        {allowCloseTime && (
-                            <option
-                                value={publicAnswersOptions.AFTER_CLOSE_TIME}
-                            >
-                                {publicAnswersOptions.AFTER_CLOSE_TIME}
-                            </option>
-                        )}
-                    </select>
+                        options={Object.values(testLevels).map((level) => ({
+                            label: level,
+                            value: level,
+                        }))}
+                    />
                 </div>
 
                 {testBody.public_answers_option ===
@@ -360,11 +341,11 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                             >
                                 Public answers date:{" "}
                             </label>
-                            <input
+                            <Input
                                 type="datetime-local"
                                 id="public_answers_date"
                                 name="public_answers_date"
-                                className="border border-gray-500 px-2 py-1 focus:border-orange-600 outline-none grow"
+                                className="grow"
                                 value={formatTimezone(
                                     testBody.public_answers_date
                                 )}

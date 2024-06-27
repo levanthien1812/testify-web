@@ -10,7 +10,7 @@ import { useMutation } from "react-query";
 import { assignTakers } from "../../../../services/test";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
-import Button from "../../../authPage/components/Button";
+import Button from "../../../../components/elements/Button";
 
 type AddTakersProps = {
     onClose: () => void;

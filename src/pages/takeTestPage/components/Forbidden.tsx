@@ -1,6 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router";
-import Button from "../../authPage/components/Button";
+import Button from "../../../components/elements/Button";
 
 const Forbidden = () => {
     const navigate = useNavigate();

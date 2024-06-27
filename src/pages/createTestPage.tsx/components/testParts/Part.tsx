@@ -7,7 +7,8 @@ import { addPart, updatePart } from "../../../../services/test";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { partSchema } from "../../../../validations/test";
-import Button from "../../../authPage/components/Button";
+import Button from "../../../../components/elements/Button";
+import Input from "../../../../components/elements/Input";
 
 const Part: React.FC<{
     testId: string;
@@ -121,11 +122,11 @@ const Part: React.FC<{
                         <label htmlFor="name" className="w-1/5">
                             Part name:{" "}
                         </label>
-                        <input
+                        <Input
                             type="text"
                             name="name"
                             id="name"
-                            className="border border-gray-500 px-2 py-1 focus:border-orange-600 outline-none grow"
+                            className="grow"
                             value={partBody.name}
                             onChange={handleInputChange}
                             required
@@ -135,11 +136,11 @@ const Part: React.FC<{
                         <label htmlFor="description" className="w-1/5">
                             Description:{" "}
                         </label>
-                        <input
+                        <Input
                             type="text"
                             name="description"
                             id="description"
-                            className="border border-gray-500 px-2 py-1 focus:border-orange-600 outline-none grow"
+                            className="grow"
                             value={partBody.description}
                             onChange={handleInputChange}
                             required
@@ -149,12 +150,12 @@ const Part: React.FC<{
                         <label htmlFor="score" className="w-1/5 shrink-0">
                             Score:{" "}
                         </label>
-                        <input
+                        <Input
                             type="number"
                             min={0}
                             id="score"
                             name="score"
-                            className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow"
+                            className="grow"
                             value={partBody.score}
                             onChange={handleInputChange}
                             required
@@ -165,13 +166,13 @@ const Part: React.FC<{
                         >
                             Num of questions:{" "}
                         </label>
-                        <input
+                        <Input
                             type="number"
                             step={1}
                             min={0}
                             id="num_questions"
                             name="num_questions"
-                            className="border border-gray-500 px-2 py-1 w-0 focus:border-orange-600 outline-none grow"
+                            className="grow"
                             value={partBody.num_questions}
                             onChange={handleInputChange}
                             required

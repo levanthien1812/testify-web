@@ -12,7 +12,7 @@ import { useDispatch } from "react-redux";
 import { authActions } from "../../stores/auth";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
-import Button from "../../pages/authPage/components/Button";
+import Button from "../elements/Button";
 
 const Header = () => {
     const { user, isAuthened } = useSelector((state: RootState) => state.auth);

@@ -7,7 +7,7 @@ import { on } from "events";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import { useMutation } from "react-query";
-import Button from "../../authPage/components/Button";
+import Button from "../../../components/elements/Button";
 
 type SectionProps = {
     test: TestItf;

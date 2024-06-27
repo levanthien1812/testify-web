@@ -19,7 +19,7 @@ import { formatTime } from "../../utils/time";
 import TestInfo from "./components/TestInfo";
 import Forbidden from "./components/Forbidden";
 import Submission from "./components/Submission";
-import Button from "../authPage/components/Button";
+import Button from "../../components/elements/Button";
 
 const TakeTestPage = () => {
     const { testId } = useParams();

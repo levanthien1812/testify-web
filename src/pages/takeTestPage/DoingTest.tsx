@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import RemainingTime from "./components/RemainingTime";
 import Swal from "sweetalert2";
 import Question from "./components/Question";
-import Button from "../authPage/components/Button";
+import Button from "../../components/elements/Button";
 
 type DoingTestProps = {
     test: TestItf;

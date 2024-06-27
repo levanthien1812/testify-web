@@ -11,7 +11,7 @@ import TestTakers from "./components/TestTakers";
 import { testStatus } from "../../config/config";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
-import Button from "../authPage/components/Button";
+import Button from "../../components/elements/Button";
 
 const CreateTestPage = () => {
     const [test, setTest] = useState<TestItf | null>(null);
