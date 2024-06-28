@@ -3,6 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { ReactNode } from "react";
 import { createPortal } from "react-dom";
 import Button from "../elements/Button";
+import Backdrop from "./Backdrop";
 
 type ModalProps = {
     children: ReactNode;
@@ -29,10 +30,7 @@ const ModalContext = React.createContext<Pick<ModalProps, "onClose"> | null>(
 const Modal = ({ children, onClose, className }: ModalProps) => {
     return createPortal(
         <ModalContext.Provider value={{ onClose }}>
-            <div
-                className={`absolute top-0 left-0 right-0 bottom-0 m-auto bg-black bg-opacity-15 shadow-md w-full h-full`}
-                onClick={onClose}
-            ></div>
+            <Backdrop onClose={onClose} />
             <div
                 className={`absolute top-0 left-0 right-0 bottom-0 m-auto bg-white shadow-md w-fit h-fit min-w-40 md:min-w-80 2xl:min-w-[500px] ${className}`}
             >

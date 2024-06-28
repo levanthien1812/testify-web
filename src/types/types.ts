@@ -94,6 +94,7 @@ export interface MultipleChoiceQuestionBodyItf {
     options: {
         text: string;
     }[];
+    images?: FileList | string[] | null;
 }
 
 export interface MultipleChoiceQuestionItf

@@ -49,7 +49,6 @@ const DoingTest = ({
             return responseData.answers;
         },
         onSuccess: (data) => {
-            console.log(data);
             toast.success("Answers submitted successfully");
             onAfterSubmit();
         },

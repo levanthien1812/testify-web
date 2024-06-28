@@ -103,7 +103,6 @@ const TakeTestPage = () => {
                     new Date(test.datetime).getTime() - Date.now();
                 if (timeUntilStart > 0 && !openIntervalRef.current) {
                     openIntervalRef.current = setInterval(() => {
-                        console.log(timeUntilStart);
                         timeUntilStart -= 1000;
                         if (timeUntilStart <= 0) {
                             setStatus("opened");
@@ -121,7 +120,6 @@ const TakeTestPage = () => {
                     new Date(test.close_time).getTime() - Date.now();
                 if (timeUntilClose > 0 && !closeIntervalRef.current) {
                     closeIntervalRef.current = setInterval(() => {
-                        console.log(status);
                         timeUntilClose -= 1000;
                         if (timeUntilClose - 1000 <= 0) {
                             setStatus((prev) =>
