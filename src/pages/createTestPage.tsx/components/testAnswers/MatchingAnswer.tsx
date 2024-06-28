@@ -20,7 +20,6 @@ const MatchingAnswer = ({
     >(content.answer || []);
 
     const handleDrop = (item: { left: string; right: string }) => {
-        console.log(item);
         const index = matchings.findIndex((matching) => {
             return matching.left === item.left && matching.right === item.right;
         });

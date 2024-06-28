@@ -61,7 +61,6 @@ const CreateTakers = ({
         const updatedTakers = [...takers];
         updatedTakers[index][_name] = value;
 
-        console.log(updatedTakers);
         setTakers(updatedTakers);
     };
 

@@ -1,7 +1,9 @@
 import { instance } from "../config/axios";
+import { questionTypes } from "../config/config";
 import {
     AnswerBody,
     AnswerItf,
+    MultipleChoiceQuestionBodyItf,
     PartBodyItf,
     QuestionBodyItf,
     TakerBodyItf,
@@ -125,9 +127,33 @@ export const createQuestion = async (
     questionBody: QuestionBodyItf
 ) => {
     try {
-        const response = await instance.post(`/tests/${testId}/questions`, {
-            ...questionBody,
-        });
+        const formData = new FormData();
+
+        for (const [key, value] of Object.entries(questionBody)) {
+            if (key === "content") {
+                formData.append("content", JSON.stringify(value));
+            } else {
+                formData.append(key, value);
+            }
+        }
+
+        if (questionBody.type == questionTypes.MULITPLE_CHOICES) {
+            const content =
+                questionBody.content as MultipleChoiceQuestionBodyItf;
+            for (let i = 0; i < content.images!.length; i++) {
+                formData.append(`files[]`, content.images![i]);
+            }
+        }
+
+        const response = await instance.post(
+            `/tests/${testId}/questions`,
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
         return response.data;
     } catch (error) {
         throw error;
@@ -142,7 +168,12 @@ export const updateQuestion = async (
     try {
         const response = await instance.patch(
             `/tests/${testId}/questions/${questionId}`,
-            questionBody
+            questionBody,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }
         );
         return response.data;
     } catch (error) {

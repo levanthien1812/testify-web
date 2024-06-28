@@ -83,7 +83,6 @@ const RegistePage = () => {
             }
         } catch (error: unknown) {
             if (error instanceof AxiosError) {
-                console.log(error);
                 toast.error(error.response?.data.message);
             }
         }

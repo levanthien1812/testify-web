@@ -4,6 +4,7 @@ import Option from "./Option";
 import TextEditor from "../../../../components/richTextEditor/TiptapEditor";
 import { toast } from "react-toastify";
 import Button from "../../../../components/elements/Button";
+import ImagesChoser from "../../../../components/elements/ImagesChoser";
 
 const MulitpleChoiceQuestion: React.FC<{
     content: MultipleChoiceQuestionBodyItf;
@@ -11,7 +12,6 @@ const MulitpleChoiceQuestion: React.FC<{
 }> = ({ content, onContentChange }) => {
     const [mcqContent, setMcqContent] =
         useState<MultipleChoiceQuestionBodyItf>(content);
-    const [text, setText] = useState<string>(content.text);
 
     const manipulateOptions = (action: (array: { text: string }[]) => void) => {
         const updatedContent = { ...mcqContent };
@@ -34,6 +34,10 @@ const MulitpleChoiceQuestion: React.FC<{
         }
     };
 
+    const handleImageChange = (images: FileList | null) => {
+        setMcqContent({ ...mcqContent, images });
+    };
+
     const handleAddOption = () => {
         if (mcqContent.options.length >= 10) {
             toast.warning("Maximum 10 options are allowed");
@@ -51,14 +55,19 @@ const MulitpleChoiceQuestion: React.FC<{
     };
 
     useEffect(() => {
-        onContentChange({ ...mcqContent, text });
-    }, [mcqContent, text]);
+        onContentChange(mcqContent);
+    }, [mcqContent]);
 
     return (
         <>
             <div className="flex flex-col">
                 <label htmlFor="text">Text: </label>
-                <TextEditor content={text} setContent={setText} />
+                <TextEditor
+                    content={mcqContent.text}
+                    setContent={(text) =>
+                        setMcqContent({ ...mcqContent, text })
+                    }
+                />
             </div>
             <div className="mt-2">
                 <p>Options</p>
@@ -81,6 +90,16 @@ const MulitpleChoiceQuestion: React.FC<{
                     >
                         Add option
                     </Button>
+                </div>
+
+                <div className="mt-4">
+                    <label htmlFor="images">Images</label>
+                    <ImagesChoser
+                        images={mcqContent.images || null}
+                        setImages={(images: FileList | null) =>
+                            handleImageChange(images)
+                        }
+                    />
                 </div>
             </div>
         </>

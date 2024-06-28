@@ -25,11 +25,6 @@ const TakerSubmissionDetail = ({
     onClose,
 }: TakerSubmissionDetailProps) => {
     const { testId } = useParams();
-    useMemo(() => {
-        if (submission) {
-            console.log(submission);
-        }
-    }, [testId]);
 
     const { isLoading: isLoadingTest, data: testWithAnswers } =
         useQuery<TestItf>({

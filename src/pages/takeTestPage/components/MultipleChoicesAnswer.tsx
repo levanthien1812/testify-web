@@ -13,7 +13,6 @@ const MultipleChoicesAnswer = ({
     content,
     userAnswer,
 }: MultipleChoicesAnswerProps) => {
-    console.log(userAnswer);
     const optionChosen = useMemo(() => {
         if (userAnswer === undefined && content.answer) {
             return content.answer[0];

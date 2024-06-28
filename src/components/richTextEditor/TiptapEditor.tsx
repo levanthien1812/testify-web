@@ -179,7 +179,7 @@ const extensions = [
 
 type TextEditorProps = {
     content: string;
-    setContent: React.Dispatch<React.SetStateAction<string>>;
+    setContent: (content: string) => void;
     withInsertGapButton?: boolean;
 };
 
