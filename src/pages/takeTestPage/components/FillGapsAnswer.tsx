@@ -9,7 +9,7 @@ type FillGapsAnswerProps = {
 
 const FillGapsAnswer = ({ content, userAnswer }: FillGapsAnswerProps) => {
     const gaps = useMemo(() => {
-        if (userAnswer === undefined) {
+        if (!userAnswer) {
             return content.answer || [];
         } else if (userAnswer !== null) {
             return userAnswer.answer || [];

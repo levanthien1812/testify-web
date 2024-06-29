@@ -11,7 +11,7 @@ type MatchingAnswerProps = {
 
 const MatchingAnswer = ({ content, userAnswer }: MatchingAnswerProps) => {
     const matchings = useMemo(() => {
-        if (userAnswer === undefined) {
+        if (!userAnswer) {
             return content.answer || [];
         } else if (userAnswer !== null) {
             return userAnswer.answer || [];

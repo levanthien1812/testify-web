@@ -155,7 +155,7 @@ const Part: React.FC<{
                             min={0}
                             id="score"
                             name="score"
-                            className="grow"
+                            className="w-0 grow"
                             value={partBody.score}
                             onChange={handleInputChange}
                             required
@@ -172,7 +172,7 @@ const Part: React.FC<{
                             min={0}
                             id="num_questions"
                             name="num_questions"
-                            className="grow"
+                            className="w-0 grow"
                             value={partBody.num_questions}
                             onChange={handleInputChange}
                             required

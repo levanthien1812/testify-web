@@ -96,6 +96,15 @@ const TestItemCard = ({ test }: TestItemCardProps) => {
                     />
                     {format(new Date(test.datetime), "dd/MM/yyyy HH:mm")}
                 </p>
+                {!!test.submissions_count && (
+                    <p className="font-bold text-orange-600">
+                        <FontAwesomeIcon
+                            className="text-xs text-orange-600 me-2"
+                            icon={faStar}
+                        />
+                        Submissions: {test.submissions_count}
+                    </p>
+                )}
             </div>
 
             {hover && (

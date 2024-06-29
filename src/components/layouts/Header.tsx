@@ -55,10 +55,10 @@ const Header = () => {
             </Link>
             {!isAuthened && (
                 <div className="flex gap-6">
-                    <Button className="text-lg">
+                    <Button>
                         <Link to={"/register"}>Register</Link>
                     </Button>
-                    <Button className="text-lg">
+                    <Button>
                         <Link to={"/login"}>Login</Link>
                     </Button>
                 </div>
