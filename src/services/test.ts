@@ -122,11 +122,13 @@ export const validateParts = async (testId: string) => {
     }
 };
 
-export const createQuestion = async (
+export const saveQuestion = async (
     testId: string,
-    questionBody: QuestionBodyItf
+    questionBody: QuestionBodyItf,
+    questionId?: string
 ) => {
     try {
+        console.log(questionBody);
         const formData = new FormData();
 
         for (const [key, value] of Object.entries(questionBody)) {
@@ -140,41 +142,36 @@ export const createQuestion = async (
         if (questionBody.type == questionTypes.MULITPLE_CHOICES) {
             const content =
                 questionBody.content as MultipleChoiceQuestionBodyItf;
-            for (let i = 0; i < content.images!.length; i++) {
-                formData.append(`files[]`, content.images![i]);
+
+            if (content.images && content.images.length > 0) {
+                for (let i = 0; i < content.images.length; i++) {
+                    formData.append(`files[]`, content.images[i]);
+                }
             }
         }
 
-        const response = await instance.post(
-            `/tests/${testId}/questions`,
-            formData,
-            {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            }
-        );
-        return response.data;
-    } catch (error) {
-        throw error;
-    }
-};
-
-export const updateQuestion = async (
-    testId: string,
-    questionId: string,
-    questionBody: QuestionBodyItf
-) => {
-    try {
-        const response = await instance.patch(
-            `/tests/${testId}/questions/${questionId}`,
-            questionBody,
-            {
-                headers: {
-                    "Content-Type": "multipart/form-data",
-                },
-            }
-        );
+        let response;
+        if (!questionId) {
+            response = await instance.post(
+                `/tests/${testId}/questions`,
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+        } else {
+            response = await instance.patch(
+                `/tests/${testId}/questions/${questionId}`,
+                formData,
+                {
+                    headers: {
+                        "Content-Type": "multipart/form-data",
+                    },
+                }
+            );
+        }
         return response.data;
     } catch (error) {
         throw error;

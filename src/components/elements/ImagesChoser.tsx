@@ -1,6 +1,7 @@
 import React, { ChangeEvent, useMemo, useState } from "react";
 import Input from "./Input";
 import ImagesViewer from "./ImagesViewer";
+import { formatImageUrl } from "../../utils/formatImageUrl";
 
 type ImagesChoserProps = {
     images: FileList | string[] | null;
@@ -10,23 +11,6 @@ type ImagesChoserProps = {
 
 const ImagesChoser = ({ images, setImages, className }: ImagesChoserProps) => {
     const [viewImage, setViewImage] = useState(false);
-
-    const formattedImages = useMemo(() => {
-        if (images && !(images instanceof FileList)) {
-            let copiedImages = [...images];
-
-            copiedImages = copiedImages.map((image) => {
-                let updatedImage = image.replace(
-                    "public",
-                    process.env.REACT_APP_API_HOST!
-                );
-                updatedImage.replaceAll("\\", "/");
-                return updatedImage;
-            });
-            return copiedImages;
-        }
-        return images;
-    }, [images]);
 
     return (
         <>
@@ -54,9 +38,13 @@ const ImagesChoser = ({ images, setImages, className }: ImagesChoserProps) => {
                     </button>
                 </div>
             )}
-            {viewImage && formattedImages && formattedImages.length > 0 && (
+            {viewImage && images && images.length > 0 && (
                 <ImagesViewer
-                    images={formattedImages}
+                    images={
+                        images instanceof FileList
+                            ? images
+                            : images.map((image) => formatImageUrl(image))
+                    }
                     onClose={() => setViewImage(false)}
                 />
             )}

@@ -71,6 +71,7 @@ export interface TestItf extends TestBodyItf {
     taker_ids: string[] | userItf[];
     are_answers_provided: boolean;
     questions?: QuestionItf[];
+    submissions_count?: number;
     status: (typeof testStatus)[keyof typeof testStatus];
 }
 
@@ -106,6 +107,7 @@ export interface MultipleChoiceQuestionItf
     }[];
     answer?: string[];
     explaination?: string;
+    images?: string[];
 }
 
 export interface FillGapsQuestionBodyItf {

@@ -18,7 +18,7 @@ import MulitpleChoiceQuestion from "./MultipleChoicesQuestion";
 import FillGapsQuestion from "./FillGapsQuestion";
 import MatchingQuestion from "./MatchingQuestion";
 import { useMutation } from "react-query";
-import { createQuestion, updateQuestion } from "../../../../services/test";
+import { saveQuestion } from "../../../../services/test";
 import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { questionTypeToQuestionSchema } from "../../../../utils/mapping";
@@ -146,7 +146,7 @@ const Question = ({
     const { mutate: createQuestionMutate, isLoading: createQuestionLoading } =
         useMutation({
             mutationFn: async (questionBody: QuestionBodyItf) =>
-                await createQuestion(testId, questionBody),
+                await saveQuestion(testId, questionBody),
             mutationKey: ["create-question", { body: questionBody }],
             onSuccess: (data) => {
                 toast.success("Create question successfuly");
@@ -163,7 +163,7 @@ const Question = ({
     const { mutate: updateQuestionMutate, isLoading: updateQuestionLoading } =
         useMutation({
             mutationFn: async (questionBody: QuestionBodyItf) =>
-                await updateQuestion(testId, question!._id, questionBody),
+                await saveQuestion(testId, questionBody, question!._id),
             mutationKey: [
                 "update-question",
                 { questionId: question?._id, body: questionBody },

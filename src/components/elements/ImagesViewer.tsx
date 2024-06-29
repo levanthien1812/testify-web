@@ -39,34 +39,41 @@ const ImagesViewer = ({ images, onClose }: ImagesViewerProps) => {
                         alt={images[currentIndex].name}
                     />
                 )}
-                <button
-                    className="absolute left-2 rounded-full overflow-hidden cursor-pointer disabled:cursor-default"
-                    disabled={currentIndex === 0}
-                >
-                    <FontAwesomeIcon
-                        icon={faChevronCircleLeft}
-                        onClick={() =>
-                            setCurrentIndex((prev) =>
-                                prev > 0 ? prev - 1 : prev
-                            )
-                        }
-                        className="text-white text-opacity-70 hover:text-opacity-100 text-xl"
-                    />
-                </button>
-                <button
-                    className="absolute right-2 rounded-full overflow-hidden cursor-pointer disabled:cursor-default"
-                    disabled={currentIndex === images.length - 1}
-                >
-                    <FontAwesomeIcon
-                        icon={faChevronCircleRight}
-                        onClick={() =>
-                            setCurrentIndex((prev) =>
-                                prev < images.length - 1 ? prev + 1 : prev
-                            )
-                        }
-                        className="text-white text-opacity-70 hover:text-opacity-100 text-xl"
-                    />
-                </button>
+                {images.length > 1 && (
+                    <>
+                        {" "}
+                        <button
+                            className="absolute left-2 rounded-full overflow-hidden cursor-pointer disabled:cursor-default"
+                            disabled={currentIndex === 0}
+                        >
+                            <FontAwesomeIcon
+                                icon={faChevronCircleLeft}
+                                onClick={() =>
+                                    setCurrentIndex((prev) =>
+                                        prev > 0 ? prev - 1 : prev
+                                    )
+                                }
+                                className="text-white text-opacity-70 hover:text-opacity-100 text-xl"
+                            />
+                        </button>
+                        <button
+                            className="absolute right-2 rounded-full overflow-hidden cursor-pointer disabled:cursor-default"
+                            disabled={currentIndex === images.length - 1}
+                        >
+                            <FontAwesomeIcon
+                                icon={faChevronCircleRight}
+                                onClick={() =>
+                                    setCurrentIndex((prev) =>
+                                        prev < images.length - 1
+                                            ? prev + 1
+                                            : prev
+                                    )
+                                }
+                                className="text-white text-opacity-70 hover:text-opacity-100 text-xl"
+                            />
+                        </button>
+                    </>
+                )}
             </div>
         </>,
         document.getElementById("modal")!

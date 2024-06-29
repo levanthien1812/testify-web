@@ -56,7 +56,7 @@ const LoginPage = () => {
                     navigate("/home");
                 }
             }
-        } catch (error: unknown) {
+        } catch (error) {
             if (error instanceof AxiosError) {
                 toast.error(error.response?.data.message);
             }
