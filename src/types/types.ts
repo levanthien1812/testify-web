@@ -13,6 +13,7 @@ export interface userItf {
     role: (typeof roles)[keyof typeof roles];
     maker_id?: string;
     id: string;
+    photo?: string;
 }
 
 export interface authInitialStateItf {
@@ -252,8 +253,8 @@ export interface TakerBodyItf {
 }
 
 export interface TakerItf extends TakerBodyItf {
-    _id: string;
-    maker_id: string;
+    id: string;
+    maker_ids: string[];
 }
 
 export interface UserMultipleChoicesAnswerBodyItf {
@@ -309,3 +310,10 @@ export type TestRequestFilter = Pick<
     FilterState,
     "search" | "sort" | "date_from" | "date_to" | "status"
 >;
+
+export type TakerStatistics = {
+    taker: userItf;
+    average_score: number;
+    total_tests_assigned: number;
+    total_submissions: number;
+};

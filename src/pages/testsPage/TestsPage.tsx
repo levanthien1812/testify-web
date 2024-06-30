@@ -47,7 +47,9 @@ const TestsPage = () => {
     return (
         <div className="xl:w-2/3 md:w-5/6 mx-auto py-10">
             <h2 className="text-4xl">Tests</h2>
-            <Filter filter={filter} setFilter={setFilter} />
+            {testsFetchResult && testsFetchResult.tests.length > 0 && (
+                <Filter filter={filter} setFilter={setFilter} />
+            )}
             {testsFetchResult?.tests && (
                 <>
                     <div className="grid md:grid-cols-3 xl:grid-cols-4 gap-5 mt-5 auto-rows-fr">

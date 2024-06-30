@@ -13,6 +13,7 @@ import { authActions } from "../../stores/auth";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import Button from "../elements/Button";
+import defaultUserPhoto from "./../../assets/images/default-user-photo.png";
 
 const Header = () => {
     const { user, isAuthened } = useSelector((state: RootState) => state.auth);
@@ -66,12 +67,19 @@ const Header = () => {
             {isAuthened && user && (
                 <div className="relative">
                     <button
-                        className="flex gap-2 items-center hover:bg-gray-100 p-1"
+                        className="flex gap-2 items-center hover:bg-gray-100 p-1 min-w-40"
                         onClick={() => setShowActions(!showActions)}
                     >
-                        <div className="p-2 bg-gray-200 w-[40px] h-[40px] flex justify-center items-center">
-                            <FontAwesomeIcon icon={faUser} />
-                        </div>
+                        <img
+                            src={
+                                user.photo && user.photo.length > 0
+                                    ? user.photo
+                                    : defaultUserPhoto
+                            }
+                            alt="user-photo"
+                            className="w-[40px] h-[40px] object-cover rounded-full shadow-md"
+                        />
+
                         <span className="me-2">{user.name}</span>
                     </button>
 
