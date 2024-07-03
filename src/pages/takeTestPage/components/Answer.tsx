@@ -112,7 +112,7 @@ const Answer = ({ question }: QuestionProps) => {
                         question.answer
                             ? (question.answer
                                   .content as MultipleChoicesAnswerItf)
-                            : null
+                            : question.answer
                     }
                 />
             )}
@@ -122,7 +122,7 @@ const Answer = ({ question }: QuestionProps) => {
                     userAnswer={
                         question.answer
                             ? (question.answer.content as FillGapsAnswerItf)
-                            : null
+                            : question.answer
                     }
                 />
             )}
@@ -132,7 +132,7 @@ const Answer = ({ question }: QuestionProps) => {
                     userAnswer={
                         question.answer
                             ? (question.answer.content as MatchingAnswerItf)
-                            : null
+                            : question.answer
                     }
                 />
             )}
@@ -142,7 +142,7 @@ const Answer = ({ question }: QuestionProps) => {
                     userAnswer={
                         question.answer
                             ? (question.answer.content as ResponseAnswerItf)
-                            : null
+                            : question.answer
                     }
                 />
             )}

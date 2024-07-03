@@ -8,20 +8,28 @@ import { useNavigate, useParams } from "react-router";
 import { useMutation, useQuery } from "react-query";
 import { getTest, publishTest, updateTest } from "../../services/test";
 import TestTakers from "./components/TestTakers";
-import { testStatus } from "../../config/config";
+import { shareOptions, testStatus } from "../../config/config";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import Button from "../../components/elements/Button";
+import { useSearchParams } from "react-router-dom";
 
 const CreateTestPage = () => {
-    const [test, setTest] = useState<TestItf | null>(null);
-    const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(1);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const stepParam = searchParams.get("step");
+    const [step, setStep] = useState<1 | 2 | 3 | 4 | 5>(
+        parseInt(stepParam || "1") as 1 | 2 | 3 | 4 | 5
+    );
     const navigate = useNavigate();
 
     const { testId: testIdParam } = useParams();
     const [testId, setTestId] = useState<string | undefined>(testIdParam);
 
-    const { data, isLoading, refetch } = useQuery({
+    const {
+        data: test,
+        isLoading,
+        refetch,
+    } = useQuery({
         queryFn: async () => {
             const res = await getTest(testId!);
             return res.test;
@@ -59,10 +67,45 @@ const CreateTestPage = () => {
     }, [testId]);
 
     useEffect(() => {
-        if (data) {
-            setTest(data);
-        } else setTest(null);
-    }, [data]);
+        if (!testId && !test) {
+            return setStep(1);
+        }
+
+        if (testId && !test && step > 1) {
+            return setStep(1);
+        }
+
+        if (test && testId) {
+            if (
+                test.num_parts > 1 &&
+                test.parts.length !== test.num_parts &&
+                step > 2
+            ) {
+                return setStep(2);
+            }
+
+            if (
+                (!test.questions ||
+                    test.questions.length !== test.num_questions) &&
+                step > 3
+            ) {
+                return setStep(3);
+            }
+
+            if (
+                (!test.share_option ||
+                    (test.share_option === shareOptions.RESTRICTED &&
+                        test.taker_ids.length === 0)) &&
+                step > 5
+            ) {
+                return setStep(5);
+            }
+        }
+    }, [test, step]);
+
+    useEffect(() => {
+        setSearchParams({ step: step + "" });
+    }, [step]);
 
     return (
         <div className="xl:w-2/3 md:w-5/6 mx-auto py-10">
@@ -79,7 +122,10 @@ const CreateTestPage = () => {
                                         : "bg-gray-300"
                                 } grow`}
                             ></div>
-                            <div
+                            <button
+                                onClick={() =>
+                                    setStep((index + 1) as 1 | 2 | 3 | 4 | 5)
+                                }
                                 className={`w-8 h-8 ${
                                     step >= index + 1
                                         ? step === index + 1
@@ -89,7 +135,7 @@ const CreateTestPage = () => {
                                 } text-white rounded-full flex items-center justify-center text-xl`}
                             >
                                 {index + 1}
-                            </div>
+                            </button>
                             <div
                                 className={`h-1 ${
                                     step >= index + 1

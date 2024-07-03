@@ -151,8 +151,8 @@ export interface MatchingQuestionItf extends MatchingQuestionBodyItf {
 
 export interface ResponseQuestionBodyItf {
     text: string;
-    minLength?: number;
-    maxLength?: number;
+    min_length?: number;
+    max_length?: number;
     image?: string;
 }
 

@@ -14,7 +14,7 @@ const ResponseQuestion = ({
     const [response, setResponse] = useState<string>();
 
     const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        if (!content.maxLength || e.target.value.length <= content.maxLength) {
+        if (!content.max_length || e.target.value.length <= content.max_length) {
             setResponse(e.target.value);
             onProvideAnswer(e.target.value);
         }

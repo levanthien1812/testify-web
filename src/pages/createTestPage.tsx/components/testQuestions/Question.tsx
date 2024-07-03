@@ -135,8 +135,8 @@ const Question = ({
                     ...questionBody,
                     content: {
                         text: "",
-                        minLength: 1,
-                        maxLength: 1,
+                        min_length: 1,
+                        max_length: 1,
                     },
                 });
                 break;

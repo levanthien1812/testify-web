@@ -3,12 +3,12 @@ import { ResponseAnswerItf, ResponseQuestionItf } from "../../../types/types";
 
 type ResponseAnswerProps = {
     content: ResponseQuestionItf;
-    userAnswer: ResponseAnswerItf | null;
+    userAnswer: ResponseAnswerItf | null | undefined;
 };
 
 const ResponseAnswer = ({ content, userAnswer }: ResponseAnswerProps) => {
     const response = useMemo(() => {
-        if (!userAnswer) {
+        if (userAnswer === undefined) {
             return content.answer;
         } else if (userAnswer !== null) {
             return userAnswer.answer;

@@ -60,7 +60,6 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                 await updateTest(test!._id, testBody),
             mutationKey: ["update-test", { testId: test?._id, body: testBody }],
             onSuccess: (data) => {
-                onAfterUpdate(data.test.id);
                 onNext();
             },
             onError: (err) => {
@@ -324,10 +323,12 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                         name="public_answers_option"
                         value={testBody.public_answers_option}
                         onChange={handleInputChange}
-                        options={Object.values(testLevels).map((level) => ({
-                            label: level,
-                            value: level,
-                        }))}
+                        options={Object.values(publicAnswersOptions).map(
+                            (publicAnswersOption) => ({
+                                label: publicAnswersOption,
+                                value: publicAnswersOption,
+                            })
+                        )}
                     />
                 </div>
 

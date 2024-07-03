@@ -42,7 +42,7 @@ const RecentTests = () => {
             )}
 
             {tests && (
-                <div className="flex gap-6 mt-3 overflow-x-scroll scrollbar-thin pb-1">
+                <div className="flex gap-6 mt-3 overflow-x-scroll pb-1 custom-scrollbar-x">
                     {tests.map((test: TestItf) => {
                         return (
                             <div key={test._id}>

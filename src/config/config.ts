@@ -42,3 +42,8 @@ export const autoScoreTypes = [
 ];
 
 export const manualScoreTypes = [questionTypes.RESPONSE];
+
+export const shareOptions = {
+    ANYONE: "anyone",
+    RESTRICTED: "restricted",
+};
