@@ -27,6 +27,7 @@ const Takers = ({ test, onAfterUpdate }: TakersProps) => {
                                 name={(taker as userItf).email}
                                 id={(taker as userItf).email}
                                 checked={true}
+                                readOnly
                             />
                             <label
                                 htmlFor={(taker as userItf).email}

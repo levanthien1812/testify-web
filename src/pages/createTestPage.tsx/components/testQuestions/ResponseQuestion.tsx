@@ -34,26 +34,26 @@ const ResponseQuestion: React.FC<{
                 <TextEditor content={text} setContent={setText} />
             </div>
             <div className="flex flex-col items-start mt-2">
-                <label htmlFor="minLength">Minimum length of response: </label>
+                <label htmlFor="min_length">Minimum length of response: </label>
                 <Input
                     type="number"
-                    name="minLength"
-                    id="minLength"
+                    name="min_length"
+                    id="min_length"
                     min={1}
                     className="w-full"
-                    value={content.minLength}
+                    value={content.min_length}
                     onChange={handleInputChange}
                 />
             </div>
             <div className="flex flex-col items-start mt-2">
-                <label htmlFor="maxLength">Maximum length: </label>
+                <label htmlFor="max_length">Maximum length: </label>
                 <Input
                     type="number"
-                    name="maxLength"
-                    id="maxLength"
+                    name="max_length"
+                    id="max_length"
                     min={1}
                     className="w-full"
-                    value={content.maxLength}
+                    value={content.max_length}
                     onChange={handleInputChange}
                 />
             </div>

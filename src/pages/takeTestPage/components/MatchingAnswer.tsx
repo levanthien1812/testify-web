@@ -6,12 +6,12 @@ import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 type MatchingAnswerProps = {
     content: MatchingQuestionItf;
-    userAnswer: MatchingAnswerItf | null;
+    userAnswer: MatchingAnswerItf | null | undefined;
 };
 
 const MatchingAnswer = ({ content, userAnswer }: MatchingAnswerProps) => {
     const matchings = useMemo(() => {
-        if (!userAnswer) {
+        if (userAnswer === undefined) {
             return content.answer || [];
         } else if (userAnswer !== null) {
             return userAnswer.answer || [];

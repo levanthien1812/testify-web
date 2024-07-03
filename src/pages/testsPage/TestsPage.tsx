@@ -25,7 +25,7 @@ const TestsPage = () => {
         isLoading: isLoadingTests,
         refetch: refetchTests,
     } = useQuery<TestsFetchResult>({
-        queryKey: ["tests", { filter }],
+        queryKey: ["tests", { ...filter }],
         queryFn: async () => {
             let requestFilter = { ...filter };
             if (requestFilter.sort && requestFilter.order) {
@@ -47,10 +47,8 @@ const TestsPage = () => {
     return (
         <div className="xl:w-2/3 md:w-5/6 mx-auto py-10">
             <h2 className="text-4xl">Tests</h2>
+            <Filter filter={filter} setFilter={setFilter} />
             {testsFetchResult && testsFetchResult.tests.length > 0 && (
-                <Filter filter={filter} setFilter={setFilter} />
-            )}
-            {testsFetchResult?.tests && (
                 <>
                     <div className="grid md:grid-cols-3 xl:grid-cols-4 gap-5 mt-5 auto-rows-fr">
                         {testsFetchResult.tests.map((test) => (
@@ -110,6 +108,14 @@ const TestsPage = () => {
                     </div>
                 </>
             )}
+
+            {!testsFetchResult ||
+                (testsFetchResult.tests.length === 0 && (
+                    <p className="text-center mt-5 text-xl text-gray-600">
+                        No tests found
+                    </p>
+                ))}
+
             {isLoadingTests && (
                 <p className="text-center mt-5 text-xl text-gray-600">
                     Loading tests...

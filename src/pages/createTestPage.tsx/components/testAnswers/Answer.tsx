@@ -103,7 +103,6 @@ const Answer: React.FC<{
             {savable && (
                 <div className="flex justify-end">
                     <Button
-                        className="w-1/5"
                         primary={false}
                         onClick={() => {
                             setReset(true);
@@ -112,11 +111,7 @@ const Answer: React.FC<{
                     >
                         Cancel
                     </Button>
-                    <Button
-                        className="w-1/5"
-                        onClick={handleSaveAnswer}
-                        disabled={isLoading}
-                    >
+                    <Button onClick={handleSaveAnswer} disabled={isLoading}>
                         {isLoading ? "Saving..." : "Save"}
                     </Button>
                 </div>

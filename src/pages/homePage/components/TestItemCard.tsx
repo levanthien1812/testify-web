@@ -9,6 +9,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
 import { roles, testStatus } from "../../../config/config";
 import Button from "../../../components/elements/Button";
+import { Circle } from "rc-progress";
 
 type TestItemCardProps = {
     test: TestItf;
@@ -65,45 +66,61 @@ const TestItemCard = ({ test }: TestItemCardProps) => {
                     {test.status}
                 </div>
             </div>
-            <div className="px-3 py-3">
-                {test.num_parts > 1 && (
+            <div className="px-3 py-3 flex gap-2">
+                <div>
+                    {test.num_parts > 1 && (
+                        <p>
+                            <FontAwesomeIcon
+                                className="text-xs text-orange-600 me-2"
+                                icon={faStar}
+                            />
+                            {test.num_parts} parts
+                        </p>
+                    )}
                     <p>
                         <FontAwesomeIcon
                             className="text-xs text-orange-600 me-2"
                             icon={faStar}
                         />
-                        {test.num_parts} parts
+                        {test.num_questions} questions
                     </p>
-                )}
-                <p>
-                    <FontAwesomeIcon
-                        className="text-xs text-orange-600 me-2"
-                        icon={faStar}
-                    />
-                    {test.num_questions} questions
-                </p>
-                <p>
-                    <FontAwesomeIcon
-                        className="text-xs text-orange-600 me-2"
-                        icon={faStar}
-                    />
-                    {test.duration} minutes
-                </p>
-                <p>
-                    <FontAwesomeIcon
-                        className="text-xs text-orange-600 me-2"
-                        icon={faStar}
-                    />
-                    {format(new Date(test.datetime), "dd/MM/yyyy HH:mm")}
-                </p>
-                {!!test.submissions_count && (
-                    <p className="font-bold text-orange-600">
+                    <p>
                         <FontAwesomeIcon
                             className="text-xs text-orange-600 me-2"
                             icon={faStar}
                         />
-                        Submissions: {test.submissions_count}
+                        {test.duration} minutes
                     </p>
+                    <p>
+                        <FontAwesomeIcon
+                            className="text-xs text-orange-600 me-2"
+                            icon={faStar}
+                        />
+                        {format(new Date(test.datetime), "dd/MM/yyyy HH:mm")}
+                    </p>
+                </div>
+                {!!test.submissions_count && (
+                    <div className="flex flex-col items-center justify-center grow bg-gray-50 px-2 py-2 rounded-md shadow-md">
+                        <div className="w-1/2">
+                            <Circle
+                                strokeWidth={6}
+                                percent={
+                                    (test.submissions_count /
+                                        test.taker_ids.length) *
+                                    100
+                                }
+                                strokeColor={"#ea580c"}
+                                trailColor={"#eeeeee"}
+                                trailWidth={6}
+                            />
+                        </div>
+                        <p className="font-bold text-xl text-orange-600">
+                            {`${test.submissions_count}/${test.taker_ids.length}`}
+                        </p>
+                        <p className="font-bold text-orange-600 leading-none text-sm">
+                            Submissions
+                        </p>
+                    </div>
                 )}
             </div>
 

@@ -4,12 +4,12 @@ import Input from "../../../components/elements/Input";
 
 type FillGapsAnswerProps = {
     content: FillGapsQuestionItf;
-    userAnswer: FillGapsAnswerItf | null;
+    userAnswer: FillGapsAnswerItf | null | undefined;
 };
 
 const FillGapsAnswer = ({ content, userAnswer }: FillGapsAnswerProps) => {
     const gaps = useMemo(() => {
-        if (!userAnswer) {
+        if (userAnswer === undefined) {
             return content.answer || [];
         } else if (userAnswer !== null) {
             return userAnswer.answer || [];

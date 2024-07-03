@@ -71,7 +71,7 @@ const ViewTestPage = () => {
             </div>
 
             <div className=" mt-4">
-                <p className="text-2xl text-center">Submissions</p>
+                <p className="text-2xl text-center">{`Submissions (${submissions?.length}/${test?.taker_ids.length})`}</p>
                 {isLoadingSubmissions && (
                     <p className="text-center">Loading submission ...</p>
                 )}
@@ -93,7 +93,7 @@ const ViewTestPage = () => {
             {viewQuestionsAndAnswers && test && (
                 <Modal
                     onClose={() => setViewQuestionsAndAnswers(false)}
-                    className="w-5/6 md:w-2/3"
+                    className="w-3/4 md:w-3/5"
                 >
                     <ModalHeader title="Questions and Answers" />
                     <ModalBody>
@@ -131,7 +131,10 @@ const ViewTestPage = () => {
             )}
 
             {viewProvideAnswers && test && (
-                <Modal onClose={() => setViewProvideAnswers(false)}>
+                <Modal
+                    onClose={() => setViewProvideAnswers(false)}
+                    className="w-3/4 md:w-3/5"
+                >
                     <ModalHeader title="Provide Answers" />
                     <ModalBody>
                         <TestAnswers

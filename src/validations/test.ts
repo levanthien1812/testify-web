@@ -73,8 +73,8 @@ export const matchingQuestionSchema = Joi.object()
 export const responseQuestionSchema = Joi.object()
     .keys({
         text: Joi.string().required(),
-        minLength: Joi.number().optional().min(1),
-        maxLength: Joi.number().optional().min(1),
+        min_length: Joi.number().optional().min(1),
+        max_length: Joi.number().optional().min(1),
     })
     .unknown(true);
 

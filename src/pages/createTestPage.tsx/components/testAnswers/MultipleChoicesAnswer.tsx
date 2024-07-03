@@ -43,7 +43,7 @@ const MultipleChoicesAnswer = ({
             {content.images && (
                 <div
                     className={`grid ${
-                        content.images.length > 2
+                        content.images.length >= 2
                             ? "grid-cols-2"
                             : "grid-cols-1"
                     } gap-2 px-[10%] mt-2 justify-items-center`}

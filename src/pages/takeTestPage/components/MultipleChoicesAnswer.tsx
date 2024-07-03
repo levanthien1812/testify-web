@@ -7,7 +7,7 @@ import { formatImageUrl } from "../../../utils/formatImageUrl";
 
 type MultipleChoicesAnswerProps = {
     content: MultipleChoiceQuestionItf;
-    userAnswer: MultipleChoicesAnswerItf | null;
+    userAnswer: MultipleChoicesAnswerItf | null | undefined;
 };
 
 const MultipleChoicesAnswer = ({
@@ -15,9 +15,9 @@ const MultipleChoicesAnswer = ({
     userAnswer,
 }: MultipleChoicesAnswerProps) => {
     const optionChosen = useMemo(() => {
-        if (!userAnswer && content.answer) {
+        if (userAnswer === undefined && content.answer) {
             return content.answer[0];
-        } else if (userAnswer !== null && userAnswer.answer) {
+        } else if (userAnswer && userAnswer.answer) {
             return userAnswer.answer[0];
         }
 
