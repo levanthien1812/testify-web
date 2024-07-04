@@ -59,8 +59,8 @@ const MatchingAnswer = ({
                     __html: content.text,
                 }}
             ></div>
-            <div className="flex gap-3 w-full mt-2 px-2">
-                <div className="space-y-2 w-1/2">
+            <div className="grid grid-cols-2 gap-3 w-full mt-2 px-2 auto-rows-fr">
+                <div className="space-y-2">
                     {content.left_items.map((item) => (
                         <DraggableItem
                             item={item}
@@ -75,7 +75,7 @@ const MatchingAnswer = ({
                         />
                     ))}
                 </div>
-                <div className="space-y-2 w-1/2">
+                <div className="space-y-2">
                     {content.right_items.map((item) => (
                         <DraggableItem
                             item={item}
@@ -98,9 +98,9 @@ const MatchingAnswer = ({
                     {matchings.map((matching) => (
                         <div
                             key={matching.left}
-                            className="bg-gray-100 px-4 py-1 flex items-center gap-2 relative"
+                            className="bg-gray-100 px-4 py-1 grid grid-cols-8 items-center gap-1 relative"
                         >
-                            <span>
+                            <span className="col-span-3">
                                 {
                                     content.left_items.find(
                                         (left_item) =>
@@ -108,11 +108,13 @@ const MatchingAnswer = ({
                                     )?.text
                                 }
                             </span>
-                            <FontAwesomeIcon
-                                icon={faArrowRight}
-                                className="text-xs"
-                            />
-                            <span>
+                            <div className="col-span-1 text-center">
+                                <FontAwesomeIcon
+                                    icon={faArrowRight}
+                                    className="text-xs "
+                                />
+                            </div>
+                            <span className="col-span-3">
                                 {
                                     content.right_items.find(
                                         (right_item) =>
@@ -124,7 +126,7 @@ const MatchingAnswer = ({
                                 onClick={() =>
                                     handleDeleteMatching(matching.left)
                                 }
-                                className="absolute top-1 right-4 hover:font-bold"
+                                className="hover:font-bold"
                             >
                                 Clear
                             </button>

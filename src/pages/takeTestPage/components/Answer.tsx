@@ -86,6 +86,8 @@ const Answer = ({ question }: QuestionProps) => {
                     (
                     {question.answer
                         ? `${question.answer.score}/${question.score}`
+                        : question.answer === null
+                        ? `0/${question.score}`
                         : question.score}{" "}
                     points)
                 </span>{" "}

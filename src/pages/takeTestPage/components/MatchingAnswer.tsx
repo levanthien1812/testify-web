@@ -79,9 +79,9 @@ const MatchingAnswer = ({ content, userAnswer }: MatchingAnswerProps) => {
                                         ? "bg-green-100"
                                         : "bg-red-100"
                                     : "bg-gray-100"
-                            } px-4 py-1 flex items-center gap-2 relative`}
+                            } px-4 py-1  grid grid-cols-9 items-center gap-2 relative`}
                         >
-                            <span>
+                            <span className="col-span-4">
                                 {
                                     content.left_items.find(
                                         (left_item) =>
@@ -89,11 +89,14 @@ const MatchingAnswer = ({ content, userAnswer }: MatchingAnswerProps) => {
                                     )?.text
                                 }
                             </span>
-                            <FontAwesomeIcon
-                                icon={faArrowRight}
-                                className="text-xs"
-                            />
-                            <span>
+                            <span className="col-span-1 text-center">
+                                <FontAwesomeIcon
+                                    icon={faArrowRight}
+                                    className="text-xs"
+                                />
+                            </span>
+
+                            <span className="col-span-4">
                                 {
                                     content.right_items.find(
                                         (right_item) =>

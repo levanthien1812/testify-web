@@ -33,7 +33,7 @@ const SubmissionsTable = ({ submissions, refetch }: SubmissionsTableProps) => {
                 accessorKey: "taker_id.name",
                 cell: ({ row }) => {
                     return _.capitalize(
-                        (row.original.taker_id as Omit<userItf, "role">).name
+                        (row.original.taker_id as userItf).name
                     );
                 },
                 sortingFn: "alphanumeric",
@@ -277,12 +277,10 @@ const SubmissionsTable = ({ submissions, refetch }: SubmissionsTableProps) => {
                         table.setPageSize(Number(e.target.value));
                     }}
                     sizing="sm"
-                    options={
-                        [10, 20, 30, 40, 50].map((pageSize) => ({
-                            value: pageSize,
-                            label: pageSize,
-                        }))
-                    }
+                    options={[10, 20, 30, 40, 50].map((pageSize) => ({
+                        value: pageSize,
+                        label: pageSize,
+                    }))}
                 />
             </div>
             {selectedTakerId && (
@@ -290,8 +288,8 @@ const SubmissionsTable = ({ submissions, refetch }: SubmissionsTableProps) => {
                     submission={
                         submissions.find(
                             (submission) =>
-                                (submission.taker_id as Omit<userItf, "role">)
-                                    .id === selectedTakerId
+                                (submission.taker_id as userItf).id ===
+                                selectedTakerId
                         )!
                     }
                     takerId={selectedTakerId}

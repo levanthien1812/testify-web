@@ -84,13 +84,13 @@ const CreateTestPage = () => {
                 return setStep(2);
             }
 
-            if (
-                (!test.questions ||
-                    test.questions.length !== test.num_questions) &&
-                step > 3
-            ) {
-                return setStep(3);
-            }
+            // if (
+            //     (!test.questions ||
+            //         test.questions.length !== test.num_questions) &&
+            //     step > 3
+            // ) {
+            //     return setStep(3);
+            // }
 
             if (
                 (!test.share_option ||

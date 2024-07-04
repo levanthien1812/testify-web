@@ -5,7 +5,8 @@ const DraggableItem: React.FC<{
     onDrop: (item: { left: string; right: string }) => void;
     part: "left" | "right";
     draggable: boolean;
-}> = ({ item, onDrop, part, draggable }) => {
+    className?: string;
+}> = ({ item, onDrop, part, draggable, className }) => {
     const [dragStart, setDragStart] = useState(false);
     const [dragOver, setDragOver] = useState(false);
 
@@ -55,7 +56,7 @@ const DraggableItem: React.FC<{
                 draggable
                     ? "bg-gray-100 cursor-pointer hover:bg-gray-200"
                     : "bg-orange-200 cursor-not-allowed"
-            }`}
+            } ${className}`}
             draggable={draggable}
             onDragStart={handleDragStart}
             onDragOver={handleDragOver}
