@@ -285,7 +285,7 @@ export type UserAnswer =
 
 export interface SubmissionItf {
     _id: string;
-    taker_id: string | Omit<userItf, "role">;
+    taker_id: string | userItf;
     test_id: string;
     score?: number;
     correct_answers?: number;

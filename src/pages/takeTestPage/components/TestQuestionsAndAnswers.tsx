@@ -1,4 +1,3 @@
-import { Link } from "react-router-dom";
 import { TestItf } from "../../../types/types";
 import Answer from "./Answer";
 

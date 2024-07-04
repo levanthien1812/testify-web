@@ -19,6 +19,23 @@ type TakerSubmissionDetailProps = {
     onClose: () => void;
 };
 
+const TakerInfoItem = ({
+    label,
+    text,
+}: {
+    label: string;
+    text: string | number;
+}) => {
+    return (
+        <div className="col-span-3 border border-dashed flex flex-col border-gray-400 px-2 py-1">
+            <span className="leading-tight">{label}:</span>
+            <span className="font-bold bg-orange-500 text-white w-fit px-2 rounded-full">
+                {text}
+            </span>
+        </div>
+    );
+};
+
 const TakerSubmissionDetail = ({
     submission,
     takerId,
@@ -48,64 +65,48 @@ const TakerSubmissionDetail = ({
             <ModalHeader title={`Taker's submissions detail`} />
             <ModalBody>
                 {submission && (
-                    <div className="grid grid-cols-3 gap-2 bg-orange-100 p-4 border border-orange-600">
-                        <p>
-                            Taker's name:{" "}
-                            <span className="font-bold">
-                                {
-                                    (
-                                        submission.taker_id as Omit<
-                                            userItf,
-                                            "role"
-                                        >
-                                    ).name
-                                }
-                            </span>
-                        </p>
-                        <p className="col-span-2">
-                            Taker's email:{" "}
-                            <span className="font-bold">
-                                {
-                                    (
-                                        submission.taker_id as Omit<
-                                            userItf,
-                                            "role"
-                                        >
-                                    ).email
-                                }
-                            </span>
-                        </p>
-                        <p>
-                            Start time:{" "}
-                            <span className="font-bold">
-                                {format(
-                                    new Date(submission.start_time),
-                                    "dd/MM/yyyy HH:mm:ss"
-                                )}
-                            </span>
-                        </p>
-                        <p className="col-span-2">
-                            Submit time:{" "}
-                            <span className="font-bold">
-                                {format(
-                                    new Date(submission.submit_time),
-                                    "dd/MM/yyyy HH:mm:ss"
-                                )}
-                            </span>
-                        </p>
-                        <p>
-                            Correct answers:{" "}
-                            <span className="font-bold">
-                                {submission.correct_answers}
-                            </span>
-                        </p>
-                        <p>
-                            Wrong answers:{" "}
-                            <span className="font-bold">
-                                {submission.wrong_answers}
-                            </span>
-                        </p>
-                        <p className="font-bold"> Score: {submission.score}</p>
+                    <div className="grid grid-cols-8 gap-1 bg-orange-100 px-4 py-2 border border-dashed border-orange-600">
+                        <div className="row-span-4 col-span-2 overflow-hidden m-2">
+                            <img
+                                src={(submission.taker_id as userItf).photo}
+                                alt=""
+                                className="rounded-full shadow-md"
+                            />
+                        </div>
+                        <TakerInfoItem
+                            label="Taker's name"
+                            text={(submission.taker_id as userItf).name}
+                        />
+                        <TakerInfoItem
+                            label="Taker's email"
+                            text={(submission.taker_id as userItf).email}
+                        />
+                        <TakerInfoItem
+                            label="Start time"
+                            text={format(
+                                new Date(submission.start_time),
+                                "dd/MM/yyyy HH:mm:ss"
+                            )}
+                        />
+                        <TakerInfoItem
+                            label="Submit time"
+                            text={format(
+                                new Date(submission.submit_time),
+                                "dd/MM/yyyy HH:mm:ss"
+                            )}
+                        />
+                        <TakerInfoItem
+                            label="Correct answers"
+                            text={submission.correct_answers || 0}
+                        />
+                        <TakerInfoItem
+                            label="Wrong answers"
+                            text={submission.wrong_answers || 0}
+                        />
+                        <TakerInfoItem
+                            label="Score"
+                            text={submission.score || 0}
+                        />
                     </div>
                 )}
                 {isLoadingTest && <p className="text-center">Loading...</p>}
