@@ -9,3 +9,13 @@ export const getTakersStatistics = async () => {
         throw error;
     }
 };
+
+export const getTakers = async () => {
+    try {
+        const response = await instance.get("users/takers");
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};

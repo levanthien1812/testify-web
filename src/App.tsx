@@ -17,6 +17,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "./stores/rootState";
 import ViewTestPage from "./pages/viewTestPage/ViewTestPage";
 import TestsPage from "./pages/testsPage/TestsPage";
+import ChatPage from "./pages/chatPage/ChatPage";
 
 const queryClient = new QueryClient();
 
@@ -77,6 +78,10 @@ function App() {
                                     <TakeTestPage />
                                 ),
                         },
+                        {
+                            path: "/chat",
+                            element: <ChatPage />,
+                        }
                     ],
                 },
                 {

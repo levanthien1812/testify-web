@@ -317,3 +317,38 @@ export type TakerStatistics = {
     total_tests_assigned: number;
     total_submissions: number;
 };
+
+export interface ChatBodyItf {
+    members: string[];
+}
+
+export interface ChatItf {
+    _id: string;
+    members: {
+        member: string | userItf;
+        nick_name: string | null;
+    }[];
+    is_group_chat: boolean;
+    group_admin: string | userItf | null;
+    chat_name: string | null;
+    appearances: {
+        background_color: string;
+        messages_color: string;
+    };
+    created_at: Date;
+    updated_at: Date;
+}
+
+export interface MessageBody {
+    chat_id: string;
+    text: string;
+}
+
+export interface MessageItf {
+    _id: string;
+    text: string;
+    sender_id: string;
+    chat_id: string;
+    created_at: Date;
+    updated_at: Date;
+}

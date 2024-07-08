@@ -4,13 +4,14 @@ import Modal, {
     ModalFooter,
     ModalHeader,
 } from "../../../../components/modals/Modal";
-import AvailableTakers from "./AvailableTakers";
 import CreateTakers from "./CreateTakers";
-import { useMutation } from "react-query";
-import { assignTakers } from "../../../../services/test";
+import { useMutation, useQuery } from "react-query";
+import { assignTakers, getAvailableTakers } from "../../../../services/test";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import Button from "../../../../components/elements/Button";
+import { userItf } from "../../../../types/types";
+import TakersChoser from "./TakersChoser";
 
 type AddTakersProps = {
     onClose: () => void;
@@ -37,6 +38,19 @@ const AddTakers = ({ onClose, testId, onAfterUpdate }: AddTakersProps) => {
         },
     });
 
+    const { data: availableTakers, isFetching } = useQuery<userItf[]>({
+        queryFn: async () => {
+            const data = await getAvailableTakers(testId);
+            return data.takers;
+        },
+        queryKey: ["getAvailableTakers", { testId: testId }],
+        onError: (err) => {
+            if (err instanceof AxiosError) {
+                toast.error(err.response?.data.message);
+            }
+        },
+    });
+
     const handleSave = () => {
         mutate();
     };
@@ -49,10 +63,16 @@ const AddTakers = ({ onClose, testId, onAfterUpdate }: AddTakersProps) => {
         <Modal onClose={onClose}>
             <ModalHeader title="Add takers" />
             <ModalBody>
-                {!isCreateTaker && (
-                    <AvailableTakers
-                        testId={testId}
+                {isFetching && (
+                    <p className="text-center text-gray-500">
+                        Loading takers...
+                    </p>
+                )}
+                {!isCreateTaker && availableTakers && (
+                    <TakersChoser
                         onAfterSelect={handleAfterSelect}
+                        takers={availableTakers}
+                        label="Select available takers"
                     />
                 )}
 
