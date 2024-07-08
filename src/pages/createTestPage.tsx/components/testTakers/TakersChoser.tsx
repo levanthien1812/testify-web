@@ -1,49 +1,28 @@
-import { userItf } from "../../../../types/types";
-import { useQuery } from "react-query";
-import { getAvailableTakers } from "../../../../services/test";
-import { AxiosError } from "axios";
-import { toast } from "react-toastify";
 import { useEffect, useState } from "react";
-import { on } from "events";
+import { userItf } from "../../../../types/types";
 import Input from "../../../../components/elements/Input";
 
-type AvailableTakersProps = {
-    testId: string;
+type TakersChoserProps = {
+    takers: userItf[];
+    label?: string;
     onAfterSelect: (selectedTakers: string[]) => void;
 };
 
-const AvailableTakers = ({ testId, onAfterSelect }: AvailableTakersProps) => {
+const TakersChoser = ({
+    takers,
+    label = "Choose takers",
+    onAfterSelect,
+}: TakersChoserProps) => {
     const [filteredTakers, setFilteredTakers] = useState<userItf[]>([]);
     const [search, setSearch] = useState("");
     const [selectedTakers, setSelectedTakers] = useState<string[]>([]);
     const [selectAll, setSelectAll] = useState<boolean>(false);
 
-    const { data: availableTakers, isFetching } = useQuery<userItf[]>({
-        queryFn: async () => {
-            const data = await getAvailableTakers(testId);
-            return data.takers;
-        },
-        queryKey: ["getAvailableTakers", { testId: testId }],
-        onError: (err) => {
-            if (err instanceof AxiosError) {
-                toast.error(err.response?.data.message);
-            }
-        },
-    });
-
     useEffect(() => {
-        if (availableTakers) {
-            setFilteredTakers(availableTakers);
-        } else {
-            setFilteredTakers([]);
-        }
-    }, [availableTakers]);
-
-    useEffect(() => {
-        if (availableTakers) {
+        if (takers) {
             if (search.length > 0) {
                 setFilteredTakers(
-                    availableTakers.filter(
+                    takers.filter(
                         (taker) =>
                             taker.name
                                 .toLowerCase()
@@ -54,10 +33,10 @@ const AvailableTakers = ({ testId, onAfterSelect }: AvailableTakersProps) => {
                     )
                 );
             } else {
-                setFilteredTakers(availableTakers);
+                setFilteredTakers(takers);
             }
         }
-    }, [search, availableTakers]);
+    }, [search, takers]);
 
     useEffect(() => {
         onAfterSelect(selectedTakers);
@@ -65,7 +44,7 @@ const AvailableTakers = ({ testId, onAfterSelect }: AvailableTakersProps) => {
 
     return (
         <div>
-            <p>Choose from available takers:</p>
+            <p>{label}</p>
 
             <div className="flex gap-4 items-end">
                 <div>
@@ -103,9 +82,6 @@ const AvailableTakers = ({ testId, onAfterSelect }: AvailableTakersProps) => {
             </div>
 
             <div className="max-h-52 overflow-y-scroll scrollbar-thin mt-2">
-                {isFetching && !availableTakers && (
-                    <p className="text-center">Loading available takers...</p>
-                )}
                 {filteredTakers &&
                     filteredTakers.map((taker, index) => (
                         <div
@@ -148,13 +124,13 @@ const AvailableTakers = ({ testId, onAfterSelect }: AvailableTakersProps) => {
                             </div>
                         </div>
                     ))}
-                {!availableTakers ||
-                    (availableTakers.length === 0 && (
-                        <p className="text-center">No takers available</p>
+                {!takers ||
+                    (takers.length === 0 && (
+                        <p className="text-center">No takers found!</p>
                     ))}
             </div>
         </div>
     );
 };
 
-export default AvailableTakers;
+export default TakersChoser;

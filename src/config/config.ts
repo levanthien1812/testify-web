@@ -47,3 +47,8 @@ export const shareOptions = {
     ANYONE: "anyone",
     RESTRICTED: "restricted",
 };
+
+export const chatOptions = {
+    INDIVIDUAL: "individual",
+    GROUP: "group",
+};
