@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { getChats } from "../../services/chat";
 import Button from "../../components/elements/Button";
@@ -7,6 +7,12 @@ import { ChatItf } from "../../types/types";
 import Chats from "./components/Chats";
 import SelectedChat from "./components/SelectedChat";
 import ChatInfo from "./components/ChatInfo";
+import ChatSocketContext, {
+    useChatSocket,
+} from "./components/ChatSocketContext";
+import ChatSocketProvider from "./components/ChatSocketContext";
+import { useSelector } from "react-redux";
+import { RootState } from "../../stores/rootState";
 
 const ChatPage = () => {
     const [selectedChat, setSelectedChat] = React.useState<ChatItf | null>(
@@ -14,6 +20,8 @@ const ChatPage = () => {
     );
     const [isAddingChat, setIsAddingChat] = React.useState(false);
     const [openInfo, setOpenInfo] = useState(false);
+    const { socket } = useChatSocket();
+    const user = useSelector((state: RootState) => state.auth.user);
 
     const {
         data: chats,
@@ -28,8 +36,13 @@ const ChatPage = () => {
         queryKey: ["chats"],
     });
 
+    useEffect(() => {
+        if (!socket) return;
+        socket.emit("add-online-users", user!.id);
+    }, [socket]);
+
     return (
-        <div className="mt-6 shadow-md w-5/6 min-h-[80vh] md:w-3/4 2xl:w-2/3 mx-auto flex p-2 bg-slate-50 gap-2">
+        <div className="mt-6 shadow-md w-5/6 h-[80vh] md:w-3/4 2xl:w-2/3 mx-auto flex p-2 bg-slate-50 gap-2">
             <div className="w-1/3 p-2 bg-white shadow-md grow-0">
                 <div className="flex justify-between py-2 border-b border-dashed border-gray-300">
                     <h3 className="text-2xl font-bold">Messages</h3>

@@ -1,7 +1,8 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { ChatItf, userItf } from "../../../types/types";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
+import { useChatSocket } from "./ChatSocketContext";
 
 type ChatsProps = {
     chats: ChatItf[];
@@ -10,6 +11,7 @@ type ChatsProps = {
 
 const Chats = ({ chats, setSelectedChat }: ChatsProps) => {
     const user = useSelector((state: RootState) => state.auth.user);
+    const { socket, onlineUsers } = useChatSocket();
 
     return (
         <div className="space-y-2">
@@ -23,18 +25,14 @@ const Chats = ({ chats, setSelectedChat }: ChatsProps) => {
                         <div className="flex relative h-10 w-1/5 shrink-0">
                             {chat.members
                                 .filter(
-                                    (member) =>
-                                        (member.member as userItf).id !==
-                                        user?.id
+                                    (member) => member.member.id !== user?.id
                                 )
                                 .slice(0, 2)
                                 .map((member, index) => {
                                     return (
                                         <img
-                                            key={(member.member as userItf).id}
-                                            src={
-                                                (member.member as userItf).photo
-                                            }
+                                            key={member.member.id}
+                                            src={member.member.photo}
                                             alt=""
                                             className={`w-10 h-10 shrink-0 rounded-full absolute shadow-md`}
                                             style={{
@@ -57,7 +55,14 @@ const Chats = ({ chats, setSelectedChat }: ChatsProps) => {
                                     +{chat.members.length - 3}
                                 </div>
                             )}
-                            <div className="absolute bg-green-600 w-3 h-3 rounded-full -bottom-0.5 -left-0.5 border border-white"></div>
+                            {onlineUsers.find((onlineUser) =>
+                                chat.members
+                                    .map((member) => member.member.id)
+                                    .filter((id) => id !== user!.id)
+                                    .includes(onlineUser.user_id)
+                            ) && (
+                                <div className="absolute bg-green-600 w-3 h-3 rounded-full -bottom-0.5 -left-0.5 border border-white"></div>
+                            )}
                         </div>
                         <div className="grow min-w-0">
                             <p className="whitespace-nowrap overflow-hidden text-ellipsis">

@@ -71,7 +71,7 @@ const MenuBar = ({
     }
 
     return (
-        <div className="flex gap-1 items-start mb-2 overflow-x-scroll custom-scrollbar-x">
+        <div className="flex gap-1 items-start mb-2 custom-scrollbar-x">
             {withInsertGapButton && (
                 <EditorButton
                     onClick={() =>

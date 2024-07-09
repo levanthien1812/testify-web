@@ -325,7 +325,7 @@ export interface ChatBodyItf {
 export interface ChatItf {
     _id: string;
     members: {
-        member: string | userItf;
+        member: userItf;
         nick_name: string | null;
     }[];
     is_group_chat: boolean;

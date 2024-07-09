@@ -18,6 +18,7 @@ import { RootState } from "./stores/rootState";
 import ViewTestPage from "./pages/viewTestPage/ViewTestPage";
 import TestsPage from "./pages/testsPage/TestsPage";
 import ChatPage from "./pages/chatPage/ChatPage";
+import ChatSocketProvider from "./pages/chatPage/components/ChatSocketContext";
 
 const queryClient = new QueryClient();
 
@@ -80,8 +81,12 @@ function App() {
                         },
                         {
                             path: "/chat",
-                            element: <ChatPage />,
-                        }
+                            element: (
+                                <ChatSocketProvider>
+                                    <ChatPage />
+                                </ChatSocketProvider>
+                            ),
+                        },
                     ],
                 },
                 {
