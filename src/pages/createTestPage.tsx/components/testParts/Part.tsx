@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
 import { PartBodyItf, TestPartItf } from "../../../../types/types";
@@ -6,9 +6,9 @@ import { useMutation } from "react-query";
 import { addPart, updatePart } from "../../../../services/test";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
-import { partSchema } from "../../../../validations/test";
 import Button from "../../../../components/elements/Button";
 import Input from "../../../../components/elements/Input";
+import { useForm } from "react-hook-form";
 
 const Part: React.FC<{
     testId: string;
@@ -16,16 +16,26 @@ const Part: React.FC<{
     part: TestPartItf | null;
     onAfterUpdate: () => void;
 }> = ({ part, onAfterUpdate, testId, index }) => {
-    const [showSave, setShowSave] = useState(false);
-    const [savable, setSavable] = useState<boolean>(false);
     const [open, setOpen] = useState<boolean>(true);
-    const [partBody, setPartBody] = useState<PartBodyItf>({
-        name: "",
-        order: index + 1,
-        description: "",
-        score: 0,
-        num_questions: 0,
-    });
+    const initialValues = useMemo(
+        () =>
+            !part
+                ? {
+                      name: "",
+                      order: index + 1,
+                      description: "",
+                      score: 0,
+                      num_questions: 0,
+                  }
+                : {
+                      name: part.name,
+                      order: part.order,
+                      description: part.description,
+                      score: part.score,
+                      num_questions: part.num_questions,
+                  },
+        [part]
+    );
 
     const { mutate: createPartMutate, isLoading: createPartLoading } =
         useMutation({
@@ -33,7 +43,7 @@ const Part: React.FC<{
                 await addPart(testId, partBody),
             mutationKey: ["add-part", { body: part }],
             onSuccess: (data) => {
-                setShowSave(false);
+                toast.success("Part added successfully");
                 onAfterUpdate();
             },
             onError: (err) => {
@@ -52,7 +62,7 @@ const Part: React.FC<{
                 { partId: part && part._id, body: part },
             ],
             onSuccess: (data) => {
-                setShowSave(false);
+                toast.success("Part updated successfully");
                 onAfterUpdate();
             },
             onError: (err) => {
@@ -62,45 +72,21 @@ const Part: React.FC<{
             },
         });
 
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        let name: string, value: string | number | Date;
-        name = e.target.name;
-        value = e.target.value;
+    const {
+        handleSubmit,
+        formState: { errors },
+        register,
+        watch,
+    } = useForm<PartBodyItf>({
+        defaultValues: initialValues,
+    });
 
-        if (["score", "num_questions"].includes(name)) {
-            value = parseFloat(value);
-        }
-
-        setShowSave(true);
-        setPartBody({ ...partBody, [name]: value });
+    const onSubmit = (data: PartBodyItf) => {
+        if (!part) createPartMutate(data);
+        else updatePartMutate(data);
     };
 
-    const handleSavePart = () => {
-        if (!part) createPartMutate(partBody);
-        else updatePartMutate(partBody);
-    };
-
-    useEffect(() => {
-        const { error } = partSchema.validate(partBody);
-
-        if (!error) {
-            setSavable(true);
-        } else {
-            setSavable(false);
-        }
-    }, [partBody]);
-
-    useEffect(() => {
-        if (part) {
-            setPartBody({
-                name: part.name,
-                description: part.description,
-                order: part.order,
-                score: part.score,
-                num_questions: part.num_questions,
-            });
-        }
-    }, [part]);
+    const order = watch("order");
 
     return (
         <div className="">
@@ -108,7 +94,7 @@ const Part: React.FC<{
                 className="flex justify-between items-center px-4 py-2 bg-gray-300 cursor-pointer"
                 onClick={() => setOpen((prev) => !prev)}
             >
-                <p className="text-lg">Part {partBody.order}</p>
+                <p className="text-lg">Part {order}</p>
                 <FontAwesomeIcon
                     icon={faChevronRight}
                     className={`text-sm transition-all ${
@@ -117,19 +103,19 @@ const Part: React.FC<{
                 />
             </div>
             {open && (
-                <div className="border border-gray-300 px-4 py-4 space-y-3">
+                <form
+                    onSubmit={handleSubmit(onSubmit)}
+                    className="border border-gray-300 px-4 py-4 space-y-3"
+                >
                     <div className="flex gap-4 items-end">
                         <label htmlFor="name" className="w-1/5">
                             Part name:{" "}
                         </label>
                         <Input
-                            type="text"
-                            name="name"
-                            id="name"
-                            className="grow"
-                            value={partBody.name}
-                            onChange={handleInputChange}
-                            required
+                            {...register("name", {
+                                required: "Name is required",
+                            })}
+                            error={errors?.name && errors?.name.message}
                         />
                     </div>
                     <div className="flex gap-4 items-end">
@@ -137,13 +123,13 @@ const Part: React.FC<{
                             Description:{" "}
                         </label>
                         <Input
-                            type="text"
-                            name="description"
-                            id="description"
-                            className="grow"
-                            value={partBody.description}
-                            onChange={handleInputChange}
-                            required
+                            {...register("description", {
+                                required: "Description is required",
+                            })}
+                            error={
+                                errors?.description &&
+                                errors?.description.message
+                            }
                         />
                     </div>
                     <div className="flex gap-4 items-end mt-4">
@@ -153,12 +139,16 @@ const Part: React.FC<{
                         <Input
                             type="number"
                             min={0}
-                            id="score"
-                            name="score"
-                            className="w-0 grow"
-                            value={partBody.score}
-                            onChange={handleInputChange}
-                            required
+                            step={1}
+                            {...register("score", {
+                                required: "Score is required",
+                                min: {
+                                    value: 1,
+                                    message: "Score must be greater than 0",
+                                },
+                                valueAsNumber: true,
+                            })}
+                            error={errors?.score && errors?.score.message}
                         />
                         <label
                             htmlFor="num_questions"
@@ -169,34 +159,34 @@ const Part: React.FC<{
                         <Input
                             type="number"
                             step={1}
-                            min={0}
-                            id="num_questions"
-                            name="num_questions"
-                            className="w-0 grow"
-                            value={partBody.num_questions}
-                            onChange={handleInputChange}
-                            required
+                            {...register("num_questions", {
+                                required: "Number of questions is required",
+                                min: {
+                                    value: 1,
+                                    message:
+                                        "Number of questions must be greater than 0",
+                                },
+                                valueAsNumber: true,
+                            })}
+                            error={
+                                errors?.num_questions &&
+                                errors?.num_questions.message
+                            }
                         />
                     </div>
-                </div>
-            )}
-            {showSave && (
-                <div className="flex justify-end">
-                    {/* <button className="px-4 py-0.5 bg-gray-600 text-white w-1/5 hover:bg-gray-500">
-                        Cancel
-                    </button> */}
-                    <Button
-                        className="w-1/5"
-                        onClick={handleSavePart}
-                        disabled={
-                            !savable || createPartLoading || updatePartLoading
-                        }
-                    >
-                        {createPartLoading || updatePartLoading
-                            ? "Saving..."
-                            : "Save"}
-                    </Button>
-                </div>
+
+                    <div className="flex justify-end">
+                        <Button
+                            className="w-1/5"
+                            type="submit"
+                            disabled={createPartLoading || updatePartLoading}
+                        >
+                            {createPartLoading || updatePartLoading
+                                ? "Saving..."
+                                : "Save"}
+                        </Button>
+                    </div>
+                </form>
             )}
         </div>
     );

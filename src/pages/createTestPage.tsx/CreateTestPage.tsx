@@ -162,7 +162,7 @@ const CreateTestPage = () => {
                         </Button>
                     </div>
                 )}
-                {step === 1 && (
+                {step === 1 && !isLoading && (
                     <TestInfo
                         test={test}
                         onNext={() => setStep(2)}

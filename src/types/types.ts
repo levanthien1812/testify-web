@@ -52,7 +52,7 @@ export interface LoginErrorItf {
 
 export interface TestBodyItf {
     title: string;
-    datetime: Date;
+    datetime: string;
     description: string;
     duration: number;
     max_score: number;
@@ -60,10 +60,11 @@ export interface TestBodyItf {
     num_parts: number;
     level: (typeof testLevels)[keyof typeof testLevels];
     code: string;
-    close_time?: Date;
+    enable_close_time: boolean;
+    close_time: string;
     share_option?: "restricted" | "anyone";
     public_answers_option: (typeof publicAnswersOptions)[keyof typeof publicAnswersOptions];
-    public_answers_date?: Date;
+    public_answers_date: string;
 }
 export interface TestItf extends TestBodyItf {
     _id: string;

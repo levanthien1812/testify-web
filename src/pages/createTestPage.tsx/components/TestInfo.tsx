@@ -1,16 +1,15 @@
-import { ChangeEvent, FormEvent, useEffect, useState } from "react";
+import { useEffect, useMemo } from "react";
 import { publicAnswersOptions, testLevels } from "../../../config/config";
 import { TestBodyItf, TestItf } from "../../../types/types";
 import { createTest, updateTest } from "../../../services/test";
 import { useMutation } from "react-query";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
-import { testBodySchema } from "../../../validations/test";
 import { formatTimezone } from "../../../utils/time";
-import _, { set } from "lodash";
 import Button from "../../../components/elements/Button";
 import Input from "../../../components/elements/Input";
 import Select from "../../../components/elements/Select";
+import { useForm } from "react-hook-form";
 
 type SectionProps = {
     test: TestItf | null;
@@ -20,29 +19,35 @@ type SectionProps = {
 };
 
 const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
-    const [testBody, setTestBody] = useState<TestBodyItf>({
-        title: "",
-        datetime: new Date(),
-        description: "",
-        duration: 0,
-        max_score: 10,
-        num_questions: 0,
-        level: testLevels.EASY,
-        num_parts: 1,
-        close_time: new Date(),
-        code: "",
-        public_answers_option: publicAnswersOptions.SPECIFIC_DATE,
-        public_answers_date: new Date(),
-    });
-
-    const [allowCloseTime, setAllowCloseTime] = useState(true);
-    const [isFinished, setIsFinished] = useState<boolean>(false);
+    const initialValues: TestBodyItf = useMemo(
+        () =>
+            !test
+                ? {
+                      title: "",
+                      datetime: formatTimezone(new Date()),
+                      description: "",
+                      duration: 0,
+                      max_score: 10,
+                      num_questions: 0,
+                      level: testLevels.EASY,
+                      num_parts: 1,
+                      enable_close_time: true,
+                      close_time: formatTimezone(new Date()),
+                      code: "",
+                      public_answers_option: publicAnswersOptions.SPECIFIC_DATE,
+                      public_answers_date: formatTimezone(new Date()),
+                  }
+                : {
+                      ...test,
+                  },
+        [test]
+    );
 
     const { mutate: createTestMutate, isLoading: createTestLoading } =
         useMutation({
             mutationFn: async (testBody: TestBodyItf) =>
                 await createTest(testBody),
-            mutationKey: ["create-test", { body: testBody }],
+            mutationKey: ["create-test"],
             onSuccess: (data) => {
                 onAfterUpdate(data.test._id);
                 onNext();
@@ -58,7 +63,7 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
         useMutation({
             mutationFn: async (testBody: TestBodyItf) =>
                 await updateTest(test!._id, testBody),
-            mutationKey: ["update-test", { testId: test?._id, body: testBody }],
+            mutationKey: ["update-test", { testId: test?._id }],
             onSuccess: (data) => {
                 onNext();
             },
@@ -69,125 +74,67 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
             },
         });
 
-    const handleInputChange = (
-        e: ChangeEvent<HTMLInputElement | HTMLSelectElement>
-    ) => {
-        let name: string, value: string | number | Date;
-        name = e.target.name;
-        value = e.target.value;
+    const {
+        handleSubmit,
+        formState: { errors },
+        register,
+        setValue,
+        watch,
+    } = useForm<TestBodyItf>({
+        defaultValues: initialValues,
+    });
 
-        if (["duration", "max_score"].includes(name)) {
-            value = parseFloat(value);
-        } else if (["num_parts", "num_questions"].includes(name)) {
-            value = parseInt(value);
-        } else if (["datetime", "close_time"].includes(name)) {
-            value = new Date(value);
-        }
-        setTestBody({ ...testBody, [name]: value });
-    };
-
-    const handleSubmit = async (e: FormEvent) => {
-        e.preventDefault();
-
+    const onSubmit = async (data: TestBodyItf) => {
         if (test) {
-            updateTestMutate(
-                allowCloseTime ? testBody : _.omit(testBody, ["close_time"])
-            );
+            updateTestMutate(data);
         } else {
-            createTestMutate(
-                allowCloseTime ? testBody : _.omit(testBody, ["close_time"])
-            );
+            createTestMutate(data);
         }
     };
 
-    useEffect(() => {
-        if (test) {
-            setTestBody({
-                title: test.title,
-                datetime: new Date(test.datetime),
-                description: test.description,
-                duration: test.duration,
-                max_score: test.max_score,
-                num_questions: test.num_questions,
-                level: test.level,
-                code: test.code,
-                num_parts: test.num_parts,
-                close_time: test.close_time
-                    ? new Date(test.close_time)
-                    : new Date(),
-                public_answers_option: test.public_answers_option,
-                public_answers_date: test.public_answers_date
-                    ? new Date(test.public_answers_date)
-                    : new Date(),
-            });
-
-            if (test.close_time) {
-                setAllowCloseTime(true);
-            } else {
-                setAllowCloseTime(false);
-            }
-        }
-    }, [test]);
+    const startTime = watch("datetime");
 
     useEffect(() => {
-        setTestBody({
-            ...testBody,
-            close_time: testBody.datetime,
-            public_answers_date: testBody.datetime,
-        });
-    }, [testBody.datetime]);
+        const formattedStartTime = formatTimezone(new Date(startTime));
+        setValue("datetime", formattedStartTime);
+        setValue("close_time", startTime);
+        setValue("public_answers_date", startTime);
+    }, [startTime]);
+
+    const publicAnswersOption = watch("public_answers_option");
+    const closeTime = watch("close_time");
+    const enableCloseTime = watch("enable_close_time");
 
     useEffect(() => {
         if (
-            testBody.public_answers_option ===
-                publicAnswersOptions.AFTER_CLOSE_TIME &&
-            testBody.close_time
+            publicAnswersOption === publicAnswersOptions.AFTER_CLOSE_TIME &&
+            enableCloseTime
         ) {
-            setTestBody({
-                ...testBody,
-                public_answers_date: testBody.close_time,
-            });
+            setValue("public_answers_date", closeTime);
         }
-    }, [testBody.public_answers_option, testBody.close_time]);
-
-    useEffect(() => {
-        const { error } = testBodySchema.validate(testBody);
-
-        if (!error) setIsFinished(true);
-        else setIsFinished(false);
-    }, [testBody]);
+    }, [publicAnswersOption, enableCloseTime, closeTime]);
 
     return (
         <div className="px-20 py-12 shadow-2xl">
             <h2 className="text-center text-3xl">Test Information</h2>
 
-            <div className="mt-4 ">
+            <form onSubmit={handleSubmit(onSubmit)} className="mt-4 ">
                 <div className="flex gap-4 items-end">
                     <label htmlFor="title" className="w-1/5">
                         Test title:{" "}
                     </label>
                     <Input
-                        type="text"
-                        name="title"
-                        id="title"
-                        className="grow"
-                        value={testBody.title}
-                        onChange={handleInputChange}
-                        required
+                        {...register("title", {
+                            required: "Title is required",
+                        })}
+                        error={errors?.title && errors?.title.message}
                     />
                 </div>
                 <div className="flex gap-4 items-end mt-4">
                     <label htmlFor="description" className="w-1/5">
                         Test description:{" "}
                     </label>
-                    <Input
-                        type="text"
-                        id="description"
-                        name="description"
-                        className="grow"
-                        value={testBody.description}
-                        onChange={handleInputChange}
-                    />
+                    <Input {...register("description")} />
                 </div>
                 <div className="flex gap-4 items-end mt-4">
                     <label htmlFor="datetime" className="w-1/5">
@@ -195,12 +142,10 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                     </label>
                     <Input
                         type="datetime-local"
-                        id="datetime"
-                        name="datetime"
-                        className="grow"
-                        value={formatTimezone(testBody.datetime)}
-                        onChange={handleInputChange}
-                        required
+                        {...register("datetime", {
+                            required: "Start time is required",
+                        })}
+                        error={errors?.datetime && errors?.datetime.message}
                     />
                 </div>
                 <div className="flex gap-4 items-end mt-4">
@@ -210,13 +155,14 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                     <Input
                         type="number"
                         step={5}
-                        min={0}
-                        id="duration"
-                        name="duration"
-                        className="grow w-0"
-                        value={testBody.duration}
-                        onChange={handleInputChange}
-                        required
+                        {...register("duration", {
+                            required: "Duration is required",
+                            min: {
+                                value: 1,
+                                message: "Duration must be greater than 0",
+                            },
+                        })}
+                        error={errors?.duration && errors?.duration.message}
                     />
                     <label htmlFor="max_score" className="w-1/5 shrink-0">
                         Max score:{" "}
@@ -224,13 +170,14 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                     <Input
                         type="number"
                         step={1}
-                        min={0}
-                        id="max_score"
-                        name="max_score"
-                        className="grow w-0"
-                        value={testBody.max_score}
-                        onChange={handleInputChange}
-                        required
+                        {...register("max_score", {
+                            required: "Max score is required",
+                            min: {
+                                value: 1,
+                                message: "Max score must be greater than 0",
+                            },
+                        })}
+                        error={errors?.max_score && errors?.max_score.message}
                     />
                 </div>
                 <div className="flex gap-4 items-end mt-4">
@@ -238,19 +185,14 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                         <label htmlFor="datetime">Close time: </label>
                         <input
                             type="checkbox"
-                            checked={allowCloseTime}
-                            onChange={() => setAllowCloseTime(!allowCloseTime)}
+                            {...register("enable_close_time")}
                         />
                     </div>
 
                     <Input
                         type="datetime-local"
-                        id="close_time"
-                        name="close_time"
-                        className="grow"
-                        value={formatTimezone(testBody.close_time!)}
-                        onChange={handleInputChange}
-                        disabled={!allowCloseTime}
+                        {...register("close_time")}
+                        disabled={!enableCloseTime}
                     />
                 </div>
                 <div className="flex gap-4 items-end mt-4">
@@ -260,13 +202,16 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                     <Input
                         type="number"
                         step={1}
-                        min={0}
-                        id="num_parts"
-                        name="num_parts"
-                        className="grow w-0"
-                        value={testBody.num_parts}
-                        onChange={handleInputChange}
-                        required
+                        {...register("num_parts", {
+                            required: "Number of parts is required",
+                            min: {
+                                value: 1,
+                                message:
+                                    "Number of parts must be greater than 0",
+                            },
+                            valueAsNumber: true,
+                        })}
+                        error={errors?.num_parts && errors?.num_parts.message}
                     />
                     <label htmlFor="num_questions" className="w-1/5 shrink-0">
                         Num of questions:{" "}
@@ -274,35 +219,32 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                     <Input
                         type="number"
                         step={1}
-                        min={0}
-                        id="num_questions"
-                        name="num_questions"
-                        className="grow w-0"
-                        value={testBody.num_questions}
-                        onChange={handleInputChange}
+                        {...register("num_questions", {
+                            required: "Number of questions is required",
+                            min: {
+                                value: 1,
+                                message:
+                                    "Number of questions must be greater than 0",
+                            },
+                            valueAsNumber: true,
+                        })}
+                        error={
+                            errors?.num_questions &&
+                            errors?.num_questions.message
+                        }
                     />
                 </div>
                 <div className="flex gap-4 items-end mt-4">
                     <label htmlFor="code" className="w-1/5 shrink-0">
                         Test code:{" "}
                     </label>
-                    <Input
-                        type="text"
-                        id="code"
-                        name="code"
-                        className="grow w-0"
-                        value={testBody.code}
-                        onChange={handleInputChange}
-                    />
+                    <Input {...register("code")} />
                     <label htmlFor="level" className="w-1/5 shrink-0">
                         Level:{" "}
                     </label>
                     <Select
-                        id="level"
-                        className="grow w-0 capitalize"
-                        name="level"
-                        value={testBody.level}
-                        onChange={handleInputChange}
+                        className="grow capitalize"
+                        {...register("level")}
                         options={Object.values(testLevels).map((level) => ({
                             label: level,
                             value: level,
@@ -318,11 +260,10 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                         Public answers options:{" "}
                     </label>
                     <Select
-                        id="public_answers_option"
                         className="w-0 grow capitalize"
-                        name="public_answers_option"
-                        value={testBody.public_answers_option}
-                        onChange={handleInputChange}
+                        {...register("public_answers_option", {
+                            required: "Public answers option is required",
+                        })}
                         options={Object.values(publicAnswersOptions).map(
                             (publicAnswersOption) => ({
                                 label: publicAnswersOption,
@@ -332,29 +273,22 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                     />
                 </div>
 
-                {testBody.public_answers_option ===
-                    publicAnswersOptions.SPECIFIC_DATE &&
-                    testBody.public_answers_date && (
-                        <div className="flex gap-4 items-end mt-4">
-                            <label
-                                htmlFor="public_answers_date"
-                                className="w-1/5 whitespace-nowrap overflow-hidden text-ellipsis"
-                            >
-                                Public answers date:{" "}
-                            </label>
-                            <Input
-                                type="datetime-local"
-                                id="public_answers_date"
-                                name="public_answers_date"
-                                className="grow"
-                                value={formatTimezone(
-                                    testBody.public_answers_date
-                                )}
-                                onChange={handleInputChange}
-                                required
-                            />
-                        </div>
-                    )}
+                {publicAnswersOption === publicAnswersOptions.SPECIFIC_DATE && (
+                    <div className="flex gap-4 items-end mt-4">
+                        <label
+                            htmlFor="public_answers_date"
+                            className="w-1/5 whitespace-nowrap overflow-hidden text-ellipsis"
+                        >
+                            Public answers date:{" "}
+                        </label>
+                        <Input
+                            type="datetime-local"
+                            {...register("public_answers_date", {
+                                required: "Public answers date is required",
+                            })}
+                        />
+                    </div>
+                )}
 
                 <div className="flex justify-end items-center gap-3 mt-6 pt-4 border-t border-gray-300">
                     <Button size="lg" disabled>
@@ -362,19 +296,15 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                     </Button>
                     <Button
                         size="lg"
-                        disabled={
-                            createTestLoading ||
-                            updateTestLoading ||
-                            !isFinished
-                        }
-                        onClick={handleSubmit}
+                        type="submit"
+                        disabled={createTestLoading || updateTestLoading}
                     >
                         {!(createTestLoading || updateTestLoading)
                             ? "Next"
                             : "Saving..."}
                     </Button>
                 </div>
-            </div>
+            </form>
         </div>
     );
 };
