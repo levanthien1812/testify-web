@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { forwardRef, useState } from "react";
 import Input from "../../components/elements/Input";
 
 interface AuthInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -6,13 +6,14 @@ interface AuthInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     error?: string;
 }
 
-const AuthInput = ({ labelText, error, ...props }: AuthInputProps) => {
+const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>((props, ref) => {
     const [show, setShow] = useState<boolean>(false);
+    const { labelText, error, ...rest } = props;
 
     return (
         <div className="flex flex-col">
             <div className="mb-1 flex justify-between items-center">
-                <label htmlFor="password-confirm">{labelText}</label>
+                <label htmlFor={props.name}>{labelText}</label>
                 {props.type === "password" && (
                     <button
                         type="button"
@@ -25,14 +26,9 @@ const AuthInput = ({ labelText, error, ...props }: AuthInputProps) => {
                     </button>
                 )}
             </div>
-            <Input {...props} type={props.type} />
-            {error && (
-                <p className="text-end text-orange-600 text-sm italic mt-1 leading-4">
-                    {error}
-                </p>
-            )}
+            <Input {...rest} type={show ? "text" : props.type} ref={ref} />
         </div>
     );
-};
+});
 
 export default AuthInput;

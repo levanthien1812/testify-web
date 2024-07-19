@@ -9,6 +9,7 @@ interface ChatSocketContextItf {
         user_id: string;
         socket_id: string;
     }[];
+    currentChat: string | null;
 }
 
 const ChatSocketContext = React.createContext<ChatSocketContextItf | undefined>(
@@ -23,7 +24,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
             socket_id: string;
         }[]
     >([]);
-    const user = useSelector((state: RootState) => state.auth.user);
+    const [currentChat, setCurrentChat] = React.useState<string | null>(null);
 
     useEffect(() => {
         const socket = io(process.env.REACT_APP_API_HOST!);
@@ -47,7 +48,9 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
     }, [socket]);
 
     return (
-        <ChatSocketContext.Provider value={{ socket, onlineUsers }}>
+        <ChatSocketContext.Provider
+            value={{ socket, onlineUsers, currentChat }}
+        >
             {children}
         </ChatSocketContext.Provider>
     );
