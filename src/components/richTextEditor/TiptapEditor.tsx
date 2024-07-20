@@ -196,6 +196,7 @@ const TextEditor = ({
             onUpdate={(e) => {
                 setContent(e.editor.getHTML());
             }}
+            
             editorProps={{
                 attributes: {
                     class: "border border-black outline-none px-4 py-1 focus:border-orange-600 bg-white h-14",

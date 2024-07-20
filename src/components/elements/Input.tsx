@@ -17,7 +17,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
                     sizing === "md" && "px-2 py-1"
                 } ${
                     sizing === "sm" && "px-1 py-0"
-                } focus:border-orange-600 outline-none placeholder:italic disabled:bg-gray-100 disabled:cursor-not-allowed w-full ${className}`}
+                } focus:border-orange-600 outline-none placeholder:italic disabled:bg-gray-100 disabled:cursor-not-allowed w-full file:bg-orange-600 file:border-none file:text-white file:text-sm ${className}`}
                 {...rest}
                 ref={ref}
             />

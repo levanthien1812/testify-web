@@ -181,18 +181,20 @@ export interface QuestionItf {
         | ResponseQuestionItf;
 }
 
-export interface QuestionBodyItf {
+export type QuestionBodyContentItf =
+    | MultipleChoiceQuestionBodyItf
+    | FillGapsQuestionBodyItf
+    | MatchingQuestionBodyItf
+    | ResponseQuestionBodyItf
+    | null;
+
+export interface QuestionBodyItf<T extends QuestionBodyContentItf> {
     score: number;
     level: (typeof testLevels)[keyof typeof testLevels];
     type: (typeof questionTypes)[keyof typeof questionTypes];
     order: number;
     part_id?: string;
-    content:
-        | MultipleChoiceQuestionBodyItf
-        | FillGapsQuestionBodyItf
-        | MatchingQuestionBodyItf
-        | ResponseQuestionBodyItf
-        | null;
+    content: T;
 }
 
 export type AnswerItf = {

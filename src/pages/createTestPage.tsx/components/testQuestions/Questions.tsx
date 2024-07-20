@@ -53,8 +53,9 @@ const Questions: React.FC<{
                             questions.map((question, index) =>
                                 !withAnswer ? (
                                     <Question
-                                        testId={testId!}
+                                        testId={part.test_id!}
                                         question={question}
+                                        part={part}
                                         key={index}
                                         index={index}
                                         onAfterUpdate={onAfterUpdate}
