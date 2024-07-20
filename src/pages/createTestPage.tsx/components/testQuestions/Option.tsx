@@ -1,56 +1,44 @@
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { ChangeEvent, useState } from "react";
+import React, { ChangeEvent, forwardRef, useState } from "react";
 import { motion } from "framer-motion";
 import Input from "../../../../components/elements/Input";
 
-const Option: React.FC<{
+interface OptionProps extends React.InputHTMLAttributes<HTMLInputElement> {
     index: number;
-    value: { text: string };
-    name: string;
-    onInputChange?: (e: ChangeEvent<HTMLInputElement>) => void;
     onDelete?: (index: number) => void;
-}> = ({ index, value, name, onInputChange, onDelete }) => {
+    error?: string;
+}
+
+const Option = forwardRef<HTMLInputElement, OptionProps>((props, ref) => {
+    const { index, onDelete, error, ...rest } = props;
     const [hover, setHover] = useState<boolean>(false);
 
     return (
         <div
-            className="flex border border-gray-500 relative"
+            className="items-end"
             key={index}
             onMouseOver={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
         >
-            <div className="flex">
-                <label
-                    htmlFor={name}
-                    className="text-nowrap px-2 bg-orange-500 text-white"
-                >
-                    Option {index + 1}
+            <div className="flex justify-between">
+                <label htmlFor={rest.name} className="text-nowrap">
+                    Option {index + 1}:
                 </label>
+                {hover && (
+                    <button
+                        type="button"
+                        className="text-gray-500 hover:text-orange-600"
+                        onClick={() => onDelete && onDelete(index)}
+                    >
+                        Delete
+                    </button>
+                )}
             </div>
 
-            <Input
-                type="text"
-                name={name}
-                id={name}
-                min={0}
-                className="grow border-none"
-                value={value.text}
-                onChange={onInputChange}
-                required
-            />
-            {hover && (
-                <motion.button
-                    className="absolute top-0 right-0 bg-gray-200 text-red-500 h-full px-2 flex items-center border-l border-gray-500 hover:bg-gray-300"
-                    initial={{ translateX: 20, opacity: 0 }}
-                    animate={{ translateX: 0, opacity: 1 }}
-                    onClick={() => onDelete && onDelete(index)}
-                >
-                    <FontAwesomeIcon icon={faTimes} />
-                </motion.button>
-            )}
+            <Input min={0} className="grow" ref={ref} {...rest} error={error} />
         </div>
     );
-};
+});
 
 export default Option;

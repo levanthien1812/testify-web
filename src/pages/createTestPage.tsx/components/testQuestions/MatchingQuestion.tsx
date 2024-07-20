@@ -1,94 +1,93 @@
 import React, { ChangeEvent, useEffect, useState } from "react";
-import { MatchingQuestionBodyItf } from "../../../../types/types";
+import {
+    MatchingQuestionBodyItf,
+    QuestionBodyItf,
+} from "../../../../types/types";
 import Option from "./Option";
 import TextEditor from "../../../../components/richTextEditor/TiptapEditor";
 import { toast } from "react-toastify";
 import Button from "../../../../components/elements/Button";
+import {
+    Control,
+    Controller,
+    FieldErrors,
+    useFieldArray,
+    UseFormRegister,
+} from "react-hook-form";
 
 const MatchingQuestion: React.FC<{
     content: MatchingQuestionBodyItf;
-    onContentChange: (content: MatchingQuestionBodyItf) => void;
-}> = ({ content, onContentChange }) => {
-    const [mqContent, setMqContent] =
-        useState<MatchingQuestionBodyItf>(content);
-    const [text, setText] = useState<string>(content.text);
-
-    const manipulateArray = (
-        arrayName: "left_items" | "right_items",
-        action: (array: { text: string }[]) => void
-    ) => {
-        const updatedContent = { ...mqContent };
-        const updatedArray = updatedContent[arrayName];
-        action(updatedArray);
-        updatedContent[arrayName] = updatedArray;
-        setMqContent(updatedContent);
-    };
-
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        let name = e.target.name;
-        let value = e.target.value;
-
-        if (name.includes("items")) {
-            const arrayName = name.split(".")[0] as
-                | "left_items"
-                | "right_items";
-            const index = name.split(".")[1];
-
-            manipulateArray(
-                arrayName,
-                (arr) => (arr[parseInt(index)].text = value)
-            );
-        } else {
-            setMqContent({ ...mqContent, [name]: value });
-        }
-    };
+    control: Control<QuestionBodyItf<MatchingQuestionBodyItf>>;
+    errors: FieldErrors<QuestionBodyItf<MatchingQuestionBodyItf>>;
+    register: UseFormRegister<QuestionBodyItf<MatchingQuestionBodyItf>>;
+}> = ({ content, control, register, errors }) => {
+    const {
+        fields: leftItems,
+        append: appendLeftItem,
+        remove: removeLeftItem,
+    } = useFieldArray<QuestionBodyItf<MatchingQuestionBodyItf>>({
+        control,
+        name: "content.left_items",
+    });
+    const {
+        fields: rightItems,
+        append: appendRightItem,
+        remove: removeRightItem,
+    } = useFieldArray<QuestionBodyItf<MatchingQuestionBodyItf>>({
+        control,
+        name: "content.right_items",
+    });
 
     const handleAddOption = () => {
-        if (mqContent.left_items.length >= 10) {
-            toast.warning("You can't add more than 10 options");
-            return;
-        }
-        manipulateArray("left_items", (arr) => arr.push({ text: "" }));
-        manipulateArray("right_items", (arr) => arr.push({ text: "" }));
+        appendLeftItem({ text: "" });
+        appendRightItem({ text: "" });
     };
-
-    const handleDeleteOption = (index: number) => {
-        if (mqContent.left_items.length <= 2) {
-            toast.warning("You can't delete more than 2 options");
-            return;
-        }
-        manipulateArray("left_items", (arr) => arr.splice(index, 1));
-        manipulateArray("right_items", (arr) => arr.splice(index, 1));
-    };
-
-    useEffect(() => {
-        onContentChange({ ...mqContent, text });
-    }, [mqContent, text]);
 
     return (
         <>
             <div className="flex flex-col">
                 <label htmlFor="text">Text: </label>
-                <TextEditor content={text} setContent={setText} />
+                <Controller
+                    name="content.text"
+                    control={control}
+                    rules={{
+                        required: "Text is required",
+                    }}
+                    render={({ field: { onChange, value } }) => (
+                        <TextEditor content={value} setContent={onChange} />
+                    )}
+                />
+                {errors.content?.text && (
+                    <p className="text-end text-orange-600 text-sm italic mt-1 leading-4">
+                        {errors.content.text.message}
+                    </p>
+                )}
             </div>
             <div className="mt-2">
                 <p>Left part:</p>
                 <div className="space-y-1">
-                    {content.left_items.map((item, index) => (
+                    {leftItems.map((item, index) => (
                         <Option
                             index={index}
                             key={index}
-                            value={item}
-                            name={`left_items.${index}`}
-                            onDelete={handleDeleteOption}
-                            onInputChange={handleInputChange}
+                            onDelete={() => removeLeftItem(index)}
+                            {...register(`content.left_items.${index}.text`, {
+                                required: "Item text is required",
+                            })}
+                            defaultValue={item.text}
+                            error={
+                                errors.content?.left_items?.[index]?.text
+                                    ?.message
+                            }
                         />
                     ))}
 
                     <Button
                         primary={false}
+                        type="button"
                         className="w-full"
                         onClick={handleAddOption}
+                        disabled={content.left_items.length >= 10}
                     >
                         Add item
                     </Button>
@@ -97,14 +96,19 @@ const MatchingQuestion: React.FC<{
             <div className="mt-2">
                 <p>Right part:</p>
                 <div className="space-y-1">
-                    {content.right_items.map((item, index) => (
+                    {rightItems.map((item, index) => (
                         <Option
                             index={index}
                             key={index}
-                            value={item}
-                            name={`right_items.${index}`}
-                            onDelete={handleDeleteOption}
-                            onInputChange={handleInputChange}
+                            onDelete={() => removeRightItem(index)}
+                            {...register(`content.right_items.${index}.text`, {
+                                required: "Item text is required",
+                            })}
+                            defaultValue={item.text}
+                            error={
+                                errors.content?.right_items?.[index]?.text
+                                    ?.message
+                            }
                         />
                     ))}
                 </div>

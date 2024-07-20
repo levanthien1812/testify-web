@@ -5,6 +5,7 @@ import {
     AnswerItf,
     MultipleChoiceQuestionBodyItf,
     PartBodyItf,
+    QuestionBodyContentItf,
     QuestionBodyItf,
     TakerBodyItf,
     TestBodyItf,
@@ -124,7 +125,7 @@ export const validateParts = async (testId: string) => {
 
 export const saveQuestion = async (
     testId: string,
-    questionBody: QuestionBodyItf,
+    questionBody: QuestionBodyItf<QuestionBodyContentItf>,
     questionId?: string
 ) => {
     try {
