@@ -120,7 +120,7 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
 
             <form onSubmit={handleSubmit(onSubmit)} className="mt-4 ">
                 <div className="flex gap-4 items-end">
-                    <label htmlFor="title" className="w-1/5">
+                    <label htmlFor="title" className="w-1/5 shrink-0">
                         Test title:{" "}
                     </label>
                     <Input
@@ -131,13 +131,13 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                     />
                 </div>
                 <div className="flex gap-4 items-end mt-4">
-                    <label htmlFor="description" className="w-1/5">
+                    <label htmlFor="description" className="w-1/5 shrink-0">
                         Test description:{" "}
                     </label>
                     <Input {...register("description")} />
                 </div>
                 <div className="flex gap-4 items-end mt-4">
-                    <label htmlFor="datetime" className="w-1/5">
+                    <label htmlFor="datetime" className="w-1/5 shrink-0">
                         Start time:{" "}
                     </label>
                     <Input
@@ -181,7 +181,7 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                     />
                 </div>
                 <div className="flex gap-4 items-end mt-4">
-                    <div className="w-1/5">
+                    <div className="w-1/5 shrink-0">
                         <label htmlFor="datetime">Close time: </label>
                         <input
                             type="checkbox"
@@ -255,7 +255,7 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                 <div className="flex gap-4 items-end mt-4">
                     <label
                         htmlFor="public_answers_option"
-                        className="w-1/5 whitespace-nowrap overflow-hidden text-ellipsis"
+                        className="w-1/5 shrink-0 whitespace-nowrap overflow-hidden text-ellipsis"
                     >
                         Public answers options:{" "}
                     </label>
@@ -277,7 +277,7 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                     <div className="flex gap-4 items-end mt-4">
                         <label
                             htmlFor="public_answers_date"
-                            className="w-1/5 whitespace-nowrap overflow-hidden text-ellipsis"
+                            className="w-1/5 shrink-0 whitespace-nowrap overflow-hidden text-ellipsis"
                         >
                             Public answers date:{" "}
                         </label>

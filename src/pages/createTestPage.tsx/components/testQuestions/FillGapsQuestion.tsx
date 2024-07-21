@@ -1,54 +1,68 @@
-import React, { ChangeEvent, useEffect, useState } from "react";
-import { FillGapsQuestionBodyItf } from "../../../../types/types";
+import React from "react";
+import {
+    FillGapsQuestionBodyItf,
+    QuestionBodyItf,
+} from "../../../../types/types";
 import TextEditor from "../../../../components/richTextEditor/TiptapEditor";
-import { useCurrentEditor } from "@tiptap/react";
 import Input from "../../../../components/elements/Input";
+import {
+    Control,
+    Controller,
+    FieldErrors,
+    UseFormRegister,
+} from "react-hook-form";
 
 const FillGapsQuestion: React.FC<{
     content: FillGapsQuestionBodyItf;
-    onContentChange: (content: FillGapsQuestionBodyItf) => void;
-}> = ({ content, onContentChange }) => {
-    const [fgqContent, setFgqContent] =
-        useState<FillGapsQuestionBodyItf>(content);
-    const [text, setText] = useState<string>(content.text);
-
-    const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        let name = e.target.name;
-        let value = e.target.value;
-
-        setFgqContent({ ...fgqContent, [name]: value });
-    };
-
-    useEffect(() => {
-        onContentChange({ ...fgqContent, text });
-    }, [fgqContent, text]);
-
+    control: Control<QuestionBodyItf<FillGapsQuestionBodyItf>>;
+    errors: FieldErrors<QuestionBodyItf<FillGapsQuestionBodyItf>>;
+    register: UseFormRegister<QuestionBodyItf<FillGapsQuestionBodyItf>>;
+}> = ({ content, control, register, errors }) => {
     return (
         <>
             <div className="flex flex-col items-start">
                 <label htmlFor="num_gaps">Number of gaps: </label>
                 <Input
                     type="number"
-                    name="num_gaps"
-                    id="num_gaps"
                     min={1}
-                    className="w-full"
-                    value={content.num_gaps}
-                    onChange={handleInputChange}
-                    required
+                    {...register("content.num_gaps", {
+                        required: "Number of gaps is required",
+                        min: {
+                            value: 1,
+                            message: "Number of gaps must be at least 1",
+                        },
+                    })}
+                    error={
+                        errors.content?.num_gaps &&
+                        errors.content.num_gaps.message
+                    }
                 />
             </div>
             <div className="flex flex-col mt-2">
                 <label htmlFor="text">Text: </label>
-                <TextEditor
-                    content={text}
-                    setContent={setText}
-                    withInsertGapButton={true}
+                <Controller
+                    name="content.text"
+                    control={control}
+                    rules={{
+                        required: "Text is required",
+                    }}
+                    render={({ field: { onChange, value } }) => (
+                        <TextEditor
+                            content={value}
+                            setContent={onChange}
+                            withInsertGapButton={true}
+                        />
+                    )}
                 />
                 <p className="text-right text-sm italic mt-2">
                     Place the cursor somewhere in the text and click Insert Gap
                     button{" "}
                 </p>
+                {errors.content?.text && (
+                    <p className="text-end text-orange-600 text-sm italic mt-1 leading-4">
+                        {errors.content.text.message}
+                    </p>
+                )}
             </div>
         </>
     );

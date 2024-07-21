@@ -154,7 +154,7 @@ export interface ResponseQuestionBodyItf {
     text: string;
     min_length?: number;
     max_length?: number;
-    image?: string;
+    images?: string[];
 }
 
 export interface ResponseQuestionItf extends ResponseQuestionBodyItf {

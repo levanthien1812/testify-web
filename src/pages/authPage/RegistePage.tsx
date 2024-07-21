@@ -4,7 +4,6 @@ import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../stores/auth";
-import Cookies from "js-cookie";
 import { roles } from "../../config/config";
 import Button from "../../components/elements/Button";
 import AuthInput from "./AuthInput";
@@ -39,17 +38,6 @@ const RegistePage = () => {
             toast.success("Register successfully");
 
             const { user, tokens } = data;
-
-            Cookies.set("user", JSON.stringify(user), {
-                expires: new Date(tokens.access.expires),
-            });
-            Cookies.set("access_token", tokens.access.token, {
-                expires: new Date(tokens.access.expires),
-            });
-            Cookies.set("refresh_token", tokens.refresh.token, {
-                expires: new Date(tokens.refresh.expires),
-            });
-
             dispatch(authActions.authenticate({ user, tokens }));
 
             if (user.role === roles.MAKER) {

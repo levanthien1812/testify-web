@@ -114,19 +114,11 @@ const Question = ({
     const type = watch("type");
     const order = watch("order");
 
-    const handleContentChange = (
-        content:
-            | MultipleChoiceQuestionBodyItf
-            | FillGapsQuestionBodyItf
-            | MatchingQuestionBodyItf
-            | ResponseQuestionBodyItf
-    ) => {
-        setValue("content", content);
-    };
-
     useEffect(() => {
-        if (question && question.type === type)
+        if (question && question.content && question.type === type) {
             setValue("content", question.content);
+            return;
+        }
 
         switch (type) {
             case questionTypes.MULITPLE_CHOICES:
@@ -219,14 +211,9 @@ const Question = ({
                             className="w-[600px]"
                         >
                             <div className="flex gap-4">
-                                <div className="space-y-4 gap-4 w-1/3 shrink-0">
-                                    <div className="flex items-end gap-2">
-                                        <label
-                                            htmlFor="score"
-                                            className="w-1/5"
-                                        >
-                                            Score:{" "}
-                                        </label>
+                                <div className="space-y-2 w-1/3 shrink-0">
+                                    <div>
+                                        <label htmlFor="score">Score: </label>
                                         <Input
                                             type="number"
                                             min={0}
@@ -244,13 +231,9 @@ const Question = ({
                                             }
                                         />
                                     </div>
-                                    <div className="flex items-end gap-2">
-                                        <label
-                                            htmlFor="level"
-                                            className="w-1/5"
-                                        >
-                                            Level:{" "}
-                                        </label>
+
+                                    <div>
+                                        <label htmlFor="level">Level: </label>
                                         <Select
                                             className="grow capitalize"
                                             {...register("level")}
@@ -262,10 +245,8 @@ const Question = ({
                                             }))}
                                         />
                                     </div>
-                                    <div className="flex items-end gap-2">
-                                        <label htmlFor="type" className="w-1/5">
-                                            Type:{" "}
-                                        </label>
+                                    <div>
+                                        <label htmlFor="type">Type: </label>
                                         <Select
                                             className="grow capitalize"
                                             {...register("type", {
@@ -287,6 +268,7 @@ const Question = ({
                                         />
                                     </div>
                                 </div>
+                                <div className="border-l border-gray-300 border-dashed"></div>
                                 <div className="grow overflow-hidden">
                                     {content &&
                                         type ===
@@ -314,8 +296,16 @@ const Question = ({
                                                 content={
                                                     content as FillGapsQuestionBodyItf
                                                 }
-                                                onContentChange={
-                                                    handleContentChange
+                                                control={
+                                                    control as Control<
+                                                        QuestionBodyItf<FillGapsQuestionBodyItf>
+                                                    >
+                                                }
+                                                errors={errors}
+                                                register={
+                                                    register as UseFormRegister<
+                                                        QuestionBodyItf<FillGapsQuestionBodyItf>
+                                                    >
                                                 }
                                             />
                                         )}
@@ -344,15 +334,23 @@ const Question = ({
                                                 content={
                                                     content as ResponseQuestionBodyItf
                                                 }
-                                                onContentChange={
-                                                    handleContentChange
+                                                control={
+                                                    control as Control<
+                                                        QuestionBodyItf<ResponseQuestionBodyItf>
+                                                    >
+                                                }
+                                                errors={errors}
+                                                register={
+                                                    register as UseFormRegister<
+                                                        QuestionBodyItf<ResponseQuestionBodyItf>
+                                                    >
                                                 }
                                             />
                                         )}
                                 </div>
                             </div>
 
-                            <div className="flex justify-end mt-4 gap-2">
+                            <div className="flex justify-end mt-4 gap-2 border-t border-gray-300 pt-4">
                                 <Button
                                     primary={false}
                                     type="button"

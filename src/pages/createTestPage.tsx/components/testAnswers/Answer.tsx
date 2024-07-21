@@ -4,6 +4,7 @@ import {
     FillGapsQuestionItf,
     MatchingQuestionItf,
     MultipleChoiceQuestionItf,
+    MultipleChoicesAnswerBodyItf,
     QuestionItf,
     ResponseQuestionItf,
 } from "../../../../types/types";
@@ -17,6 +18,7 @@ import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import ResponseAnswer from "./ResponseAnswer";
 import Button from "../../../../components/elements/Button";
+import { useForm } from "react-hook-form";
 
 const Answer: React.FC<{
     question: QuestionItf;
@@ -108,10 +110,16 @@ const Answer: React.FC<{
                             setReset(true);
                             setSavable(false);
                         }}
+                        size="sm"
                     >
                         Cancel
                     </Button>
-                    <Button onClick={handleSaveAnswer} disabled={isLoading}>
+                    <Button
+                        onClick={handleSaveAnswer}
+                        disabled={isLoading}
+                        type="submit"
+                        size="sm"
+                    >
                         {isLoading ? "Saving..." : "Save"}
                     </Button>
                 </div>

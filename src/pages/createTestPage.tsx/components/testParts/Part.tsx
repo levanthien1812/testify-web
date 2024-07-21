@@ -108,7 +108,7 @@ const Part: React.FC<{
                     className="border border-gray-300 px-4 py-4 space-y-3"
                 >
                     <div className="flex gap-4 items-end">
-                        <label htmlFor="name" className="w-1/5">
+                        <label htmlFor="name" className="w-1/5 shrink-0">
                             Part name:{" "}
                         </label>
                         <Input
@@ -119,7 +119,7 @@ const Part: React.FC<{
                         />
                     </div>
                     <div className="flex gap-4 items-end">
-                        <label htmlFor="description" className="w-1/5">
+                        <label htmlFor="description" className="w-1/5 shrink-0">
                             Description:{" "}
                         </label>
                         <Input

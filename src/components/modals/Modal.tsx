@@ -58,7 +58,7 @@ export const ModalHeader = ({ title }: HeaderProps) => {
 
 export const ModalBody = ({ children }: BodyProps) => {
     return (
-        <div className="px-4 py-6 max-h-[70vh] overflow-y-scroll">
+        <div className="px-4 py-4 max-h-[70vh] overflow-y-scroll">
             {children}
         </div>
     );
