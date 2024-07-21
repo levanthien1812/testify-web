@@ -1,6 +1,7 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import { AnswerBody, MultipleChoiceQuestionItf } from "../../../../types/types";
+import { AnswerBody, MultipleChoiceQuestionItf, MultipleChoicesAnswerBodyItf } from "../../../../types/types";
 import { formatImageUrl } from "../../../../utils/formatImageUrl";
+import { useForm } from "react-hook-form";
 
 type MultipleChoicesAnswerProps = {
     content: MultipleChoiceQuestionItf;
@@ -34,7 +35,7 @@ const MultipleChoicesAnswer = ({
     }, [reset]);
 
     return (
-        <>
+        <div>
             <div
                 className=""
                 dangerouslySetInnerHTML={{ __html: content.text }}
@@ -80,7 +81,7 @@ const MultipleChoicesAnswer = ({
                     </div>
                 ))}
             </div>
-        </>
+        </div>
     );
 };
 

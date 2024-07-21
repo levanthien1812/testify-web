@@ -11,10 +11,12 @@ const Button = ({
     primary = true,
     size = "md",
     className,
+    type = "button",
     ...props
 }: ButtonProps) => {
     return (
         <button
+            type={type}
             className={`shadow-sm ${
                 primary
                     ? "bg-orange-600 shadow-orange-200 hover:bg-orange-700 active:bg-orange-500"

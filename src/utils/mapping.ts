@@ -4,6 +4,12 @@ import MatchingQuestion from "../pages/createTestPage.tsx/components/testQuestio
 import MulitpleChoiceQuestion from "../pages/createTestPage.tsx/components/testQuestions/MultipleChoicesQuestion";
 import ResponseQuestion from "../pages/createTestPage.tsx/components/testQuestions/ResponseQuestion";
 import {
+    FillGapsAnswerBodyItf,
+    MatchingAnswerBodyItf,
+    MultipleChoicesAnswerBodyItf,
+    ResponseAnswerBodyItf,
+} from "../types/types";
+import {
     fillGapsQuestionSchema,
     matchingQuestionSchema,
     mulitpleChoicesQuestionSchema,

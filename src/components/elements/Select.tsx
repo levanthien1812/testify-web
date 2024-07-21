@@ -14,7 +14,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
     const { className, options, sizing = "md", error, ...rest } = props;
 
     return (
-        <div className="grow">
+        <div className="grow w-full">
             <select
                 className={`border border-gray-500 ${
                     sizing === "sm" && "px-1 py-0.5"

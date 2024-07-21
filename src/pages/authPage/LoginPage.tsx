@@ -1,8 +1,5 @@
-import { FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { LoginBodyItf } from "../../types/types";
 import { useDispatch } from "react-redux";
-import { LoginSchema } from "../../validations/auth";
 import { login as loginService, loginGoogle } from "../../services/auth";
 import { isSuccess } from "../../utils/response";
 import { authActions } from "../../stores/auth";
@@ -14,7 +11,6 @@ import Button from "../../components/elements/Button";
 import AuthInput from "./AuthInput";
 import { useMutation } from "react-query";
 import { useForm } from "react-hook-form";
-import Cookies from "js-cookie";
 
 type LoginFields = {
     email: string;
@@ -41,17 +37,6 @@ const LoginPage = () => {
             toast.success("Login successfully");
 
             const { user, tokens } = data;
-
-            Cookies.set("user", JSON.stringify(user), {
-                expires: new Date(tokens.access.expires),
-            });
-            Cookies.set("access_token", tokens.access.token, {
-                expires: new Date(tokens.access.expires),
-            });
-            Cookies.set("refresh_token", tokens.refresh.token, {
-                expires: new Date(tokens.refresh.expires),
-            });
-
             dispatch(authActions.authenticate({ user, tokens }));
 
             if (user.role === roles.MAKER) {
