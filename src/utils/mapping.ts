@@ -1,14 +1,8 @@
-import { questionTypes } from "../config/config";
+import { QUESTION_TYPE } from "../config/constants/tests";
 import FillGapsQuestion from "../pages/createTestPage.tsx/components/testQuestions/FillGapsQuestion";
 import MatchingQuestion from "../pages/createTestPage.tsx/components/testQuestions/MatchingQuestion";
 import MulitpleChoiceQuestion from "../pages/createTestPage.tsx/components/testQuestions/MultipleChoicesQuestion";
 import ResponseQuestion from "../pages/createTestPage.tsx/components/testQuestions/ResponseQuestion";
-import {
-    FillGapsAnswerBodyItf,
-    MatchingAnswerBodyItf,
-    MultipleChoicesAnswerBodyItf,
-    ResponseAnswerBodyItf,
-} from "../types/types";
 import {
     fillGapsQuestionSchema,
     matchingQuestionSchema,
@@ -17,15 +11,15 @@ import {
 } from "../validations/test";
 
 export const questionTypeToQuestionSchema = new Map([
-    [questionTypes.MULITPLE_CHOICES, mulitpleChoicesQuestionSchema],
-    [questionTypes.FILL_GAPS, fillGapsQuestionSchema],
-    [questionTypes.MATCHING, matchingQuestionSchema],
-    [questionTypes.RESPONSE, responseQuestionSchema],
+    [QUESTION_TYPE.MULTIPLE_CHOICES, mulitpleChoicesQuestionSchema],
+    [QUESTION_TYPE.FILL_IN_THE_GAPS, fillGapsQuestionSchema],
+    [QUESTION_TYPE.MATCHING, matchingQuestionSchema],
+    [QUESTION_TYPE.RESPONSE, responseQuestionSchema],
 ]);
 
 export const questionTypeToQuestionComponent = {
-    [questionTypes.MULITPLE_CHOICES]: MulitpleChoiceQuestion,
-    [questionTypes.FILL_GAPS]: FillGapsQuestion,
-    [questionTypes.MATCHING]: MatchingQuestion,
-    [questionTypes.RESPONSE]: ResponseQuestion,
+    [QUESTION_TYPE.MULTIPLE_CHOICES]: MulitpleChoiceQuestion,
+    [QUESTION_TYPE.FILL_IN_THE_GAPS]: FillGapsQuestion,
+    [QUESTION_TYPE.MATCHING]: MatchingQuestion,
+    [QUESTION_TYPE.RESPONSE]: ResponseQuestion,
 };

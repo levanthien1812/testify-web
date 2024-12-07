@@ -42,7 +42,7 @@ const DoingTest = ({
     const { mutate, isLoading } = useMutation({
         mutationFn: async () => {
             const responseData = await submitAnswers(
-                test._id,
+                test.id,
                 answers,
                 startTime
             );
@@ -113,7 +113,7 @@ const DoingTest = ({
                     {test.num_parts > 1 &&
                         test.parts.map((part) => {
                             return (
-                                <div key={part._id} className="">
+                                <div key={part.id} className="">
                                     <div className="text-lg bg-gray-200 px-4 py-1">
                                         <span className="underline">
                                             Part {part.order}:
@@ -129,7 +129,7 @@ const DoingTest = ({
                                             part.questions.map((question) => (
                                                 <Question
                                                     question={question}
-                                                    key={question._id}
+                                                    key={question.id}
                                                     onProvideAnswer={
                                                         handleProvideAnswer
                                                     }
@@ -143,7 +143,7 @@ const DoingTest = ({
                         test.questions!.map((question) => (
                             <Question
                                 question={question}
-                                key={question._id}
+                                key={question.id}
                                 onProvideAnswer={handleProvideAnswer}
                             />
                         ))}

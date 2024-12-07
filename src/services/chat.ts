@@ -1,5 +1,5 @@
 import { instance } from "../config/axios";
-import { chatOptions } from "../config/config";
+import { CHAT_OPTIONS } from "../config/config";
 import { ChatBodyItf, MessageBody } from "../types/types";
 
 export const getChats = async () => {
@@ -13,7 +13,7 @@ export const getChats = async () => {
 
 export const createChats = async (
     chatsBody: ChatBodyItf,
-    option: (typeof chatOptions)[keyof typeof chatOptions]
+    option: (typeof CHAT_OPTIONS)[keyof typeof CHAT_OPTIONS]
 ) => {
     try {
         const response = await instance.post(

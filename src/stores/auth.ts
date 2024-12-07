@@ -1,4 +1,4 @@
-import { createSlice, CreateSliceOptions } from "@reduxjs/toolkit";
+import { createSlice } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
 import { authInitialStateItf, userItf } from "../types/types";
 

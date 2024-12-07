@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Modal, {
     ModalBody,
     ModalFooter,
@@ -10,53 +10,51 @@ import { assignTakers, getAvailableTakers } from "../../../../services/test";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import Button from "../../../../components/elements/Button";
-import { userItf } from "../../../../types/types";
+import { TakerItf, userItf } from "../../../../types/types";
 import TakersChoser from "./TakersChoser";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../stores/rootState";
+import { createTestActions } from "../../../../stores/createTest";
+import { QUERY_KEYS } from "../../../../config/constants/queryMutationKeys";
+import { useDispatch } from "react-redux";
 
 type AddTakersProps = {
     onClose: () => void;
-    testId: string;
-    onAfterUpdate: () => void;
 };
 
-const AddTakers = ({ onClose, testId, onAfterUpdate }: AddTakersProps) => {
+const AddTakers = ({ onClose }: AddTakersProps) => {
     const [isCreateTaker, setIsCreateTaker] = useState<boolean>(false);
-    const [selectedTakers, setSelectedTakers] = useState<string[]>([]);
+    const { testId, testTakers, availableTakers } = useSelector(
+        (state: RootState) => state.createTest
+    );
+    const { setAvailableTakers } = createTestActions;
+    const dispatch = useDispatch();
 
     const { mutate, isLoading } = useMutation({
         mutationFn: async () => {
-            await assignTakers(testId, selectedTakers);
+            await assignTakers(
+                testId!,
+                testTakers!.map((taker) => taker.email)
+            );
         },
         onSuccess: () => {
-            onAfterUpdate();
             onClose();
-        },
-        onError: (err) => {
-            if (err instanceof AxiosError) {
-                toast.error(err.response?.data.message);
-            }
         },
     });
 
-    const { data: availableTakers, isFetching } = useQuery<userItf[]>({
+    const { isFetching } = useQuery<TakerItf[]>({
         queryFn: async () => {
-            const data = await getAvailableTakers(testId);
+            const data = await getAvailableTakers(testId!);
             return data.takers;
         },
-        queryKey: ["getAvailableTakers", { testId: testId }],
-        onError: (err) => {
-            if (err instanceof AxiosError) {
-                toast.error(err.response?.data.message);
-            }
+        queryKey: [QUERY_KEYS.GET_AVAILABLE_TAKERS, { testId: testId }],
+        onSuccess: (data) => {
+            dispatch(setAvailableTakers(data));
         },
     });
 
     const handleSave = () => {
         mutate();
-    };
-
-    const handleAfterSelect = (takers: string[]) => {
-        setSelectedTakers(takers);
     };
 
     return (
@@ -69,11 +67,7 @@ const AddTakers = ({ onClose, testId, onAfterUpdate }: AddTakersProps) => {
                     </p>
                 )}
                 {!isCreateTaker && availableTakers && (
-                    <TakersChoser
-                        onAfterSelect={handleAfterSelect}
-                        takers={availableTakers}
-                        label="Select available takers"
-                    />
+                    <TakersChoser label="Select available takers" />
                 )}
 
                 <button
@@ -84,14 +78,7 @@ const AddTakers = ({ onClose, testId, onAfterUpdate }: AddTakersProps) => {
                 </button>
 
                 {isCreateTaker && (
-                    <CreateTakers
-                        testId={testId}
-                        onAfterUpdate={() => {
-                            onAfterUpdate();
-                            onClose();
-                        }}
-                        onClose={() => setIsCreateTaker(false)}
-                    />
+                    <CreateTakers onClose={() => setIsCreateTaker(false)} />
                 )}
             </ModalBody>
             <ModalFooter>

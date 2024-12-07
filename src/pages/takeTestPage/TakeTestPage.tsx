@@ -13,7 +13,7 @@ import { format } from "date-fns";
 import { AxiosError, HttpStatusCode } from "axios";
 import DoingTest from "./DoingTest";
 import RemainingTime from "./components/RemainingTime";
-import { testStatus } from "../../config/config";
+import { TEST_STATUS } from "../../config/config";
 import { toast } from "react-toastify";
 import { formatTime } from "../../utils/time";
 import TestInfo from "./components/TestInfo";
@@ -78,16 +78,16 @@ const TakeTestPage = () => {
         if (test) {
             if (status !== "started") {
                 if (
-                    test.status === testStatus.PUBLISHED ||
-                    test.status === testStatus.PUBLISHABLE
+                    test.status === TEST_STATUS.PUBLISHED ||
+                    test.status === TEST_STATUS.PUBLISHABLE
                 ) {
                     setStatus("published");
                 }
 
-                if (test.status === testStatus.OPENED) {
+                if (test.status === TEST_STATUS.OPENED) {
                     setStatus("opened");
                 }
-                if (test.status === testStatus.CLOSED) {
+                if (test.status === TEST_STATUS.CLOSED) {
                     setStatus("closed");
                 }
 

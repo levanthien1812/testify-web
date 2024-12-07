@@ -11,7 +11,7 @@ const TestQuestionsAndAnswers = ({ test }: TestQuestionsAndAnswersProps) => {
             {test.num_parts > 1 &&
                 test.parts.map((part) => {
                     return (
-                        <div key={part._id} className="">
+                        <div key={part.id} className="">
                             <div className="text-lg bg-gray-200 px-4 py-1">
                                 <span className="underline">
                                     Part {part.order}:
@@ -24,7 +24,7 @@ const TestQuestionsAndAnswers = ({ test }: TestQuestionsAndAnswersProps) => {
                                     part.questions.map((question) => (
                                         <Answer
                                             question={question}
-                                            key={question._id}
+                                            key={question.id}
                                         />
                                     ))}
                             </div>
@@ -33,7 +33,7 @@ const TestQuestionsAndAnswers = ({ test }: TestQuestionsAndAnswersProps) => {
                 })}
             {test.num_parts <= 1 &&
                 test.questions!.map((question) => (
-                    <Answer question={question} key={question._id} />
+                    <Answer question={question} key={question.id} />
                 ))}
         </div>
     );

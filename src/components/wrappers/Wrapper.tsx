@@ -1,0 +1,104 @@
+import React, { ReactNode, useEffect } from "react";
+import Button from "../elements/Button";
+import { ButtonProps } from "../../types/common";
+
+type ViewData = {
+    headerTitle: {
+        text: string;
+        extraClass?: string;
+        description?: {
+            text: string;
+        };
+    };
+    bottomButtons: {
+        containButton: Partial<ButtonProps>;
+        outlinedButton: Partial<ButtonProps>;
+        additionalButtons?: Partial<ButtonProps>[];
+    };
+};
+
+const Wrapper = ({
+    viewData = {
+        headerTitle: {
+            text: "",
+        },
+        bottomButtons: {
+            containButton: {
+                included: true,
+                text: "Next",
+                type: "button",
+            },
+            outlinedButton: {
+                included: true,
+                text: "Back",
+                type: "button",
+            },
+        },
+    },
+    children,
+}: {
+    viewData: ViewData;
+    children: ReactNode;
+}) => {
+    const { containButton, outlinedButton, additionalButtons } =
+        viewData?.bottomButtons;
+
+    return (
+        <div className="px-20 py-12 shadow-2xl">
+            <h2 className="text-center text-3xl">
+                {viewData?.headerTitle?.text}
+            </h2>
+
+            <p className="text-center">
+                {viewData?.headerTitle?.description?.text}
+            </p>
+
+            <div>{children}</div>
+
+            <div className="flex justify-end items-center gap-3 mt-6 pt-4 border-t border-gray-300">
+                <>
+                    {additionalButtons &&
+                        additionalButtons?.map((button) => (
+                            <Button
+                                size="lg"
+                                type="button"
+                                disabled={button?.disabled}
+                                onClick={button?.onClick}
+                            >
+                                {!button?.isLoading && !button?.disabled
+                                    ? button.text
+                                    : button?.loadingText}
+                            </Button>
+                        ))}
+                </>
+
+                {!(outlinedButton?.included === false) && (
+                    <Button
+                        size="lg"
+                        type="button"
+                        disabled={outlinedButton?.disabled}
+                        onClick={outlinedButton?.onClick}
+                    >
+                        {outlinedButton?.text}
+                    </Button>
+                )}
+                {!(containButton?.included === false) && (
+                    <Button
+                        size="lg"
+                        type={containButton?.type}
+                        disabled={containButton?.disabled}
+                        onClick={containButton?.onClick}
+                    >
+                        {containButton?.isLoading
+                            ? containButton?.loadingText
+                            : containButton?.disabled
+                            ? containButton?.disabledText || containButton?.text
+                            : containButton?.text}
+                    </Button>
+                )}
+            </div>
+        </div>
+    );
+};
+
+export default Wrapper;

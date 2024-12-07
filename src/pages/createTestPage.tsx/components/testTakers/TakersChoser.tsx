@@ -1,28 +1,31 @@
 import { useEffect, useState } from "react";
-import { userItf } from "../../../../types/types";
+import { TakerItf, userItf } from "../../../../types/types";
 import Input from "../../../../components/elements/Input";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../stores/rootState";
+import { createTestActions } from "../../../../stores/createTest";
+import { useDispatch } from "react-redux";
 
 type TakersChoserProps = {
-    takers: userItf[];
     label?: string;
-    onAfterSelect: (selectedTakers: string[]) => void;
 };
 
-const TakersChoser = ({
-    takers,
-    label = "Choose takers",
-    onAfterSelect,
-}: TakersChoserProps) => {
-    const [filteredTakers, setFilteredTakers] = useState<userItf[]>([]);
+const TakersChoser = ({ label = "Choose takers" }: TakersChoserProps) => {
+    const [filteredTakers, setFilteredTakers] = useState<TakerItf[]>([]);
     const [search, setSearch] = useState("");
-    const [selectedTakers, setSelectedTakers] = useState<string[]>([]);
     const [selectAll, setSelectAll] = useState<boolean>(false);
+    const dispatch = useDispatch();
+
+    const { testTakers, availableTakers } = useSelector(
+        (state: RootState) => state.createTest
+    );
+    const { saveTestTakers, addTestTakers } = createTestActions;
 
     useEffect(() => {
-        if (takers) {
+        if (availableTakers) {
             if (search.length > 0) {
                 setFilteredTakers(
-                    takers.filter(
+                    availableTakers.filter(
                         (taker) =>
                             taker.name
                                 .toLowerCase()
@@ -33,14 +36,23 @@ const TakersChoser = ({
                     )
                 );
             } else {
-                setFilteredTakers(takers);
+                setFilteredTakers(availableTakers);
             }
         }
-    }, [search, takers]);
+    }, [search, availableTakers]);
 
-    useEffect(() => {
-        onAfterSelect(selectedTakers);
-    }, [selectedTakers]);
+    const handleSelectAllTakers = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setSelectAll(e.target.checked);
+        if (e.target.checked) {
+            dispatch(saveTestTakers({ testTakers: filteredTakers }));
+        } else {
+            dispatch(saveTestTakers({ testTakers: [] }));
+        }
+    };
+
+    const handleSelectTaker = (taker: TakerItf) => {
+        dispatch(addTestTakers([taker]));
+    };
 
     return (
         <div>
@@ -53,16 +65,7 @@ const TakersChoser = ({
                         name="select-all"
                         id="select-all"
                         checked={selectAll}
-                        onChange={(e) => {
-                            setSelectAll(e.target.checked);
-                            if (e.target.checked) {
-                                setSelectedTakers(
-                                    filteredTakers.map((taker) => taker.id)
-                                );
-                            } else {
-                                setSelectedTakers([]);
-                            }
-                        }}
+                        onChange={handleSelectAllTakers}
                     />
                     <label htmlFor="select-all" className="ms-2">
                         Select all
@@ -93,39 +96,26 @@ const TakersChoser = ({
                                     type="checkbox"
                                     name={taker.id}
                                     id={taker.id}
-                                    checked={selectedTakers.includes(taker.id)}
-                                    onChange={(e) => {
-                                        if (
-                                            !selectedTakers.includes(taker.id)
-                                        ) {
-                                            setSelectedTakers([
-                                                ...selectedTakers,
-                                                taker.id,
-                                            ]);
-                                        } else {
-                                            setSelectedTakers(
-                                                selectedTakers.filter(
-                                                    (id) => id !== taker.id
-                                                )
-                                            );
-                                        }
-                                    }}
+                                    checked={testTakers.some(
+                                        (t) => t.id === taker.id
+                                    )}
+                                    onChange={() => handleSelectTaker(taker)}
                                 />
                                 <label
                                     htmlFor={taker.id}
                                     className="cursor-pointer"
                                 >
-                                    <span>{(taker as userItf).name}</span>
+                                    <span>{taker.name}</span>
                                     <span className="text-gray-600">
                                         {" "}
-                                        - {(taker as userItf).email}
+                                        - {taker.email}
                                     </span>
                                 </label>
                             </div>
                         </div>
                     ))}
-                {!takers ||
-                    (takers.length === 0 && (
+                {!test ||
+                    (test.length === 0 && (
                         <p className="text-center">No takers found!</p>
                     ))}
             </div>

@@ -55,12 +55,12 @@ const MatchingQuestion = ({
                     {content.left_items.map((item) => (
                         <DraggableItem
                             item={item}
-                            key={item._id}
+                            key={item.id}
                             onDrop={handleDrop}
                             part="left"
                             draggable={
                                 matchings.findIndex(
-                                    (matching) => item._id === matching.left
+                                    (matching) => item.id === matching.left
                                 ) < 0
                             }
                         />
@@ -70,12 +70,12 @@ const MatchingQuestion = ({
                     {content.right_items.map((item) => (
                         <DraggableItem
                             item={item}
-                            key={item._id}
+                            key={item.id}
                             onDrop={handleDrop}
                             part="right"
                             draggable={
                                 matchings.findIndex(
-                                    (matching) => item._id === matching.right
+                                    (matching) => item.id === matching.right
                                 ) < 0
                             }
                         />
@@ -95,7 +95,7 @@ const MatchingQuestion = ({
                                 {
                                     content.left_items.find(
                                         (left_item) =>
-                                            left_item._id === matching.left
+                                            left_item.id === matching.left
                                     )?.text
                                 }
                             </span>
@@ -107,7 +107,7 @@ const MatchingQuestion = ({
                                 {
                                     content.right_items.find(
                                         (right_item) =>
-                                            right_item._id === matching.right
+                                            right_item.id === matching.right
                                     )?.text
                                 }
                             </span>

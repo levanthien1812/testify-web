@@ -5,7 +5,7 @@ import Select from "../../../components/elements/Select";
 import { formatTimezone } from "../../../utils/time";
 import { FilterState } from "../../../types/types";
 import { Link } from "react-router-dom";
-import { testStatus } from "../../../config/config";
+import { TEST_STATUS } from "../../../config/config";
 import _ from "lodash";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
@@ -128,14 +128,14 @@ const Filter = ({ filter, setFilter }: FilterProps) => {
                             <Select
                                 sizing="sm"
                                 name="status"
-                                value={filter.status || testStatus.PUBLISHED}
+                                value={filter.status || TEST_STATUS.PUBLISHED}
                                 onChange={(e) => {
                                     setFilter({
                                         ...filter,
                                         status: e.target.value,
                                     });
                                 }}
-                                options={Object.values(testStatus).map(
+                                options={Object.values(TEST_STATUS).map(
                                     (status) => ({
                                         value: status,
                                         label: _.capitalize(status),

@@ -1,76 +1,99 @@
 import { useEffect, useMemo } from "react";
-import { publicAnswersOptions, testLevels } from "../../../config/config";
-import { TestBodyItf, TestItf } from "../../../types/types";
-import { createTest, updateTest } from "../../../services/test";
-import { useMutation } from "react-query";
-import { AxiosError } from "axios";
-import { toast } from "react-toastify";
+import { PUBLIC_ANSWERS_OPTIONS, TEST_LEVEL } from "../../../config/config";
+import { TestBodyItf } from "../../../types/types";
 import { formatTimezone } from "../../../utils/time";
-import Button from "../../../components/elements/Button";
 import Input from "../../../components/elements/Input";
 import Select from "../../../components/elements/Select";
 import { useForm } from "react-hook-form";
+import Wrapper from "../../../components/wrappers/Wrapper";
+import { createTestActions } from "../../../stores/createTest";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../stores/rootState";
+import { useMutation } from "react-query";
+import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
+import { createTest, updateTest } from "../../../services/test";
+import { useDispatch } from "react-redux";
 
-type SectionProps = {
-    test: TestItf | null;
-    onAfterUpdate: (testId: string) => void;
-    onBack: () => void;
-    onNext: () => void;
-};
+const TestInfo = () => {
+    const {
+        movePrevStep,
+        moveNextStep,
+        saveTestInfo,
+        validate: validateTest,
+        initializeTestParts,
+    } = createTestActions;
+    const {
+        testTitle,
+        testDatetime,
+        testDescription,
+        testDuration,
+        testId,
+        level,
+        closeTime,
+        code,
+        enableCloseTime,
+        numParts,
+        numQuestions,
+        maxScore,
+        publicAnswersDate,
+        publicAnswersOption,
+        isValidTestInfo,
+    } = useSelector((state: RootState) => state.createTest);
+    const dispatch = useDispatch();
 
-const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
     const initialValues: TestBodyItf = useMemo(
-        () =>
-            !test
-                ? {
-                      title: "",
-                      datetime: formatTimezone(new Date()),
-                      description: "",
-                      duration: 0,
-                      max_score: 10,
-                      num_questions: 0,
-                      level: testLevels.EASY,
-                      num_parts: 1,
-                      enable_close_time: true,
-                      close_time: formatTimezone(new Date()),
-                      code: "",
-                      public_answers_option: publicAnswersOptions.SPECIFIC_DATE,
-                      public_answers_date: formatTimezone(new Date()),
-                  }
-                : {
-                      ...test,
-                  },
-        [test]
+        () => ({
+            title: testTitle,
+            datetime: testDatetime,
+            description: testDescription,
+            duration: testDuration,
+            max_score: maxScore,
+            num_questions: numQuestions,
+            num_parts: numParts,
+            level: level,
+            code: code,
+            enable_close_time: enableCloseTime,
+            close_time: closeTime,
+            public_answers_option: publicAnswersOption,
+            public_answers_date: publicAnswersDate,
+        }),
+        [
+            testTitle,
+            testDatetime,
+            testDescription,
+            testDuration,
+            maxScore,
+            numQuestions,
+            numParts,
+            level,
+            code,
+            enableCloseTime,
+            closeTime,
+            publicAnswersDate,
+            publicAnswersOption,
+        ]
     );
 
     const { mutate: createTestMutate, isLoading: createTestLoading } =
         useMutation({
             mutationFn: async (testBody: TestBodyItf) =>
                 await createTest(testBody),
-            mutationKey: ["create-test"],
+            mutationKey: [MUTATION_KEYS.CREATE_TEST],
             onSuccess: (data) => {
-                onAfterUpdate(data.test._id);
-                onNext();
-            },
-            onError: (err) => {
-                if (err instanceof AxiosError) {
-                    toast.error(err.response?.data.message);
-                }
+                dispatch(saveTestInfo({ testId: data?.test?.id }));
+                dispatch(initializeTestParts());
+                dispatch(moveNextStep());
             },
         });
 
     const { mutate: updateTestMutate, isLoading: updateTestLoading } =
         useMutation({
             mutationFn: async (testBody: TestBodyItf) =>
-                await updateTest(test!._id, testBody),
-            mutationKey: ["update-test", { testId: test?._id }],
+                await updateTest(testId || "", testBody),
+            mutationKey: [MUTATION_KEYS.UPDATE_TEST, { testId }],
             onSuccess: (data) => {
-                onNext();
-            },
-            onError: (err) => {
-                if (err instanceof AxiosError) {
-                    toast.error(err.response?.data.message);
-                }
+                dispatch(initializeTestParts());
+                dispatch(moveNextStep());
             },
         });
 
@@ -85,40 +108,77 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
     });
 
     const onSubmit = async (data: TestBodyItf) => {
-        if (test) {
-            updateTestMutate(data);
-        } else {
-            createTestMutate(data);
-        }
+        if (!testId) createTestMutate(data);
+        else updateTestMutate(data);
     };
 
-    const startTime = watch("datetime");
+    const allValues = watch();
 
     useEffect(() => {
-        const formattedStartTime = formatTimezone(new Date(startTime));
+        const formattedStartTime = formatTimezone(
+            new Date(allValues?.datetime)
+        );
         setValue("datetime", formattedStartTime);
-        setValue("close_time", startTime);
-        setValue("public_answers_date", startTime);
-    }, [startTime]);
+        setValue("close_time", allValues?.datetime);
+        setValue("public_answers_date", allValues?.datetime);
+    }, [allValues?.datetime, setValue]);
 
-    const publicAnswersOption = watch("public_answers_option");
-    const closeTime = watch("close_time");
-    const enableCloseTime = watch("enable_close_time");
+    useEffect(() => {
+        console.log(initialValues, allValues);
+        dispatch(saveTestInfo(allValues));
+        dispatch(validateTest());
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [JSON.stringify(allValues), dispatch, saveTestInfo, validateTest]);
 
     useEffect(() => {
         if (
-            publicAnswersOption === publicAnswersOptions.AFTER_CLOSE_TIME &&
-            enableCloseTime
+            allValues?.public_answers_option ===
+                PUBLIC_ANSWERS_OPTIONS.AFTER_CLOSE_TIME &&
+            allValues?.enable_close_time === true &&
+            allValues?.close_time
         ) {
-            setValue("public_answers_date", closeTime);
+            setValue("public_answers_date", allValues?.close_time);
         }
-    }, [publicAnswersOption, enableCloseTime, closeTime]);
+    }, [
+        allValues?.public_answers_option,
+        allValues?.enable_close_time,
+        allValues?.close_time,
+        setValue,
+    ]);
 
     return (
-        <div className="px-20 py-12 shadow-2xl">
-            <h2 className="text-center text-3xl">Test Information</h2>
-
-            <form onSubmit={handleSubmit(onSubmit)} className="mt-4 ">
+        <Wrapper
+            viewData={{
+                headerTitle: {
+                    text: "Test Information",
+                },
+                bottomButtons: {
+                    outlinedButton: {
+                        disabled: true,
+                        onClick: () => dispatch(movePrevStep()),
+                        text: "Back",
+                    },
+                    containButton: {
+                        disabled:
+                            !isValidTestInfo ||
+                            createTestLoading ||
+                            updateTestLoading,
+                        isLoading: createTestLoading || updateTestLoading,
+                        type: "submit",
+                        text: "Next",
+                        onClick: () => {
+                            handleSubmit(onSubmit)();
+                        },
+                        loadingText: createTestLoading
+                            ? "Saving..."
+                            : updateTestLoading
+                            ? "Updating..."
+                            : null,
+                    },
+                },
+            }}
+        >
+            <form className="mt-4 ">
                 <div className="flex gap-4 items-end">
                     <label htmlFor="title" className="w-1/5 shrink-0">
                         Test title:{" "}
@@ -245,7 +305,7 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                     <Select
                         className="grow capitalize"
                         {...register("level")}
-                        options={Object.values(testLevels).map((level) => ({
+                        options={Object.values(TEST_LEVEL).map((level) => ({
                             label: level,
                             value: level,
                         }))}
@@ -264,7 +324,7 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                         {...register("public_answers_option", {
                             required: "Public answers option is required",
                         })}
-                        options={Object.values(publicAnswersOptions).map(
+                        options={Object.values(PUBLIC_ANSWERS_OPTIONS).map(
                             (publicAnswersOption) => ({
                                 label: publicAnswersOption,
                                 value: publicAnswersOption,
@@ -273,7 +333,8 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                     />
                 </div>
 
-                {publicAnswersOption === publicAnswersOptions.SPECIFIC_DATE && (
+                {publicAnswersOption ===
+                    PUBLIC_ANSWERS_OPTIONS.SPECIFIC_DATE && (
                     <div className="flex gap-4 items-end mt-4">
                         <label
                             htmlFor="public_answers_date"
@@ -289,23 +350,8 @@ const TestInfo = ({ test, onAfterUpdate, onNext, onBack }: SectionProps) => {
                         />
                     </div>
                 )}
-
-                <div className="flex justify-end items-center gap-3 mt-6 pt-4 border-t border-gray-300">
-                    <Button size="lg" disabled>
-                        Back
-                    </Button>
-                    <Button
-                        size="lg"
-                        type="submit"
-                        disabled={createTestLoading || updateTestLoading}
-                    >
-                        {!(createTestLoading || updateTestLoading)
-                            ? "Next"
-                            : "Saving..."}
-                    </Button>
-                </div>
             </form>
-        </div>
+        </Wrapper>
     );
 };
 

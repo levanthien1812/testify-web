@@ -8,7 +8,6 @@ import {
     QuestionItf,
     ResponseQuestionItf,
 } from "../../../../types/types";
-import { questionTypes } from "../../../../config/config";
 import MultipleChoicesAnswer from "./MultipleChoicesAnswer";
 import FillGapsAnswer from "./FillGapsAnswer";
 import MatchingAnswer from "./MatchingAnswer";
@@ -19,27 +18,21 @@ import { toast } from "react-toastify";
 import ResponseAnswer from "./ResponseAnswer";
 import Button from "../../../../components/elements/Button";
 import { useForm } from "react-hook-form";
+import { QUESTION_TYPE } from "../../../../config/constants/tests";
 
 const Answer: React.FC<{
     question: QuestionItf;
-    onAfterUpdate: () => void;
-}> = ({ question, onAfterUpdate }) => {
+}> = ({ question }) => {
     const [savable, setSavable] = useState<boolean>(false);
     const [reset, setReset] = useState<boolean>(false);
     const [answerBody, setAnswerBody] = useState<AnswerBody>();
 
     const { mutate, isLoading } = useMutation({
         mutationFn: async (answerBody: AnswerBody) =>
-            await addAnswer(question.test_id, question._id, answerBody),
-        mutationKey: ["add-answer", { question_id: question._id }],
+            await addAnswer(question.test_id, question.id!, answerBody),
+        mutationKey: ["add-answer", { question_id: question.id }],
         onSuccess: (data) => {
             setSavable(false);
-            onAfterUpdate();
-        },
-        onError: (err) => {
-            if (err instanceof AxiosError) {
-                toast.error(err.response?.data.message);
-            }
         },
     });
 
@@ -57,8 +50,8 @@ const Answer: React.FC<{
         <div>
             <p
                 className={`px-2 text-white ${
-                    question.content.answer &&
-                    question.content.answer.length > 0
+                    question.content!.answer &&
+                    question.content!.answer.length > 0
                         ? "bg-gray-600"
                         : "bg-orange-600"
                 } w-fit`}
@@ -68,34 +61,34 @@ const Answer: React.FC<{
             </p>
             <div
                 className={`px-2 py-2 border ${
-                    question.content.answer &&
-                    question.content.answer.length > 0
+                    question.content!.answer &&
+                    question.content!.answer.length > 0
                         ? "border-gray-600"
                         : "border-orange-600"
                 }`}
             >
-                {question.type === questionTypes.MULITPLE_CHOICES && (
+                {question.type === QUESTION_TYPE.MULTIPLE_CHOICES && (
                     <MultipleChoicesAnswer
                         reset={reset}
                         content={question.content as MultipleChoiceQuestionItf}
                         onProvideAnswer={handleProvideAnswer}
                     />
                 )}
-                {question.type === questionTypes.FILL_GAPS && (
+                {question.type === QUESTION_TYPE.FILL_IN_THE_GAPS && (
                     <FillGapsAnswer
                         reset={reset}
                         content={question.content as FillGapsQuestionItf}
                         onProvideAnswer={handleProvideAnswer}
                     />
                 )}
-                {question.type === questionTypes.MATCHING && (
+                {question.type === QUESTION_TYPE.MATCHING && (
                     <MatchingAnswer
                         reset={reset}
                         content={question.content as MatchingQuestionItf}
                         onProvideAnswer={handleProvideAnswer}
                     />
                 )}
-                {question.type === questionTypes.RESPONSE && (
+                {question.type === QUESTION_TYPE.RESPONSE && (
                     <ResponseAnswer
                         content={question.content as ResponseQuestionItf}
                     />

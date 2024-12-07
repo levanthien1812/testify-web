@@ -10,48 +10,62 @@ import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
 import Button from "../../../components/elements/Button";
 import Select from "../../../components/elements/Select";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../stores/rootState";
+import Wrapper from "../../../components/wrappers/Wrapper";
+import { createTestActions } from "../../../stores/createTest";
+import { useDispatch } from "react-redux";
 
-type SectionProps = {
-    test: TestItf;
-    onAfterUpdate: () => void;
-    onBack: () => void;
-    onNext: () => void;
-};
-
-const TestTakers = ({ test, onAfterUpdate, onBack, onNext }: SectionProps) => {
+const TestTakers = () => {
+    const { testId } = useSelector((state: RootState) => state.createTest);
     const [shareOption, setShareOption] = useState<"restricted" | "anyone">(
         "restricted"
     );
     const navigate = useNavigate();
+    const { moveNextStep, movePrevStep } = createTestActions;
+    const dispatch = useDispatch();
 
-    const { mutate, isLoading } = useMutation({
-        mutationFn: async () => {
-            await updateTest(test._id, { share_option: shareOption });
-        },
-        mutationKey: ["updateTest", { body: { share_option: shareOption } }],
-        onSuccess: () => {
-            onAfterUpdate();
-        },
-        onError: (err) => {
-            if (err instanceof AxiosError) {
-                toast.error(err.response?.data.message);
-            }
-        },
-    });
-
-    const handleNext = () => {
-        mutate();
-        navigate("/home");
-    };
+    const { mutate: updateTestMutate, isLoading: isUpdatingTest } = useMutation(
+        {
+            mutationFn: async () => {
+                await updateTest(testId!, { share_option: shareOption });
+            },
+            mutationKey: [
+                "updateTest",
+                { body: { share_option: shareOption } },
+            ],
+            onSuccess: () => {
+                dispatch(moveNextStep());
+            },
+        }
+    );
 
     return (
-        <div className="px-20 py-12 shadow-2xl">
-            <h2 className="text-center text-3xl">Test Takers</h2>
-            <p className="text-center">
-                Create test taker's accounts so that they can access the test
-                and do it.
-            </p>
-
+        <Wrapper
+            viewData={{
+                headerTitle: {
+                    text: "Test Takers",
+                    description: {
+                        text: "Create test taker's accounts so that they can access the test and do it.",
+                    },
+                },
+                bottomButtons: {
+                    containButton: {
+                        onClick: () => {
+                            dispatch(movePrevStep());
+                        },
+                    },
+                    outlinedButton: {
+                        disabled: isUpdatingTest,
+                        loadingText: "Updating...",
+                        isLoading: isUpdatingTest,
+                        onClick: () => {
+                            updateTestMutate();
+                        },
+                    },
+                },
+            }}
+        >
             <div className="mt-4 px-8 py-4 bg-orange-100 space-x-2">
                 <label htmlFor="share-select">Share the test with: </label>
                 <Select
@@ -79,19 +93,8 @@ const TestTakers = ({ test, onAfterUpdate, onBack, onNext }: SectionProps) => {
                 </div>
             </div>
 
-            {shareOption === "restricted" && (
-                <Takers test={test} onAfterUpdate={onAfterUpdate} />
-            )}
-
-            <div className="flex justify-end items-center gap-3 mt-6 pt-4 border-t border-gray-300">
-                <Button size="lg" onClick={onBack}>
-                    Back
-                </Button>
-                <Button size="lg" onClick={handleNext} disabled={isLoading}>
-                    Finish
-                </Button>
-            </div>
-        </div>
+            {shareOption === "restricted" && <Takers />}
+        </Wrapper>
     );
 };
 

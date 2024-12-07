@@ -7,7 +7,7 @@ import { TestItf } from "../../../types/types";
 import { format } from "date-fns";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
-import { roles, testStatus } from "../../../config/config";
+import { ROLES, TEST_STATUS } from "../../../config/config";
 import Button from "../../../components/elements/Button";
 import { Circle } from "rc-progress";
 
@@ -21,29 +21,29 @@ const TestItemCard = ({ test }: TestItemCardProps) => {
     const user = useSelector((state: RootState) => state.auth.user);
 
     const handleClickView = () => {
-        if (user!.role === roles.MAKER) {
+        if (user!.role === ROLES.MAKER) {
             if (
-                test.status === testStatus.DRAFT ||
-                test.status === testStatus.PUBLISHABLE
+                test.status === TEST_STATUS.DRAFT ||
+                test.status === TEST_STATUS.PUBLISHABLE
             )
-                navigate(`/tests/${test._id}/edit`);
-            else navigate(`/tests/${test._id}`);
+                navigate(`/tests/${test.id}/edit`);
+            else navigate(`/tests/${test.id}`);
         } else {
-            navigate(`/tests/${test._id}`);
+            navigate(`/tests/${test.id}`);
         }
     };
 
     const statusColor = useMemo(() => {
         switch (test.status) {
-            case testStatus.DRAFT:
+            case TEST_STATUS.DRAFT:
                 return "bg-yellow-500";
-            case testStatus.PUBLISHABLE:
+            case TEST_STATUS.PUBLISHABLE:
                 return "bg-cyan-600";
-            case testStatus.PUBLISHED:
+            case TEST_STATUS.PUBLISHED:
                 return "bg-blue-600";
-            case testStatus.OPENED:
+            case TEST_STATUS.OPENED:
                 return "bg-green-600";
-            case testStatus.CLOSED:
+            case TEST_STATUS.CLOSED:
                 return "bg-gray-600";
             default:
                 return "bg-gray-600";

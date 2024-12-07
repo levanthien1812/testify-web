@@ -45,7 +45,7 @@ const RecentTests = () => {
                 <div className="flex gap-6 mt-3 pb-1 custom-scrollbar-x">
                     {tests.map((test: TestItf) => {
                         return (
-                            <div key={test._id}>
+                            <div key={test.id}>
                                 <TestItemCard test={test} />
                             </div>
                         );

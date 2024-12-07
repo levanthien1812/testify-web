@@ -6,6 +6,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faChevronLeft,
     faChevronRight,
+    faCircle,
+    faDotCircle,
     faFaceSmile,
 } from "@fortawesome/free-solid-svg-icons";
 import { useMutation, useQuery } from "react-query";
@@ -36,9 +38,9 @@ const SelectedChat = ({ chat, openInfo, setOpenInfo }: SelectedChatProps) => {
     const { isLoading: messagesLoading, refetch: refetchMessages } = useQuery<
         MessageItf[]
     >({
-        queryKey: ["messages", chat._id],
+        queryKey: ["messages", chat.id],
         queryFn: async () => {
-            const responseData = await getMessages(chat._id);
+            const responseData = await getMessages(chat.id);
             return responseData.messages;
         },
         onSuccess: (data) => {
@@ -49,13 +51,13 @@ const SelectedChat = ({ chat, openInfo, setOpenInfo }: SelectedChatProps) => {
     const { mutate: sendMessageMutate } = useMutation({
         mutationFn: async () => {
             const responseData = await sendMessage({
-                chat_id: chat._id,
+                chat_id: chat.id,
                 text: currentMessageText,
             });
 
             return responseData.message;
         },
-        mutationKey: ["messages", chat._id],
+        mutationKey: ["messages", chat.id],
         onSuccess: (data) => {
             setMessages((prev) => [...prev, data]);
             setNewMessage(data);
@@ -88,7 +90,7 @@ const SelectedChat = ({ chat, openInfo, setOpenInfo }: SelectedChatProps) => {
     useEffect(() => {
         if (!socket) return;
         socket.on("get-message", (message: MessageItf) => {
-            if (message.chat_id !== chat._id) return;
+            if (message.chat_id !== chat.id) return;
             setMessages((prev) => [...prev, message]);
         });
 
@@ -107,7 +109,22 @@ const SelectedChat = ({ chat, openInfo, setOpenInfo }: SelectedChatProps) => {
         <div className="flex w-2/3 p-2 bg-white shadow-md">
             <div className="flex flex-col grow">
                 <div className="flex justify-between items-center py-2 border-b border-dashed border-gray-300">
-                    <h3 className="text-2xl font-bold">{chat.chat_name}</h3>
+                    <div className="flex items-center gap-2">
+                        <h3 className="text-2xl font-bold">{chat.chat_name}</h3>
+                        <FontAwesomeIcon
+                            icon={faCircle}
+                            className="text-gray-300 text-[4px]"
+                        />
+                        <p className="">
+                            {onlineUsers.find(
+                                (onlineUser) =>
+                                    onlineUser.socket_id === socket?.id &&
+                                    onlineUser.user_id === user!.id
+                            )
+                                ? "Online"
+                                : "Offline"}
+                        </p>
+                    </div>
                     <button
                         className="flex items-center bg-gray-300 hover:bg-gray-400 p-2 leading-none rounded-full"
                         onClick={(e) => setOpenInfo(!openInfo)}
@@ -131,7 +148,7 @@ const SelectedChat = ({ chat, openInfo, setOpenInfo }: SelectedChatProps) => {
                         {messages &&
                             messages.map((message, index) => (
                                 <div
-                                    key={message._id}
+                                    key={message.id}
                                     className={`flex flex-col mb-1 ${
                                         message.sender_id === user!.id
                                             ? "items-end"

@@ -1,9 +1,9 @@
 import Joi from "joi";
-import { publicAnswersOptions, testLevels } from "../config/config";
+import { PUBLIC_ANSWERS_OPTIONS, TEST_LEVEL } from "../config/config";
 import { numGaps } from "./custom";
 
 export const partSchema = Joi.object().keys({
-    _id: Joi.string(),
+    id: Joi.string(),
     name: Joi.string().required(),
     score: Joi.number().required().min(0.0001),
     num_questions: Joi.number().required().min(1),
@@ -18,12 +18,12 @@ export const testBodySchema = Joi.object().keys({
     duration: Joi.number().required().min(1),
     max_score: Joi.number().required().min(1),
     num_questions: Joi.number().required().min(1),
-    level: Joi.string().valid(...Object.values(testLevels)),
+    level: Joi.string().valid(...Object.values(TEST_LEVEL)),
     code: Joi.string().allow(""),
     num_parts: Joi.number().min(1),
     close_time: Joi.date().optional(),
     public_answers_option: Joi.string().valid(
-        ...Object.values(publicAnswersOptions)
+        ...Object.values(PUBLIC_ANSWERS_OPTIONS)
     ),
     public_answers_date: Joi.date().optional(),
 });

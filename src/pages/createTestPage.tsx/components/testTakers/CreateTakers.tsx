@@ -11,37 +11,36 @@ import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import Button from "../../../../components/elements/Button";
 import Input from "../../../../components/elements/Input";
+import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../stores/rootState";
+import { TOAST_MESSAGES } from "../../../../config/constants/toasts";
+import { createTestActions } from "../../../../stores/createTest";
+import { useDispatch } from "react-redux";
 
 type CreateTakersProps = {
-    testId: string;
     onClose: () => void;
-    onAfterUpdate: () => void;
 };
 
-const CreateTakers = ({
-    testId,
-    onClose,
-    onAfterUpdate,
-}: CreateTakersProps) => {
+const CreateTakers = ({ onClose }: CreateTakersProps) => {
     const [takers, setTakers] = useState<TakerBodyItf[]>([
         { name: "", email: "" },
     ]);
+    const { testId } = useSelector((state: RootState) => state.createTest);
+    const { addTestTakers } = createTestActions;
+    const dispatch = useDispatch();
 
     const { mutate, isLoading } = useMutation({
         mutationFn: async (takersBody: TakerBodyItf[]) => {
-            const data = await createTakers(testId, { takers: takersBody });
+            const data = await createTakers(testId!, { takers: takersBody });
 
             return data;
         },
-        mutationKey: ["createTakers"],
+        mutationKey: [MUTATION_KEYS.CREATE_TAKERS, { testId: testId }],
         onSuccess: (data) => {
             onClose();
-            onAfterUpdate();
-        },
-        onError: (err) => {
-            if (err instanceof AxiosError) {
-                toast.error(err.response?.data.message);
-            }
+            toast.success(TOAST_MESSAGES.CREATE_TAKERS_SUCCESSFULLY);
+            dispatch(addTestTakers(data.takers));
         },
     });
 
