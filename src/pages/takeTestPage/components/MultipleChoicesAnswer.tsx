@@ -39,7 +39,7 @@ const MultipleChoicesAnswer = ({
 
             {content.images && (
                 <div className="grid grid-cols-2 gap-2 px-[10%] mt-2 justify-items-center">
-                    {content.images.map((image) => (
+                    {(content.images as string[]).map((image) => (
                         <div key={image} className="relative">
                             <img
                                 src={formatImageUrl(image)}
@@ -55,18 +55,18 @@ const MultipleChoicesAnswer = ({
                 {content.options.map((option) => (
                     <div
                         className="flex gap-3 items-center ps-2 hover:bg-gray-200 cursor-pointer"
-                        key={option._id}
+                        key={option.id}
                     >
                         <input
                             type="radio"
-                            name={content._id}
-                            value={option._id}
-                            id={option._id}
-                            checked={optionChosen === option._id}
+                            name={content.id}
+                            value={option.id}
+                            id={option.id}
+                            checked={optionChosen === option.id}
                             className={
                                 userAnswer
                                     ? content.answer &&
-                                      content.answer[0] === option._id
+                                      content.answer[0] === option.id
                                         ? "accent-green-600"
                                         : "accent-red-600"
                                     : ""
@@ -74,18 +74,18 @@ const MultipleChoicesAnswer = ({
                             readOnly
                         />
                         <label
-                            htmlFor={option._id}
+                            htmlFor={option.id}
                             className={`grow ${
                                 userAnswer
                                     ? content.answer &&
-                                      content.answer[0] === option._id &&
+                                      content.answer[0] === option.id &&
                                       "text-green-600"
                                     : ""
                             } ${
                                 userAnswer
                                     ? content.answer &&
-                                      content.answer[0] !== option._id &&
-                                      optionChosen === option._id &&
+                                      content.answer[0] !== option.id &&
+                                      optionChosen === option.id &&
                                       "text-red-600"
                                     : ""
                             }`}

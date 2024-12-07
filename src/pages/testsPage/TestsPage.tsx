@@ -52,7 +52,7 @@ const TestsPage = () => {
                 <>
                     <div className="grid md:grid-cols-3 xl:grid-cols-4 gap-5 mt-5 auto-rows-fr">
                         {testsFetchResult.tests.map((test) => (
-                            <div key={test._id}>
+                            <div key={test.id}>
                                 <TestItemCard test={test} />
                             </div>
                         ))}

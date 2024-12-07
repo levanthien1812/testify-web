@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../stores/auth";
-import { roles } from "../../config/config";
+import { ROLES } from "../../config/config";
 import Button from "../../components/elements/Button";
 import AuthInput from "./AuthInput";
 import { SubmitHandler, useForm } from "react-hook-form";
@@ -40,7 +40,7 @@ const RegistePage = () => {
             const { user, tokens } = data;
             dispatch(authActions.authenticate({ user, tokens }));
 
-            if (user.role === roles.MAKER) {
+            if (user.role === ROLES.MAKER) {
                 navigate("/home");
             }
         },

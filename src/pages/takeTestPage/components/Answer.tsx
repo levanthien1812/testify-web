@@ -10,7 +10,7 @@ import {
     ResponseAnswerItf,
     ResponseQuestionItf,
 } from "../../../types/types";
-import { manualScoreTypes, questionTypes, roles } from "../../../config/config";
+import { MANUAL_SCORE_TYPES, ROLES } from "../../../config/config";
 import MultipleChoicesAnswer from "./MultipleChoicesAnswer";
 import FillGapsAnswer from "./FillGapsAnswer";
 import MatchingAnswer from "./MatchingAnswer";
@@ -23,6 +23,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
 import Button from "../../../components/elements/Button";
 import Input from "../../../components/elements/Input";
+import { QUESTION_TYPE } from "../../../config/constants/tests";
 
 type QuestionProps = {
     question: QuestionItf;
@@ -36,7 +37,7 @@ const Answer = ({ question }: QuestionProps) => {
     const user = useSelector((state: RootState) => state.auth.user);
 
     const needManualScore = useMemo(() => {
-        return manualScoreTypes.includes(question.type);
+        return MANUAL_SCORE_TYPES.includes(question.type);
     }, [question]);
 
     const { mutate: updateScoreMutate, isLoading: updateScoreLoading } =
@@ -44,7 +45,7 @@ const Answer = ({ question }: QuestionProps) => {
             mutationFn: async () => {
                 const data = await updateTakerAnswer(
                     question.test_id,
-                    question.answer!._id,
+                    question.answer!.id,
                     { score: manualScore! }
                 );
 
@@ -52,7 +53,7 @@ const Answer = ({ question }: QuestionProps) => {
             },
             mutationKey: [
                 "updateTakerAnswer",
-                { answer_id: question.answer?._id },
+                { answer_id: question.answer?.id },
             ],
             onSuccess: () => {},
             onError: (error) => {
@@ -107,7 +108,7 @@ const Answer = ({ question }: QuestionProps) => {
                     </span>
                 )}
             </div>
-            {question.type === questionTypes.MULITPLE_CHOICES && (
+            {question.type === QUESTION_TYPE.MULTIPLE_CHOICES && (
                 <MultipleChoicesAnswer
                     content={question.content as MultipleChoiceQuestionItf}
                     userAnswer={
@@ -118,7 +119,7 @@ const Answer = ({ question }: QuestionProps) => {
                     }
                 />
             )}
-            {question.type === questionTypes.FILL_GAPS && (
+            {question.type === QUESTION_TYPE.FILL_IN_THE_GAPS && (
                 <FillGapsAnswer
                     content={question.content as FillGapsQuestionItf}
                     userAnswer={
@@ -128,7 +129,7 @@ const Answer = ({ question }: QuestionProps) => {
                     }
                 />
             )}
-            {question.type === questionTypes.MATCHING && (
+            {question.type === QUESTION_TYPE.MATCHING && (
                 <MatchingAnswer
                     content={question.content as MatchingQuestionItf}
                     userAnswer={
@@ -138,7 +139,7 @@ const Answer = ({ question }: QuestionProps) => {
                     }
                 />
             )}
-            {question.type === questionTypes.RESPONSE && (
+            {question.type === QUESTION_TYPE.RESPONSE && (
                 <ResponseAnswer
                     content={question.content as ResponseQuestionItf}
                     userAnswer={
@@ -149,7 +150,7 @@ const Answer = ({ question }: QuestionProps) => {
                 />
             )}
 
-            {user?.role === roles.MAKER && needManualScore && (
+            {user?.role === ROLES.MAKER && needManualScore && (
                 <div className="border-t pt-2 border-gray-400 border-dashed space-x-2">
                     {((question.answer && !question.answer.score) ||
                         isUpdatingScore) && (

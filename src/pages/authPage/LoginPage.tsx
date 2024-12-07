@@ -4,7 +4,7 @@ import { login as loginService, loginGoogle } from "../../services/auth";
 import { isSuccess } from "../../utils/response";
 import { authActions } from "../../stores/auth";
 import { toast } from "react-toastify";
-import { roles } from "../../config/config";
+import { ROLES } from "../../config/config";
 import { AxiosError } from "axios";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import Button from "../../components/elements/Button";
@@ -39,7 +39,7 @@ const LoginPage = () => {
             const { user, tokens } = data;
             dispatch(authActions.authenticate({ user, tokens }));
 
-            if (user.role === roles.MAKER) {
+            if (user.role === ROLES.MAKER) {
                 navigate("/home");
             }
         },

@@ -7,7 +7,7 @@ import MainLayout from "./components/layouts/MainLayout";
 import LoginPage from "./pages/authPage/LoginPage";
 import "react-toastify/dist/ReactToastify.css";
 import ProtectedRoute from "./components/routes/ProtectedRoute";
-import { roles } from "./config/config";
+import { ROLES } from "./config/config";
 import HomePage from "./pages/homePage/HomePage";
 import CreateTestPage from "./pages/createTestPage.tsx/CreateTestPage";
 import { GoogleOAuthProvider } from "@react-oauth/google";
@@ -19,8 +19,9 @@ import ViewTestPage from "./pages/viewTestPage/ViewTestPage";
 import TestsPage from "./pages/testsPage/TestsPage";
 import ChatPage from "./pages/chatPage/ChatPage";
 import ChatSocketProvider from "./pages/chatPage/components/ChatSocketContext";
+import queryClientConfig from "./config/queryClient";
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient(queryClientConfig);
 
 function App() {
     const user = useSelector((state: RootState) => state.auth.user);
@@ -43,7 +44,7 @@ function App() {
                     ],
                 },
                 {
-                    element: <ProtectedRoute allowedRoles={[roles.MAKER]} />,
+                    element: <ProtectedRoute allowedRoles={[ROLES.MAKER]} />,
                     children: [
                         {
                             path: "/tests/create",
@@ -58,7 +59,7 @@ function App() {
                 {
                     element: (
                         <ProtectedRoute
-                            allowedRoles={[roles.MAKER, roles.TAKER]}
+                            allowedRoles={[ROLES.MAKER, ROLES.TAKER]}
                         />
                     ),
                     children: [
@@ -73,7 +74,7 @@ function App() {
                         {
                             path: "/tests/:testId",
                             element:
-                                user?.role === roles.MAKER ? (
+                                user?.role === ROLES.MAKER ? (
                                     <ViewTestPage />
                                 ) : (
                                     <TakeTestPage />
@@ -90,7 +91,7 @@ function App() {
                     ],
                 },
                 {
-                    element: <ProtectedRoute allowedRoles={[roles.TAKER]} />,
+                    element: <ProtectedRoute allowedRoles={[ROLES.TAKER]} />,
                     children: [],
                 },
                 {

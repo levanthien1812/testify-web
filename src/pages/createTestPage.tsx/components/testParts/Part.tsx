@@ -1,74 +1,61 @@
-import React, { useMemo, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import React, { useEffect, useMemo } from "react";
 import { PartBodyItf, TestPartItf } from "../../../../types/types";
 import { useMutation } from "react-query";
 import { addPart, updatePart } from "../../../../services/test";
-import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import Button from "../../../../components/elements/Button";
 import Input from "../../../../components/elements/Input";
 import { useForm } from "react-hook-form";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../stores/rootState";
+import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
+import { TOAST_MESSAGES } from "../../../../config/constants/toasts";
+import { createTestActions } from "../../../../stores/createTest";
+import Accordion from "../../../../components/accordions/Accordion";
+import { useDispatch } from "react-redux";
+import { INITIAL_PART } from "../../../../config/constants/initialValues";
+import { pickFieldsFromObject } from "../../../../utils/object";
 
 const Part: React.FC<{
-    testId: string;
-    index: number;
-    part: TestPartItf | null;
-    onAfterUpdate: () => void;
-}> = ({ part, onAfterUpdate, testId, index }) => {
-    const [open, setOpen] = useState<boolean>(true);
-    const initialValues = useMemo(
-        () =>
-            !part
-                ? {
-                      name: "",
-                      order: index + 1,
-                      description: "",
-                      score: 0,
-                      num_questions: 0,
-                  }
-                : {
-                      name: part.name,
-                      order: part.order,
-                      description: part.description,
-                      score: part.score,
-                      num_questions: part.num_questions,
-                  },
-        [part]
-    );
+    part: TestPartItf;
+}> = ({ part }) => {
+    const { testId } = useSelector((state: RootState) => state.createTest);
+    const { saveTestParts, validate: validateParts } = createTestActions;
+    const dispatch = useDispatch();
 
     const { mutate: createPartMutate, isLoading: createPartLoading } =
         useMutation({
             mutationFn: async (partBody: PartBodyItf) =>
-                await addPart(testId, partBody),
-            mutationKey: ["add-part", { body: part }],
+                await addPart(testId!, partBody),
+            mutationKey: [MUTATION_KEYS.CREATE_PARTS, { body: part }],
             onSuccess: (data) => {
-                toast.success("Part added successfully");
-                onAfterUpdate();
-            },
-            onError: (err) => {
-                if (err instanceof AxiosError) {
-                    toast.error(err.response?.data.message);
-                }
+                console.log(data);
+                dispatch(
+                    saveTestParts({
+                        partOrder: part.order,
+                        partInfo: { id: data?.part?.id },
+                    })
+                );
+                dispatch(validateParts());
+                toast.success(TOAST_MESSAGES.PART_ADDED_SUCCESSFULLY);
             },
         });
 
     const { mutate: updatePartMutate, isLoading: updatePartLoading } =
         useMutation({
             mutationFn: async (partBody: PartBodyItf) =>
-                await updatePart(testId, part!._id, partBody),
+                await updatePart(
+                    testId!,
+                    part.id!,
+                    pickFieldsFromObject(partBody, INITIAL_PART)
+                ),
             mutationKey: [
-                "update-part",
-                { partId: part && part._id, body: part },
+                MUTATION_KEYS.UPDATE_PART,
+                { partId: part && part.id, body: part },
             ],
             onSuccess: (data) => {
-                toast.success("Part updated successfully");
-                onAfterUpdate();
-            },
-            onError: (err) => {
-                if (err instanceof AxiosError) {
-                    toast.error(err.response?.data.message);
-                }
+                dispatch(validateParts());
+                toast.success(TOAST_MESSAGES.PART_UPDATED_SUCCESSFULLY);
             },
         });
 
@@ -78,117 +65,107 @@ const Part: React.FC<{
         register,
         watch,
     } = useForm<PartBodyItf>({
-        defaultValues: initialValues,
+        defaultValues: part,
     });
 
     const onSubmit = (data: PartBodyItf) => {
-        if (!part) createPartMutate(data);
-        else updatePartMutate(data);
+        if (!part.id) createPartMutate(data);
+        else updatePartMutate(data as Pick<PartBodyItf, keyof PartBodyItf>);
     };
 
-    const order = watch("order");
+    const allValues = watch();
+
+    useEffect(() => {
+        dispatch(
+            saveTestParts({
+                partOrder: part.order,
+                partInfo: allValues,
+            })
+        );
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [JSON.stringify(allValues), saveTestParts, dispatch, part?.order]);
 
     return (
-        <div className="">
-            <div
-                className="flex justify-between items-center px-4 py-2 bg-gray-300 cursor-pointer"
-                onClick={() => setOpen((prev) => !prev)}
+        <Accordion viewData={{ title: { text: `Part ${part.order}` } }}>
+            <form
+                onSubmit={handleSubmit(onSubmit)}
+                className="border border-gray-300 px-4 py-4 space-y-3"
             >
-                <p className="text-lg">Part {order}</p>
-                <FontAwesomeIcon
-                    icon={faChevronRight}
-                    className={`text-sm transition-all ${
-                        open ? "rotate-90" : "rotate-0"
-                    }`}
-                />
-            </div>
-            {open && (
-                <form
-                    onSubmit={handleSubmit(onSubmit)}
-                    className="border border-gray-300 px-4 py-4 space-y-3"
-                >
-                    <div className="flex gap-4 items-end">
-                        <label htmlFor="name" className="w-1/5 shrink-0">
-                            Part name:{" "}
-                        </label>
-                        <Input
-                            {...register("name", {
-                                required: "Name is required",
-                            })}
-                            error={errors?.name && errors?.name.message}
-                        />
-                    </div>
-                    <div className="flex gap-4 items-end">
-                        <label htmlFor="description" className="w-1/5 shrink-0">
-                            Description:{" "}
-                        </label>
-                        <Input
-                            {...register("description", {
-                                required: "Description is required",
-                            })}
-                            error={
-                                errors?.description &&
-                                errors?.description.message
-                            }
-                        />
-                    </div>
-                    <div className="flex gap-4 items-end mt-4">
-                        <label htmlFor="score" className="w-1/5 shrink-0">
-                            Score:{" "}
-                        </label>
-                        <Input
-                            type="number"
-                            min={0}
-                            step={1}
-                            {...register("score", {
-                                required: "Score is required",
-                                min: {
-                                    value: 1,
-                                    message: "Score must be greater than 0",
-                                },
-                                valueAsNumber: true,
-                            })}
-                            error={errors?.score && errors?.score.message}
-                        />
-                        <label
-                            htmlFor="num_questions"
-                            className="w-1/5 shrink-0"
-                        >
-                            Num of questions:{" "}
-                        </label>
-                        <Input
-                            type="number"
-                            step={1}
-                            {...register("num_questions", {
-                                required: "Number of questions is required",
-                                min: {
-                                    value: 1,
-                                    message:
-                                        "Number of questions must be greater than 0",
-                                },
-                                valueAsNumber: true,
-                            })}
-                            error={
-                                errors?.num_questions &&
-                                errors?.num_questions.message
-                            }
-                        />
-                    </div>
+                <div className="flex gap-4 items-end">
+                    <label htmlFor="name" className="w-1/5 shrink-0">
+                        Part name:{" "}
+                    </label>
+                    <Input
+                        {...register("name", {
+                            required: "Name is required",
+                        })}
+                        error={errors?.name && errors?.name.message}
+                    />
+                </div>
+                <div className="flex gap-4 items-end">
+                    <label htmlFor="description" className="w-1/5 shrink-0">
+                        Description:{" "}
+                    </label>
+                    <Input
+                        {...register("description")}
+                        error={
+                            errors?.description && errors?.description.message
+                        }
+                    />
+                </div>
+                <div className="flex gap-4 items-end mt-4">
+                    <label htmlFor="score" className="w-1/5 shrink-0">
+                        Score:{" "}
+                    </label>
+                    <Input
+                        type="number"
+                        min={0}
+                        step={1}
+                        {...register("score", {
+                            required: "Score is required",
+                            min: {
+                                value: 1,
+                                message: "Score must be greater than 0",
+                            },
+                            valueAsNumber: true,
+                        })}
+                        error={errors?.score && errors?.score.message}
+                    />
+                    <label htmlFor="num_questions" className="w-1/5 shrink-0">
+                        Num of questions:{" "}
+                    </label>
+                    <Input
+                        type="number"
+                        step={1}
+                        {...register("num_questions", {
+                            required: "Number of questions is required",
+                            min: {
+                                value: 1,
+                                message:
+                                    "Number of questions must be greater than 0",
+                            },
+                            valueAsNumber: true,
+                        })}
+                        error={
+                            errors?.num_questions &&
+                            errors?.num_questions.message
+                        }
+                    />
+                </div>
 
-                    <div className="flex justify-end">
-                        <Button
-                            className="w-1/5"
-                            type="submit"
-                            disabled={createPartLoading || updatePartLoading}
-                        >
-                            {createPartLoading || updatePartLoading
-                                ? "Saving..."
-                                : "Save"}
-                        </Button>
-                    </div>
-                </form>
-            )}
-        </div>
+                <div className="flex justify-end">
+                    <Button
+                        className="w-1/5"
+                        type="submit"
+                        disabled={createPartLoading || updatePartLoading}
+                    >
+                        {createPartLoading || updatePartLoading
+                            ? "Saving..."
+                            : "Save"}
+                    </Button>
+                </div>
+            </form>
+        </Accordion>
     );
 };
 

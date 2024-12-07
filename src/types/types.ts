@@ -1,16 +1,16 @@
 import {
-    publicAnswersOptions,
-    questionTypes,
-    roles,
-    testLevels,
-    testStatus,
+    PUBLIC_ANSWERS_OPTIONS,
+    ROLES,
+    TEST_LEVEL,
+    TEST_STATUS,
 } from "../config/config";
+import { QUESTION_TYPE } from "../config/constants/tests";
 
 export interface userItf {
     username?: string;
     name: string;
     email: string;
-    role: (typeof roles)[keyof typeof roles];
+    role: (typeof ROLES)[keyof typeof ROLES];
     maker_id?: string;
     id: string;
     photo?: string;
@@ -58,23 +58,23 @@ export interface TestBodyItf {
     max_score: number;
     num_questions: number;
     num_parts: number;
-    level: (typeof testLevels)[keyof typeof testLevels];
+    level: (typeof TEST_LEVEL)[keyof typeof TEST_LEVEL];
     code: string;
     enable_close_time: boolean;
     close_time: string;
     share_option?: "restricted" | "anyone";
-    public_answers_option: (typeof publicAnswersOptions)[keyof typeof publicAnswersOptions];
+    public_answers_option: (typeof PUBLIC_ANSWERS_OPTIONS)[keyof typeof PUBLIC_ANSWERS_OPTIONS];
     public_answers_date: string;
 }
 export interface TestItf extends TestBodyItf {
-    _id: string;
+    id: string;
     parts: TestPartItf[];
     maker_id: string;
     taker_ids: string[] | userItf[];
     are_answers_provided: boolean;
     questions?: QuestionItf[];
     submissions_count?: number;
-    status: (typeof testStatus)[keyof typeof testStatus];
+    status: (typeof TEST_STATUS)[keyof typeof TEST_STATUS];
 }
 
 export interface PartBodyItf {
@@ -86,8 +86,8 @@ export interface PartBodyItf {
 }
 
 export interface TestPartItf extends PartBodyItf {
-    _id: string;
-    test_id: string;
+    id?: string;
+    test_id?: string;
     questions?: QuestionItf[];
 }
 
@@ -102,14 +102,13 @@ export interface MultipleChoiceQuestionBodyItf {
 
 export interface MultipleChoiceQuestionItf
     extends MultipleChoiceQuestionBodyItf {
-    _id: string;
+    id?: string;
     options: {
         text: string;
-        _id: string;
+        id?: string;
     }[];
     answer?: string[];
     explaination?: string;
-    images?: string[];
 }
 
 export interface FillGapsQuestionBodyItf {
@@ -118,7 +117,7 @@ export interface FillGapsQuestionBodyItf {
 }
 
 export interface FillGapsQuestionItf extends FillGapsQuestionBodyItf {
-    _id: string;
+    id?: string;
     answer?: string[];
     explaination?: string;
 }
@@ -134,13 +133,13 @@ export interface MatchingQuestionBodyItf {
 }
 
 export interface MatchingQuestionItf extends MatchingQuestionBodyItf {
-    _id: string;
+    id?: string;
     left_items: {
-        _id: string;
+        id: string;
         text: string;
     }[];
     right_items: {
-        _id: string;
+        id: string;
         text: string;
     }[];
     answer?: {
@@ -158,23 +157,21 @@ export interface ResponseQuestionBodyItf {
 }
 
 export interface ResponseQuestionItf extends ResponseQuestionBodyItf {
-    _id: string;
+    id?: string;
     answer?: string;
     explaination?: string;
 }
 
 export interface QuestionItf {
-    _id: string;
-    id: string;
+    id?: string;
     order: number;
     test_id: string;
     score: number;
-    part_number: number;
-    level: (typeof testLevels)[keyof typeof testLevels];
-    type: (typeof questionTypes)[keyof typeof questionTypes];
+    level: (typeof TEST_LEVEL)[keyof typeof TEST_LEVEL];
+    type: (typeof QUESTION_TYPE)[keyof typeof QUESTION_TYPE];
     part_id?: string;
-    answer?: AnswerItf; // user_answer
-    content:
+    answer?: AnswerItf | null; // user_answer
+    content?:
         | MultipleChoiceQuestionItf
         | FillGapsQuestionItf
         | MatchingQuestionItf
@@ -185,20 +182,19 @@ export type QuestionBodyContentItf =
     | MultipleChoiceQuestionBodyItf
     | FillGapsQuestionBodyItf
     | MatchingQuestionBodyItf
-    | ResponseQuestionBodyItf
-    | null;
+    | ResponseQuestionBodyItf;
 
 export interface QuestionBodyItf<T extends QuestionBodyContentItf> {
     score: number;
-    level: (typeof testLevels)[keyof typeof testLevels];
-    type: (typeof questionTypes)[keyof typeof questionTypes];
+    level: (typeof TEST_LEVEL)[keyof typeof TEST_LEVEL];
+    type: (typeof QUESTION_TYPE)[keyof typeof QUESTION_TYPE];
     order: number;
     part_id?: string;
     content: T;
 }
 
 export type AnswerItf = {
-    _id: string;
+    id: string;
     date: Date;
     content:
         | MultipleChoicesAnswerItf
@@ -213,7 +209,7 @@ export interface MultipleChoicesAnswerBodyItf {
 }
 
 export interface MultipleChoicesAnswerItf extends MultipleChoicesAnswerBodyItf {
-    _id: string;
+    id: string;
     answer_id?: string;
 }
 
@@ -222,7 +218,7 @@ export interface FillGapsAnswerBodyItf {
 }
 
 export interface FillGapsAnswerItf extends FillGapsAnswerBodyItf {
-    _id: string;
+    id: string;
     answer_id?: string;
 }
 
@@ -231,7 +227,7 @@ export interface MatchingAnswerBodyItf {
 }
 
 export interface MatchingAnswerItf extends MatchingAnswerBodyItf {
-    _id: string;
+    id: string;
     answer_id?: string;
 }
 
@@ -240,7 +236,7 @@ export interface ResponseAnswerBodyItf {
 }
 
 export interface ResponseAnswerItf extends ResponseAnswerBodyItf {
-    _id: string;
+    id: string;
     answer_id?: string;
 }
 
@@ -256,8 +252,8 @@ export interface TakerBodyItf {
 }
 
 export interface TakerItf extends TakerBodyItf {
-    id: string;
-    maker_ids: string[];
+    id?: string;
+    maker_ids?: string[];
 }
 
 export interface UserMultipleChoicesAnswerBodyItf {
@@ -287,7 +283,7 @@ export type UserAnswer =
     | UserResponseAnswerBodyItf;
 
 export interface SubmissionItf {
-    _id: string;
+    id: string;
     taker_id: string | userItf;
     test_id: string;
     score?: number;
@@ -306,7 +302,7 @@ export type FilterState = {
     order?: string;
     date_from?: Date;
     date_to?: Date;
-    status?: (typeof testStatus)[keyof typeof testStatus];
+    status?: (typeof TEST_STATUS)[keyof typeof TEST_STATUS];
 };
 
 export type TestRequestFilter = Pick<
@@ -326,7 +322,7 @@ export interface ChatBodyItf {
 }
 
 export interface ChatItf {
-    _id: string;
+    id: string;
     members: {
         member: userItf;
         nick_name: string | null;
@@ -338,6 +334,8 @@ export interface ChatItf {
         background_color: string;
         messages_color: string;
     };
+    unread_messages?: MessageItf[];
+    last_message: MessageItf | null;
     created_at: Date;
     updated_at: Date;
 }
@@ -348,7 +346,7 @@ export interface MessageBody {
 }
 
 export interface MessageItf {
-    _id: string;
+    id: string;
     text: string;
     sender_id: string;
     chat_id: string;

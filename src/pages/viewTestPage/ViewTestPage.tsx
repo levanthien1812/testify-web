@@ -137,12 +137,7 @@ const ViewTestPage = () => {
                 >
                     <ModalHeader title="Provide Answers" />
                     <ModalBody>
-                        <TestAnswers
-                            onAfterUpdate={() => refetchTest()}
-                            test={test}
-                            onBack={() => {}}
-                            onNext={() => {}}
-                        />
+                        <TestAnswers />
                     </ModalBody>
                     <ModalFooter></ModalFooter>
                 </Modal>

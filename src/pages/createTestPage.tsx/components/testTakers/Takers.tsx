@@ -4,19 +4,17 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import AddTakers from "./AddTakers";
 import { TestItf, userItf } from "../../../../types/types";
 import Button from "../../../../components/elements/Button";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../stores/rootState";
 
-type TakersProps = {
-    test: TestItf;
-    onAfterUpdate: () => void;
-};
-
-const Takers = ({ test, onAfterUpdate }: TakersProps) => {
+const Takers = () => {
     const [isAddingTakers, setIsAddingTakers] = useState<boolean>(false);
+    const { testTakers } = useSelector((state: RootState) => state.createTest);
 
     return (
         <div className="mt-4">
             <div className="space-y-2">
-                {test.taker_ids!.map((taker, index) => (
+                {testTakers!.map((taker, index) => (
                     <div
                         className="px-4 py-2 bg-orange-100 flex justify-between items-center"
                         key={Math.random()}
@@ -60,11 +58,7 @@ const Takers = ({ test, onAfterUpdate }: TakersProps) => {
                 </Button>
             </div>
             {isAddingTakers && (
-                <AddTakers
-                    onClose={() => setIsAddingTakers(false)}
-                    testId={test._id}
-                    onAfterUpdate={onAfterUpdate}
-                />
+                <AddTakers onClose={() => setIsAddingTakers(false)} />
             )}
         </div>
     );

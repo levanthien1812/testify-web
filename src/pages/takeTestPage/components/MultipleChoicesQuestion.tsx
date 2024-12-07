@@ -34,17 +34,17 @@ const MultipleChoicesQuestion = ({
                 {content.options.map((option) => (
                     <div
                         className="flex gap-3 items-center ps-2 hover:bg-gray-200 cursor-pointer"
-                        key={option._id}
+                        key={option.id}
                     >
                         <input
                             type="radio"
-                            name={content._id}
-                            value={option._id}
-                            id={option._id}
+                            name={content.id}
+                            value={option.id}
+                            id={option.id}
                             onChange={handleChangeRadio}
-                            checked={optionChosen === option._id}
+                            checked={optionChosen === option.id}
                         />
-                        <label htmlFor={option._id} className="grow">
+                        <label htmlFor={option.id} className="grow">
                             {option.text}
                         </label>
                     </div>

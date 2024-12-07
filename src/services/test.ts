@@ -1,5 +1,5 @@
 import { instance } from "../config/axios";
-import { questionTypes } from "../config/config";
+import { QUESTION_TYPE } from "../config/constants/tests";
 import {
     AnswerBody,
     AnswerItf,
@@ -140,7 +140,7 @@ export const saveQuestion = async (
             }
         }
 
-        if (questionBody.type == questionTypes.MULITPLE_CHOICES) {
+        if (questionBody.type === QUESTION_TYPE.MULTIPLE_CHOICES) {
             const content =
                 questionBody.content as MultipleChoiceQuestionBodyItf;
 

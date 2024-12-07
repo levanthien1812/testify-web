@@ -47,7 +47,7 @@ const MatchingAnswer = ({ content, userAnswer }: MatchingAnswerProps) => {
                     {content.left_items.map((item) => (
                         <DraggableItem
                             item={item}
-                            key={item._id}
+                            key={item.id}
                             onDrop={() => {}}
                             part="left"
                             draggable={false}
@@ -58,7 +58,7 @@ const MatchingAnswer = ({ content, userAnswer }: MatchingAnswerProps) => {
                     {content.right_items.map((item) => (
                         <DraggableItem
                             item={item}
-                            key={item._id}
+                            key={item.id}
                             onDrop={() => {}}
                             part="right"
                             draggable={false}
@@ -85,7 +85,7 @@ const MatchingAnswer = ({ content, userAnswer }: MatchingAnswerProps) => {
                                 {
                                     content.left_items.find(
                                         (left_item) =>
-                                            left_item._id === matching.left
+                                            left_item.id === matching.left
                                     )?.text
                                 }
                             </span>
@@ -100,7 +100,7 @@ const MatchingAnswer = ({ content, userAnswer }: MatchingAnswerProps) => {
                                 {
                                     content.right_items.find(
                                         (right_item) =>
-                                            right_item._id === matching.right
+                                            right_item.id === matching.right
                                     )?.text
                                 }
                             </span>

@@ -1,4 +1,4 @@
-import { ChangeEvent, useCallback, useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     FillGapsQuestionBodyItf,
     MatchingQuestionBodyItf,
@@ -11,93 +11,39 @@ import {
 } from "../../../../types/types";
 import Modal, {
     ModalBody,
-    ModalFooter,
     ModalHeader,
 } from "../../../../components/modals/Modal";
-import { questionTypes, testLevels } from "../../../../config/config";
 import MulitpleChoiceQuestion from "./MultipleChoicesQuestion";
 import FillGapsQuestion from "./FillGapsQuestion";
 import MatchingQuestion from "./MatchingQuestion";
 import { useMutation } from "react-query";
 import { saveQuestion } from "../../../../services/test";
 import { toast } from "react-toastify";
-import { AxiosError } from "axios";
-import { questionTypeToQuestionSchema } from "../../../../utils/mapping";
 import ResponseQuestion from "./ResponseQuestion";
 import Button from "../../../../components/elements/Button";
 import Input from "../../../../components/elements/Input";
 import Select from "../../../../components/elements/Select";
 import { Control, useForm, UseFormRegister } from "react-hook-form";
+import { INITIAL_QUESTION } from "../../../../config/constants/initialValues";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../stores/rootState";
+import { createTestActions } from "../../../../stores/createTest";
+import { TOAST_MESSAGES } from "../../../../config/constants/toasts";
+import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
+import { useDispatch } from "react-redux";
+import { TEST_LEVEL } from "../../../../config/config";
+import { QUESTION_TYPE } from "../../../../config/constants/tests";
 
 type QuestionProps = {
-    question: QuestionItf | null;
+    question: QuestionItf;
     part?: TestPartItf;
-    index: number;
-    testId: string;
-    onAfterUpdate: () => void;
 };
 
-const Question = ({
-    question,
-    onAfterUpdate,
-    testId,
-    part,
-    index,
-}: QuestionProps) => {
+const Question = ({ question, part }: QuestionProps) => {
     const [open, setOpen] = useState<boolean>(false);
-
-    const getInitialContent = useCallback(
-        (questionType: (typeof questionTypes)[keyof typeof questionTypes]) => {
-            switch (questionType) {
-                case questionTypes.MULITPLE_CHOICES:
-                    return {
-                        allow_multiple: false,
-                        options: [{ text: "" }, { text: "" }],
-                        text: "",
-                        images: null,
-                    };
-                case questionTypes.FILL_GAPS:
-                    return {
-                        text: "",
-                        num_gaps: 1,
-                    };
-                case questionTypes.MATCHING:
-                    return {
-                        text: "",
-                        left_items: [{ text: "" }, { text: "" }],
-                        right_items: [{ text: "" }, { text: "" }],
-                    };
-                case questionTypes.RESPONSE:
-                    return {
-                        text: "",
-                        min_length: 1,
-                        max_length: 1,
-                    };
-            }
-        },
-        []
-    );
-
-    const initialValues = useMemo(() => {
-        const shared = {
-            score: 1,
-            level: testLevels.NONE,
-            type: question ? question.type : questionTypes.MULITPLE_CHOICES,
-            content: getInitialContent(
-                question ? question.type : questionTypes.MULITPLE_CHOICES
-            ),
-            order: index + 1,
-        };
-        if (question) {
-            return question;
-        }
-        if (!part) return shared;
-
-        return {
-            ...shared,
-            part_id: part._id,
-        };
-    }, [question, part]);
+    const { testId } = useSelector((state: RootState) => state.createTest);
+    const { saveTestQuestions } = createTestActions;
+    const dispatch = useDispatch();
 
     const {
         handleSubmit,
@@ -107,62 +53,37 @@ const Question = ({
         watch,
         control,
     } = useForm<QuestionBodyItf<QuestionBodyContentItf>>({
-        defaultValues: initialValues,
+        defaultValues: question,
     });
 
-    const content = watch("content");
-    const type = watch("type");
-    const order = watch("order");
+    const allValues = watch();
 
     useEffect(() => {
-        if (question && question.content && question.type === type) {
-            setValue("content", question.content);
-            return;
-        }
-
-        switch (type) {
-            case questionTypes.MULITPLE_CHOICES:
-                setValue(
-                    "content",
-                    getInitialContent(type) as MultipleChoiceQuestionBodyItf
-                );
-                break;
-            case questionTypes.FILL_GAPS:
-                setValue(
-                    "content",
-                    getInitialContent(type) as FillGapsQuestionBodyItf
-                );
-                break;
-            case questionTypes.MATCHING:
-                setValue(
-                    "content",
-                    getInitialContent(type) as MatchingQuestionBodyItf
-                );
-                break;
-            case questionTypes.RESPONSE:
-                setValue(
-                    "content",
-                    getInitialContent(type) as ResponseQuestionBodyItf
-                );
-                break;
-        }
-    }, [type]);
+        dispatch(
+            saveTestQuestions({
+                partId: part?.id,
+                questionOrder: question.order,
+                questionInfo: allValues,
+            })
+        );
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [
+        JSON.stringify(allValues),
+        part?.id,
+        question?.order,
+        saveTestQuestions,
+        dispatch,
+    ]);
 
     const { mutate: createQuestionMutate, isLoading: createQuestionLoading } =
         useMutation({
             mutationFn: async (
                 questionBody: QuestionBodyItf<QuestionBodyContentItf>
-            ) => await saveQuestion(testId, questionBody),
-            mutationKey: ["create-question"],
+            ) => await saveQuestion(testId!, questionBody),
+            mutationKey: [MUTATION_KEYS.CREATE_QUESTION],
             onSuccess: (data) => {
-                toast.success("Create question successfuly");
+                toast.success(TOAST_MESSAGES.CREATE_QUESTION_SUCCESSFULLY);
                 setOpen(false);
-                onAfterUpdate();
-            },
-            onError: (err) => {
-                if (err instanceof AxiosError) {
-                    toast.error(err.response?.data.message);
-                }
             },
         });
 
@@ -170,17 +91,14 @@ const Question = ({
         useMutation({
             mutationFn: async (
                 questionBody: QuestionBodyItf<QuestionBodyContentItf>
-            ) => await saveQuestion(testId, questionBody, question!._id),
-            mutationKey: ["update-question", { questionId: question?._id }],
+            ) => await saveQuestion(testId!, questionBody, question!.id),
+            mutationKey: [
+                MUTATION_KEYS.UPDATE_QUESTION,
+                { questionId: question?.id },
+            ],
             onSuccess: (data) => {
-                toast.success("Update question successfuly");
+                toast.success(TOAST_MESSAGES.UPDATE_QUESTION_SUCCESSFULLY);
                 setOpen(false);
-                onAfterUpdate();
-            },
-            onError: (err) => {
-                if (err instanceof AxiosError) {
-                    toast.error(err.response?.data.message);
-                }
             },
         });
 
@@ -200,11 +118,11 @@ const Question = ({
                 }`}
                 onClick={() => setOpen(true)}
             >
-                Question {order}
+                Question {question?.order}
             </div>
             {open && (
                 <Modal onClose={() => setOpen(false)}>
-                    <ModalHeader title={`Question ${order}`} />
+                    <ModalHeader title={`Question ${question?.order}`} />
                     <ModalBody>
                         <form
                             onSubmit={handleSubmit(onSubmit)}
@@ -238,7 +156,7 @@ const Question = ({
                                             className="grow capitalize"
                                             {...register("level")}
                                             options={Object.values(
-                                                testLevels
+                                                TEST_LEVEL
                                             ).map((level) => ({
                                                 label: level,
                                                 value: level,
@@ -252,7 +170,6 @@ const Question = ({
                                             {...register("type", {
                                                 required: "Type is required",
                                                 onChange(event) {
-                                                    setValue("content", null);
                                                     setValue(
                                                         "type",
                                                         event.target.value
@@ -260,7 +177,7 @@ const Question = ({
                                                 },
                                             })}
                                             options={Object.values(
-                                                questionTypes
+                                                QUESTION_TYPE
                                             ).map((type) => ({
                                                 label: type,
                                                 value: type,
@@ -270,12 +187,12 @@ const Question = ({
                                 </div>
                                 <div className="border-l border-gray-300 border-dashed"></div>
                                 <div className="grow overflow-hidden">
-                                    {content &&
-                                        type ===
-                                            questionTypes.MULITPLE_CHOICES && (
+                                    {allValues?.content &&
+                                        allValues?.type ===
+                                            QUESTION_TYPE.MULTIPLE_CHOICES && (
                                             <MulitpleChoiceQuestion
                                                 content={
-                                                    content as MultipleChoiceQuestionBodyItf
+                                                    allValues?.content as MultipleChoiceQuestionBodyItf
                                                 }
                                                 control={
                                                     control as Control<
@@ -290,11 +207,12 @@ const Question = ({
                                                 }
                                             />
                                         )}
-                                    {content &&
-                                        type === questionTypes.FILL_GAPS && (
+                                    {allValues?.content &&
+                                        allValues?.type ===
+                                            QUESTION_TYPE.FILL_IN_THE_GAPS && (
                                             <FillGapsQuestion
                                                 content={
-                                                    content as FillGapsQuestionBodyItf
+                                                    allValues?.content as FillGapsQuestionBodyItf
                                                 }
                                                 control={
                                                     control as Control<
@@ -309,11 +227,12 @@ const Question = ({
                                                 }
                                             />
                                         )}
-                                    {content &&
-                                        type === questionTypes.MATCHING && (
+                                    {allValues?.content &&
+                                        allValues?.type ===
+                                            QUESTION_TYPE.MATCHING && (
                                             <MatchingQuestion
                                                 content={
-                                                    content as MatchingQuestionBodyItf
+                                                    allValues?.content as MatchingQuestionBodyItf
                                                 }
                                                 control={
                                                     control as Control<
@@ -328,11 +247,12 @@ const Question = ({
                                                 }
                                             />
                                         )}
-                                    {content &&
-                                        type === questionTypes.RESPONSE && (
+                                    {allValues?.content &&
+                                        allValues?.type ===
+                                            QUESTION_TYPE.RESPONSE && (
                                             <ResponseQuestion
                                                 content={
-                                                    content as ResponseQuestionBodyItf
+                                                    allValues?.content as ResponseQuestionBodyItf
                                                 }
                                                 control={
                                                     control as Control<

@@ -1,5 +1,9 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import { AnswerBody, MultipleChoiceQuestionItf, MultipleChoicesAnswerBodyItf } from "../../../../types/types";
+import {
+    AnswerBody,
+    MultipleChoiceQuestionItf,
+    MultipleChoicesAnswerBodyItf,
+} from "../../../../types/types";
 import { formatImageUrl } from "../../../../utils/formatImageUrl";
 import { useForm } from "react-hook-form";
 
@@ -49,7 +53,7 @@ const MultipleChoicesAnswer = ({
                             : "grid-cols-1"
                     } gap-2 px-[10%] mt-2 justify-items-center`}
                 >
-                    {content.images.map((image) => (
+                    {(content.images as string[]).map((image) => (
                         <div key={image} className="relative object-cover">
                             <img
                                 src={formatImageUrl(image)}
@@ -65,17 +69,17 @@ const MultipleChoicesAnswer = ({
                 {content.options.map((option) => (
                     <div
                         className="flex gap-3 items-center ps-2 hover:bg-gray-200 cursor-pointer"
-                        key={option._id}
+                        key={option.id}
                     >
                         <input
                             type="radio"
-                            name={content._id}
-                            value={option._id}
-                            id={option._id}
+                            name={content.id}
+                            value={option.id}
+                            id={option.id}
                             onChange={handleChangeRadio}
-                            checked={optionChosen === option._id}
+                            checked={optionChosen === option.id}
                         />
-                        <label htmlFor={option._id} className="grow">
+                        <label htmlFor={option.id} className="grow">
                             {option.text}
                         </label>
                     </div>

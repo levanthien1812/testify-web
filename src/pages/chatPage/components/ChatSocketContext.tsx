@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { io, Socket } from "socket.io-client";
 import { RootState } from "../../../stores/rootState";
+import { ChatItf } from "../../../types/types";
 
 interface ChatSocketContextItf {
     socket: Socket | null;
@@ -9,7 +10,8 @@ interface ChatSocketContextItf {
         user_id: string;
         socket_id: string;
     }[];
-    currentChat: string | null;
+    currentChat: ChatItf | null;
+    setCurrentChat: (chat: ChatItf) => void;
 }
 
 const ChatSocketContext = React.createContext<ChatSocketContextItf | undefined>(
@@ -24,7 +26,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
             socket_id: string;
         }[]
     >([]);
-    const [currentChat, setCurrentChat] = React.useState<string | null>(null);
+    const [currentChat, setCurrentChat] = React.useState<ChatItf | null>(null);
 
     useEffect(() => {
         const socket = io(process.env.REACT_APP_API_HOST!);
@@ -47,9 +49,18 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
         });
     }, [socket]);
 
+    const handleSetCurrentChat = (chat: ChatItf) => {
+        setCurrentChat(chat);
+    };
+
     return (
         <ChatSocketContext.Provider
-            value={{ socket, onlineUsers, currentChat }}
+            value={{
+                socket,
+                onlineUsers,
+                currentChat,
+                setCurrentChat: handleSetCurrentChat,
+            }}
         >
             {children}
         </ChatSocketContext.Provider>

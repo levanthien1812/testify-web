@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 
 const DraggableItem: React.FC<{
-    item: { _id: string; text: string };
+    item: { id: string; text: string };
     onDrop: (item: { left: string; right: string }) => void;
     part: "left" | "right";
     draggable: boolean;
@@ -11,7 +11,7 @@ const DraggableItem: React.FC<{
     const [dragOver, setDragOver] = useState(false);
 
     const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
-        e.dataTransfer.setData("source_text", item._id);
+        e.dataTransfer.setData("source_text", item.id);
         e.dataTransfer.setData("source_part", part);
         setDragStart(true);
     };
@@ -39,9 +39,9 @@ const DraggableItem: React.FC<{
 
         if (part !== sourcePart) {
             if (part === "left") {
-                onDrop({ left: item._id, right: sourceText });
+                onDrop({ left: item.id, right: sourceText });
             } else {
-                onDrop({ left: sourceText, right: item._id });
+                onDrop({ left: sourceText, right: item.id });
             }
         }
 

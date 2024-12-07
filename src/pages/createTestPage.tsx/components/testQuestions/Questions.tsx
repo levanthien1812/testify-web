@@ -1,48 +1,39 @@
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useState } from "react";
-import {
-    QuestionBodyItf,
-    QuestionItf,
-    TestPartItf,
-} from "../../../../types/types";
+import React, { useMemo } from "react";
+import { QuestionItf, TestPartItf } from "../../../../types/types";
 import Question from "./Question";
 import Answer from "../testAnswers/Answer";
+import Accordion from "../../../../components/accordions/Accordion";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../stores/rootState";
 
 const Questions: React.FC<{
     part?: TestPartItf;
-    testId?: string;
-    questions: (QuestionItf | null)[];
-    onAfterUpdate: () => void;
     withAnswer?: boolean;
-}> = ({ part, questions, onAfterUpdate, testId, withAnswer = false }) => {
-    const [open, setOpen] = useState<boolean>(true);
+}> = ({ part, withAnswer = false }) => {
+    const { testQuestions, testId } = useSelector(
+        (state: RootState) => state.createTest
+    );
+    const questions = useMemo(() => {
+        if (part) {
+            return part.questions;
+        } else {
+            return testQuestions;
+        }
+    }, [part, testQuestions]);
 
     return (
         <>
             {part && (
-                <div className="border border-gray-300 ">
-                    <div
-                        className="flex justify-between items-center px-4 py-2 bg-gray-300 cursor-pointer"
-                        onClick={() => setOpen((prev) => !prev)}
-                    >
-                        <p className="text-lg ">
-                            <span className="uppercase">
-                                Part {part.order}: {part.name}{" "}
-                            </span>
-                            <span className="text-gray-500">
-                                {" "}
-                                | Score: {part.score} | Questions:{" "}
-                                {part.num_questions}
-                            </span>
-                        </p>
-                        <FontAwesomeIcon
-                            icon={faChevronRight}
-                            className={`text-sm transition-all ${
-                                open ? "rotate-90" : "rotate-0"
-                            }`}
-                        />
-                    </div>
+                <Accordion
+                    viewData={{
+                        title: {
+                            text: `Part ${part.order}: ${part.name}`,
+                            description: {
+                                text: `Score: ${part.score} | Questions: ${part.num_questions}`,
+                            },
+                        },
+                    }}
+                >
                     <div
                         className={`px-4 py-4 ${
                             !withAnswer ? "grid grid-cols-4 gap-2" : "space-y-2"
@@ -53,35 +44,26 @@ const Questions: React.FC<{
                             questions.map((question, index) =>
                                 !withAnswer ? (
                                     <Question
-                                        testId={part.test_id!}
                                         question={question}
                                         part={part}
                                         key={index}
-                                        index={index}
-                                        onAfterUpdate={onAfterUpdate}
                                     />
                                 ) : (
                                     <Answer
                                         question={question as QuestionItf}
                                         key={question!.content?.text}
-                                        onAfterUpdate={onAfterUpdate}
                                     />
                                 )
                             )}
                     </div>
-                </div>
+                </Accordion>
             )}
             {!part && (
                 <div className="px-4 py-4 grid grid-cols-4 gap-2">
-                    {questions.map((question, index) => (
-                        <Question
-                            question={question}
-                            index={index}
-                            testId={testId!}
-                            key={index}
-                            onAfterUpdate={onAfterUpdate}
-                        />
-                    ))}{" "}
+                    {questions &&
+                        questions.map((question, index) => (
+                            <Question question={question} key={index} />
+                        ))}{" "}
                 </div>
             )}
         </>

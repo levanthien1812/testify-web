@@ -15,12 +15,9 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../stores/rootState";
 
 const ChatPage = () => {
-    const [selectedChat, setSelectedChat] = React.useState<ChatItf | null>(
-        null
-    );
     const [isAddingChat, setIsAddingChat] = React.useState(false);
     const [openInfo, setOpenInfo] = useState(false);
-    const { socket } = useChatSocket();
+    const { socket, currentChat } = useChatSocket();
     const user = useSelector((state: RootState) => state.auth.user);
 
     const {
@@ -61,29 +58,24 @@ const ChatPage = () => {
                             No chats yet
                         </p>
                     )}
-                    {chats && chats.length > 0 && (
-                        <Chats
-                            chats={chats}
-                            setSelectedChat={setSelectedChat}
-                        />
-                    )}
+                    {chats && chats.length > 0 && <Chats chats={chats} />}
                 </div>
             </div>
 
-            {!selectedChat && (
+            {!currentChat && (
                 <p className="text-center mt-8 text-gray-500 text-xl grow">
                     Select a chat to start chatting
                 </p>
             )}
-            {selectedChat && (
+            {currentChat && (
                 <SelectedChat
-                    chat={selectedChat}
+                    chat={currentChat}
                     openInfo={openInfo}
                     setOpenInfo={setOpenInfo}
                 />
             )}
 
-            {openInfo && selectedChat && <ChatInfo chat={selectedChat} />}
+            {openInfo && currentChat && <ChatInfo chat={currentChat} />}
 
             {isAddingChat && (
                 <AddChat

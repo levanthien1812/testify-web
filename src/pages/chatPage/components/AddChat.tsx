@@ -12,7 +12,7 @@ import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import TakersChoser from "../../createTestPage.tsx/components/testTakers/TakersChoser";
 import { createChats } from "../../../services/chat";
-import { chatOptions } from "../../../config/config";
+import { CHAT_OPTIONS } from "../../../config/config";
 
 const AddChat = ({
     onClose,
@@ -68,18 +68,14 @@ const AddChat = ({
                     <p className="text-center text-gray-500">Loading...</p>
                 )}
                 {takers && (
-                    <TakersChoser
-                        takers={takers}
-                        onAfterSelect={handleAfterSelect}
-                        label="Select member to create chat with"
-                    />
+                    <TakersChoser label="Select member to create chat with" />
                 )}
             </ModalBody>
             <ModalFooter>
-                <Button onClick={() => mutate(chatOptions.GROUP)}>
+                <Button onClick={() => mutate(CHAT_OPTIONS.GROUP)}>
                     Add group
                 </Button>
-                <Button onClick={() => mutate(chatOptions.INDIVIDUAL)}>
+                <Button onClick={() => mutate(CHAT_OPTIONS.INDIVIDUAL)}>
                     Add individual
                 </Button>
             </ModalFooter>

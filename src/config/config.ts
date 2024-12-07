@@ -1,54 +1,57 @@
-export const roles = {
+import { QUESTION_TYPE } from "./constants/tests";
+
+export const ROLES = {
     TAKER: "taker",
     MAKER: "maker",
     ADMIN: "admin",
 };
 
-export const testLevels = {
-    NONE: "none",
-    EASY: "easy",
-    MEDIUM: "medium",
-    HARD: "hard",
-    VERY_HARD: "very hard",
+export const TEST_LEVEL = {
+    NONE: "NONE",
+    EASY: "EASY",
+    MEDIUM: "MEDIUM",
+    HARD: "HARD",
+    VERY_HARD: "VERY_HARD",
 };
 
-export const questionTypes = {
-    MULITPLE_CHOICES: "multiple choices",
-    FILL_GAPS: "fill in the gaps",
-    MATCHING: "matching",
-    RESPONSE: "response",
+export const QUESTION_LEVEL = {
+    NONE: "NONE",
+    EASY: "EASY",
+    MEDIUM: "MEDIUM",
+    HARD: "HARD",
+    VERY_HARD: "VERY_HARD",
 };
 
-export const testStatus = {
-    DRAFT: "draft",
-    PUBLISHABLE: "publishable",
-    PUBLISHED: "published",
-    OPENED: "opened",
-    STARTED: "started",
-    ENDED: "ended",
-    CLOSED: "closed",
+export const TEST_STATUS = {
+    DRAFT: "DRAFT",
+    PUBLISHABLE: "PUBLISHABLE",
+    PUBLISHED: "PUBLISHED",
+    OPENED: "OPENED",
+    STARTED: "STARTED",
+    ENDED: "ENDED",
+    CLOSED: "CLOSED",
 };
 
-export const publicAnswersOptions = {
-    AFTER_TAKER_SUBMISSION: "after taker's submission",
-    AFTER_CLOSE_TIME: "after test's close time",
-    SPECIFIC_DATE: "specific date",
+export const PUBLIC_ANSWERS_OPTIONS = {
+    AFTER_TAKER_SUBMISSION: "AFTER_TAKER_SUBMISSION",
+    AFTER_CLOSE_TIME: "AFTER_CLOSE_TIME",
+    SPECIFIC_DATE: "SPECIFIC_DATE",
 };
 
-export const autoScoreTypes = [
-    questionTypes.FILL_GAPS,
-    questionTypes.MATCHING,
-    questionTypes.MULITPLE_CHOICES,
+export const AUTO_SCORE_TYPES = [
+    QUESTION_TYPE.FILL_IN_THE_GAPS,
+    QUESTION_TYPE.MATCHING,
+    QUESTION_TYPE.MULTIPLE_CHOICES,
 ];
 
-export const manualScoreTypes = [questionTypes.RESPONSE];
+export const MANUAL_SCORE_TYPES = [QUESTION_TYPE.RESPONSE];
 
-export const shareOptions = {
-    ANYONE: "anyone",
-    RESTRICTED: "restricted",
-};
+export const SHARE_OPTIONS = {
+    ANYONE: "ANYONE",
+    RESTRICTED: "RESTRICTED",
+} as const;
 
-export const chatOptions = {
-    INDIVIDUAL: "individual",
-    GROUP: "group",
+export const CHAT_OPTIONS = {
+    INDIVIDUAL: "INDIVIDUAL",
+    GROUP: "GROUP",
 };
