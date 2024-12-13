@@ -27,11 +27,9 @@ import LoadingWrapper from "../../components/wrappers/LoadingWrapper";
 const CreateTestPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const stepParam = searchParams.get("step");
-    const { currentStep, steps } = useSelector(
-        (state: RootState) => state.createTest
-    );
+    const { currentStep } = useSelector((state: RootState) => state.createTest);
     const navigate = useNavigate();
-    const { setTestFromAPI, setStep } = createTestActions;
+    const { setTestFromAPI, setStep, reset } = createTestActions;
     const dispatch = useDispatch();
 
     const { testId: testIdParam } = useParams();
@@ -81,6 +79,12 @@ const CreateTestPage = () => {
             dispatch(setStep(CREATE_TEST_STEPS.TEST_INFORMATION));
         }
     }, [stepParam, dispatch, setStep]);
+
+    useEffect(() => {
+        return () => {
+            dispatch(reset());
+        };
+    }, [dispatch, reset]);
 
     return (
         <LoadingWrapper

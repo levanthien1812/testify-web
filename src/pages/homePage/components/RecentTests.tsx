@@ -16,6 +16,10 @@ const RecentTests = () => {
         },
     });
 
+    const handleClickCreateTestBtn = () => {
+        navigate("/tests/create");
+    };
+
     return (
         <div>
             <div className="flex justify-between items-end">
@@ -24,7 +28,7 @@ const RecentTests = () => {
                     <Button
                         size="sm"
                         className="ms-3"
-                        onClick={() => navigate("/tests/create")}
+                        onClick={handleClickCreateTestBtn}
                     >
                         Create test
                     </Button>

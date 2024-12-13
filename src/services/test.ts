@@ -129,7 +129,6 @@ export const saveQuestion = async (
     questionId?: string
 ) => {
     try {
-        console.log(questionBody);
         const formData = new FormData();
 
         for (const [key, value] of Object.entries(questionBody)) {

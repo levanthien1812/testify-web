@@ -10,6 +10,8 @@ import {
 } from "../config/constants/initialValues";
 import { CREATE_TEST_STEPS, QUESTION_TYPE } from "../config/constants/tests";
 import { QuestionItf, TakerItf, TestPartItf } from "../types/types";
+import { pickFieldsFromObject } from "../utils/object";
+import { getInitialQuestionContent } from "../utils/mapping";
 
 const createTestSlice = createSlice({
     initialState: INITIAL_CREATE_TEST_CONTEXT,
@@ -87,9 +89,10 @@ const createTestSlice = createSlice({
             if (action.payload?.testId) state.testId = action.payload.testId;
         },
         initializeTestParts(state) {
-            const countProvidedParts = state.testParts.filter(
-                (part) => part.id
-            ).length;
+            console.log(state);
+            const countProvidedParts = state?.testParts?.filter(
+                (part) => part?.id
+            )?.length;
             if (state.numParts > 1 && countProvidedParts === 0) {
                 state.testParts = [...Array(state?.numParts)].map(
                     (item, index) => ({ ...INITIAL_PART, order: index + 1 })
@@ -123,18 +126,35 @@ const createTestSlice = createSlice({
             };
 
             // Initialize part questions
+            const numQuestions = action.payload.partInfo?.num_questions;
+            const partQuestions = state.testParts[partIndex].questions;
             if (
-                action.payload.partInfo?.num_questions &&
-                state?.testQuestions?.length === 0 &&
-                (state.testParts[partIndex]?.questions?.length === 0 ||
-                    !state.testParts[partIndex]?.questions)
+                numQuestions &&
+                (!state.testQuestions || state?.testQuestions?.length === 0)
             ) {
-                state.testParts[partIndex].questions = [
-                    ...Array(action.payload.partInfo?.num_questions),
-                ].map((item, index) => ({
-                    ...INITIAL_QUESTION,
-                    order: index + 1,
-                }));
+                if (partQuestions?.length === 0 || !partQuestions) {
+                    state.testParts[partIndex].questions = [
+                        ...Array(numQuestions),
+                    ].map((item, index) => ({
+                        ...INITIAL_QUESTION,
+                        order: index + 1,
+                    }));
+                } else if (partQuestions?.length < numQuestions) {
+                    state.testParts[partIndex].questions = [
+                        ...partQuestions,
+                        ...[...Array(numQuestions - partQuestions?.length)].map(
+                            (item, index) => ({
+                                ...INITIAL_QUESTION,
+                                order: partQuestions?.length + index + 1,
+                            })
+                        ),
+                    ];
+                } else {
+                    state.testParts[partIndex].questions = partQuestions?.slice(
+                        0,
+                        numQuestions
+                    );
+                }
             }
 
             if (
@@ -146,6 +166,12 @@ const createTestSlice = createSlice({
                     part_id: action.payload.partInfo.id,
                 }));
             }
+
+            if (action.payload.partInfo?.is_saved) {
+                state.testParts[partIndex].is_saved = true;
+            } else {
+                state.testParts[partIndex].is_saved = false;
+            }
         },
         saveTestQuestions(
             state,
@@ -155,21 +181,6 @@ const createTestSlice = createSlice({
                 questionInfo: Partial<QuestionItf>;
             }>
         ) {
-            const getInitialQuestionContent = (type: string) => {
-                switch (type) {
-                    case QUESTION_TYPE.MULTIPLE_CHOICES:
-                        return INITIAL_MULTIPLE_CHOICES_QUESTION;
-
-                    case QUESTION_TYPE.FILL_IN_THE_GAPS:
-                        return INITIAL_FILL_GAPS_QUESTION;
-
-                    case QUESTION_TYPE.MATCHING:
-                        return INITIAL_MATCHING_QUESTION;
-
-                    case QUESTION_TYPE.RESPONSE:
-                        return INITIAL_RESPONSE_QUESTION;
-                }
-            };
             if (action.payload?.partId) {
                 const partIndex = state.testParts.findIndex(
                     (part) => part.id === action.payload.partId
@@ -183,26 +194,30 @@ const createTestSlice = createSlice({
                 const question = partQuestions[questionIndex];
                 if (!question) return;
 
-                state.testParts[partIndex].questions![questionIndex] = {
-                    ...question,
-                    ...action.payload.questionInfo,
-                };
-                if (action.payload?.questionInfo?.type && !question.content) {
-                    state.testParts[partIndex].questions![
-                        questionIndex
-                    ].content = getInitialQuestionContent(
-                        action.payload.questionInfo?.type
-                    );
+                // state.testParts[partIndex].questions![questionIndex] = {
+                //     ...question,
+                //     ...action.payload.questionInfo,
+                // };
+                if (
+                    action.payload?.questionInfo?.type &&
+                    action.payload?.questionInfo.type !== question.type
+                ) {
+                    state.testParts[partIndex].questions![questionIndex] = {
+                        ...state.testParts[partIndex].questions![questionIndex],
+                        type: action.payload?.questionInfo?.type,
+                        content: getInitialQuestionContent(question.type),
+                    };
                 }
-                if (action.payload?.questionInfo?.content) {
-                    state.testParts[partIndex].questions![
-                        questionIndex
-                    ].content = {
-                        ...(question.content as any),
-                        ...JSON.parse(
-                            JSON.stringify(
-                                action.payload?.questionInfo?.content as any
-                            )
+
+                if (
+                    action.payload?.questionInfo?.content &&
+                    action.payload?.questionInfo.type === question.type
+                ) {
+                    state.testParts[partIndex].questions![questionIndex] = {
+                        ...state.testParts[partIndex].questions![questionIndex],
+                        content: pickFieldsFromObject(
+                            action.payload?.questionInfo?.content,
+                            getInitialQuestionContent(question.type)
                         ),
                     };
                 }
@@ -220,7 +235,6 @@ const createTestSlice = createSlice({
                 };
                 if (
                     action.payload?.questionInfo?.type &&
-                    !question.content &&
                     action.payload?.questionInfo.type !== question.type
                 ) {
                     state.testQuestions[questionIndex].content =
@@ -281,14 +295,35 @@ const createTestSlice = createSlice({
                 case CREATE_TEST_STEPS.TEST_PARTS: {
                     if (state?.testParts?.length > 0) {
                         let isEqualTotalScores = false;
+                        let isEqualNumberQuestions = false;
                         const totalPartsScores = state?.testParts?.reduce(
                             (total, curr) => curr.score + total,
                             0
                         );
-                        if (totalPartsScores === state?.maxScore) {
+                        if (
+                            totalPartsScores === state?.maxScore &&
+                            state?.testParts?.every(
+                                (part) => part.num_questions > 0
+                            )
+                        ) {
                             isEqualTotalScores = true;
                         }
-                        state.isValidParts = isEqualTotalScores;
+
+                        const totalPartsQuestions = state?.testParts?.reduce(
+                            (total, curr) => total + curr?.num_questions,
+                            0
+                        );
+                        if (
+                            totalPartsQuestions === state?.numQuestions &&
+                            state?.testParts?.every(
+                                (part) => part.num_questions > 0
+                            )
+                        ) {
+                            isEqualNumberQuestions = true;
+                        }
+
+                        state.isValidParts =
+                            isEqualTotalScores && isEqualNumberQuestions;
                     }
                     break;
                 }
@@ -358,7 +393,6 @@ const createTestSlice = createSlice({
             }
         },
         setTestFromAPI(state, action) {
-            console.log(action);
             state.testTitle = action.payload?.title;
             state.testDatetime = action.payload?.datetime;
             state.testDescription = action.payload?.description;
@@ -375,10 +409,12 @@ const createTestSlice = createSlice({
             state.publicAnswersDate = action.payload?.public_answers_date;
             state.testId = action.payload?.id;
 
-            state.testParts = action.payload?.parts as Pick<
-                TestPartItf,
-                keyof TestPartItf
-            >[];
+            state.testParts = action.payload?.parts;
+            state.testParts = state.testParts.map((part) => ({
+                ...part,
+                is_saved: part?.id ? true : false,
+            }));
+
             // Initialize part questions
             state.testParts?.map((part) => {
                 if (
@@ -394,8 +430,12 @@ const createTestSlice = createSlice({
                 }
                 return part;
             });
+
             state.testQuestions = action.payload?.questions;
             state.testTakers = action.payload?.taker_ids;
+        },
+        reset(state) {
+            return INITIAL_CREATE_TEST_CONTEXT;
         },
     },
 });

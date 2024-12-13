@@ -89,6 +89,7 @@ export interface TestPartItf extends PartBodyItf {
     id?: string;
     test_id?: string;
     questions?: QuestionItf[];
+    is_saved?: boolean;
 }
 
 export interface MultipleChoiceQuestionBodyItf {
@@ -135,11 +136,11 @@ export interface MatchingQuestionBodyItf {
 export interface MatchingQuestionItf extends MatchingQuestionBodyItf {
     id?: string;
     left_items: {
-        id: string;
+        id?: string;
         text: string;
     }[];
     right_items: {
-        id: string;
+        id?: string;
         text: string;
     }[];
     answer?: {
@@ -176,6 +177,7 @@ export interface QuestionItf {
         | FillGapsQuestionItf
         | MatchingQuestionItf
         | ResponseQuestionItf;
+    is_saved?: boolean;
 }
 
 export type QuestionBodyContentItf =

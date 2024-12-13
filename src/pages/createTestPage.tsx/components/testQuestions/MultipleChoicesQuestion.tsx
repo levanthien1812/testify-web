@@ -21,7 +21,6 @@ const MulitpleChoiceQuestion: React.FC<{
     errors: FieldErrors<QuestionBodyItf<MultipleChoiceQuestionBodyItf>>;
     register: UseFormRegister<QuestionBodyItf<MultipleChoiceQuestionBodyItf>>;
 }> = ({ content, control, register, errors }) => {
-
     const {
         fields: options,
         append: appendOption,
@@ -84,9 +83,7 @@ const MulitpleChoiceQuestion: React.FC<{
                     <label htmlFor="images">Images</label>
                     <ImagesChoser
                         images={content.images || null}
-                        {...register("content.images", {
-                            required: "Images are required",
-                        })}
+                        {...register("content.images", {})}
                     />
                 </div>
             </div>

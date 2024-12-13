@@ -52,7 +52,7 @@ const MatchingQuestion = ({
             ></div>
             <div className="flex gap-3 w-full mt-2 px-2">
                 <div className="space-y-2 w-1/2">
-                    {content.left_items.map((item) => (
+                    {content?.left_items?.map((item) => (
                         <DraggableItem
                             item={item}
                             key={item.id}
@@ -67,7 +67,7 @@ const MatchingQuestion = ({
                     ))}
                 </div>
                 <div className="space-y-2 w-1/2">
-                    {content.right_items.map((item) => (
+                    {content?.right_items?.map((item) => (
                         <DraggableItem
                             item={item}
                             key={item.id}

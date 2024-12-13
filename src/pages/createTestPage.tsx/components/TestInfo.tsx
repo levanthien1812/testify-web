@@ -124,7 +124,6 @@ const TestInfo = () => {
     }, [allValues?.datetime, setValue]);
 
     useEffect(() => {
-        console.log(initialValues, allValues);
         dispatch(saveTestInfo(allValues));
         dispatch(validateTest());
         // eslint-disable-next-line react-hooks/exhaustive-deps
