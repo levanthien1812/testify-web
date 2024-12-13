@@ -1,9 +1,9 @@
 import { QUESTION_TYPE } from "./constants/tests";
 
 export const ROLES = {
-    TAKER: "taker",
-    MAKER: "maker",
-    ADMIN: "admin",
+    TAKER: "TAKER",
+    MAKER: "MAKER",
+    ADMIN: "ADMIN",
 };
 
 export const TEST_LEVEL = {

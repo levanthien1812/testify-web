@@ -3,6 +3,7 @@ import {
     FillGapsQuestionItf,
     MatchingQuestionItf,
     MultipleChoiceQuestionItf,
+    PartBodyItf,
     QuestionItf,
     ResponseQuestionItf,
     TestBodyItf,
@@ -124,8 +125,8 @@ export const INITIAL_FILL_GAPS_QUESTION: FillGapsQuestionItf = {
 };
 
 export const INITIAL_MATCHING_QUESTION: MatchingQuestionItf = {
-    left_items: [],
-    right_items: [],
+    left_items: [{ text: "" }, { text: "" }],
+    right_items: [{ text: "" }, { text: "" }],
     text: "",
 };
 

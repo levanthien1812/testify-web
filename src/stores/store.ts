@@ -7,6 +7,10 @@ const store = configureStore({
         auth: authReducer,
         createTest: createTestReducer,
     },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({
+            serializableCheck: false,
+        }),
 });
 
 export default store;

@@ -79,10 +79,25 @@ const Question = ({ question, part }: QuestionProps) => {
         useMutation({
             mutationFn: async (
                 questionBody: QuestionBodyItf<QuestionBodyContentItf>
-            ) => await saveQuestion(testId!, questionBody),
+            ) =>
+                await saveQuestion(testId!, {
+                    ...questionBody,
+                    part_id: part?.id,
+                }),
             mutationKey: [MUTATION_KEYS.CREATE_QUESTION],
             onSuccess: (data) => {
                 toast.success(TOAST_MESSAGES.CREATE_QUESTION_SUCCESSFULLY);
+                dispatch(
+                    saveTestQuestions({
+                        partId: part?.id,
+                        questionOrder: question.order,
+                        questionInfo: {
+                            id: data?.question?.id,
+                            is_saved: true,
+                            content: data?.content,
+                        },
+                    })
+                );
                 setOpen(false);
             },
         });
@@ -103,7 +118,7 @@ const Question = ({ question, part }: QuestionProps) => {
         });
 
     const onSubmit = (data: QuestionBodyItf<QuestionBodyContentItf>) => {
-        if (!question) {
+        if (!question?.id) {
             createQuestionMutate(data);
         } else {
             updateQuestionMutate(data);

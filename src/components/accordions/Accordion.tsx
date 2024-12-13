@@ -27,7 +27,7 @@ const Accordion = ({
                 className="flex justify-between items-center px-4 py-2 bg-gray-300 cursor-pointer"
                 onClick={() => setOpen((prev) => !prev)}
             >
-                <p className="text-lg ">
+                <p className="text-lg space-x-2">
                     <span className="uppercase">{viewData?.title?.text}</span>
                     <span className="text-gray-500">
                         {viewData?.title?.description?.text}

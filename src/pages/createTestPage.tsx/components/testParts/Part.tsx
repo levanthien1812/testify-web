@@ -14,7 +14,7 @@ import { createTestActions } from "../../../../stores/createTest";
 import Accordion from "../../../../components/accordions/Accordion";
 import { useDispatch } from "react-redux";
 import { INITIAL_PART } from "../../../../config/constants/initialValues";
-import { pickFieldsFromObject } from "../../../../utils/object";
+import { isEmpty, pickFieldsFromObject } from "../../../../utils/object";
 
 const Part: React.FC<{
     part: TestPartItf;
@@ -29,11 +29,10 @@ const Part: React.FC<{
                 await addPart(testId!, partBody),
             mutationKey: [MUTATION_KEYS.CREATE_PARTS, { body: part }],
             onSuccess: (data) => {
-                console.log(data);
                 dispatch(
                     saveTestParts({
                         partOrder: part.order,
-                        partInfo: { id: data?.part?.id },
+                        partInfo: { id: data?.part?.id, is_saved: true },
                     })
                 );
                 dispatch(validateParts());
@@ -55,6 +54,12 @@ const Part: React.FC<{
             ],
             onSuccess: (data) => {
                 dispatch(validateParts());
+                dispatch(
+                    saveTestParts({
+                        partOrder: part.order,
+                        partInfo: { is_saved: true },
+                    })
+                );
                 toast.success(TOAST_MESSAGES.PART_UPDATED_SUCCESSFULLY);
             },
         });
@@ -70,7 +75,7 @@ const Part: React.FC<{
 
     const onSubmit = (data: PartBodyItf) => {
         if (!part.id) createPartMutate(data);
-        else updatePartMutate(data as Pick<PartBodyItf, keyof PartBodyItf>);
+        else updatePartMutate(pickFieldsFromObject(data, INITIAL_PART));
     };
 
     const allValues = watch();
@@ -79,7 +84,7 @@ const Part: React.FC<{
         dispatch(
             saveTestParts({
                 partOrder: part.order,
-                partInfo: allValues,
+                partInfo: { ...allValues, is_saved: false },
             })
         );
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -153,16 +158,21 @@ const Part: React.FC<{
                     />
                 </div>
 
-                <div className="flex justify-end">
-                    <Button
-                        className="w-1/5"
-                        type="submit"
-                        disabled={createPartLoading || updatePartLoading}
-                    >
-                        {createPartLoading || updatePartLoading
-                            ? "Saving..."
-                            : "Save"}
-                    </Button>
+                <div className="flex justify-end gap-6 items-end">
+                    {part?.is_saved && (
+                        <p className="text-orange-600 italic">Part is saved</p>
+                    )}
+                    {!part?.is_saved && (
+                        <Button
+                            className="w-1/5"
+                            type="submit"
+                            disabled={createPartLoading || updatePartLoading}
+                        >
+                            {createPartLoading || updatePartLoading
+                                ? "Saving..."
+                                : "Save"}
+                        </Button>
+                    )}
                 </div>
             </form>
         </Accordion>

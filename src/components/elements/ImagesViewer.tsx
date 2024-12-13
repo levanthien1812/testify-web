@@ -45,6 +45,7 @@ const ImagesViewer = ({ images, onClose }: ImagesViewerProps) => {
                         <button
                             className="absolute left-2 rounded-full overflow-hidden cursor-pointer disabled:cursor-default"
                             disabled={currentIndex === 0}
+                            type="button"
                         >
                             <FontAwesomeIcon
                                 icon={faChevronCircleLeft}
@@ -59,6 +60,7 @@ const ImagesViewer = ({ images, onClose }: ImagesViewerProps) => {
                         <button
                             className="absolute right-2 rounded-full overflow-hidden cursor-pointer disabled:cursor-default"
                             disabled={currentIndex === images.length - 1}
+                            type="button"
                         >
                             <FontAwesomeIcon
                                 icon={faChevronCircleRight}

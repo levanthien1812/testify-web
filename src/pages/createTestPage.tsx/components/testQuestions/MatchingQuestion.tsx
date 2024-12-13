@@ -59,7 +59,7 @@ const MatchingQuestion: React.FC<{
                 />
                 {errors.content?.text && (
                     <p className="text-end text-orange-600 text-sm italic mt-1 leading-4">
-                        {errors.content.text.message}
+                        {errors?.content?.text?.message}
                     </p>
                 )}
             </div>
@@ -87,7 +87,7 @@ const MatchingQuestion: React.FC<{
                         type="button"
                         className="w-full"
                         onClick={handleAddOption}
-                        disabled={content.left_items.length >= 10}
+                        disabled={content?.left_items?.length >= 10}
                     >
                         Add item
                     </Button>
@@ -96,7 +96,7 @@ const MatchingQuestion: React.FC<{
             <div className="mt-2">
                 <p>Right part:</p>
                 <div className="space-y-1">
-                    {rightItems.map((item, index) => (
+                    {rightItems?.map((item, index) => (
                         <Option
                             index={index}
                             key={index}
