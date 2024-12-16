@@ -80,11 +80,11 @@ const CreateTestPage = () => {
         }
     }, [stepParam, dispatch, setStep]);
 
-    useEffect(() => {
-        return () => {
-            dispatch(reset());
-        };
-    }, [dispatch, reset]);
+    // useEffect(() => {
+    //     return () => {
+    //         dispatch(reset());
+    //     };
+    // }, [dispatch, reset]);
 
     return (
         <LoadingWrapper
