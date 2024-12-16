@@ -121,7 +121,7 @@ export const INITIAL_MULTIPLE_CHOICES_QUESTION: MultipleChoiceQuestionItf = {
 
 export const INITIAL_FILL_GAPS_QUESTION: FillGapsQuestionItf = {
     text: "",
-    num_gaps: 0,
+    num_gaps: 1,
 };
 
 export const INITIAL_MATCHING_QUESTION: MatchingQuestionItf = {

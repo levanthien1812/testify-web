@@ -194,31 +194,18 @@ const createTestSlice = createSlice({
                 const question = partQuestions[questionIndex];
                 if (!question) return;
 
-                // state.testParts[partIndex].questions![questionIndex] = {
-                //     ...question,
-                //     ...action.payload.questionInfo,
-                // };
-                if (
-                    action.payload?.questionInfo?.type &&
-                    action.payload?.questionInfo.type !== question.type
-                ) {
-                    state.testParts[partIndex].questions![questionIndex] = {
-                        ...state.testParts[partIndex].questions![questionIndex],
-                        type: action.payload?.questionInfo?.type,
-                        content: getInitialQuestionContent(question.type),
-                    };
-                }
+                state.testParts[partIndex].questions![questionIndex] = {
+                    ...question,
+                    ...action.payload.questionInfo,
+                };
 
                 if (
                     action.payload?.questionInfo?.content &&
-                    action.payload?.questionInfo.type === question.type
+                    !action.payload?.questionInfo?.type
                 ) {
                     state.testParts[partIndex].questions![questionIndex] = {
                         ...state.testParts[partIndex].questions![questionIndex],
-                        content: pickFieldsFromObject(
-                            action.payload?.questionInfo?.content,
-                            getInitialQuestionContent(question.type)
-                        ),
+                        content: action.payload?.questionInfo?.content,
                     };
                 }
             } else {
@@ -233,23 +220,10 @@ const createTestSlice = createSlice({
                     ...question,
                     ...action.payload.questionInfo,
                 };
-                if (
-                    action.payload?.questionInfo?.type &&
-                    action.payload?.questionInfo.type !== question.type
-                ) {
-                    state.testQuestions[questionIndex].content =
-                        getInitialQuestionContent(
-                            action.payload.questionInfo?.type
-                        );
-                }
                 if (action.payload?.questionInfo?.content) {
-                    state.testQuestions[questionIndex].content = {
-                        ...(question.content as any),
-                        ...JSON.parse(
-                            JSON.stringify(
-                                action.payload?.questionInfo?.content as any
-                            )
-                        ),
+                    state.testQuestions[questionIndex] = {
+                        ...state.testQuestions[questionIndex],
+                        content: action.payload?.questionInfo?.content,
                     };
                 }
             }

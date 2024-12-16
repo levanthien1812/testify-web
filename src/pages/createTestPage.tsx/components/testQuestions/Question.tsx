@@ -33,6 +33,7 @@ import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
 import { useDispatch } from "react-redux";
 import { TEST_LEVEL } from "../../../../config/config";
 import { QUESTION_TYPE } from "../../../../config/constants/tests";
+import { getInitialQuestionContent } from "../../../../utils/mapping";
 
 type QuestionProps = {
     question: QuestionItf;
@@ -59,19 +60,45 @@ const Question = ({ question, part }: QuestionProps) => {
     const allValues = watch();
 
     useEffect(() => {
+        if (!question?.id) {
+            setValue("content", getInitialQuestionContent(allValues?.type));
+        }
         dispatch(
             saveTestQuestions({
                 partId: part?.id,
                 questionOrder: question.order,
-                questionInfo: allValues,
+                questionInfo: {
+                    type: allValues?.type,
+                    level: allValues?.level,
+                    score: allValues?.score,
+                },
             })
         );
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
-        JSON.stringify(allValues),
+        allValues?.type,
+        allValues?.level,
+        allValues?.score,
         part?.id,
         question?.order,
-        saveTestQuestions,
+        dispatch,
+    ]);
+
+    useEffect(() => {
+        dispatch(
+            saveTestQuestions({
+                partId: part?.id,
+                questionOrder: question.order,
+                questionInfo: {
+                    content: JSON.parse(JSON.stringify(allValues?.content)),
+                },
+            })
+        );
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [
+        JSON.stringify(allValues?.content),
+        part?.id,
+        question?.order,
         dispatch,
     ]);
 
@@ -202,12 +229,12 @@ const Question = ({ question, part }: QuestionProps) => {
                                 </div>
                                 <div className="border-l border-gray-300 border-dashed"></div>
                                 <div className="grow overflow-hidden">
-                                    {allValues?.content &&
-                                        allValues?.type ===
+                                    {question?.content &&
+                                        question?.type ===
                                             QUESTION_TYPE.MULTIPLE_CHOICES && (
                                             <MulitpleChoiceQuestion
                                                 content={
-                                                    allValues?.content as MultipleChoiceQuestionBodyItf
+                                                    question?.content as MultipleChoiceQuestionBodyItf
                                                 }
                                                 control={
                                                     control as Control<
@@ -222,12 +249,12 @@ const Question = ({ question, part }: QuestionProps) => {
                                                 }
                                             />
                                         )}
-                                    {allValues?.content &&
-                                        allValues?.type ===
+                                    {question?.content &&
+                                        question?.type ===
                                             QUESTION_TYPE.FILL_IN_THE_GAPS && (
                                             <FillGapsQuestion
                                                 content={
-                                                    allValues?.content as FillGapsQuestionBodyItf
+                                                    question?.content as FillGapsQuestionBodyItf
                                                 }
                                                 control={
                                                     control as Control<
@@ -242,12 +269,12 @@ const Question = ({ question, part }: QuestionProps) => {
                                                 }
                                             />
                                         )}
-                                    {allValues?.content &&
-                                        allValues?.type ===
+                                    {question?.content &&
+                                        question?.type ===
                                             QUESTION_TYPE.MATCHING && (
                                             <MatchingQuestion
                                                 content={
-                                                    allValues?.content as MatchingQuestionBodyItf
+                                                    question?.content as MatchingQuestionBodyItf
                                                 }
                                                 control={
                                                     control as Control<
@@ -262,12 +289,12 @@ const Question = ({ question, part }: QuestionProps) => {
                                                 }
                                             />
                                         )}
-                                    {allValues?.content &&
-                                        allValues?.type ===
+                                    {question?.content &&
+                                        question?.type ===
                                             QUESTION_TYPE.RESPONSE && (
                                             <ResponseQuestion
                                                 content={
-                                                    allValues?.content as ResponseQuestionBodyItf
+                                                    question?.content as ResponseQuestionBodyItf
                                                 }
                                                 control={
                                                     control as Control<

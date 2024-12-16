@@ -73,7 +73,7 @@ const MulitpleChoiceQuestion: React.FC<{
                         type="button"
                         className="w-full"
                         onClick={() => appendOption({ text: "" })}
-                        disabled={content.options.length >= 10}
+                        disabled={content?.options?.length >= 10}
                     >
                         Add option
                     </Button>
