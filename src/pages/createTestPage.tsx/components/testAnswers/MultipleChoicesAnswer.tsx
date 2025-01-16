@@ -1,16 +1,14 @@
 import { ChangeEvent, useEffect, useState } from "react";
 import {
-    AnswerBody,
+    MultipleChoiceAnswerItf,
     MultipleChoiceQuestionItf,
-    MultipleChoicesAnswerBodyItf,
 } from "../../../../types/types";
 import { formatImageUrl } from "../../../../utils/formatImageUrl";
-import { useForm } from "react-hook-form";
 
 type MultipleChoicesAnswerProps = {
     content: MultipleChoiceQuestionItf;
     reset: boolean;
-    onProvideAnswer: (answerBody: AnswerBody) => void;
+    onProvideAnswer: (answerBody: MultipleChoiceAnswerItf) => void;
 };
 
 const MultipleChoicesAnswer = ({
@@ -19,21 +17,23 @@ const MultipleChoicesAnswer = ({
     onProvideAnswer,
 }: MultipleChoicesAnswerProps) => {
     const [optionChosen, setOptionChosen] = useState<string>(
-        content.answer && content.answer.length > 0 ? content.answer[0] : ""
+        content.answer && content.answer?.options?.length > 0
+            ? content.answer?.options[0]
+            : ""
     );
 
     const handleChangeRadio = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.value) {
             setOptionChosen(e.target.value);
-            onProvideAnswer({ answer: [e.target.value] });
+            onProvideAnswer({ options: [e.target.value] });
         }
     };
 
     useEffect(() => {
         if (reset === true)
             setOptionChosen(
-                content.answer && content.answer.length > 0
-                    ? content.answer[0]
+                content.answer && content.answer?.options?.length > 0
+                    ? content.answer?.options[0]
                     : ""
             );
     }, [reset]);

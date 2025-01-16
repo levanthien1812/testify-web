@@ -1,5 +1,8 @@
 import { useEffect, useState } from "react";
-import { AnswerBody, MatchingQuestionItf } from "../../../../types/types";
+import {
+    MatchingAnswerItf,
+    MatchingQuestionItf,
+} from "../../../../types/types";
 import DraggableItem from "./DraggableItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
@@ -7,7 +10,7 @@ import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 type MatchingAnswerProps = {
     content: MatchingQuestionItf;
     reset: boolean;
-    onProvideAnswer: (answerBody: AnswerBody) => void;
+    onProvideAnswer: (answerBody: MatchingAnswerItf) => void;
 };
 
 const MatchingAnswer = ({
@@ -17,7 +20,7 @@ const MatchingAnswer = ({
 }: MatchingAnswerProps) => {
     const [matchings, setMatchings] = useState<
         { left: string; right: string }[]
-    >(content.answer || []);
+    >(content.answer?.matchings || []);
 
     const handleDrop = (item: { left: string; right: string }) => {
         const index = matchings.findIndex((matching) => {
@@ -41,14 +44,16 @@ const MatchingAnswer = ({
     useEffect(() => {
         if (
             matchings.length > 0 &&
-            matchings.length !== content.answer?.length
+            matchings.length !== content.answer?.matchings?.length
         ) {
-            onProvideAnswer({ answer: matchings });
+            onProvideAnswer({ matchings });
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [matchings]);
 
     useEffect(() => {
-        if (reset === true) setMatchings(content.answer || []);
+        if (reset === true) setMatchings(content.answer?.matchings || []);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [reset]);
 
     return (
@@ -94,45 +99,52 @@ const MatchingAnswer = ({
 
             <div className="mt-2">
                 <p>Matchings:</p>
-                <div className="border border-gray-500 px-4 py-2 space-y-2">
-                    {matchings.map((matching) => (
-                        <div
-                            key={matching.left}
-                            className="bg-gray-100 px-4 py-1 grid grid-cols-8 items-center gap-1 relative"
-                        >
-                            <span className="col-span-3">
-                                {
-                                    content.left_items.find(
-                                        (left_item) =>
-                                            left_item.id === matching.left
-                                    )?.text
-                                }
-                            </span>
-                            <div className="col-span-1 text-center">
-                                <FontAwesomeIcon
-                                    icon={faArrowRight}
-                                    className="text-xs "
-                                />
-                            </div>
-                            <span className="col-span-3">
-                                {
-                                    content.right_items.find(
-                                        (right_item) =>
-                                            right_item.id === matching.right
-                                    )?.text
-                                }
-                            </span>
-                            <button
-                                onClick={() =>
-                                    handleDeleteMatching(matching.left)
-                                }
-                                className="hover:font-bold"
+                {matchings.length === 0 && (
+                    <p className="text-gray-500 text-sm italic">
+                        No matchings provided!
+                    </p>
+                )}
+                {matchings.length > 0 && (
+                    <div className="border border-gray-500 px-4 py-2 space-y-2">
+                        {matchings.map((matching) => (
+                            <div
+                                key={matching.left}
+                                className="bg-gray-100 px-4 py-1 grid grid-cols-8 items-center gap-1 relative"
                             >
-                                Clear
-                            </button>
-                        </div>
-                    ))}
-                </div>
+                                <span className="col-span-3">
+                                    {
+                                        content.left_items.find(
+                                            (left_item) =>
+                                                left_item.id === matching.left
+                                        )?.text
+                                    }
+                                </span>
+                                <div className="col-span-1 text-center">
+                                    <FontAwesomeIcon
+                                        icon={faArrowRight}
+                                        className="text-xs "
+                                    />
+                                </div>
+                                <span className="col-span-3">
+                                    {
+                                        content.right_items.find(
+                                            (right_item) =>
+                                                right_item.id === matching.right
+                                        )?.text
+                                    }
+                                </span>
+                                <button
+                                    onClick={() =>
+                                        handleDeleteMatching(matching.left)
+                                    }
+                                    className="hover:font-bold"
+                                >
+                                    Clear
+                                </button>
+                            </div>
+                        ))}
+                    </div>
+                )}
             </div>
         </>
     );

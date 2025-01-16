@@ -1,5 +1,4 @@
-import { useEffect, useState } from "react";
-import { TestItf, UserAnswer } from "../../types/types";
+import { useEffect, useRef, useState } from "react";
 import { useMutation } from "react-query";
 import { submitAnswers } from "../../services/test";
 import { AxiosError } from "axios";
@@ -8,41 +7,27 @@ import RemainingTime from "./components/RemainingTime";
 import Swal from "sweetalert2";
 import Question from "./components/Question";
 import Button from "../../components/elements/Button";
+import { useSelector } from "react-redux";
+import { RootState } from "../../stores/rootState";
+import { useDispatch } from "react-redux";
+import { takeTestActions } from "../../stores/takeTest";
 
 type DoingTestProps = {
-    test: TestItf;
-    remainingTime: number;
-    startTime: Date;
     onAfterSubmit: () => void;
 };
 
-const DoingTest = ({
-    test,
-    remainingTime,
-    startTime,
-    onAfterSubmit,
-}: DoingTestProps) => {
-    const [answers, setAnswers] = useState<UserAnswer[]>([]);
-    const [submittable, setSubmittable] = useState(false);
-    const [confirmSubmit, setConfirmSubmit] = useState(false);
-
-    const handleProvideAnswer = (userAnswer: UserAnswer) => {
-        const updatedAnswers = [...answers];
-        const index = updatedAnswers.findIndex(
-            (answer) => answer.question_id === userAnswer.question_id
-        );
-        if (index === -1) {
-            updatedAnswers.push(userAnswer);
-        } else {
-            updatedAnswers[index] = userAnswer;
-        }
-        setAnswers(updatedAnswers);
-    };
+const DoingTest = ({ onAfterSubmit }: DoingTestProps) => {
+    const { answers, startTime, test, submittable } = useSelector(
+        (state: RootState) => state.takeTest
+    );
+    const dispatch = useDispatch();
+    const remainingIntervalRef = useRef<NodeJS.Timer | null>(null);
+    const [remainingTime, setRemainingTime] = useState(0);
 
     const { mutate, isLoading } = useMutation({
         mutationFn: async () => {
             const responseData = await submitAnswers(
-                test.id,
+                test!.id,
                 answers,
                 startTime
             );
@@ -61,9 +46,13 @@ const DoingTest = ({
 
     useEffect(() => {
         if (remainingTime <= 0) {
+            setRemainingTime(0);
+            dispatch(takeTestActions.setIsEnded(true));
+            if (remainingIntervalRef.current)
+                clearInterval(remainingIntervalRef.current);
             mutate();
         }
-    }, [remainingTime]);
+    }, [remainingTime, mutate, dispatch]);
 
     const handleSubmit = () => {
         Swal.fire({
@@ -83,6 +72,10 @@ const DoingTest = ({
     };
 
     useEffect(() => {
+        setRemainingTime(test!.duration * 60);
+        remainingIntervalRef.current = setInterval(() => {
+            setRemainingTime((prev) => prev - 1000);
+        }, 1000);
         const handleBeforeUnload = (event: BeforeUnloadEvent) => {
             event.preventDefault();
         };
@@ -91,27 +84,22 @@ const DoingTest = ({
 
         return () => {
             window.removeEventListener("beforeunload", handleBeforeUnload);
+            if (remainingIntervalRef.current) {
+                clearInterval(remainingIntervalRef.current);
+            }
         };
     }, []);
-
-    useEffect(() => {
-        if (test.num_questions === answers.length) {
-            setSubmittable(true);
-        } else {
-            setSubmittable(false);
-        }
-    }, [answers]);
 
     return (
         <div>
             <RemainingTime
                 remainingTime={remainingTime}
-                totalTime={test.duration * 60 * 1000}
+                totalTime={test!.duration * 60 * 1000}
             />
             <div className="py-8 px-8">
                 <div className="space-y-1">
-                    {test.num_parts > 1 &&
-                        test.parts.map((part) => {
+                    {test!.num_parts > 1 &&
+                        test!.parts.map((part) => {
                             return (
                                 <div key={part.id} className="">
                                     <div className="text-lg bg-gray-200 px-4 py-1">
@@ -130,22 +118,15 @@ const DoingTest = ({
                                                 <Question
                                                     question={question}
                                                     key={question.id}
-                                                    onProvideAnswer={
-                                                        handleProvideAnswer
-                                                    }
                                                 />
                                             ))}
                                     </div>
                                 </div>
                             );
                         })}
-                    {test.num_parts <= 1 &&
-                        test.questions!.map((question) => (
-                            <Question
-                                question={question}
-                                key={question.id}
-                                onProvideAnswer={handleProvideAnswer}
-                            />
+                    {test!.num_parts <= 1 &&
+                        test!.questions!.map((question) => (
+                            <Question question={question} key={question.id} />
                         ))}
 
                     <div className="flex flex-col items-center justify-center">

@@ -1,18 +1,16 @@
-import { ChangeEvent, useEffect, useState } from "react";
-import { AnswerBody, FillGapsQuestionItf } from "../../../types/types";
-import { generateArray } from "../../../utils/array";
+import { ChangeEvent, useState } from "react";
+import { FillGapsQuestionItf, QuestionItf } from "../../../types/types";
 import Input from "../../../components/elements/Input";
+import { useDispatch } from "react-redux";
+import { takeTestActions } from "../../../stores/takeTest";
 
 type FillGapsQuestionProps = {
-    content: FillGapsQuestionItf;
-    onProvideAnswer: (answer: string[]) => void;
+    question: QuestionItf<FillGapsQuestionItf>;
 };
 
-const FillGapsQuestion = ({
-    content,
-    onProvideAnswer,
-}: FillGapsQuestionProps) => {
+const FillGapsQuestion = ({ question }: FillGapsQuestionProps) => {
     const [gaps, setGaps] = useState<string[]>([]);
+    const dispatch = useDispatch();
 
     const handleFillGap = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.value) {
@@ -20,7 +18,12 @@ const FillGapsQuestion = ({
             let index = parseInt(e.target.name.split("-")[1]) - 1;
             updatedGaps[index] = e.target.value;
             setGaps(updatedGaps);
-            onProvideAnswer(updatedGaps);
+            dispatch(
+                takeTestActions.addAnswer({
+                    question_id: question.id!,
+                    content: { gaps },
+                })
+            );
         }
     };
 
@@ -29,12 +32,12 @@ const FillGapsQuestion = ({
             <div
                 className=""
                 dangerouslySetInnerHTML={{
-                    __html: content.text.replaceAll("***", "___"),
+                    __html: question.content!.text.replaceAll("***", "___"),
                 }}
             ></div>
 
             <div className="space-y-1 mt-2">
-                {[...Array(content.num_gaps)].map((num, index) => (
+                {[...Array(question.content!.num_gaps)].map((num, index) => (
                     <div className="flex gap-3 items-end ps-2" key={index + 1}>
                         <label
                             htmlFor={`gap${index + 1}`}

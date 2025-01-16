@@ -1,21 +1,20 @@
 import { useEffect, useState } from "react";
-import { AnswerBody, MatchingQuestionItf } from "../../../types/types";
+import { MatchingQuestionItf, QuestionItf } from "../../../types/types";
 import DraggableItem from "../../createTestPage.tsx/components/testAnswers/DraggableItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { useDispatch } from "react-redux";
+import { takeTestActions } from "../../../stores/takeTest";
 
 type MatchingQuestionProps = {
-    content: MatchingQuestionItf;
-    onProvideAnswer: (answer: { left: string; right: string }[]) => void;
+    question: QuestionItf<MatchingQuestionItf>;
 };
 
-const MatchingQuestion = ({
-    content,
-    onProvideAnswer,
-}: MatchingQuestionProps) => {
+const MatchingQuestion = ({ question }: MatchingQuestionProps) => {
     const [matchings, setMatchings] = useState<
         { left: string; right: string }[]
     >([]);
+    const dispatch = useDispatch();
 
     const handleDrop = (item: { left: string; right: string }) => {
         const index = matchings.findIndex((matching) => {
@@ -38,7 +37,12 @@ const MatchingQuestion = ({
 
     useEffect(() => {
         if (matchings.length > 0) {
-            onProvideAnswer(matchings);
+            dispatch(
+                takeTestActions.addAnswer({
+                    question_id: question.id!,
+                    content: { matchings },
+                })
+            );
         }
     }, [matchings]);
 
@@ -47,12 +51,12 @@ const MatchingQuestion = ({
             <div
                 className=""
                 dangerouslySetInnerHTML={{
-                    __html: content.text,
+                    __html: question.content!.text,
                 }}
             ></div>
             <div className="flex gap-3 w-full mt-2 px-2">
                 <div className="space-y-2 w-1/2">
-                    {content?.left_items?.map((item) => (
+                    {question.content!?.left_items?.map((item) => (
                         <DraggableItem
                             item={item}
                             key={item.id}
@@ -67,7 +71,7 @@ const MatchingQuestion = ({
                     ))}
                 </div>
                 <div className="space-y-2 w-1/2">
-                    {content?.right_items?.map((item) => (
+                    {question.content!?.right_items?.map((item) => (
                         <DraggableItem
                             item={item}
                             key={item.id}
@@ -93,7 +97,7 @@ const MatchingQuestion = ({
                         >
                             <span>
                                 {
-                                    content.left_items.find(
+                                    question.content!.left_items.find(
                                         (left_item) =>
                                             left_item.id === matching.left
                                     )?.text
@@ -105,7 +109,7 @@ const MatchingQuestion = ({
                             />
                             <span>
                                 {
-                                    content.right_items.find(
+                                    question.content!.right_items.find(
                                         (right_item) =>
                                             right_item.id === matching.right
                                     )?.text

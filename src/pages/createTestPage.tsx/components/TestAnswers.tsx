@@ -24,11 +24,13 @@ const TestAnswers = () => {
                 },
                 bottomButtons: {
                     containButton: {
+                        text: "Next",
                         onClick: () => {
                             dispatch(moveNextStep());
                         },
                     },
                     outlinedButton: {
+                        text: "Back",
                         onClick: () => {
                             dispatch(movePrevStep());
                         },

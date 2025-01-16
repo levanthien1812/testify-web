@@ -1,22 +1,28 @@
-import { ChangeEvent, useEffect, useState } from "react";
-import { AnswerBody, ResponseQuestionItf } from "../../../types/types";
-import { generateArray } from "../../../utils/array";
+import { ChangeEvent, useState } from "react";
+import { QuestionItf, ResponseQuestionItf } from "../../../types/types";
+import { useDispatch } from "react-redux";
+import { takeTestActions } from "../../../stores/takeTest";
 
 type ResponseQuestionProps = {
-    content: ResponseQuestionItf;
-    onProvideAnswer: (answer: string) => void;
+    question: QuestionItf<ResponseQuestionItf>;
 };
 
-const ResponseQuestion = ({
-    content,
-    onProvideAnswer,
-}: ResponseQuestionProps) => {
+const ResponseQuestion = ({ question }: ResponseQuestionProps) => {
     const [response, setResponse] = useState<string>();
+    const dispatch = useDispatch();
 
     const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
-        if (!content.max_length || e.target.value.length <= content.max_length) {
+        if (
+            !question.content!.max_length ||
+            e.target.value.length <= question.content!.max_length
+        ) {
             setResponse(e.target.value);
-            onProvideAnswer(e.target.value);
+            dispatch(
+                takeTestActions.addAnswer({
+                    question_id: question.id!,
+                    content: { response: e.target.value },
+                })
+            );
         }
     };
 
@@ -25,7 +31,7 @@ const ResponseQuestion = ({
             <div
                 className=""
                 dangerouslySetInnerHTML={{
-                    __html: content.text.replaceAll("***", "___"),
+                    __html: question.content!.text.replaceAll("***", "___"),
                 }}
             ></div>
 

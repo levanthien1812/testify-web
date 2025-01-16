@@ -124,7 +124,7 @@ const ViewTestPage = () => {
                                 </Button>
                             </div>
                         )}
-                        <TestQuestionsAndAnswers test={test} />
+                        <TestQuestionsAndAnswers test={test} answers={[]} />
                     </ModalBody>
                     <ModalFooter></ModalFooter>
                 </Modal>

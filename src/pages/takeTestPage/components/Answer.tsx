@@ -5,10 +5,13 @@ import {
     MatchingAnswerItf,
     MatchingQuestionItf,
     MultipleChoiceQuestionItf,
-    MultipleChoicesAnswerItf,
+    MultipleChoiceAnswerItf,
     QuestionItf,
     ResponseAnswerItf,
     ResponseQuestionItf,
+    QuestionContentItf,
+    UserAnswerItf,
+    AnswerBodyContentItf,
 } from "../../../types/types";
 import { MANUAL_SCORE_TYPES, ROLES } from "../../../config/config";
 import MultipleChoicesAnswer from "./MultipleChoicesAnswer";
@@ -26,12 +29,13 @@ import Input from "../../../components/elements/Input";
 import { QUESTION_TYPE } from "../../../config/constants/tests";
 
 type QuestionProps = {
-    question: QuestionItf;
+    question: QuestionItf<QuestionContentItf>;
+    answer?: UserAnswerItf<AnswerBodyContentItf>;
 };
 
-const Answer = ({ question }: QuestionProps) => {
+const Answer = ({ question, answer }: QuestionProps) => {
     const [manualScore, setManualScore] = useState<number>(
-        question.answer ? question.answer.score || 0 : 0
+        answer ? answer.score || 0 : 0
     );
     const [isUpdatingScore, setIsUpdatingScore] = useState<boolean>(false);
     const user = useSelector((state: RootState) => state.auth.user);
@@ -45,16 +49,13 @@ const Answer = ({ question }: QuestionProps) => {
             mutationFn: async () => {
                 const data = await updateTakerAnswer(
                     question.test_id,
-                    question.answer!.id,
+                    answer!.id!,
                     { score: manualScore! }
                 );
 
                 return data;
             },
-            mutationKey: [
-                "updateTakerAnswer",
-                { answer_id: question.answer?.id },
-            ],
+            mutationKey: ["updateTakerAnswer", { answer_id: answer?.id }],
             onSuccess: () => {},
             onError: (error) => {
                 if (error instanceof AxiosError) {
@@ -76,7 +77,7 @@ const Answer = ({ question }: QuestionProps) => {
     return (
         <div
             className={`px-4 py-2 ${
-                needManualScore && question.answer && !question.answer.score
+                needManualScore && answer && !answer.score
                     ? "bg-orange-100"
                     : "bg-white"
             }`}
@@ -85,17 +86,17 @@ const Answer = ({ question }: QuestionProps) => {
                 <span className="underline">Question {question.order}:</span>{" "}
                 <span className="font-bold italic">
                     (
-                    {question.answer
-                        ? `${question.answer.score}/${question.score}`
-                        : question.answer === null
+                    {answer
+                        ? `${answer.score}/${question.score}`
+                        : answer === null
                         ? `0/${question.score}`
                         : question.score}{" "}
                     points)
                 </span>{" "}
-                {question.answer !== undefined && !needManualScore && (
+                {answer !== undefined && !needManualScore && (
                     <span className="font-bold italic">
-                        {question.answer !== null ? (
-                            question.answer.score! > 0 ? (
+                        {answer !== null ? (
+                            answer.score! > 0 ? (
                                 <span className="text-green-600">
                                     Correct ✅
                                 </span>
@@ -110,50 +111,34 @@ const Answer = ({ question }: QuestionProps) => {
             </div>
             {question.type === QUESTION_TYPE.MULTIPLE_CHOICES && (
                 <MultipleChoicesAnswer
-                    content={question.content as MultipleChoiceQuestionItf}
-                    userAnswer={
-                        question.answer
-                            ? (question.answer
-                                  .content as MultipleChoicesAnswerItf)
-                            : question.answer
+                    questionContent={
+                        question.content as MultipleChoiceQuestionItf
                     }
+                    answerContent={answer?.content as MultipleChoiceAnswerItf}
                 />
             )}
             {question.type === QUESTION_TYPE.FILL_IN_THE_GAPS && (
                 <FillGapsAnswer
-                    content={question.content as FillGapsQuestionItf}
-                    userAnswer={
-                        question.answer
-                            ? (question.answer.content as FillGapsAnswerItf)
-                            : question.answer
-                    }
+                    questionContent={question.content as FillGapsQuestionItf}
+                    answerContent={answer?.content as FillGapsAnswerItf}
                 />
             )}
             {question.type === QUESTION_TYPE.MATCHING && (
                 <MatchingAnswer
-                    content={question.content as MatchingQuestionItf}
-                    userAnswer={
-                        question.answer
-                            ? (question.answer.content as MatchingAnswerItf)
-                            : question.answer
-                    }
+                    questionContent={question.content as MatchingQuestionItf}
+                    answerContent={answer?.content as MatchingAnswerItf}
                 />
             )}
             {question.type === QUESTION_TYPE.RESPONSE && (
                 <ResponseAnswer
-                    content={question.content as ResponseQuestionItf}
-                    userAnswer={
-                        question.answer
-                            ? (question.answer.content as ResponseAnswerItf)
-                            : question.answer
-                    }
+                    questionContent={question.content as ResponseQuestionItf}
+                    answerContent={answer?.content as ResponseAnswerItf}
                 />
             )}
 
             {user?.role === ROLES.MAKER && needManualScore && (
                 <div className="border-t pt-2 border-gray-400 border-dashed space-x-2">
-                    {((question.answer && !question.answer.score) ||
-                        isUpdatingScore) && (
+                    {((answer && !answer.score) || isUpdatingScore) && (
                         <>
                             <label htmlFor="manualScore">Score: </label>
                             <Input
@@ -185,9 +170,7 @@ const Answer = ({ question }: QuestionProps) => {
                                     size="sm"
                                     onClick={() => {
                                         setManualScore(
-                                            question.answer
-                                                ? question.answer.score || 0
-                                                : 0
+                                            answer ? answer.score || 0 : 0
                                         );
                                         setIsUpdatingScore(false);
                                     }}
@@ -197,16 +180,14 @@ const Answer = ({ question }: QuestionProps) => {
                             )}
                         </>
                     )}
-                    {question.answer &&
-                        question.answer.score &&
-                        !isUpdatingScore && (
-                            <Button
-                                size="sm"
-                                onClick={() => setIsUpdatingScore(true)}
-                            >
-                                Update score
-                            </Button>
-                        )}
+                    {answer && answer.score && !isUpdatingScore && (
+                        <Button
+                            size="sm"
+                            onClick={() => setIsUpdatingScore(true)}
+                        >
+                            Update score
+                        </Button>
+                    )}
                 </div>
             )}
         </div>

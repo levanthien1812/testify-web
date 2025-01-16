@@ -166,7 +166,10 @@ const TakerSubmissionDetail = ({
                     <div className="sentinel" ref={sentinelRef}></div>
                     {isLoadingTest && <p className="text-center">Loading...</p>}
                     {testWithAnswers && (
-                        <TestQuestionsAndAnswers test={testWithAnswers} />
+                        <TestQuestionsAndAnswers
+                            test={testWithAnswers}
+                            answers={[]}
+                        />
                     )}
                 </div>
             </ModalBody>

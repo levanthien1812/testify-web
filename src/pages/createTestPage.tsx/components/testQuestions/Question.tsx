@@ -5,6 +5,7 @@ import {
     MultipleChoiceQuestionBodyItf,
     QuestionBodyContentItf,
     QuestionBodyItf,
+    QuestionContentItf,
     QuestionItf,
     ResponseQuestionBodyItf,
     TestPartItf,
@@ -36,7 +37,7 @@ import { QUESTION_TYPE } from "../../../../config/constants/tests";
 import { getInitialQuestionContent } from "../../../../utils/mapping";
 
 type QuestionProps = {
-    question: QuestionItf;
+    question: QuestionItf<QuestionContentItf>;
     part?: TestPartItf;
 };
 

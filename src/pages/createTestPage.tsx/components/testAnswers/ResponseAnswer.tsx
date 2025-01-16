@@ -1,6 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
-import { AnswerBody, ResponseQuestionItf } from "../../../../types/types";
-import { generateArray } from "../../../../utils/array";
+import { ResponseQuestionItf } from "../../../../types/types";
 
 type ResponseAnswerProps = {
     content: ResponseQuestionItf;

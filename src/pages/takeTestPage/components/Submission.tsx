@@ -3,21 +3,21 @@ import React from "react";
 import { formatTime } from "../../../utils/time";
 import { TestItf, SubmissionItf } from "../../../types/types";
 import Answer from "./Answer";
-import SubmissionDetail from "./TestQuestionsAndAnswers";
+import TestQuetionsAndAnswers from "./TestQuestionsAndAnswers";
 import Button from "../../../components/elements/Button";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../stores/rootState";
 
 type SubmissionProps = {
-    test: TestItf;
     submission: SubmissionItf;
-    onViewDetail: () => void;
 };
 
-const Submission = ({ submission, test, onViewDetail }: SubmissionProps) => {
+const Submission = ({ submission }: SubmissionProps) => {
     const [viewDetail, setViewDetail] = React.useState(false);
+    const { test, answers } = useSelector((state: RootState) => state.takeTest);
 
     const handleViewDetail = () => {
         setViewDetail((prev) => !prev);
-        onViewDetail();
     };
 
     return (
@@ -49,7 +49,9 @@ const Submission = ({ submission, test, onViewDetail }: SubmissionProps) => {
                 {!viewDetail ? "View detail" : "Hide detail"}
             </Button>
 
-            {viewDetail && <SubmissionDetail test={test} />}
+            {viewDetail && (
+                <TestQuetionsAndAnswers test={test!} answers={answers} />
+            )}
         </div>
     );
 };

@@ -1,45 +1,45 @@
 import { useMemo } from "react";
 import {
+    MultipleChoiceAnswerItf,
     MultipleChoiceQuestionItf,
-    MultipleChoicesAnswerItf,
 } from "../../../types/types";
 import { formatImageUrl } from "../../../utils/formatImageUrl";
 
 type MultipleChoicesAnswerProps = {
-    content: MultipleChoiceQuestionItf;
-    userAnswer: MultipleChoicesAnswerItf | null | undefined;
+    questionContent: MultipleChoiceQuestionItf;
+    answerContent: MultipleChoiceAnswerItf;
 };
 
 const MultipleChoicesAnswer = ({
-    content,
-    userAnswer,
+    questionContent,
+    answerContent,
 }: MultipleChoicesAnswerProps) => {
     const optionChosen = useMemo(() => {
-        if (userAnswer === undefined && content.answer) {
-            return content.answer[0];
-        } else if (userAnswer && userAnswer.answer) {
-            return userAnswer.answer[0];
+        if (answerContent === undefined && questionContent.answer?.options) {
+            return questionContent.answer?.options[0];
+        } else if (answerContent) {
+            return answerContent.options[0];
         }
 
         return "";
 
-        // return userAnswer && userAnswer.answer.length > 0
-        //     ? userAnswer.answer[0]
-        //     : content.answer
-        //     ? content.answer[0]
+        // return answerContent && answerQuesquestionContent.answer.length > 0
+        //     ? answerQuesquestionContent.answer[0]
+        //     : questionContent.answer
+        //     ? questionContent.answer[0]
         //     : "";
-    }, [userAnswer]);
+    }, [answerContent, questionContent]);
 
     return (
         <>
             <div
                 className=""
-                dangerouslySetInnerHTML={{ __html: content.text }}
+                dangerouslySetInnerHTML={{ __html: questionContent.text }}
             ></div>
 
-            {content.images && (
+            {questionContent.images && (
                 <div className="grid grid-cols-2 gap-2 px-[10%] mt-2 justify-items-center">
-                    {(content.images as string[]).map((image) => (
+                    {(questionContent.images as string[]).map((image) => (
                         <div key={image} className="relative">
                             <img
                                 src={formatImageUrl(image)}
@@ -52,21 +52,22 @@ const MultipleChoicesAnswer = ({
             )}
 
             <div className="space-y-1 mt-2">
-                {content.options.map((option) => (
+                {questionContent.options.map((option) => (
                     <div
                         className="flex gap-3 items-center ps-2 hover:bg-gray-200 cursor-pointer"
                         key={option.id}
                     >
                         <input
                             type="radio"
-                            name={content.id}
+                            name={questionContent.id}
                             value={option.id}
                             id={option.id}
                             checked={optionChosen === option.id}
                             className={
-                                userAnswer
-                                    ? content.answer &&
-                                      content.answer[0] === option.id
+                                answerContent
+                                    ? questionContent.answer &&
+                                      questionContent.answer.options[0] ===
+                                          option.id
                                         ? "accent-green-600"
                                         : "accent-red-600"
                                     : ""
@@ -76,15 +77,17 @@ const MultipleChoicesAnswer = ({
                         <label
                             htmlFor={option.id}
                             className={`grow ${
-                                userAnswer
-                                    ? content.answer &&
-                                      content.answer[0] === option.id &&
+                                answerContent
+                                    ? questionContent.answer &&
+                                      questionContent.answer.options[0] ===
+                                          option.id &&
                                       "text-green-600"
                                     : ""
                             } ${
-                                userAnswer
-                                    ? content.answer &&
-                                      content.answer[0] !== option.id &&
+                                answerContent
+                                    ? questionContent.answer &&
+                                      questionContent.answer.options[0] !==
+                                          option.id &&
                                       optionChosen === option.id &&
                                       "text-red-600"
                                     : ""
