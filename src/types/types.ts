@@ -72,7 +72,7 @@ export interface TestItf extends TestBodyItf {
     maker_id: string;
     taker_ids: string[] | userItf[];
     are_answers_provided: boolean;
-    questions?: QuestionItf[];
+    questions?: QuestionItf<QuestionContentItf>[];
     submissions_count?: number;
     status: (typeof TEST_STATUS)[keyof typeof TEST_STATUS];
 }
@@ -88,7 +88,7 @@ export interface PartBodyItf {
 export interface TestPartItf extends PartBodyItf {
     id?: string;
     test_id?: string;
-    questions?: QuestionItf[];
+    questions?: QuestionItf<QuestionContentItf>[];
     is_saved?: boolean;
 }
 
@@ -102,13 +102,13 @@ export interface MultipleChoiceQuestionBodyItf {
 }
 
 export interface MultipleChoiceQuestionItf
-    extends MultipleChoiceQuestionBodyItf {
+    extends MultipleChoiceQuestionBodyItf,
+        BaseQuestionContentItf<MultipleChoiceAnswerItf> {
     id?: string;
     options: {
         text: string;
         id?: string;
     }[];
-    answer?: string[];
     explaination?: string;
 }
 
@@ -117,9 +117,10 @@ export interface FillGapsQuestionBodyItf {
     num_gaps: number;
 }
 
-export interface FillGapsQuestionItf extends FillGapsQuestionBodyItf {
+export interface FillGapsQuestionItf
+    extends FillGapsQuestionBodyItf,
+        BaseQuestionContentItf<FillGapsAnswerItf> {
     id?: string;
-    answer?: string[];
     explaination?: string;
 }
 
@@ -133,7 +134,9 @@ export interface MatchingQuestionBodyItf {
     }[];
 }
 
-export interface MatchingQuestionItf extends MatchingQuestionBodyItf {
+export interface MatchingQuestionItf
+    extends MatchingQuestionBodyItf,
+        BaseQuestionContentItf<MatchingAnswerItf> {
     id?: string;
     left_items: {
         id?: string;
@@ -142,10 +145,6 @@ export interface MatchingQuestionItf extends MatchingQuestionBodyItf {
     right_items: {
         id?: string;
         text: string;
-    }[];
-    answer?: {
-        left: string;
-        right: string;
     }[];
     explaination?: string;
 }
@@ -157,13 +156,24 @@ export interface ResponseQuestionBodyItf {
     images?: string[];
 }
 
-export interface ResponseQuestionItf extends ResponseQuestionBodyItf {
+export interface ResponseQuestionItf
+    extends ResponseQuestionBodyItf,
+        BaseQuestionContentItf<ResponseAnswerItf> {
     id?: string;
-    answer?: string;
     explaination?: string;
 }
 
-export interface QuestionItf {
+export interface BaseQuestionContentItf<T extends AnswerBodyContentItf> {
+    answer?: T;
+}
+
+export type QuestionContentItf =
+    | MultipleChoiceQuestionItf
+    | FillGapsQuestionItf
+    | MatchingQuestionItf
+    | ResponseQuestionItf;
+
+export interface QuestionItf<T extends QuestionContentItf> {
     id?: string;
     order: number;
     test_id: string;
@@ -171,12 +181,7 @@ export interface QuestionItf {
     level: (typeof TEST_LEVEL)[keyof typeof TEST_LEVEL];
     type: (typeof QUESTION_TYPE)[keyof typeof QUESTION_TYPE];
     part_id?: string;
-    answer?: AnswerItf | null; // user_answer
-    content?:
-        | MultipleChoiceQuestionItf
-        | FillGapsQuestionItf
-        | MatchingQuestionItf
-        | ResponseQuestionItf;
+    content?: T;
     is_saved?: boolean;
 }
 
@@ -195,58 +200,39 @@ export interface QuestionBodyItf<T extends QuestionBodyContentItf> {
     content: T;
 }
 
-export type AnswerItf = {
-    id: string;
-    date: Date;
-    content:
-        | MultipleChoicesAnswerItf
-        | FillGapsAnswerItf
-        | MatchingAnswerItf
-        | ResponseAnswerItf;
+export interface BaseAnswerItf {
+    is_saved?: boolean;
+}
+
+export type AnswerBodyContentItf =
+    | MultipleChoiceAnswerItf
+    | FillGapsAnswerItf
+    | MatchingAnswerItf
+    | ResponseAnswerItf;
+
+export interface MultipleChoiceAnswerItf extends BaseAnswerItf {
+    options: string[];
+}
+export interface FillGapsAnswerItf extends BaseAnswerItf {
+    gaps: string[];
+}
+export interface MatchingAnswerItf extends BaseAnswerItf {
+    matchings: {
+        left: string;
+        right: string;
+    }[];
+}
+export interface ResponseAnswerItf extends BaseAnswerItf {
+    response: string;
+}
+
+export type UserAnswerItf<T extends AnswerBodyContentItf> = {
+    id?: string;
+    question_id: string;
+    date?: Date;
+    content?: T;
     score?: number;
 };
-
-export interface MultipleChoicesAnswerBodyItf {
-    answer: string[];
-}
-
-export interface MultipleChoicesAnswerItf extends MultipleChoicesAnswerBodyItf {
-    id: string;
-    answer_id?: string;
-}
-
-export interface FillGapsAnswerBodyItf {
-    answer: string[];
-}
-
-export interface FillGapsAnswerItf extends FillGapsAnswerBodyItf {
-    id: string;
-    answer_id?: string;
-}
-
-export interface MatchingAnswerBodyItf {
-    answer: { left: string; right: string }[];
-}
-
-export interface MatchingAnswerItf extends MatchingAnswerBodyItf {
-    id: string;
-    answer_id?: string;
-}
-
-export interface ResponseAnswerBodyItf {
-    answer: string;
-}
-
-export interface ResponseAnswerItf extends ResponseAnswerBodyItf {
-    id: string;
-    answer_id?: string;
-}
-
-export type AnswerBody =
-    | MultipleChoicesAnswerBodyItf
-    | FillGapsAnswerBodyItf
-    | MatchingAnswerBodyItf
-    | ResponseAnswerBodyItf;
 
 export interface TakerBodyItf {
     name: string;
@@ -257,32 +243,6 @@ export interface TakerItf extends TakerBodyItf {
     id?: string;
     maker_ids?: string[];
 }
-
-export interface UserMultipleChoicesAnswerBodyItf {
-    question_id: string;
-    answer: string[];
-}
-
-export interface UserFillGapsAnswerBodyItf {
-    question_id: string;
-    answer: string[];
-}
-
-export interface UserMatchingAnswerBodyItf {
-    question_id: string;
-    answer: { left: string; right: string }[];
-}
-
-export interface UserResponseAnswerBodyItf {
-    question_id: string;
-    answer: string;
-}
-
-export type UserAnswer =
-    | UserMultipleChoicesAnswerBodyItf
-    | UserFillGapsAnswerBodyItf
-    | UserMatchingAnswerBodyItf
-    | UserResponseAnswerBodyItf;
 
 export interface SubmissionItf {
     id: string;

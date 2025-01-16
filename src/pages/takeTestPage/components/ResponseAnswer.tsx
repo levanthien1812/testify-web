@@ -2,27 +2,30 @@ import { useMemo } from "react";
 import { ResponseAnswerItf, ResponseQuestionItf } from "../../../types/types";
 
 type ResponseAnswerProps = {
-    content: ResponseQuestionItf;
-    userAnswer: ResponseAnswerItf | null | undefined;
+    questionContent: ResponseQuestionItf;
+    answerContent: ResponseAnswerItf;
 };
 
-const ResponseAnswer = ({ content, userAnswer }: ResponseAnswerProps) => {
+const ResponseAnswer = ({
+    questionContent,
+    answerContent,
+}: ResponseAnswerProps) => {
     const response = useMemo(() => {
-        if (userAnswer === undefined) {
-            return content.answer;
-        } else if (userAnswer !== null) {
-            return userAnswer.answer;
+        if (answerContent === undefined) {
+            return questionContent.answer?.response;
+        } else if (answerContent !== null) {
+            return answerContent.response;
         }
 
         return "";
-    }, [userAnswer]);
+    }, [questionContent, answerContent]);
 
     return (
         <div>
             <div
                 className=""
                 dangerouslySetInnerHTML={{
-                    __html: content.text,
+                    __html: questionContent.text,
                 }}
             ></div>
 

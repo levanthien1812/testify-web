@@ -5,26 +5,29 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 
 type MatchingAnswerProps = {
-    content: MatchingQuestionItf;
-    userAnswer: MatchingAnswerItf | null | undefined;
+    questionContent: MatchingQuestionItf;
+    answerContent: MatchingAnswerItf;
 };
 
-const MatchingAnswer = ({ content, userAnswer }: MatchingAnswerProps) => {
+const MatchingAnswer = ({
+    questionContent,
+    answerContent,
+}: MatchingAnswerProps) => {
     const matchings = useMemo(() => {
-        if (userAnswer === undefined) {
-            return content.answer || [];
-        } else if (userAnswer !== null) {
-            return userAnswer.answer || [];
+        if (answerContent === undefined) {
+            return questionContent.answer?.matchings || [];
+        } else if (answerContent !== null) {
+            return answerContent.matchings || [];
         }
 
         return [];
 
         // return userAnswer ? userAnswer.answer || [] : content.answer || [];
-    }, [userAnswer]);
+    }, [questionContent, answerContent]);
 
     const isCorrectMatching = (matching: { left: string; right: string }) => {
-        if (content.answer) {
-            return content.answer.find(
+        if (questionContent.answer) {
+            return questionContent.answer.matchings.find(
                 (answer) =>
                     answer.left === matching.left &&
                     answer.right === matching.right
@@ -39,12 +42,12 @@ const MatchingAnswer = ({ content, userAnswer }: MatchingAnswerProps) => {
             <div
                 className=""
                 dangerouslySetInnerHTML={{
-                    __html: content.text,
+                    __html: questionContent.text,
                 }}
             ></div>
             <div className="flex gap-3 w-full mt-2 px-2">
                 <div className="space-y-2 w-1/2">
-                    {content.left_items.map((item) => (
+                    {questionContent.left_items.map((item) => (
                         <DraggableItem
                             item={item}
                             key={item.id}
@@ -55,7 +58,7 @@ const MatchingAnswer = ({ content, userAnswer }: MatchingAnswerProps) => {
                     ))}
                 </div>
                 <div className="space-y-2 w-1/2">
-                    {content.right_items.map((item) => (
+                    {questionContent.right_items.map((item) => (
                         <DraggableItem
                             item={item}
                             key={item.id}
@@ -74,7 +77,8 @@ const MatchingAnswer = ({ content, userAnswer }: MatchingAnswerProps) => {
                         <div
                             key={matching.left}
                             className={`${
-                                content.answer && userAnswer
+                                questionContent.answer &&
+                                answerContent.matchings
                                     ? isCorrectMatching(matching)
                                         ? "bg-green-100"
                                         : "bg-red-100"
@@ -83,7 +87,7 @@ const MatchingAnswer = ({ content, userAnswer }: MatchingAnswerProps) => {
                         >
                             <span className="col-span-4">
                                 {
-                                    content.left_items.find(
+                                    questionContent.left_items.find(
                                         (left_item) =>
                                             left_item.id === matching.left
                                     )?.text
@@ -98,7 +102,7 @@ const MatchingAnswer = ({ content, userAnswer }: MatchingAnswerProps) => {
 
                             <span className="col-span-4">
                                 {
-                                    content.right_items.find(
+                                    questionContent.right_items.find(
                                         (right_item) =>
                                             right_item.id === matching.right
                                     )?.text

@@ -1,11 +1,10 @@
-import React from "react";
 import {
     FillGapsQuestionItf,
     MatchingQuestionItf,
     MultipleChoiceQuestionItf,
+    QuestionContentItf,
     QuestionItf,
     ResponseQuestionItf,
-    UserAnswer,
 } from "../../../types/types";
 import MultipleChoicesQuestion from "./MultipleChoicesQuestion";
 import FillGapsQuestion from "./FillGapsQuestion";
@@ -14,56 +13,33 @@ import ResponseQuestion from "./ResponseQuestion";
 import { QUESTION_TYPE } from "../../../config/constants/tests";
 
 type QuestionProps = {
-    question: QuestionItf;
-    onProvideAnswer: (answer: UserAnswer) => void;
+    question: QuestionItf<QuestionContentItf>;
 };
 
-const Question = ({ question, onProvideAnswer }: QuestionProps) => {
+const Question = ({ question }: QuestionProps) => {
     return (
         <div className="px-4 py-2" key={question.id}>
             <div>Question {question.order}: </div>
             {question.type === QUESTION_TYPE.MULTIPLE_CHOICES && (
                 <MultipleChoicesQuestion
-                    content={question.content as MultipleChoiceQuestionItf}
-                    onProvideAnswer={(answer) =>
-                        onProvideAnswer({
-                            question_id: question.id!,
-                            answer: answer,
-                        })
+                    question={
+                        question as QuestionItf<MultipleChoiceQuestionItf>
                     }
                 />
             )}
             {question.type === QUESTION_TYPE.FILL_IN_THE_GAPS && (
                 <FillGapsQuestion
-                    content={question.content as FillGapsQuestionItf}
-                    onProvideAnswer={(answer) =>
-                        onProvideAnswer({
-                            question_id: question.id!,
-                            answer: answer,
-                        })
-                    }
+                    question={question as QuestionItf<FillGapsQuestionItf>}
                 />
             )}
             {question.type === QUESTION_TYPE.MATCHING && (
                 <MatchingQuestion
-                    content={question.content as MatchingQuestionItf}
-                    onProvideAnswer={(answer) =>
-                        onProvideAnswer({
-                            question_id: question.id!,
-                            answer: answer,
-                        })
-                    }
+                    question={question as QuestionItf<MatchingQuestionItf>}
                 />
             )}
             {question.type === QUESTION_TYPE.RESPONSE && (
                 <ResponseQuestion
-                    content={question.content as ResponseQuestionItf}
-                    onProvideAnswer={(answer) =>
-                        onProvideAnswer({
-                            question_id: question.id!,
-                            answer: answer,
-                        })
-                    }
+                    question={question as QuestionItf<ResponseQuestionItf>}
                 />
             )}
         </div>

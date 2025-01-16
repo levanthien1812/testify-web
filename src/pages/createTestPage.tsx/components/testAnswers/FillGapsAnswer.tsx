@@ -1,12 +1,14 @@
 import { ChangeEvent, useEffect, useState } from "react";
-import { AnswerBody, FillGapsQuestionItf } from "../../../../types/types";
-import { generateArray } from "../../../../utils/array";
+import {
+    FillGapsAnswerItf,
+    FillGapsQuestionItf,
+} from "../../../../types/types";
 import Input from "../../../../components/elements/Input";
 
 type FillGapsAnswerProps = {
     content: FillGapsQuestionItf;
     reset: boolean;
-    onProvideAnswer: (answerBody: AnswerBody) => void;
+    onProvideAnswer: (answerBody: FillGapsAnswerItf) => void;
 };
 
 const FillGapsAnswer = ({
@@ -15,7 +17,7 @@ const FillGapsAnswer = ({
     reset,
 }: FillGapsAnswerProps) => {
     const [gaps, setGaps] = useState<string[]>(
-        content.answer || Array(content.num_gaps).fill("")
+        content.answer?.gaps || Array(content.num_gaps).fill("")
     );
 
     const handleFillGap = (e: ChangeEvent<HTMLInputElement>) => {
@@ -24,13 +26,13 @@ const FillGapsAnswer = ({
             let index = parseInt(e.target.name.split("-")[1]) - 1;
             updatedGaps[index] = e.target.value;
             setGaps(updatedGaps);
-            onProvideAnswer({ answer: updatedGaps });
+            onProvideAnswer({ gaps: updatedGaps });
         }
     };
 
     useEffect(() => {
         if (reset === true)
-            setGaps(content.answer || Array(content.num_gaps).fill(""));
+            setGaps(content.answer?.gaps || Array(content.num_gaps).fill(""));
     }, [reset]);
 
     return (

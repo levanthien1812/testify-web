@@ -1,8 +1,7 @@
 import { instance } from "../config/axios";
 import { QUESTION_TYPE } from "../config/constants/tests";
 import {
-    AnswerBody,
-    AnswerItf,
+    AnswerBodyContentItf,
     MultipleChoiceQuestionBodyItf,
     PartBodyItf,
     QuestionBodyContentItf,
@@ -10,7 +9,7 @@ import {
     TakerBodyItf,
     TestBodyItf,
     TestRequestFilter,
-    UserAnswer,
+    UserAnswerItf,
 } from "../types/types";
 
 export const createTest = async (testBody: TestBodyItf) => {
@@ -45,6 +44,15 @@ export const getTest = async (
                     : ""
             }`
         );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getTestStatus = async (testId: string) => {
+    try {
+        const response = await instance.get(`/tests/${testId}`);
         return response.data;
     } catch (error) {
         throw error;
@@ -181,7 +189,7 @@ export const saveQuestion = async (
 export const addAnswer = async (
     testId: string,
     questionId: string,
-    answerBody: AnswerBody
+    answerBody: AnswerBodyContentItf
 ) => {
     try {
         const response = await instance.patch(
@@ -252,7 +260,7 @@ export const validateQuestions = async (testId: string) => {
 
 export const submitAnswers = async (
     testId: string,
-    answers: UserAnswer[],
+    answers: UserAnswerItf<AnswerBodyContentItf>[],
     startTime: Date
 ) => {
     try {
@@ -290,7 +298,7 @@ export const getSubmissions = async (testId: string) => {
 export const updateTakerAnswer = async (
     testId: string,
     answerId: string,
-    answerBody: Pick<AnswerItf, "score">
+    answerBody: Pick<UserAnswerItf<AnswerBodyContentItf>, "score">
 ) => {
     try {
         const response = await instance.patch(

@@ -1,17 +1,16 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
     INITIAL_CREATE_TEST_CONTEXT,
-    INITIAL_FILL_GAPS_QUESTION,
-    INITIAL_MATCHING_QUESTION,
-    INITIAL_MULTIPLE_CHOICES_QUESTION,
     INITIAL_PART,
     INITIAL_QUESTION,
-    INITIAL_RESPONSE_QUESTION,
 } from "../config/constants/initialValues";
-import { CREATE_TEST_STEPS, QUESTION_TYPE } from "../config/constants/tests";
-import { QuestionItf, TakerItf, TestPartItf } from "../types/types";
-import { pickFieldsFromObject } from "../utils/object";
-import { getInitialQuestionContent } from "../utils/mapping";
+import { CREATE_TEST_STEPS } from "../config/constants/tests";
+import {
+    QuestionContentItf,
+    QuestionItf,
+    TakerItf,
+    TestPartItf,
+} from "../types/types";
 
 const createTestSlice = createSlice({
     initialState: INITIAL_CREATE_TEST_CONTEXT,
@@ -178,7 +177,7 @@ const createTestSlice = createSlice({
             action: PayloadAction<{
                 partId?: string;
                 questionOrder: number;
-                questionInfo: Partial<QuestionItf>;
+                questionInfo: Partial<QuestionItf<QuestionContentItf>>;
             }>
         ) {
             if (action.payload?.partId) {
@@ -390,16 +389,18 @@ const createTestSlice = createSlice({
             }));
 
             // Initialize part questions
-            state.testParts?.map((part) => {
+            state.testParts = state.testParts?.map((part) => {
                 if (
                     part?.num_questions > 0 &&
                     (part?.questions?.length === 0 || !part?.questions)
                 ) {
                     part.questions = [...Array(part?.num_questions)].map(
-                        (item, index) => ({
-                            ...INITIAL_QUESTION,
-                            order: index + 1,
-                        })
+                        (item, index) => {
+                            return {
+                                ...INITIAL_QUESTION,
+                                order: index + 1,
+                            };
+                        }
                     );
                 }
                 return part;

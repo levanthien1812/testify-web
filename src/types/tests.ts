@@ -2,13 +2,18 @@ import {
     PUBLIC_ANSWERS_OPTIONS,
     SHARE_OPTIONS,
     TEST_LEVEL,
+    TEST_STATUS,
 } from "../config/config";
 import {
+    AnswerBodyContentItf,
     PartBodyItf,
+    QuestionContentItf,
     QuestionItf,
+    SubmissionItf,
     TakerItf,
     TestItf,
     TestPartItf,
+    UserAnswerItf,
 } from "./types";
 
 export interface CreateTestStep {
@@ -41,11 +46,26 @@ export interface CreateTestContext {
     publicAnswersOption: (typeof PUBLIC_ANSWERS_OPTIONS)[keyof typeof PUBLIC_ANSWERS_OPTIONS];
     publicAnswersDate: string;
     testParts: TestPartItf[];
-    testQuestions: QuestionItf[];
+    testQuestions: QuestionItf<QuestionContentItf>[];
     isValidTestInfo: boolean;
     isValidCurrentPart: boolean;
     isValidParts: boolean;
     isValidQuestions: boolean;
     testTakers: TakerItf[];
     availableTakers: TakerItf[];
+}
+
+export interface TakeTestContext {
+    test: TestItf | null;
+    answers: UserAnswerItf<AnswerBodyContentItf>[];
+    startTime: Date;
+    closeTime: Date;
+    submission: SubmissionItf[];
+    testStatus: (typeof TEST_STATUS)[keyof typeof TEST_STATUS];
+    startable: boolean;
+    isStarted: boolean;
+    isEnded: boolean;
+    isForbidden: boolean;
+    includeTakerAnswers: boolean;
+    submittable: boolean;
 }

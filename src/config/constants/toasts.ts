@@ -7,6 +7,7 @@ const TOAST_MESSAGES = {
     UPDATE_QUESTION_SUCCESSFULLY: "Update question successfuly",
     CREATE_TAKERS_SUCCESSFULLY: "Create takers successfuly",
     ADD_TAKER_SUCCESSFULLY: "Add taker successfuly",
+    ADD_ANSWER_SUCCESSFULLY: "Add answer successfuly",
 };
 
 export { TOAST_MESSAGES };

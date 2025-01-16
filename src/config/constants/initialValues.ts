@@ -1,9 +1,10 @@
-import { CreateTestContext } from "../../types/tests";
+import { CreateTestContext, TakeTestContext } from "../../types/tests";
 import {
     FillGapsQuestionItf,
     MatchingQuestionItf,
     MultipleChoiceQuestionItf,
     PartBodyItf,
+    QuestionContentItf,
     QuestionItf,
     ResponseQuestionItf,
     TestBodyItf,
@@ -15,6 +16,7 @@ import {
     QUESTION_LEVEL,
     SHARE_OPTIONS,
     TEST_LEVEL,
+    TEST_STATUS,
 } from "../config";
 import { CREATE_TEST_STEPS, QUESTION_TYPE } from "./tests";
 
@@ -134,11 +136,26 @@ export const INITIAL_RESPONSE_QUESTION: ResponseQuestionItf = {
     text: "",
 };
 
-export const INITIAL_QUESTION: QuestionItf = {
+export const INITIAL_QUESTION: QuestionItf<QuestionContentItf> = {
     level: QUESTION_LEVEL.EASY,
     order: 0,
     score: 1,
     test_id: "",
     type: QUESTION_TYPE.MULTIPLE_CHOICES,
     content: INITIAL_MULTIPLE_CHOICES_QUESTION,
+};
+
+export const INITIAL_TAKE_TEST_CONTEXT: TakeTestContext = {
+    answers: [],
+    closeTime: new Date(),
+    startTime: new Date(),
+    test: null,
+    submission: [],
+    testStatus: TEST_STATUS.DRAFT,
+    startable: false,
+    isStarted: false,
+    isEnded: false,
+    isForbidden: false,
+    includeTakerAnswers: false,
+    submittable: false,
 };

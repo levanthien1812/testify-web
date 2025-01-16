@@ -1,5 +1,9 @@
 import React, { useMemo } from "react";
-import { QuestionItf, TestPartItf } from "../../../../types/types";
+import {
+    QuestionContentItf,
+    QuestionItf,
+    TestPartItf,
+} from "../../../../types/types";
 import Question from "./Question";
 import Answer from "../testAnswers/Answer";
 import Accordion from "../../../../components/accordions/Accordion";
@@ -50,7 +54,9 @@ const Questions: React.FC<{
                                     />
                                 ) : (
                                     <Answer
-                                        question={question as QuestionItf}
+                                        question={
+                                            question as QuestionItf<QuestionContentItf>
+                                        }
                                         key={question!.content?.text}
                                     />
                                 )

@@ -1,11 +1,26 @@
-import { TestItf } from "../../../types/types";
+import { useCallback, useMemo } from "react";
+import {
+    AnswerBodyContentItf,
+    TestItf,
+    UserAnswerItf,
+} from "../../../types/types";
 import Answer from "./Answer";
 
 type TestQuestionsAndAnswersProps = {
     test: TestItf;
+    answers: UserAnswerItf<AnswerBodyContentItf>[];
 };
 
-const TestQuestionsAndAnswers = ({ test }: TestQuestionsAndAnswersProps) => {
+const TestQuestionsAndAnswers = ({
+    test,
+    answers,
+}: TestQuestionsAndAnswersProps) => {
+    const getAnswer = useCallback(
+        (questionId: string) => {
+            return answers.find((answer) => answer.question_id === questionId);
+        },
+        [answers]
+    );
     return (
         <div className="mt-4">
             {test.num_parts > 1 &&
@@ -23,8 +38,9 @@ const TestQuestionsAndAnswers = ({ test }: TestQuestionsAndAnswersProps) => {
                                 {part.questions &&
                                     part.questions.map((question) => (
                                         <Answer
-                                            question={question}
                                             key={question.id}
+                                            question={question}
+                                            answer={getAnswer(question.id!)}
                                         />
                                     ))}
                             </div>
@@ -33,7 +49,11 @@ const TestQuestionsAndAnswers = ({ test }: TestQuestionsAndAnswersProps) => {
                 })}
             {test.num_parts <= 1 &&
                 test.questions!.map((question) => (
-                    <Answer question={question} key={question.id} />
+                    <Answer
+                        question={question}
+                        key={question.id}
+                        answer={getAnswer(question.id!)}
+                    />
                 ))}
         </div>
     );
