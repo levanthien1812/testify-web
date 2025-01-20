@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo } from "react";
+import React, { useEffect } from "react";
 import { PartBodyItf, TestPartItf } from "../../../../types/types";
 import { useMutation } from "react-query";
 import { addPart, updatePart } from "../../../../services/test";
@@ -14,7 +14,7 @@ import { createTestActions } from "../../../../stores/createTest";
 import Accordion from "../../../../components/accordions/Accordion";
 import { useDispatch } from "react-redux";
 import { INITIAL_PART } from "../../../../config/constants/initialValues";
-import { isEmpty, pickFieldsFromObject } from "../../../../utils/object";
+import { pickFieldsFromObject } from "../../../../utils/object";
 
 const Part: React.FC<{
     part: TestPartItf;

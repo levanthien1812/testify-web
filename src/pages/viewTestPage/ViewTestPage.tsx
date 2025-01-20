@@ -32,11 +32,6 @@ const ViewTestPage = () => {
             const responseData = await getTest(testId!);
             return responseData.test;
         },
-        onError: (error) => {
-            if (error instanceof AxiosError) {
-                toast.error(error.response?.data.message);
-            }
-        },
         retry: false,
     });
 
@@ -49,11 +44,6 @@ const ViewTestPage = () => {
         queryFn: async () => {
             const responseData = await getSubmissions(testId!);
             return responseData.submissions;
-        },
-        onError: (error) => {
-            if (error instanceof AxiosError) {
-                toast.error(error.response?.data.message);
-            }
         },
     });
 

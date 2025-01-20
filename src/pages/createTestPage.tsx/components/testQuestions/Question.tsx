@@ -44,7 +44,7 @@ type QuestionProps = {
 const Question = ({ question, part }: QuestionProps) => {
     const [open, setOpen] = useState<boolean>(false);
     const { testId } = useSelector((state: RootState) => state.createTest);
-    const { saveTestQuestions } = createTestActions;
+    const { saveTestQuestions, validate } = createTestActions;
     const dispatch = useDispatch();
 
     const {
@@ -64,6 +64,7 @@ const Question = ({ question, part }: QuestionProps) => {
         if (!question?.id) {
             setValue("content", getInitialQuestionContent(allValues?.type));
         }
+        console.log(allValues);
         dispatch(
             saveTestQuestions({
                 partId: part?.id,
@@ -71,10 +72,11 @@ const Question = ({ question, part }: QuestionProps) => {
                 questionInfo: {
                     type: allValues?.type,
                     level: allValues?.level,
-                    score: allValues?.score,
+                    score: Number(allValues?.score),
                 },
             })
         );
+        dispatch(validate());
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
         allValues?.type,
@@ -95,6 +97,7 @@ const Question = ({ question, part }: QuestionProps) => {
                 },
             })
         );
+        dispatch(validate());
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [
         JSON.stringify(allValues?.content),

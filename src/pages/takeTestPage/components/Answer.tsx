@@ -30,10 +30,10 @@ import { QUESTION_TYPE } from "../../../config/constants/tests";
 
 type QuestionProps = {
     question: QuestionItf<QuestionContentItf>;
-    answer?: UserAnswerItf<AnswerBodyContentItf>;
+    userAnswer?: UserAnswerItf<AnswerBodyContentItf>;
 };
 
-const Answer = ({ question, answer }: QuestionProps) => {
+const Answer = ({ question, userAnswer: answer }: QuestionProps) => {
     const [manualScore, setManualScore] = useState<number>(
         answer ? answer.score || 0 : 0
     );

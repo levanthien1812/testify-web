@@ -114,8 +114,8 @@ const TakersChoser = ({ label = "Choose takers" }: TakersChoserProps) => {
                             </div>
                         </div>
                     ))}
-                {!test ||
-                    (test.length === 0 && (
+                {!filteredTakers ||
+                    (filteredTakers.length === 0 && (
                         <p className="text-center">No takers found!</p>
                     ))}
             </div>

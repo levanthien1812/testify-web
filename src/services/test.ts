@@ -295,6 +295,21 @@ export const getSubmissions = async (testId: string) => {
     }
 };
 
+export const getSubmissionAnswers = async (
+    testId: string,
+    submissionId: string
+) => {
+    try {
+        const response = await instance.get(
+            `/tests/${testId}/submissions/${submissionId}/answers`
+        );
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 export const updateTakerAnswer = async (
     testId: string,
     answerId: string,

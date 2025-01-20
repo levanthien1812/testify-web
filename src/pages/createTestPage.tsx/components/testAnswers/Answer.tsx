@@ -83,7 +83,7 @@ const Answer: React.FC<{
             <div className="flex justify-start">
                 <p
                     className={`px-2 text-white ${
-                        question.content!.answer
+                        !question.content?.answer?.is_saved
                             ? "bg-gray-600"
                             : "bg-orange-600"
                     } w-fit`}
@@ -92,7 +92,7 @@ const Answer: React.FC<{
                     <span className="italic">({question.score} points)</span> :
                 </p>
                 {question?.content?.answer?.is_saved && (
-                    <p className="text-orange-600 italic">Saved</p>
+                    <p className="text-orange-600 italic ms-1">Saved</p>
                 )}
             </div>
 
