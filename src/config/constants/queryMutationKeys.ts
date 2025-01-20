@@ -3,6 +3,7 @@ const QUERY_KEYS = {
     GET_AVAILABLE_TAKERS: "get-available-takers",
     GET_TEST_SUBMISSION: "get-test-submission",
     GET_TEST_STATUS: "get-test-status",
+    GET_SUBMISSION_ANSWERS: "get-test-answers",
 };
 
 const MUTATION_KEYS = {

@@ -53,6 +53,12 @@ const TakeTestSlice = createSlice({
                 state.submittable = true;
             }
         },
+        setAnswers(state, action) {
+            state.answers = action.payload;
+        },
+        setSubmittable(state, action) {
+            state.submittable = action.payload;
+        },
     },
 });
 

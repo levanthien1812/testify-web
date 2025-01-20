@@ -4,7 +4,7 @@ import {
     INITIAL_PART,
     INITIAL_QUESTION,
 } from "../config/constants/initialValues";
-import { CREATE_TEST_STEPS } from "../config/constants/tests";
+import { CREATE_TEST_STEPS, QUESTION_TYPE } from "../config/constants/tests";
 import {
     QuestionContentItf,
     QuestionItf,
@@ -180,6 +180,7 @@ const createTestSlice = createSlice({
                 questionInfo: Partial<QuestionItf<QuestionContentItf>>;
             }>
         ) {
+            console.log(action.payload.questionInfo);
             if (action.payload?.partId) {
                 const partIndex = state.testParts.findIndex(
                     (part) => part.id === action.payload.partId
@@ -294,7 +295,7 @@ const createTestSlice = createSlice({
                         ) {
                             isEqualNumberQuestions = true;
                         }
-
+                        console.log(totalPartsScores, totalPartsQuestions);
                         state.isValidParts =
                             isEqualTotalScores && isEqualNumberQuestions;
                     }
@@ -395,13 +396,55 @@ const createTestSlice = createSlice({
                     (part?.questions?.length === 0 || !part?.questions)
                 ) {
                     part.questions = [...Array(part?.num_questions)].map(
-                        (item, index) => {
+                        (question, index) => {
                             return {
                                 ...INITIAL_QUESTION,
                                 order: index + 1,
                             };
                         }
                     );
+                }
+                if (part.questions && part.questions.length > 0) {
+                    part.questions = part.questions.map((question) => {
+                        let answer = {};
+                        if (question?.content?.answer) {
+                            switch (question.type) {
+                                case QUESTION_TYPE.MULTIPLE_CHOICES:
+                                    answer = {
+                                        options: question?.content?.answer,
+                                        is_saved: true,
+                                    };
+                                    break;
+                                case QUESTION_TYPE.FILL_IN_THE_GAPS:
+                                    answer = {
+                                        gaps: question?.content?.answer,
+                                        is_saved: true,
+                                    };
+                                    break;
+                                case QUESTION_TYPE.MATCHING:
+                                    answer = {
+                                        matchings: question?.content?.answer,
+                                        is_saved: true,
+                                    };
+                                    break;
+                                case QUESTION_TYPE.RESPONSE:
+                                    answer = {
+                                        response: question?.content?.answer,
+                                        is_saved: true,
+                                    };
+                                    break;
+                                default:
+                                    break;
+                            }
+                        }
+                        return {
+                            ...question,
+                            content: {
+                                ...question.content,
+                                answer: answer,
+                            } as QuestionContentItf,
+                        };
+                    });
                 }
                 return part;
             });

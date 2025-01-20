@@ -35,7 +35,7 @@ const TestQuestions = () => {
                 bottomButtons: {
                     containButton: {
                         text: "Next",
-                        disabled: isValidQuestions,
+                        disabled: !isValidQuestions || isValidatingQuestions,
                         loadingText: "Validating...",
                         isLoading: isValidatingQuestions,
                         onClick: () => {

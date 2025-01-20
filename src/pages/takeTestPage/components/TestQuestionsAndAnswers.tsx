@@ -15,7 +15,7 @@ const TestQuestionsAndAnswers = ({
     test,
     answers,
 }: TestQuestionsAndAnswersProps) => {
-    const getAnswer = useCallback(
+    const getUserAnswer = useCallback(
         (questionId: string) => {
             return answers.find((answer) => answer.question_id === questionId);
         },
@@ -40,7 +40,9 @@ const TestQuestionsAndAnswers = ({
                                         <Answer
                                             key={question.id}
                                             question={question}
-                                            answer={getAnswer(question.id!)}
+                                            userAnswer={getUserAnswer(
+                                                question.id!
+                                            )}
                                         />
                                     ))}
                             </div>
@@ -52,7 +54,7 @@ const TestQuestionsAndAnswers = ({
                     <Answer
                         question={question}
                         key={question.id}
-                        answer={getAnswer(question.id!)}
+                        userAnswer={getUserAnswer(question.id!)}
                     />
                 ))}
         </div>

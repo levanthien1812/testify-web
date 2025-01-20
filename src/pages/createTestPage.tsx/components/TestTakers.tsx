@@ -1,20 +1,17 @@
 import { ChangeEvent, useState } from "react";
-import { TestItf } from "../../../types/types";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import Takers from "./testTakers/Takers";
 import { useMutation } from "react-query";
 import { updateTest } from "../../../services/test";
-import { AxiosError } from "axios";
-import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
-import Button from "../../../components/elements/Button";
 import Select from "../../../components/elements/Select";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
 import Wrapper from "../../../components/wrappers/Wrapper";
 import { createTestActions } from "../../../stores/createTest";
 import { useDispatch } from "react-redux";
+import CopyLink from "./testTakers/CopyLink";
 
 const TestTakers = () => {
     const { testId } = useSelector((state: RootState) => state.createTest);
@@ -54,6 +51,7 @@ const TestTakers = () => {
                         onClick: () => {
                             dispatch(movePrevStep());
                         },
+                        text: "Finish",
                     },
                     outlinedButton: {
                         disabled: isUpdatingTest,
@@ -62,6 +60,7 @@ const TestTakers = () => {
                         onClick: () => {
                             updateTestMutate();
                         },
+                        text: "Cancel",
                     },
                 },
             }}
@@ -92,6 +91,7 @@ const TestTakers = () => {
                     </p>
                 </div>
             </div>
+            {shareOption === "anyone" && <CopyLink link="" />}
 
             {shareOption === "restricted" && <Takers />}
         </Wrapper>
