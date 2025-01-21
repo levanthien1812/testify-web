@@ -53,6 +53,7 @@ export interface CreateTestContext {
     isValidQuestions: boolean;
     testTakers: TakerItf[];
     availableTakers: TakerItf[];
+    testLink: string;
 }
 
 export interface TakeTestContext {

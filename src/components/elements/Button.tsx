@@ -25,7 +25,7 @@ const Button = ({
             ${size === "md" && "px-8 py-1"}
             ${
                 size === "lg" && "px-12 py-1.5"
-            }  disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-gray-200 transition-colors duration-150 ${className}`}
+            }  disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-gray-200 transition-colors duration-150 text-nowrap ${className}`}
             {...props}
         >
             {children}

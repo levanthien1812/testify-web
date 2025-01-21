@@ -94,7 +94,7 @@ export const INITIAL_CREATE_TEST_CONTEXT: CreateTestContext = {
     code: "",
     enableCloseTime: true,
     closeTime: "",
-    shareOption: SHARE_OPTIONS.ANYONE,
+    shareOption: SHARE_OPTIONS.RESTRICTED,
     publicAnswersOption: PUBLIC_ANSWERS_OPTIONS.SPECIFIC_DATE,
     publicAnswersDate: "",
     testParts: [],
@@ -105,6 +105,7 @@ export const INITIAL_CREATE_TEST_CONTEXT: CreateTestContext = {
     isValidParts: false,
     testTakers: [],
     availableTakers: [],
+    testLink: "",
 };
 
 export const INITIAL_PART: TestPartItf = {

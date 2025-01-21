@@ -11,6 +11,7 @@ import {
     TakerItf,
     TestPartItf,
 } from "../types/types";
+import { SHARE_OPTIONS } from "../config/config";
 
 const createTestSlice = createSlice({
     initialState: INITIAL_CREATE_TEST_CONTEXT,
@@ -378,7 +379,8 @@ const createTestSlice = createSlice({
             state.code = action.payload?.code;
             state.enableCloseTime = action.payload?.enable_close_time;
             state.closeTime = action.payload?.close_time;
-            state.shareOption = action.payload?.share_option;
+            state.shareOption =
+                action.payload?.share_option || SHARE_OPTIONS.RESTRICTED;
             state.publicAnswersOption = action.payload?.public_answers_option;
             state.publicAnswersDate = action.payload?.public_answers_date;
             state.testId = action.payload?.id;
@@ -454,6 +456,10 @@ const createTestSlice = createSlice({
         },
         reset(state) {
             return INITIAL_CREATE_TEST_CONTEXT;
+        },
+        navigateStep(step) {},
+        generateTestLink(state) {
+            state.testLink = `${window.location.origin}/tests/${state.testId}`;
         },
     },
 });

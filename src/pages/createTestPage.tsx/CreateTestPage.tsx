@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import TestInfo from "./components/TestInfo";
 import TestParts from "./components/TestParts";
 import { useNavigate, useParams } from "react-router";
@@ -22,7 +22,7 @@ import TestAnswers from "./components/TestAnswers";
 import TestTakers from "./components/TestTakers";
 import { createTestActions } from "../../stores/createTest";
 import { useDispatch } from "react-redux";
-import LoadingWrapper from "../../components/wrappers/LoadingWrapper";
+import Loading from "../../components/loadings/Loading";
 
 const CreateTestPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -87,10 +87,11 @@ const CreateTestPage = () => {
     // }, [dispatch, reset]);
 
     return (
-        <LoadingWrapper
-            isLoading={isLoadingTest}
-            loadingText={{ text: "Loading test..." }}
-        >
+        <>
+            <Loading
+                isLoading={isLoadingTest}
+                loadingText={{ text: "Loading test..." }}
+            />
             <div className="xl:w-2/3 md:w-5/6 mx-auto py-10">
                 <Navigator />
                 <div className="2xl:w-3/5 w-4/5 mx-auto my-6 relative">
@@ -123,7 +124,7 @@ const CreateTestPage = () => {
                     )}
                 </div>
             </div>
-        </LoadingWrapper>
+        </>
     );
 };
 

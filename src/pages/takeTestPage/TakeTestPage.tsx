@@ -1,5 +1,5 @@
 import { useQuery } from "react-query";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { getSubmission, getTest } from "../../services/test";
 import { SubmissionItf } from "../../types/types";
 import { AxiosError, HttpStatusCode } from "axios";
@@ -14,6 +14,9 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../stores/rootState";
 import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../stores/takeTest";
+import Loading from "../../components/loadings/Loading";
+import { useState } from "react";
+import Error from "../../components/errors/Error";
 
 const TakeTestPage = () => {
     const { testId } = useParams();
@@ -27,7 +30,8 @@ const TakeTestPage = () => {
         includeTakerAnswers,
     } = useSelector((state: RootState) => state.takeTest);
     const dispatch = useDispatch();
-
+    const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const {
         isLoading: isLoadingSubmission,
         data: submission,
@@ -52,15 +56,12 @@ const TakeTestPage = () => {
             });
             dispatch(takeTestActions.setTest(responseData.test));
         },
-        onError: (error) => {
-            if (
-                error instanceof AxiosError &&
-                error.response?.status === HttpStatusCode.Forbidden
-            ) {
-                dispatch(takeTestActions.setForbidden(true));
+        onError: (error: any) => {
+            if (error.response?.data?.errorCode) {
+                setErrorMessage(error.response?.data?.message);
+                // dispatch(takeTestActions.setForbidden(true));
             }
         },
-        enabled: false,
         retry: false,
     });
 
@@ -70,6 +71,17 @@ const TakeTestPage = () => {
 
     return (
         <div className="w-[840px] mx-auto mt-6 bg-white shadow-lg">
+            {errorMessage && (
+                <Error
+                    errorMessage={{ text: errorMessage }}
+                    actionButton={{
+                        text: "Back to home",
+                        onClick: () => {
+                            navigate("/home");
+                        },
+                    }}
+                />
+            )}
             {!isStarted && test && (
                 <div className="py-8 px-8">
                     <TestInfo test={test} />
@@ -99,9 +111,10 @@ const TakeTestPage = () => {
                 </div>
             )}
             {(isLoadingTest || isLoadingSubmission) && (
-                <p className="text-center text-xl py-8 px-8">
-                    Loading test's information...
-                </p>
+                <Loading
+                    isLoading={isLoadingTest}
+                    loadingText={{ text: "Loading test's information..." }}
+                />
             )}
             {!isLoadingTest && isForbidden && <Forbidden />}
             {isStarted && !isEnded && test && (

@@ -2,7 +2,7 @@ import React from "react";
 import BarLoader from "react-spinners/BarLoader";
 import Button from "../elements/Button";
 
-type LoadingWrapperProps = {
+type LoadingProps = {
     isLoading: boolean;
     loadingText?: {
         text: string;
@@ -18,17 +18,17 @@ type LoadingWrapperProps = {
         onClick: () => void;
         extraClass?: string;
     };
-    children: React.ReactNode;
+    children?: React.ReactNode;
 };
 
-const LoadingWrapper = ({
+const Loading = ({
     children,
     isLoading,
     loadingText,
     description,
     extraClass,
     actionButton,
-}: LoadingWrapperProps) => {
+}: LoadingProps) => {
     if (isLoading) {
         return (
             <div
@@ -52,15 +52,18 @@ const LoadingWrapper = ({
                     </p>
                 )}
                 {actionButton && (
-                    <Button onClick={actionButton.onClick}>
+                    <Button
+                        onClick={actionButton.onClick}
+                        className={`${actionButton.extraClass}`}
+                    >
                         {actionButton.text}
                     </Button>
                 )}
             </div>
         );
     } else {
-        return <>{children}</>;
+        return <div></div>;
     }
 };
 
-export default LoadingWrapper;
+export default Loading;
