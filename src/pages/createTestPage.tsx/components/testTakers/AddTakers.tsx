@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Modal, {
     ModalBody,
     ModalFooter,
@@ -7,16 +7,15 @@ import Modal, {
 import CreateTakers from "./CreateTakers";
 import { useMutation, useQuery } from "react-query";
 import { assignTakers, getAvailableTakers } from "../../../../services/test";
-import { AxiosError } from "axios";
-import { toast } from "react-toastify";
 import Button from "../../../../components/elements/Button";
-import { TakerItf, userItf } from "../../../../types/types";
+import { TakerItf } from "../../../../types/types";
 import TakersChoser from "./TakersChoser";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../stores/rootState";
 import { createTestActions } from "../../../../stores/createTest";
 import { QUERY_KEYS } from "../../../../config/constants/queryMutationKeys";
 import { useDispatch } from "react-redux";
+import Loading from "../../../../components/loadings/Loading";
 
 type AddTakersProps = {
     onClose: () => void;
@@ -61,21 +60,24 @@ const AddTakers = ({ onClose }: AddTakersProps) => {
         <Modal onClose={onClose}>
             <ModalHeader title="Add takers" />
             <ModalBody>
-                {isFetching && (
-                    <p className="text-center text-gray-500">
-                        Loading takers...
-                    </p>
-                )}
-                {!isCreateTaker && availableTakers && (
+                {!isCreateTaker && availableTakers && !isFetching && (
                     <TakersChoser label="Select available takers" />
                 )}
+                {isFetching && (
+                    <Loading
+                        loadingText={{ text: "Loading takers..." }}
+                        isLoading={isFetching}
+                    />
+                )}
 
-                <button
-                    className="text-blue-600 hover:underline mt-2 hover:font-bold"
-                    onClick={() => setIsCreateTaker(true)}
-                >
-                    Create new takers
-                </button>
+                {!isFetching && (
+                    <button
+                        className="text-blue-600 hover:underline mt-2 hover:font-bold"
+                        onClick={() => setIsCreateTaker(true)}
+                    >
+                        Create new takers
+                    </button>
+                )}
 
                 {isCreateTaker && (
                     <CreateTakers onClose={() => setIsCreateTaker(false)} />

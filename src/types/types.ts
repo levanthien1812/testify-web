@@ -1,6 +1,7 @@
 import {
     PUBLIC_ANSWERS_OPTIONS,
     ROLES,
+    SHARE_OPTIONS,
     TEST_LEVEL,
     TEST_STATUS,
 } from "../config/config";
@@ -62,7 +63,7 @@ export interface TestBodyItf {
     code: string;
     enable_close_time: boolean;
     close_time: string;
-    share_option?: "restricted" | "anyone";
+    share_option?: (typeof SHARE_OPTIONS)[keyof typeof SHARE_OPTIONS];
     public_answers_option: (typeof PUBLIC_ANSWERS_OPTIONS)[keyof typeof PUBLIC_ANSWERS_OPTIONS];
     public_answers_date: string;
 }

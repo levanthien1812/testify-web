@@ -8,6 +8,7 @@ const TOAST_MESSAGES = {
     CREATE_TAKERS_SUCCESSFULLY: "Create takers successfuly",
     ADD_TAKER_SUCCESSFULLY: "Add taker successfuly",
     ADD_ANSWER_SUCCESSFULLY: "Add answer successfuly",
+    UNABLE_TO_COPY: "Unable to copy link! Try again later.",
 };
 
 export { TOAST_MESSAGES };

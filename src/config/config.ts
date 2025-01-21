@@ -53,3 +53,5 @@ export const CHAT_OPTIONS = {
     INDIVIDUAL: "INDIVIDUAL",
     GROUP: "GROUP",
 };
+
+export const DISABLE_COPY_TIMEOUT = 2000;
