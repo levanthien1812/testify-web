@@ -5,10 +5,12 @@ import Select from "../../../components/elements/Select";
 import { formatTimezone } from "../../../utils/time";
 import { FilterState } from "../../../types/types";
 import { Link } from "react-router-dom";
-import { TEST_STATUS } from "../../../config/config";
+import { ROLES, TEST_STATUS } from "../../../config/config";
 import _ from "lodash";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../stores/rootState";
 
 type FilterProps = {
     filter: FilterState;
@@ -18,6 +20,7 @@ type FilterProps = {
 const Filter = ({ filter, setFilter }: FilterProps) => {
     const [search, setSearch] = useState(filter.search || "");
     const [showFilter, setShowFilter] = useState(false);
+    const { user } = useSelector((state: RootState) => state.auth);
 
     return (
         <>
@@ -30,11 +33,16 @@ const Filter = ({ filter, setFilter }: FilterProps) => {
                             className="text-sm ms-1"
                         />
                     </Button>
-                    <Link to="/tests/create">
-                        <Button onClick={() => setShowFilter(true)} size="sm">
-                            Create test
-                        </Button>
-                    </Link>
+                    {user?.role === ROLES.MAKER && (
+                        <Link to="/tests/create">
+                            <Button
+                                onClick={() => setShowFilter(true)}
+                                size="sm"
+                            >
+                                Create test
+                            </Button>
+                        </Link>
+                    )}
                 </div>
             )}
             {showFilter && (

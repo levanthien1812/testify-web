@@ -4,9 +4,13 @@ import { useQuery } from "react-query";
 import { getTests } from "../../../services/test";
 import { TestItf } from "../../../types/types";
 import Button from "../../../components/elements/Button";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../stores/rootState";
+import { ROLES } from "../../../config/config";
 
 const RecentTests = () => {
     const navigate = useNavigate();
+    const { user } = useSelector((state: RootState) => state.auth);
 
     const { data: tests, isLoading: isLoadingTests } = useQuery<TestItf[]>({
         queryKey: ["tests"],
@@ -22,16 +26,18 @@ const RecentTests = () => {
 
     return (
         <div>
-            <div className="flex justify-between items-end">
+            <div className="flex justify-between items-end border-b border-dashed border-gray-300 pb-0.5">
                 <div>
                     <h2 className="text-2xl inline-block">Recent tests</h2>
-                    <Button
-                        size="sm"
-                        className="ms-3"
-                        onClick={handleClickCreateTestBtn}
-                    >
-                        Create test
-                    </Button>
+                    {user!.role === ROLES.MAKER && (
+                        <Button
+                            size="sm"
+                            className="ms-3"
+                            onClick={handleClickCreateTestBtn}
+                        >
+                            Create test
+                        </Button>
+                    )}
                 </div>
 
                 <Link to="/tests" className="text-orange-600 hover:underline">
@@ -57,7 +63,7 @@ const RecentTests = () => {
 
                     {tests.length === 0 && (
                         <p className="text-center text-gray-600 text-xl">
-                            No tests yet
+                            No tests available
                         </p>
                     )}
                 </div>

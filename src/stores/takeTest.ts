@@ -59,6 +59,12 @@ const TakeTestSlice = createSlice({
         setSubmittable(state, action) {
             state.submittable = action.payload;
         },
+        setStartable(state, action) {
+            state.startable = action.payload;
+        },
+        setIsStarted(state, action) {
+            state.isStarted = action.payload;
+        },
     },
 });
 

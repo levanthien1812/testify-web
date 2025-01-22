@@ -97,7 +97,9 @@ const TopTakers = () => {
 
     return (
         <div className="mt-4">
-            <h2 className="text-2xl">Top Takers</h2>
+            <div className="border-b border-dashed border-gray-300 pb-0.5">
+                <h2 className="text-2xl">Top Takers</h2>
+            </div>
 
             {isLoadingTopTakers && (
                 <p className="mt-2 text-gray-600 text-xl text-center">
