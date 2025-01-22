@@ -45,7 +45,7 @@ const DoingTest = ({ onAfterSubmit }: DoingTestProps) => {
     });
 
     useEffect(() => {
-        if (remainingTime <= 0) {
+        if (remainingTime < 0) {
             setRemainingTime(0);
             dispatch(takeTestActions.setIsEnded(true));
             if (remainingIntervalRef.current)

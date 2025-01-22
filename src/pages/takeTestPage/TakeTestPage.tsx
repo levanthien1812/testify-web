@@ -15,7 +15,7 @@ import { RootState } from "../../stores/rootState";
 import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../stores/takeTest";
 import Loading from "../../components/loadings/Loading";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Error from "../../components/errors/Error";
 
 const TakeTestPage = () => {
@@ -32,6 +32,7 @@ const TakeTestPage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+
     const {
         isLoading: isLoadingSubmission,
         data: submission,
@@ -66,8 +67,24 @@ const TakeTestPage = () => {
     });
 
     const handleStartTest = async () => {
+        dispatch(takeTestActions.setIsStarted(true));
         await refetchTest();
     };
+
+    useEffect(() => {
+        if (!test || !test.datetime) return;
+
+        const timer = setInterval(() => {
+            if (new Date(test.datetime).getTime() - Date.now() >= 0) {
+                dispatch(takeTestActions.setStartable(false));
+            } else {
+                dispatch(takeTestActions.setStartable(true));
+                clearInterval(timer);
+            }
+        }, 1000);
+
+        return () => clearInterval(timer);
+    }, [test, dispatch]);
 
     return (
         <div className="w-[840px] mx-auto mt-6 bg-white shadow-lg">
@@ -85,10 +102,10 @@ const TakeTestPage = () => {
             {!isStarted && test && (
                 <div className="py-8 px-8">
                     <TestInfo test={test} />
-                    {(testStatus === TEST_STATUS.PUBLISHED ||
-                        testStatus === TEST_STATUS.OPENED) &&
+                    {(test.status === TEST_STATUS.PUBLISHED ||
+                        test.status === TEST_STATUS.OPENED) &&
                         !submission && (
-                            <div className="flex justify-center">
+                            <div className="flex justify-center mt-4">
                                 <Button
                                     size="lg"
                                     disabled={!startable}
