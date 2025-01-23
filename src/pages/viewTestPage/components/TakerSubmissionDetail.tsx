@@ -1,7 +1,7 @@
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useQuery } from "react-query";
 import { SubmissionItf, TestItf, userItf } from "../../../types/types";
-import { getTest, getTestWithTakerAnswers } from "../../../services/test";
+import { getTestWithTakerAnswers } from "../../../services/test";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import Modal, {

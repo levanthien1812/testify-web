@@ -6,7 +6,6 @@ import {
 } from "../config/config";
 import {
     AnswerBodyContentItf,
-    PartBodyItf,
     QuestionContentItf,
     QuestionItf,
     SubmissionItf,

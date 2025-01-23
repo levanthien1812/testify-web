@@ -1,6 +1,12 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { INITIAL_TAKE_TEST_CONTEXT } from "../config/constants/initialValues";
-import { AnswerBodyContentItf, TestItf, UserAnswerItf } from "../types/types";
+import {
+    AnswerBodyContentItf,
+    QuestionContentItf,
+    QuestionItf,
+    TestItf,
+    UserAnswerItf,
+} from "../types/types";
 import { TEST_STATUS } from "../config/config";
 
 const TakeTestSlice = createSlice({
@@ -46,11 +52,30 @@ const TakeTestSlice = createSlice({
 
             if (
                 state.test &&
-                state.test.num_questions !== state.answers.length
+                state.test.num_questions !==
+                    state.answers.filter((ans) => ans.content).length
             ) {
                 state.submittable = false;
             } else {
                 state.submittable = true;
+            }
+        },
+        initAnswers(state) {
+            if (state.test && state.isStarted && state.answers.length === 0) {
+                let questions: QuestionItf<QuestionContentItf>[];
+                if (state.test.num_parts > 1 && state.test.parts) {
+                    questions = state.test.parts.reduce(
+                        (prev: QuestionItf<QuestionContentItf>[], curr) => [
+                            ...prev,
+                            ...curr.questions!,
+                        ],
+                        []
+                    );
+                } else {
+                    questions = state.test.questions!;
+                }
+                const questionIds = questions.map((question) => question.id!);
+                state.answers = questionIds.map((id) => ({ question_id: id }));
             }
         },
         setAnswers(state, action) {

@@ -9,6 +9,7 @@ const TOAST_MESSAGES = {
     ADD_TAKER_SUCCESSFULLY: "Add taker successfuly",
     ADD_ANSWER_SUCCESSFULLY: "Add answer successfuly",
     UNABLE_TO_COPY: "Unable to copy link! Try again later.",
+    TEST_SUBMITTED_SUCCESSFULLY: "Test is submitted successfully",
 };
 
 export { TOAST_MESSAGES };

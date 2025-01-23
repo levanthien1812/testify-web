@@ -1,7 +1,7 @@
 import moment from "moment-timezone";
 
 export function formatTime(seconds: number) {
-    seconds = Math.round(seconds)
+    seconds = Math.round(seconds);
     // Calculate hours, minutes, and seconds
     const hours = Math.floor(seconds / 3600);
     const minutes = Math.floor((seconds % 3600) / 60);
@@ -22,3 +22,16 @@ export function formatTimezone(date: Date) {
 
     return formattedDateTime;
 }
+
+export const debounce = <T extends (...args: any[]) => any>(
+    func: T,
+    delay: number = 2000
+): T => {
+    let timer: NodeJS.Timeout;
+    return ((...args: Parameters<T>) => {
+        clearTimeout(timer);
+        timer = setTimeout(() => {
+            func(args);
+        }, delay);
+    }) as T;
+};
