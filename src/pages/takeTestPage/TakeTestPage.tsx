@@ -2,7 +2,6 @@ import { useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router";
 import { getSubmission, getTest } from "../../services/test";
 import { SubmissionItf } from "../../types/types";
-import { AxiosError, HttpStatusCode } from "axios";
 import DoingTest from "./DoingTest";
 import { TEST_STATUS } from "../../config/config";
 import TestInfo from "./components/TestInfo";

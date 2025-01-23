@@ -255,6 +255,7 @@ export interface SubmissionItf {
     remark?: string;
     start_time: Date;
     submit_time: Date;
+    is_evaluated: boolean;
 }
 
 export type FilterState = {

@@ -11,6 +11,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../stores/rootState";
 import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../stores/takeTest";
+import { TOAST_MESSAGES } from "../../config/constants/toasts";
 
 type DoingTestProps = {
     onAfterSubmit: () => void;
@@ -22,7 +23,9 @@ const DoingTest = ({ onAfterSubmit }: DoingTestProps) => {
     );
     const dispatch = useDispatch();
     const remainingIntervalRef = useRef<NodeJS.Timer | null>(null);
-    const [remainingTime, setRemainingTime] = useState(0);
+    const [remainingTime, setRemainingTime] = useState(
+        test!.duration * 60 * 1000
+    );
 
     const { mutate, isLoading } = useMutation({
         mutationFn: async () => {
@@ -34,13 +37,9 @@ const DoingTest = ({ onAfterSubmit }: DoingTestProps) => {
             return responseData.answers;
         },
         onSuccess: (data) => {
-            toast.success("Answers submitted successfully");
+            toast.success(TOAST_MESSAGES.TEST_SUBMITTED_SUCCESSFULLY);
+            dispatch(takeTestActions.setIsEnded(true));
             onAfterSubmit();
-        },
-        onError: (error) => {
-            if (error instanceof AxiosError) {
-                toast.error(error.response?.data.message);
-            }
         },
     });
 
@@ -53,6 +52,11 @@ const DoingTest = ({ onAfterSubmit }: DoingTestProps) => {
             mutate();
         }
     }, [remainingTime, mutate, dispatch]);
+
+    useEffect(() => {
+        if (!test || answers.length > 0) return;
+        dispatch(takeTestActions.initAnswers());
+    }, [test, dispatch, answers]);
 
     const handleSubmit = () => {
         Swal.fire({
@@ -72,10 +76,6 @@ const DoingTest = ({ onAfterSubmit }: DoingTestProps) => {
     };
 
     useEffect(() => {
-        setRemainingTime(test!.duration * 60);
-        remainingIntervalRef.current = setInterval(() => {
-            setRemainingTime((prev) => prev - 1000);
-        }, 1000);
         const handleBeforeUnload = (event: BeforeUnloadEvent) => {
             event.preventDefault();
         };
@@ -89,6 +89,12 @@ const DoingTest = ({ onAfterSubmit }: DoingTestProps) => {
             }
         };
     }, []);
+
+    useEffect(() => {
+        remainingIntervalRef.current = setInterval(() => {
+            setRemainingTime((prev) => prev - 1000);
+        }, 1000);
+    }, [setRemainingTime, remainingIntervalRef]);
 
     return (
         <div>

@@ -1,8 +1,7 @@
 import { format } from "date-fns";
 import React from "react";
 import { formatTime } from "../../../utils/time";
-import { TestItf, SubmissionItf } from "../../../types/types";
-import Answer from "./Answer";
+import { SubmissionItf } from "../../../types/types";
 import TestQuetionsAndAnswers from "./TestQuestionsAndAnswers";
 import Button from "../../../components/elements/Button";
 import { useSelector } from "react-redux";
@@ -55,12 +54,12 @@ const Submission = ({ submission }: SubmissionProps) => {
                 )}{" "}
             </p>
 
-            {submission.score && <p>Score: {submission.score}</p>}
-            {submission.correct_answers && (
-                <p>Correct answers: {submission.correct_answers}</p>
-            )}
-            {submission.wrong_answers && (
-                <p>Wrong answers: {submission.wrong_answers}</p>
+            {submission.is_evaluated && (
+                <>
+                    <p>Score: {submission.score}</p>
+                    <p>Correct answers: {submission.correct_answers}</p>
+                    <p>Wrong answers: {submission.wrong_answers}</p>
+                </>
             )}
             <Button onClick={handleViewDetail}>
                 {!viewDetail ? "View detail" : "Hide detail"}

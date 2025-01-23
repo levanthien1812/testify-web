@@ -1,8 +1,6 @@
 import { TestItf, SubmissionItf } from "../../types/types";
 import { useQuery } from "react-query";
 import { getSubmissions, getTest } from "../../services/test";
-import { AxiosError } from "axios";
-import { toast } from "react-toastify";
 import { useParams } from "react-router";
 import TestInfo from "../takeTestPage/components/TestInfo";
 import SubmissionsTable from "./components/SubmissionsTable";
