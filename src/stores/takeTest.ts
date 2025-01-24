@@ -15,6 +15,28 @@ const TakeTestSlice = createSlice({
     reducers: {
         setTest(state, action: PayloadAction<TestItf>) {
             state.test = action.payload;
+
+            state.test.parts = state.test.parts?.map((part) => {
+                if (part.questions && part.questions.length > 0) {
+                    part.questions = part.questions.map((question) => {
+                        let answer = {};
+                        if (question?.content?.answer) {
+                            answer = {
+                                ...question?.content?.answer,
+                                is_saved: true,
+                            };
+                        }
+                        return {
+                            ...question,
+                            content: {
+                                ...question.content,
+                                answer: answer,
+                            } as QuestionContentItf,
+                        };
+                    });
+                }
+                return part;
+            });
         },
         setTestStatus(
             state,

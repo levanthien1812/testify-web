@@ -51,6 +51,7 @@ export interface CreateTestContext {
     isValidParts: boolean;
     isValidQuestions: boolean;
     testTakers: TakerItf[];
+    joinedTakers: TakerItf[];
     availableTakers: TakerItf[];
     testLink: string;
 }

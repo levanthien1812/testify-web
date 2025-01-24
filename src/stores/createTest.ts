@@ -4,7 +4,7 @@ import {
     INITIAL_PART,
     INITIAL_QUESTION,
 } from "../config/constants/initialValues";
-import { CREATE_TEST_STEPS, QUESTION_TYPE } from "../config/constants/tests";
+import { CREATE_TEST_STEPS } from "../config/constants/tests";
 import {
     QuestionContentItf,
     QuestionItf,
@@ -410,34 +410,10 @@ const createTestSlice = createSlice({
                     part.questions = part.questions.map((question) => {
                         let answer = {};
                         if (question?.content?.answer) {
-                            switch (question.type) {
-                                case QUESTION_TYPE.MULTIPLE_CHOICES:
-                                    answer = {
-                                        options: question?.content?.answer,
-                                        is_saved: true,
-                                    };
-                                    break;
-                                case QUESTION_TYPE.FILL_IN_THE_GAPS:
-                                    answer = {
-                                        gaps: question?.content?.answer,
-                                        is_saved: true,
-                                    };
-                                    break;
-                                case QUESTION_TYPE.MATCHING:
-                                    answer = {
-                                        matchings: question?.content?.answer,
-                                        is_saved: true,
-                                    };
-                                    break;
-                                case QUESTION_TYPE.RESPONSE:
-                                    answer = {
-                                        response: question?.content?.answer,
-                                        is_saved: true,
-                                    };
-                                    break;
-                                default:
-                                    break;
-                            }
+                            answer = {
+                                ...question?.content?.answer,
+                                is_saved: true,
+                            };
                         }
                         return {
                             ...question,
