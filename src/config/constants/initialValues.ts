@@ -104,8 +104,15 @@ export const INITIAL_CREATE_TEST_CONTEXT: CreateTestContext = {
     isValidQuestions: false,
     isValidParts: false,
     testTakers: [],
+    joinedTakers: [],
     availableTakers: [],
     testLink: "",
+    passcode: {
+        code: "",
+        valid_till: new Date(),
+        valid_in: 0,
+        method: "",
+    },
 };
 
 export const INITIAL_PART: TestPartItf = {

@@ -222,6 +222,20 @@ export const createTakers = async (
     }
 };
 
+export const getTakersDetails = async (testId: string, takerIds: string[]) => {
+    try {
+        const response = await instance.post(
+            `/tests/${testId}/takers/details`,
+            {
+                taker_ids: takerIds,
+            }
+        );
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
 export const getAvailableTakers = async (testId: string) => {
     try {
         const response = await instance.get(

@@ -71,7 +71,8 @@ export interface TestItf extends TestBodyItf {
     id: string;
     parts: TestPartItf[];
     maker_id: string;
-    taker_ids: string[] | userItf[];
+    taker_ids: string[];
+    joined_taker_ids: string[];
     are_answers_provided: boolean;
     questions?: QuestionItf<QuestionContentItf>[];
     submissions_count?: number;
@@ -225,6 +226,14 @@ export interface MatchingAnswerItf extends BaseAnswerItf {
 }
 export interface ResponseAnswerItf extends BaseAnswerItf {
     response: string;
+}
+
+export interface PasscodeItf {
+    code: string;
+    valid_till?: Date;
+    valid_in?: number;
+    method: string;
+    format?: string;
 }
 
 export type UserAnswerItf<T extends AnswerBodyContentItf> = {

@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import Takers from "./testTakers/Takers";
@@ -14,6 +14,7 @@ import { useDispatch } from "react-redux";
 import CopyLink from "./testTakers/CopyLink";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
 import { SHARE_OPTIONS } from "../../../config/config";
+import Passcode from "./testTakers/Passcode";
 
 const TestTakers = () => {
     const { testId, shareOption, testLink } = useSelector(
@@ -95,6 +96,10 @@ const TestTakers = () => {
                             value: SHARE_OPTIONS.RESTRICTED,
                             label: "Restricted",
                         },
+                        {
+                            value: SHARE_OPTIONS.PASSCODE,
+                            label: "Passcode",
+                        },
                     ]}
                 />
                 <div className="flex items-center gap-2 mt-1">
@@ -116,6 +121,8 @@ const TestTakers = () => {
             )}
 
             {shareOption === SHARE_OPTIONS.RESTRICTED && <Takers />}
+
+            {shareOption === SHARE_OPTIONS.PASSCODE && <Passcode />}
         </Wrapper>
     );
 };

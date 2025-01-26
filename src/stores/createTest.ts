@@ -4,8 +4,9 @@ import {
     INITIAL_PART,
     INITIAL_QUESTION,
 } from "../config/constants/initialValues";
-import { CREATE_TEST_STEPS, QUESTION_TYPE } from "../config/constants/tests";
+import { CREATE_TEST_STEPS } from "../config/constants/tests";
 import {
+    PasscodeItf,
     QuestionContentItf,
     QuestionItf,
     TakerItf,
@@ -410,34 +411,10 @@ const createTestSlice = createSlice({
                     part.questions = part.questions.map((question) => {
                         let answer = {};
                         if (question?.content?.answer) {
-                            switch (question.type) {
-                                case QUESTION_TYPE.MULTIPLE_CHOICES:
-                                    answer = {
-                                        options: question?.content?.answer,
-                                        is_saved: true,
-                                    };
-                                    break;
-                                case QUESTION_TYPE.FILL_IN_THE_GAPS:
-                                    answer = {
-                                        gaps: question?.content?.answer,
-                                        is_saved: true,
-                                    };
-                                    break;
-                                case QUESTION_TYPE.MATCHING:
-                                    answer = {
-                                        matchings: question?.content?.answer,
-                                        is_saved: true,
-                                    };
-                                    break;
-                                case QUESTION_TYPE.RESPONSE:
-                                    answer = {
-                                        response: question?.content?.answer,
-                                        is_saved: true,
-                                    };
-                                    break;
-                                default:
-                                    break;
-                            }
+                            answer = {
+                                ...question?.content?.answer,
+                                is_saved: true,
+                            };
                         }
                         return {
                             ...question,
@@ -460,6 +437,21 @@ const createTestSlice = createSlice({
         navigateStep(step) {},
         generateTestLink(state) {
             state.testLink = `${window.location.origin}/tests/${state.testId}`;
+        },
+        setPasscode(state, action: PayloadAction<PasscodeItf>) {
+            if (action.payload.valid_in) {
+                action.payload.valid_till = new Date(
+                    Date.now() + action.payload.valid_in * 1000 * 60
+                );
+            }
+            if (action.payload.valid_till) {
+                action.payload.valid_in = Math.round(
+                    (action.payload.valid_till.getTime() - Date.now()) /
+                        1000 /
+                        60
+                );
+            }
+            state.passcode = action.payload;
         },
     },
 });

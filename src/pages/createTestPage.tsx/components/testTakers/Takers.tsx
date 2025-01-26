@@ -22,19 +22,19 @@ const Takers = () => {
                         <div className="flex gap-2 items-center">
                             <input
                                 type="checkbox"
-                                name={(taker as userItf).email}
-                                id={(taker as userItf).email}
+                                name={taker.email}
+                                id={taker.email}
                                 checked={true}
                                 readOnly
                             />
                             <label
-                                htmlFor={(taker as userItf).email}
+                                htmlFor={taker.email}
                                 className="cursor-pointer"
                             >
-                                <span>{(taker as userItf).name}</span>
+                                <span>{taker.name}</span>
                                 <span className="text-gray-600">
                                     {" "}
-                                    - {(taker as userItf).email}
+                                    - {taker.email}
                                 </span>
                             </label>
                         </div>
