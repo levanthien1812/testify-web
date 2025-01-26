@@ -228,6 +228,14 @@ export interface ResponseAnswerItf extends BaseAnswerItf {
     response: string;
 }
 
+export interface PasscodeItf {
+    code: string;
+    valid_till?: Date;
+    valid_in?: number;
+    method: string;
+    format?: string;
+}
+
 export type UserAnswerItf<T extends AnswerBodyContentItf> = {
     id?: string;
     question_id: string;

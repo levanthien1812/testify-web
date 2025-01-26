@@ -47,6 +47,7 @@ export const MANUAL_SCORE_TYPES = [QUESTION_TYPE.RESPONSE];
 export const SHARE_OPTIONS = {
     ANYONE: "ANYONE",
     RESTRICTED: "RESTRICTED",
+    PASSCODE: "PASSCODE",
 } as const;
 
 export const CHAT_OPTIONS = {

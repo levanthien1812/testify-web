@@ -6,6 +6,7 @@ import {
 } from "../config/constants/initialValues";
 import { CREATE_TEST_STEPS } from "../config/constants/tests";
 import {
+    PasscodeItf,
     QuestionContentItf,
     QuestionItf,
     TakerItf,
@@ -436,6 +437,21 @@ const createTestSlice = createSlice({
         navigateStep(step) {},
         generateTestLink(state) {
             state.testLink = `${window.location.origin}/tests/${state.testId}`;
+        },
+        setPasscode(state, action: PayloadAction<PasscodeItf>) {
+            if (action.payload.valid_in) {
+                action.payload.valid_till = new Date(
+                    Date.now() + action.payload.valid_in * 1000 * 60
+                );
+            }
+            if (action.payload.valid_till) {
+                action.payload.valid_in = Math.round(
+                    (action.payload.valid_till.getTime() - Date.now()) /
+                        1000 /
+                        60
+                );
+            }
+            state.passcode = action.payload;
         },
     },
 });

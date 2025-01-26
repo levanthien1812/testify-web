@@ -6,6 +6,7 @@ import {
 } from "../config/config";
 import {
     AnswerBodyContentItf,
+    PasscodeItf,
     QuestionContentItf,
     QuestionItf,
     SubmissionItf,
@@ -54,6 +55,7 @@ export interface CreateTestContext {
     joinedTakers: TakerItf[];
     availableTakers: TakerItf[];
     testLink: string;
+    passcode: PasscodeItf;
 }
 
 export interface TakeTestContext {
