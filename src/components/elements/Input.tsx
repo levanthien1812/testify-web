@@ -4,10 +4,17 @@ interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     className?: string;
     error?: string;
     sizing?: "sm" | "md";
+    helperText?: string;
 }
 
 const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
-    const { className, sizing = "md", error, ...rest } = props;
+    const {
+        className,
+        sizing = "md",
+        error = null,
+        helperText = null,
+        ...rest
+    } = props;
     return (
         <div className={"grow w-full"}>
             <input
@@ -21,6 +28,11 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
                 {...rest}
                 ref={ref}
             />
+            {helperText && (
+                <p className="text-end text-gray-500 text-sm mt-1">
+                    {helperText}
+                </p>
+            )}
             {error && (
                 <p className="text-end text-orange-600 text-sm italic mt-1 leading-4">
                     {error}

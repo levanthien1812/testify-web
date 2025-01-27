@@ -7,7 +7,6 @@ import Modal, {
 import { TakerBodyItf } from "../../../../types/types";
 import { useMutation } from "react-query";
 import { createTakers } from "../../../../services/test";
-import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import Button from "../../../../components/elements/Button";
 import Input from "../../../../components/elements/Input";
@@ -27,7 +26,7 @@ const CreateTakers = ({ onClose }: CreateTakersProps) => {
         { name: "", email: "" },
     ]);
     const { testId } = useSelector((state: RootState) => state.createTest);
-    const { addTestTakers } = createTestActions;
+    const { addSelectedTestTakers } = createTestActions;
     const dispatch = useDispatch();
 
     const { mutate, isLoading } = useMutation({
@@ -40,7 +39,7 @@ const CreateTakers = ({ onClose }: CreateTakersProps) => {
         onSuccess: (data) => {
             onClose();
             toast.success(TOAST_MESSAGES.CREATE_TAKERS_SUCCESSFULLY);
-            dispatch(addTestTakers(data.takers));
+            dispatch(addSelectedTestTakers(data.takers));
         },
     });
 

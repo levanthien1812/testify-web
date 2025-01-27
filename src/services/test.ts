@@ -2,8 +2,10 @@ import { instance } from "../config/axios";
 import { QUESTION_TYPE } from "../config/constants/tests";
 import {
     AnswerBodyContentItf,
+    GeneratePasscodeBodyItf,
     MultipleChoiceQuestionBodyItf,
     PartBodyItf,
+    PasscodeItf,
     QuestionBodyContentItf,
     QuestionBodyItf,
     TakerBodyItf,
@@ -253,6 +255,22 @@ export const assignTakers = async (testId: string, takers: string[]) => {
         const response = await instance.patch(`/tests/${testId}/takers`, {
             taker_ids: takers,
         });
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const generatePasscode = async (
+    testId: string,
+    passcode: GeneratePasscodeBodyItf
+) => {
+    try {
+        const response = await instance.post(
+            `/tests/${testId}/passcode/generate`,
+            { passcode }
+        );
 
         return response.data;
     } catch (error) {

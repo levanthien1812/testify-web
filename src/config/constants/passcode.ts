@@ -3,6 +3,11 @@ export const PASSCODE_METHOD = {
     MANUALLY_ENTERED: "MANUALLY_ENTERED",
 };
 
+export const PASSCODE_METHOD_LABEL = {
+    [PASSCODE_METHOD.AUTO_GENERATED]: "Auto generated",
+    [PASSCODE_METHOD.MANUALLY_ENTERED]: "Manually entered",
+};
+
 export const PASSCODE_FORMAT = {
     "XXX-YYY": "XXX-YYY",
     YYYYYY: "YYYYYY",

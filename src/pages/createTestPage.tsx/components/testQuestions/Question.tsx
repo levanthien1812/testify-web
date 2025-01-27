@@ -32,8 +32,11 @@ import { createTestActions } from "../../../../stores/createTest";
 import { TOAST_MESSAGES } from "../../../../config/constants/toasts";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
 import { useDispatch } from "react-redux";
-import { TEST_LEVEL } from "../../../../config/config";
-import { QUESTION_TYPE } from "../../../../config/constants/tests";
+import { TEST_LEVEL, TEST_LEVEL_LABEL } from "../../../../config/config";
+import {
+    QUESTION_TYPE,
+    QUESTION_TYPE_LABEL,
+} from "../../../../config/constants/tests";
 import { getInitialQuestionContent } from "../../../../utils/mapping";
 
 type QuestionProps = {
@@ -204,7 +207,7 @@ const Question = ({ question, part }: QuestionProps) => {
                                             options={Object.values(
                                                 TEST_LEVEL
                                             ).map((level) => ({
-                                                label: level,
+                                                label: TEST_LEVEL_LABEL[level],
                                                 value: level,
                                             }))}
                                         />
@@ -225,7 +228,9 @@ const Question = ({ question, part }: QuestionProps) => {
                                             options={Object.values(
                                                 QUESTION_TYPE
                                             ).map((type) => ({
-                                                label: type,
+                                                label: QUESTION_TYPE_LABEL[
+                                                    type
+                                                ],
                                                 value: type,
                                             }))}
                                         />

@@ -5,14 +5,19 @@ import { useSelector } from "react-redux";
 import {
     PASSCODE_FORMAT,
     PASSCODE_METHOD,
+    PASSCODE_METHOD_LABEL,
 } from "../../../../config/constants/passcode";
 import { useDispatch } from "react-redux";
 import { createTestActions } from "../../../../stores/createTest";
 import Input from "../../../../components/elements/Input";
 import Button from "../../../../components/elements/Button";
+import { useMutation } from "react-query";
+import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
+import { generatePasscode } from "../../../../services/test";
 
 const Passcode = () => {
     const { passcode } = useSelector((state: RootState) => state.createTest);
+    const { testId } = useSelector((state: RootState) => state.createTest);
     const dispatch = useDispatch();
 
     const handlePasscodeChange = (
@@ -26,7 +31,24 @@ const Passcode = () => {
         );
     };
 
-    const handleGeneratePasscode = () => {};
+    const { mutate, isLoading: isGeneratingPasscode } = useMutation({
+        mutationFn: async () => {
+            const responseData = await generatePasscode(testId!, {
+                format: passcode.format,
+                test_id: testId!,
+            });
+
+            return responseData.passcode;
+        },
+        mutationKey: MUTATION_KEYS.GENERATE_PASSCODE,
+        onSuccess: (res) => {
+            dispatch(createTestActions.setPasscode(res));
+        },
+    });
+
+    const handleGeneratePasscode = () => {
+        mutate();
+    };
 
     return (
         <div>
@@ -43,9 +65,10 @@ const Passcode = () => {
                     value={passcode?.method}
                     onChange={handlePasscodeChange}
                     options={Object.values(PASSCODE_METHOD).map((method) => ({
-                        label: method,
+                        label: PASSCODE_METHOD_LABEL[method],
                         value: method,
                     }))}
+                    guideOption="Select a method"
                 />
             </div>
             {passcode.method === PASSCODE_METHOD.AUTO_GENERATED && (
@@ -63,17 +86,23 @@ const Passcode = () => {
                             value={passcode?.format}
                             onChange={handlePasscodeChange}
                             options={Object.values(PASSCODE_FORMAT).map(
-                                (method) => ({
-                                    label: method,
-                                    value: method,
+                                (format) => ({
+                                    label: format,
+                                    value: format,
                                 })
                             )}
+                            helperText="X is number, Y is letter"
                         />
                     </div>
 
                     <div className="mt-4 flex justify-center">
-                        <Button onClick={handleGeneratePasscode}>
-                            Generate passcode
+                        <Button
+                            onClick={handleGeneratePasscode}
+                            disabled={isGeneratingPasscode}
+                        >
+                            {!isGeneratingPasscode
+                                ? "Generate passcode"
+                                : "Generating passcode"}
                         </Button>
                     </div>
                 </div>
@@ -112,8 +141,7 @@ const Passcode = () => {
                 <Input
                     type="datetime-local"
                     name="valid_till"
-                    min={10}
-                    value={passcode?.valid_till?.toISOString()}
+                    value={passcode?.valid_till}
                     onChange={handlePasscodeChange}
                 />
             </div>

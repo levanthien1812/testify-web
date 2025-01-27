@@ -92,38 +92,38 @@ const CreateTestPage = () => {
                 isLoading={isLoadingTest}
                 loadingText={{ text: "Loading test..." }}
             />
-            <div className="xl:w-2/3 md:w-5/6 mx-auto py-10">
-                <Navigator />
-                <div className="2xl:w-3/5 w-4/5 mx-auto my-6 relative">
-                    {test && test.status === TEST_STATUS.PUBLISHABLE && (
-                        <div className="absolute top-0 left-0 w-full h-0 flex items-center justify-center">
-                            <Button
-                                className=" uppercase"
-                                size="lg"
-                                onClick={() => publishTestMutate()}
-                                disabled={publishTestLoading}
-                            >
-                                Publish test
-                            </Button>
-                        </div>
-                    )}
-                    {currentStep === CREATE_TEST_STEPS.TEST_INFORMATION && (
-                        <TestInfo />
-                    )}
-                    {currentStep === CREATE_TEST_STEPS.TEST_PARTS && (
-                        <TestParts />
-                    )}
-                    {currentStep === CREATE_TEST_STEPS.TEST_QUESTIONS && (
-                        <TestQuestions />
-                    )}
-                    {currentStep === CREATE_TEST_STEPS.TEST_ANSWERS && test && (
-                        <TestAnswers />
-                    )}
-                    {currentStep === CREATE_TEST_STEPS.TEST_TAKERS && test && (
-                        <TestTakers />
-                    )}
+            {test && (
+                <div className="xl:w-2/3 md:w-5/6 mx-auto py-10">
+                    <Navigator />
+                    <div className="2xl:w-3/5 w-4/5 mx-auto my-6 relative">
+                        {test && test.status === TEST_STATUS.PUBLISHABLE && (
+                            <div className="absolute top-0 left-0 w-full h-0 flex items-center justify-center">
+                                <Button
+                                    className=" uppercase"
+                                    size="lg"
+                                    onClick={() => publishTestMutate()}
+                                    disabled={publishTestLoading}
+                                >
+                                    Publish test
+                                </Button>
+                            </div>
+                        )}
+                        {currentStep === CREATE_TEST_STEPS.TEST_INFORMATION && (
+                            <TestInfo />
+                        )}
+                        {currentStep === CREATE_TEST_STEPS.TEST_PARTS && (
+                            <TestParts />
+                        )}
+                        {currentStep === CREATE_TEST_STEPS.TEST_QUESTIONS && (
+                            <TestQuestions />
+                        )}
+                        {currentStep === CREATE_TEST_STEPS.TEST_ANSWERS &&
+                            test && <TestAnswers />}
+                        {currentStep === CREATE_TEST_STEPS.TEST_TAKERS &&
+                            test && <TestTakers />}
+                    </div>
                 </div>
-            </div>
+            )}
         </>
     );
 };
