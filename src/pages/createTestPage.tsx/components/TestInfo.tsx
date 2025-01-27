@@ -1,5 +1,10 @@
 import { useEffect, useMemo } from "react";
-import { PUBLIC_ANSWERS_OPTIONS, TEST_LEVEL } from "../../../config/config";
+import {
+    PUBLIC_ANSWERS_OPTIONS,
+    PUBLIC_ANSWERS_OPTIONS_LABEL,
+    TEST_LEVEL,
+    TEST_LEVEL_LABEL,
+} from "../../../config/config";
 import { TestBodyItf } from "../../../types/types";
 import { formatTimezone } from "../../../utils/time";
 import Input from "../../../components/elements/Input";
@@ -305,7 +310,7 @@ const TestInfo = () => {
                         className="grow capitalize"
                         {...register("level")}
                         options={Object.values(TEST_LEVEL).map((level) => ({
-                            label: level,
+                            label: TEST_LEVEL_LABEL[level],
                             value: level,
                         }))}
                     />
@@ -325,7 +330,9 @@ const TestInfo = () => {
                         })}
                         options={Object.values(PUBLIC_ANSWERS_OPTIONS).map(
                             (publicAnswersOption) => ({
-                                label: publicAnswersOption,
+                                label: PUBLIC_ANSWERS_OPTIONS_LABEL[
+                                    publicAnswersOption
+                                ],
                                 value: publicAnswersOption,
                             })
                         )}

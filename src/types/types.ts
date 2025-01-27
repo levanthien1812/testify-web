@@ -66,6 +66,7 @@ export interface TestBodyItf {
     share_option?: (typeof SHARE_OPTIONS)[keyof typeof SHARE_OPTIONS];
     public_answers_option: (typeof PUBLIC_ANSWERS_OPTIONS)[keyof typeof PUBLIC_ANSWERS_OPTIONS];
     public_answers_date: string;
+    passcode?: string;
 }
 export interface TestItf extends TestBodyItf {
     id: string;
@@ -229,12 +230,16 @@ export interface ResponseAnswerItf extends BaseAnswerItf {
 }
 
 export interface PasscodeItf {
+    id?: string;
     code: string;
-    valid_till?: Date;
+    valid_till?: string;
     valid_in?: number;
     method: string;
     format?: string;
+    test_id?: string;
 }
+
+export type GeneratePasscodeBodyItf = Pick<PasscodeItf, "format" | "test_id">;
 
 export type UserAnswerItf<T extends AnswerBodyContentItf> = {
     id?: string;

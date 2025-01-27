@@ -7,11 +7,21 @@ interface SelectProps extends React.SelectHTMLAttributes<HTMLSelectElement> {
         value: string | number;
         label: string | number;
     }[];
+    guideOption?: string;
     error?: string;
+    helperText?: string;
 }
 
 const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
-    const { className, options, sizing = "md", error, ...rest } = props;
+    const {
+        className,
+        options,
+        sizing = "md",
+        guideOption = null,
+        error = null,
+        helperText = null,
+        ...rest
+    } = props;
 
     return (
         <div className="grow w-full">
@@ -24,6 +34,11 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
                 ref={ref}
                 {...rest}
             >
+                {guideOption && (
+                    <option value="" hidden>
+                        {guideOption}
+                    </option>
+                )}
                 {options.map((option) => (
                     <option
                         key={option.value}
@@ -34,6 +49,11 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
                     </option>
                 ))}
             </select>
+            {helperText && (
+                <p className="text-end text-gray-500 text-sm mt-1">
+                    {helperText}
+                </p>
+            )}
             {error && (
                 <p className="text-end text-orange-600 text-sm italic mt-1 leading-4">
                     {error}

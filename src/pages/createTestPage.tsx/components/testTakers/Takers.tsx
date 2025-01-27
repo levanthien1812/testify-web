@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import AddTakers from "./AddTakers";
-import { TestItf, userItf } from "../../../../types/types";
 import Button from "../../../../components/elements/Button";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../stores/rootState";

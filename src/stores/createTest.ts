@@ -13,6 +13,7 @@ import {
     TestPartItf,
 } from "../types/types";
 import { SHARE_OPTIONS } from "../config/config";
+import { PASSCODE_FORMAT, PASSCODE_METHOD } from "../config/constants/passcode";
 
 const createTestSlice = createSlice({
     initialState: INITIAL_CREATE_TEST_CONTEXT,
@@ -237,16 +238,22 @@ const createTestSlice = createSlice({
         ) {
             state.testTakers = action.payload.testTakers;
         },
-        addTestTakers(state, action: PayloadAction<TakerItf[]>) {
+        saveSelectedTestTakers(
+            state,
+            action: PayloadAction<{ selectedTestTakers: TakerItf[] }>
+        ) {
+            state.testTakers = action.payload.selectedTestTakers;
+        },
+        addSelectedTestTakers(state, action: PayloadAction<TakerItf[]>) {
             action.payload.forEach((taker) => {
                 if (
-                    !state.testTakers.some(
+                    !state.selectedTestTakers.some(
                         (selectedTaker) => selectedTaker.email === taker.email
                     )
                 ) {
-                    state.testTakers.push(taker);
+                    state.selectedTestTakers.push(taker);
                 } else {
-                    state.testTakers = state.testTakers.filter(
+                    state.selectedTestTakers = state.selectedTestTakers.filter(
                         (selectedTaker) => selectedTaker.email !== taker.email
                     );
                 }
@@ -439,19 +446,26 @@ const createTestSlice = createSlice({
             state.testLink = `${window.location.origin}/tests/${state.testId}`;
         },
         setPasscode(state, action: PayloadAction<PasscodeItf>) {
+            state.passcode = action.payload;
             if (action.payload.valid_in) {
                 action.payload.valid_till = new Date(
                     Date.now() + action.payload.valid_in * 1000 * 60
-                );
+                ).toISOString();
             }
             if (action.payload.valid_till) {
                 action.payload.valid_in = Math.round(
-                    (action.payload.valid_till.getTime() - Date.now()) /
+                    (new Date(action.payload.valid_till).getTime() -
+                        Date.now()) /
                         1000 /
                         60
                 );
             }
-            state.passcode = action.payload;
+            if (
+                action.payload.method === PASSCODE_METHOD.AUTO_GENERATED &&
+                !state.passcode.format
+            ) {
+                state.passcode.format = PASSCODE_FORMAT["XXX-YYY"];
+            }
         },
     },
 });

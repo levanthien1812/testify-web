@@ -3,7 +3,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import Takers from "./testTakers/Takers";
 import { useMutation } from "react-query";
-import { updateTest } from "../../../services/test";
+import { assignTakers, updateTest } from "../../../services/test";
 import { useNavigate } from "react-router";
 import Select from "../../../components/elements/Select";
 import { useSelector } from "react-redux";
@@ -15,9 +15,11 @@ import CopyLink from "./testTakers/CopyLink";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
 import { SHARE_OPTIONS } from "../../../config/config";
 import Passcode from "./testTakers/Passcode";
+import { TestBodyItf } from "../../../types/types";
+import Anyone from "./testTakers/Anyone";
 
 const TestTakers = () => {
-    const { testId, shareOption, testLink } = useSelector(
+    const { testId, shareOption, testLink, testTakers, passcode } = useSelector(
         (state: RootState) => state.createTest
     );
     const navigate = useNavigate();
@@ -26,8 +28,8 @@ const TestTakers = () => {
 
     const { mutate: updateTestMutate, isLoading: isUpdatingTest } = useMutation(
         {
-            mutationFn: async () => {
-                await updateTest(testId!, { share_option: shareOption });
+            mutationFn: async (updateData: Partial<TestBodyItf>) => {
+                await updateTest(testId!, updateData);
             },
             mutationKey: [
                 MUTATION_KEYS.UPDATE_TEST,
@@ -40,11 +42,38 @@ const TestTakers = () => {
         }
     );
 
+    const { mutate: assignTakersMutate, isLoading: isAssigningTakers } =
+        useMutation({
+            mutationFn: async () => {
+                await assignTakers(
+                    testId!,
+                    testTakers!.map((taker) => taker.email)
+                );
+            },
+            onSuccess: () => {
+                // onClose();
+            },
+        });
+
     useEffect(() => {
         if (shareOption === SHARE_OPTIONS.ANYONE) {
             dispatch(createTestActions.generateTestLink());
         }
     }, [dispatch, shareOption]);
+
+    const handleSaveTestTakers = async () => {
+        updateTestMutate({ share_option: shareOption });
+        switch (shareOption) {
+            case SHARE_OPTIONS.RESTRICTED:
+                assignTakersMutate();
+                break;
+            case SHARE_OPTIONS.PASSCODE:
+                updateTestMutate({ passcode: passcode.id });
+                break;
+            default:
+                break;
+        }
+    };
 
     return (
         <Wrapper
@@ -60,10 +89,10 @@ const TestTakers = () => {
                         text: "Finish",
                         loadingText: "Finishing...",
                         onClick: () => {
-                            updateTestMutate();
+                            handleSaveTestTakers();
                         },
-                        disabled: isUpdatingTest,
-                        isLoading: isUpdatingTest,
+                        disabled: isUpdatingTest || isAssigningTakers,
+                        isLoading: isUpdatingTest || isAssigningTakers,
                     },
                     outlinedButton: {
                         onClick: () => {
@@ -112,13 +141,7 @@ const TestTakers = () => {
                     </p>
                 </div>
             </div>
-            {shareOption === SHARE_OPTIONS.ANYONE && (
-                <div className="p-2 bg-orange-100">
-                    <div className="border-2 border-orange-500 border-dashed">
-                        <CopyLink link={testLink} />
-                    </div>
-                </div>
-            )}
+            {shareOption === SHARE_OPTIONS.ANYONE && <Anyone />}
 
             {shareOption === SHARE_OPTIONS.RESTRICTED && <Takers />}
 

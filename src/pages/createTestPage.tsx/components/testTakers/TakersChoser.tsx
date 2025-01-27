@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { TakerItf, userItf } from "../../../../types/types";
+import { TakerItf } from "../../../../types/types";
 import Input from "../../../../components/elements/Input";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../stores/rootState";
@@ -16,10 +16,10 @@ const TakersChoser = ({ label = "Choose takers" }: TakersChoserProps) => {
     const [selectAll, setSelectAll] = useState<boolean>(false);
     const dispatch = useDispatch();
 
-    const { testTakers, availableTakers } = useSelector(
+    const { selectedTestTakers, availableTakers } = useSelector(
         (state: RootState) => state.createTest
     );
-    const { saveTestTakers, addTestTakers } = createTestActions;
+    const { saveSelectedTestTakers, addSelectedTestTakers } = createTestActions;
 
     useEffect(() => {
         if (availableTakers) {
@@ -44,14 +44,16 @@ const TakersChoser = ({ label = "Choose takers" }: TakersChoserProps) => {
     const handleSelectAllTakers = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSelectAll(e.target.checked);
         if (e.target.checked) {
-            dispatch(saveTestTakers({ testTakers: filteredTakers }));
+            dispatch(
+                saveSelectedTestTakers({ selectedTestTakers: filteredTakers })
+            );
         } else {
-            dispatch(saveTestTakers({ testTakers: [] }));
+            dispatch(saveSelectedTestTakers({ selectedTestTakers: [] }));
         }
     };
 
     const handleSelectTaker = (taker: TakerItf) => {
-        dispatch(addTestTakers([taker]));
+        dispatch(addSelectedTestTakers([taker]));
     };
 
     return (
@@ -96,7 +98,7 @@ const TakersChoser = ({ label = "Choose takers" }: TakersChoserProps) => {
                                     type="checkbox"
                                     name={taker.id}
                                     id={taker.id}
-                                    checked={testTakers.some(
+                                    checked={selectedTestTakers.some(
                                         (t) => t.id === taker.id
                                     )}
                                     onChange={() => handleSelectTaker(taker)}

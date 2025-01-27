@@ -5,8 +5,8 @@ import Modal, {
     ModalHeader,
 } from "../../../../components/modals/Modal";
 import CreateTakers from "./CreateTakers";
-import { useMutation, useQuery } from "react-query";
-import { assignTakers, getAvailableTakers } from "../../../../services/test";
+import { useQuery } from "react-query";
+import { getAvailableTakers } from "../../../../services/test";
 import Button from "../../../../components/elements/Button";
 import { TakerItf } from "../../../../types/types";
 import TakersChoser from "./TakersChoser";
@@ -23,23 +23,11 @@ type AddTakersProps = {
 
 const AddTakers = ({ onClose }: AddTakersProps) => {
     const [isCreateTaker, setIsCreateTaker] = useState<boolean>(false);
-    const { testId, testTakers, availableTakers } = useSelector(
+    const { testId, availableTakers, selectedTestTakers } = useSelector(
         (state: RootState) => state.createTest
     );
     const { setAvailableTakers } = createTestActions;
     const dispatch = useDispatch();
-
-    const { mutate, isLoading } = useMutation({
-        mutationFn: async () => {
-            await assignTakers(
-                testId!,
-                testTakers!.map((taker) => taker.email)
-            );
-        },
-        onSuccess: () => {
-            onClose();
-        },
-    });
 
     const { isFetching } = useQuery<TakerItf[]>({
         queryFn: async () => {
@@ -53,7 +41,10 @@ const AddTakers = ({ onClose }: AddTakersProps) => {
     });
 
     const handleSave = () => {
-        mutate();
+        dispatch(
+            createTestActions.saveTestTakers({ testTakers: selectedTestTakers })
+        );
+        onClose();
     };
 
     return (
@@ -84,9 +75,7 @@ const AddTakers = ({ onClose }: AddTakersProps) => {
                 )}
             </ModalBody>
             <ModalFooter>
-                <Button disabled={isLoading} onClick={handleSave}>
-                    {!isLoading ? "Save" : "Saving..."}
-                </Button>
+                <Button onClick={handleSave}>Save</Button>
             </ModalFooter>
         </Modal>
     );
