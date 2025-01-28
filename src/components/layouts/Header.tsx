@@ -14,11 +14,14 @@ import { toast } from "react-toastify";
 import Button from "../elements/Button";
 import defaultUserPhoto from "./../../assets/images/default-user-photo.png";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
+import { ROLES } from "../../config/config";
+import PasscodeLink from "../modals/PasscodeLink";
 
 const Header = () => {
     const { user, isAuthened } = useSelector((state: RootState) => state.auth);
     const [showActions, setShowActions] = useState(false);
     const dispatch = useDispatch();
+    const [isEnteringPasscodeLink, setIsEnteringPasscodeLink] = useState(false);
 
     const { mutate, isLoading } = useMutation({
         mutationFn: async () => {
@@ -66,6 +69,15 @@ const Header = () => {
             )}
             {isAuthened && user && (
                 <div className="flex gap-4 items-center">
+                    {user.role === ROLES.TAKER && (
+                        <div>
+                            <Button
+                                onClick={() => setIsEnteringPasscodeLink(true)}
+                            >
+                                Enter passcode or link
+                            </Button>
+                        </div>
+                    )}
                     <div className="relative">
                         <Link to={"/chat"}>
                             <FontAwesomeIcon
@@ -88,7 +100,7 @@ const Header = () => {
                                         ? user.photo
                                         : defaultUserPhoto
                                 }
-                                alt="user-photo"
+                                alt="user"
                                 className="w-[40px] h-[40px] object-cover rounded-full shadow-md"
                             />
 
@@ -105,6 +117,12 @@ const Header = () => {
                                     Logout
                                 </Button>
                             </div>
+                        )}
+
+                        {isEnteringPasscodeLink && (
+                            <PasscodeLink
+                                onClose={() => setIsEnteringPasscodeLink(false)}
+                            />
                         )}
                     </div>
                 </div>
