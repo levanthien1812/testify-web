@@ -21,14 +21,14 @@ const Button = ({
             type={type}
             className={`shadow-sm ${
                 primary
-                    ? "bg-orange-600 shadow-orange-200 hover:bg-orange-700 active:bg-orange-500"
+                    ? "bg-orange-600 shadow-orange-200 text-white hover:bg-orange-700 active:bg-orange-500"
                     : ""
             }
                     ${
                         secondary
-                            ? "bg-gray-400 shadow-gray-200 hover:bg-gray-500 active:bg-gray-300"
+                            ? "bg-gray-200 shadow-gray-200 text-gray-500 hover:bg-gray-300 active:bg-gray-300"
                             : ""
-                    } text-white  ${size === "sm" ? "px-4 py-0" : ""}
+                    }  ${size === "sm" ? "px-4 py-0" : ""}
             ${size === "md" ? "px-8 py-1" : ""}
             ${
                 size === "lg" ? "px-12 py-1.5" : ""

@@ -167,4 +167,11 @@ export const INITIAL_TAKE_TEST_CONTEXT: TakeTestContext = {
     isForbidden: false,
     includeTakerAnswers: false,
     submittable: false,
+    passcode: {
+        code: "",
+        valid_till: new Date().toISOString(),
+        valid_in: 0,
+        method: "",
+    },
+    testLink: "",
 };
