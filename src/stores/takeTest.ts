@@ -2,6 +2,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { INITIAL_TAKE_TEST_CONTEXT } from "../config/constants/initialValues";
 import {
     AnswerBodyContentItf,
+    PasscodeItf,
     QuestionContentItf,
     QuestionItf,
     TestItf,
@@ -111,6 +112,9 @@ const TakeTestSlice = createSlice({
         },
         setIsStarted(state, action) {
             state.isStarted = action.payload;
+        },
+        setPasscode(state, action: PayloadAction<Partial<PasscodeItf>>) {
+            state.passcode = { ...state.passcode, ...action.payload };
         },
     },
 });

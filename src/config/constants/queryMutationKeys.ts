@@ -20,6 +20,7 @@ const MUTATION_KEYS = {
     VALIDATE_QUESTIONS: "validate-questions",
     ADD_ANSWER: "add-answer",
     GENERATE_PASSCODE: "generate-passcode",
+    CHECK_PASSCODE: "check-passcode",
 };
 
 export { QUERY_KEYS, MUTATION_KEYS };

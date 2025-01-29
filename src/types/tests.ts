@@ -72,4 +72,6 @@ export interface TakeTestContext {
     isForbidden: boolean;
     includeTakerAnswers: boolean;
     submittable: boolean;
+    passcode: PasscodeItf;
+    testLink: string;
 }
