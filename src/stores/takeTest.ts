@@ -9,6 +9,7 @@ import {
     UserAnswerItf,
 } from "../types/types";
 import { TEST_STATUS } from "../config/config";
+import { PUBLIC_ANSWER_VISIBILITY_LEVEL } from "../config/constants/tests";
 
 const TakeTestSlice = createSlice({
     initialState: INITIAL_TAKE_TEST_CONTEXT,
@@ -39,12 +40,7 @@ const TakeTestSlice = createSlice({
                 return part;
             });
         },
-        setTestStatus(
-            state,
-            action: PayloadAction<
-                (typeof TEST_STATUS)[keyof typeof TEST_STATUS]
-            >
-        ) {
+        setTestStatus(state, action: PayloadAction<TEST_STATUS>) {
             state.testStatus = action.payload;
             if (action.payload === TEST_STATUS.OPENED) {
                 state.startable = true;
@@ -115,6 +111,12 @@ const TakeTestSlice = createSlice({
         },
         setPasscode(state, action: PayloadAction<Partial<PasscodeItf>>) {
             state.passcode = { ...state.passcode, ...action.payload };
+        },
+        setIsEnteringPasscode(state, action) {
+            state.isEnteringPasscode = action.payload;
+        },
+        setIsPasscodeValidated(state, action) {
+            state.isPasscodeValidated = action.payload;
         },
     },
 });

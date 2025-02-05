@@ -39,9 +39,7 @@ const LoginPage = () => {
             const { user, tokens } = data;
             dispatch(authActions.authenticate({ user, tokens }));
 
-            if (user.role === ROLES.MAKER) {
-                navigate("/home");
-            }
+            navigate("/home");
         },
         onError: (err) => {
             if (err instanceof AxiosError) {

@@ -47,11 +47,14 @@ const TestInfo = ({ test }: TestInfoProps) => {
                 </span>
             </p>
 
-            {test.close_time && (
+            {test.options.allow_close_time.enable && (
                 <p className="text-xl text-center mt-2">
                     Time close:{" "}
                     <span className="font-bold px-2 text-orange-600 underline">
-                        {format(new Date(test.close_time), "dd/MM/yyyy HH:mm")}
+                        {format(
+                            new Date(test.options.allow_close_time.close_time!),
+                            "dd/MM/yyyy HH:mm"
+                        )}
                     </span>
                 </p>
             )}

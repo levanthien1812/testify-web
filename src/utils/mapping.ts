@@ -38,7 +38,7 @@ export const questionTypeToQuestionComponent = {
 };
 
 export const getInitialQuestionContent = (
-    type: (typeof QUESTION_TYPE)[keyof typeof QUESTION_TYPE]
+    type: QUESTION_TYPE
 ):
     | MultipleChoiceQuestionItf
     | FillGapsQuestionItf

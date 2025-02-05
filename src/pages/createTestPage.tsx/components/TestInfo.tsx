@@ -18,6 +18,8 @@ import { useMutation } from "react-query";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
 import { createTest, updateTest } from "../../../services/test";
 import { useDispatch } from "react-redux";
+import Accordion from "../../../components/accordions/Accordion";
+import Checkbox from "../../../components/elements/Checkbox";
 
 const TestInfo = () => {
     const {
@@ -34,15 +36,11 @@ const TestInfo = () => {
         testDuration,
         testId,
         level,
-        closeTime,
-        code,
-        enableCloseTime,
         numParts,
         numQuestions,
         maxScore,
-        publicAnswersDate,
-        publicAnswersOption,
         isValidTestInfo,
+        options,
     } = useSelector((state: RootState) => state.createTest);
     const dispatch = useDispatch();
 
@@ -56,11 +54,7 @@ const TestInfo = () => {
             num_questions: numQuestions,
             num_parts: numParts,
             level: level,
-            code: code,
-            enable_close_time: enableCloseTime,
-            close_time: closeTime,
-            public_answers_option: publicAnswersOption,
-            public_answers_date: publicAnswersDate,
+            options: options,
         }),
         [
             testTitle,
@@ -71,11 +65,7 @@ const TestInfo = () => {
             numQuestions,
             numParts,
             level,
-            code,
-            enableCloseTime,
-            closeTime,
-            publicAnswersDate,
-            publicAnswersOption,
+            options,
         ]
     );
 
@@ -124,9 +114,22 @@ const TestInfo = () => {
             new Date(allValues?.datetime)
         );
         setValue("datetime", formattedStartTime);
-        setValue("close_time", allValues?.datetime);
-        setValue("public_answers_date", allValues?.datetime);
-    }, [allValues?.datetime, setValue]);
+        if (options.allow_close_time.enable)
+            setValue(
+                "options.allow_close_time.close_time",
+                allValues?.datetime
+            );
+        if (options.allow_show_maker_answers_after_test.enable)
+            setValue(
+                "options.allow_show_maker_answers_after_test.public_answers_date",
+                allValues?.datetime
+            );
+    }, [
+        allValues?.datetime,
+        setValue,
+        options.allow_close_time.enable,
+        options.allow_show_maker_answers_after_test.enable,
+    ]);
 
     useEffect(() => {
         dispatch(saveTestInfo(allValues));
@@ -136,17 +139,22 @@ const TestInfo = () => {
 
     useEffect(() => {
         if (
-            allValues?.public_answers_option ===
+            allValues?.options.allow_show_maker_answers_after_test
+                .public_answers_option ===
                 PUBLIC_ANSWERS_OPTIONS.AFTER_CLOSE_TIME &&
-            allValues?.enable_close_time === true &&
-            allValues?.close_time
+            allValues?.options.allow_close_time.enable &&
+            allValues?.options.allow_close_time.close_time
         ) {
-            setValue("public_answers_date", allValues?.close_time);
+            setValue(
+                "options.allow_show_maker_answers_after_test.public_answers_date",
+                allValues?.options.allow_close_time.close_time
+            );
         }
     }, [
-        allValues?.public_answers_option,
-        allValues?.enable_close_time,
-        allValues?.close_time,
+        allValues?.options.allow_show_maker_answers_after_test
+            .public_answers_option,
+        allValues?.options.allow_close_time.enable,
+        allValues?.options.allow_close_time.close_time,
         setValue,
     ]);
 
@@ -183,39 +191,30 @@ const TestInfo = () => {
             }}
         >
             <form className="mt-4 ">
-                <div className="flex gap-4 items-end">
-                    <label htmlFor="title" className="w-1/5 shrink-0">
-                        Test title:{" "}
-                    </label>
+                <div className="grid grid-cols-[2fr_5fr] gap-2">
                     <Input
                         {...register("title", {
                             required: "Title is required",
                         })}
                         error={errors?.title && errors?.title.message}
+                        required
+                        label={{
+                            text: "Test title",
+                        }}
                     />
-                </div>
-                <div className="flex gap-4 items-end mt-4">
-                    <label htmlFor="description" className="w-1/5 shrink-0">
-                        Test description:{" "}
-                    </label>
-                    <Input {...register("description")} />
-                </div>
-                <div className="flex gap-4 items-end mt-4">
-                    <label htmlFor="datetime" className="w-1/5 shrink-0">
-                        Start time:{" "}
-                    </label>
+                    <Input
+                        {...register("description")}
+                        label={{ text: "Test description" }}
+                    />
                     <Input
                         type="datetime-local"
                         {...register("datetime", {
                             required: "Start time is required",
                         })}
                         error={errors?.datetime && errors?.datetime.message}
+                        label={{ text: "Start time" }}
+                        required
                     />
-                </div>
-                <div className="flex gap-4 items-end mt-4">
-                    <label htmlFor="duration" className="w-1/5 shrink-0">
-                        Duration (mins):{" "}
-                    </label>
                     <Input
                         type="number"
                         step={5}
@@ -226,11 +225,10 @@ const TestInfo = () => {
                                 message: "Duration must be greater than 0",
                             },
                         })}
+                        disabled={options.disallow_time_limit.enable}
                         error={errors?.duration && errors?.duration.message}
+                        label={{ text: "Duration (mins)" }}
                     />
-                    <label htmlFor="max_score" className="w-1/5 shrink-0">
-                        Max score:{" "}
-                    </label>
                     <Input
                         type="number"
                         step={1}
@@ -241,28 +239,10 @@ const TestInfo = () => {
                                 message: "Max score must be greater than 0",
                             },
                         })}
+                        required
                         error={errors?.max_score && errors?.max_score.message}
+                        label={{ text: "Max score" }}
                     />
-                </div>
-                <div className="flex gap-4 items-end mt-4">
-                    <div className="w-1/5 shrink-0">
-                        <label htmlFor="datetime">Close time: </label>
-                        <input
-                            type="checkbox"
-                            {...register("enable_close_time")}
-                        />
-                    </div>
-
-                    <Input
-                        type="datetime-local"
-                        {...register("close_time")}
-                        disabled={!enableCloseTime}
-                    />
-                </div>
-                <div className="flex gap-4 items-end mt-4">
-                    <label htmlFor="num_parts" className="w-1/5 shrink-0">
-                        Number of parts:{" "}
-                    </label>
                     <Input
                         type="number"
                         step={1}
@@ -275,11 +255,10 @@ const TestInfo = () => {
                             },
                             valueAsNumber: true,
                         })}
+                        required
                         error={errors?.num_parts && errors?.num_parts.message}
+                        label={{ text: "Number of parts" }}
                     />
-                    <label htmlFor="num_questions" className="w-1/5 shrink-0">
-                        Num of questions:{" "}
-                    </label>
                     <Input
                         type="number"
                         step={1}
@@ -292,20 +271,13 @@ const TestInfo = () => {
                             },
                             valueAsNumber: true,
                         })}
+                        required
                         error={
                             errors?.num_questions &&
                             errors?.num_questions.message
                         }
+                        label={{ text: "Number of questions" }}
                     />
-                </div>
-                <div className="flex gap-4 items-end mt-4">
-                    <label htmlFor="code" className="w-1/5 shrink-0">
-                        Test code:{" "}
-                    </label>
-                    <Input {...register("code")} />
-                    <label htmlFor="level" className="w-1/5 shrink-0">
-                        Level:{" "}
-                    </label>
                     <Select
                         className="grow capitalize"
                         {...register("level")}
@@ -313,49 +285,150 @@ const TestInfo = () => {
                             label: TEST_LEVEL_LABEL[level],
                             value: level,
                         }))}
+                        label={{
+                            text: "Level",
+                        }}
                     />
                 </div>
-
-                <div className="flex gap-4 items-end mt-4">
-                    <label
-                        htmlFor="public_answers_option"
-                        className="w-1/5 shrink-0 whitespace-nowrap overflow-hidden text-ellipsis"
-                    >
-                        Public answers options:{" "}
-                    </label>
-                    <Select
-                        className="w-0 grow capitalize"
-                        {...register("public_answers_option", {
-                            required: "Public answers option is required",
-                        })}
-                        options={Object.values(PUBLIC_ANSWERS_OPTIONS).map(
-                            (publicAnswersOption) => ({
-                                label: PUBLIC_ANSWERS_OPTIONS_LABEL[
-                                    publicAnswersOption
-                                ],
-                                value: publicAnswersOption,
-                            })
+                <Accordion
+                    viewData={{
+                        title: {
+                            text: "Options",
+                            extraClass: "capitalize",
+                        },
+                        extraClass: "mt-4",
+                    }}
+                >
+                    <div className="flex-col space-y-2 p-4">
+                        <Checkbox
+                            label={{ text: "Allow close time" }}
+                            {...register("options.allow_close_time.enable")}
+                        />
+                        {options.allow_close_time.enable && (
+                            <div className="grid grid-cols-[2fr_5fr] px-4 py-2 bg-orange-50">
+                                <Input
+                                    type="datetime-local"
+                                    {...register(
+                                        "options.allow_close_time.close_time"
+                                    )}
+                                    label={{
+                                        text: "Close time",
+                                    }}
+                                />
+                            </div>
                         )}
-                    />
-                </div>
+                        <Checkbox
+                            label={{ text: "Allow view submission after test" }}
+                            {...register(
+                                "options.allow_view_submission_after_test.enable"
+                            )}
+                        />
+                        <Checkbox
+                            label={{ text: "Allow multiple submissions" }}
+                            {...register(
+                                "options.allow_multiple_submissions.enable"
+                            )}
+                        />
+                        {options.allow_multiple_submissions.enable && (
+                            <div className="grid grid-cols-[2fr_5fr] px-4 py-2 bg-orange-50">
+                                <Input
+                                    type="number"
+                                    {...register(
+                                        "options.allow_multiple_submissions.maximum_submissions"
+                                    )}
+                                    label={{
+                                        text: "Maximum submissions",
+                                    }}
+                                />
+                            </div>
+                        )}
+                        <Checkbox
+                            label={{ text: "Allow save progress" }}
+                            {...register("options.allow_save_progress.enable")}
+                        />
+                        <Checkbox
+                            label={{
+                                text: "Allow showing taker's answers after test",
+                            }}
+                            {...register(
+                                "options.allow_show_taker_answers_after_test.enable"
+                            )}
+                        />
+                        <Checkbox
+                            label={{
+                                text: "Allow showing maker's answers after test",
+                            }}
+                            {...register(
+                                "options.allow_show_maker_answers_after_test.enable"
+                            )}
+                        />
+                        {options.allow_show_maker_answers_after_test.enable && (
+                            <div className="grid grid-cols-[2fr_5fr] gap-2 px-4 py-2 bg-orange-50">
+                                <Select
+                                    className="w-0 grow capitalize"
+                                    {...register(
+                                        "options.allow_show_maker_answers_after_test.public_answers_option",
+                                        {
+                                            required:
+                                                "Public answers option is required",
+                                        }
+                                    )}
+                                    label={{
+                                        text: "Public answers options",
+                                    }}
+                                    options={Object.values(
+                                        PUBLIC_ANSWERS_OPTIONS
+                                    ).map((publicAnswersOption) => ({
+                                        label: PUBLIC_ANSWERS_OPTIONS_LABEL[
+                                            publicAnswersOption
+                                        ],
+                                        value: publicAnswersOption,
+                                    }))}
+                                />
 
-                {publicAnswersOption ===
-                    PUBLIC_ANSWERS_OPTIONS.SPECIFIC_DATE && (
-                    <div className="flex gap-4 items-end mt-4">
-                        <label
-                            htmlFor="public_answers_date"
-                            className="w-1/5 shrink-0 whitespace-nowrap overflow-hidden text-ellipsis"
-                        >
-                            Public answers date:{" "}
-                        </label>
-                        <Input
-                            type="datetime-local"
-                            {...register("public_answers_date", {
-                                required: "Public answers date is required",
-                            })}
+                                {options.allow_show_maker_answers_after_test
+                                    .public_answers_option ===
+                                    PUBLIC_ANSWERS_OPTIONS.SPECIFIC_DATE && (
+                                    <Input
+                                        type="datetime-local"
+                                        label={{
+                                            text: "Public answers date",
+                                        }}
+                                        {...register(
+                                            "options.allow_show_maker_answers_after_test.public_answers_date",
+                                            {
+                                                required:
+                                                    "Public answers date is required",
+                                            }
+                                        )}
+                                    />
+                                )}
+                            </div>
+                        )}
+                        <Checkbox
+                            label={{ text: "Allow shuffling questions" }}
+                            {...register(
+                                "options.allow_shuffle_questions.enable"
+                            )}
+                        />
+                        <Checkbox
+                            label={{ text: "Allow shuffling answers" }}
+                            {...register(
+                                "options.allow_shuffle_answers.enable"
+                            )}
+                        />
+                        <Checkbox
+                            label={{ text: "Allow review before submission" }}
+                            {...register(
+                                "options.allow_review_before_submission.enable"
+                            )}
+                        />
+                        <Checkbox
+                            label={{ text: "Disallow time limit" }}
+                            {...register("options.disallow_time_limit.enable")}
                         />
                     </div>
-                )}
+                </Accordion>
             </form>
         </Wrapper>
     );

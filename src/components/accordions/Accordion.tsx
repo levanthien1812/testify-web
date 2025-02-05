@@ -10,6 +10,7 @@ type viewData = {
             text: string;
         };
     };
+    extraClass?: string;
 };
 
 const Accordion = ({
@@ -22,13 +23,15 @@ const Accordion = ({
     const [open, setOpen] = useState<boolean>(true);
 
     return (
-        <div className="border border-gray-300 ">
+        <div className={`border border-gray-300 ${viewData.extraClass}`}>
             <div
                 className="flex justify-between items-center px-4 py-2 bg-gray-300 cursor-pointer"
                 onClick={() => setOpen((prev) => !prev)}
             >
                 <p className="text-lg space-x-2">
-                    <span className="uppercase">{viewData?.title?.text}</span>
+                    <span className={`uppercase ${viewData.title.extraClass}`}>
+                        {viewData?.title?.text}
+                    </span>
                     <span className="text-gray-500">
                         {viewData?.title?.description?.text}
                     </span>

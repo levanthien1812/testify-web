@@ -140,7 +140,7 @@ const Filter = ({ filter, setFilter }: FilterProps) => {
                                 onChange={(e) => {
                                     setFilter({
                                         ...filter,
-                                        status: e.target.value,
+                                        status: e.target.value as TEST_STATUS,
                                     });
                                 }}
                                 options={Object.values(TEST_STATUS).map(
