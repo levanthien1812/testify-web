@@ -1,9 +1,12 @@
-import { CreateTestContext, TakeTestContext } from "../../types/tests";
+import {
+    CreateTestContext,
+    TakeTestContext,
+    TestOption,
+} from "../../types/tests";
 import {
     FillGapsQuestionItf,
     MatchingQuestionItf,
     MultipleChoiceQuestionItf,
-    PartBodyItf,
     QuestionContentItf,
     QuestionItf,
     ResponseQuestionItf,
@@ -20,6 +23,40 @@ import {
 } from "../config";
 import { CREATE_TEST_STEPS, QUESTION_TYPE } from "./tests";
 
+export const initialOptions: TestOption = {
+    allow_close_time: {
+        enable: false,
+    },
+    allow_view_submission_after_test: {
+        enable: false,
+    },
+    allow_multiple_submissions: {
+        enable: false,
+    },
+    allow_save_progress: {
+        enable: false,
+    },
+    allow_show_taker_answers_after_test: {
+        enable: false,
+    },
+    allow_show_maker_answers_after_test: {
+        enable: false,
+        public_answers_option: PUBLIC_ANSWERS_OPTIONS.AFTER_CLOSE_TIME,
+    },
+    allow_shuffle_questions: {
+        enable: false,
+    },
+    allow_shuffle_answers: {
+        enable: false,
+    },
+    allow_review_before_submission: {
+        enable: false,
+    },
+    disallow_time_limit: {
+        enable: false,
+    },
+};
+
 export const initialTestInfo: TestBodyItf = {
     title: "lskjfklsa",
     datetime: formatTimezone(new Date()),
@@ -29,11 +66,7 @@ export const initialTestInfo: TestBodyItf = {
     num_questions: 10,
     level: TEST_LEVEL.EASY,
     num_parts: 1,
-    enable_close_time: true,
-    close_time: formatTimezone(new Date()),
-    code: "",
-    public_answers_date: formatTimezone(new Date()),
-    public_answers_option: PUBLIC_ANSWERS_OPTIONS.SPECIFIC_DATE,
+    options: initialOptions,
 };
 
 export const INITIAL_CREATE_TEST_CONTEXT: CreateTestContext = {
@@ -91,12 +124,7 @@ export const INITIAL_CREATE_TEST_CONTEXT: CreateTestContext = {
     numQuestions: 1,
     numParts: 1,
     level: TEST_LEVEL.EASY,
-    code: "",
-    enableCloseTime: true,
-    closeTime: "",
     shareOption: SHARE_OPTIONS.RESTRICTED,
-    publicAnswersOption: PUBLIC_ANSWERS_OPTIONS.SPECIFIC_DATE,
-    publicAnswersDate: "",
     testParts: [],
     testQuestions: [],
     isValidTestInfo: false,
@@ -114,6 +142,7 @@ export const INITIAL_CREATE_TEST_CONTEXT: CreateTestContext = {
         valid_in: 0,
         method: "",
     },
+    options: initialOptions,
 };
 
 export const INITIAL_PART: TestPartItf = {
@@ -174,4 +203,6 @@ export const INITIAL_TAKE_TEST_CONTEXT: TakeTestContext = {
         method: "",
     },
     testLink: "",
+    isEnteringPasscode: false,
+    isPasscodeValidated: false,
 };

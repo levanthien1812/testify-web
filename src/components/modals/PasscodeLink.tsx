@@ -14,9 +14,10 @@ import { PasscodeItf } from "../../types/types";
 
 type PasscodeLinkProps = {
     onClose: () => void;
+    passCodeOnly?: boolean;
 };
 
-const PasscodeLink = ({ onClose }: PasscodeLinkProps) => {
+const PasscodeLink = ({ onClose, passCodeOnly = false }: PasscodeLinkProps) => {
     const [currentOption, setCurrentOption] = useState<"PASSCODE" | "LINK">(
         "PASSCODE"
     );
@@ -41,6 +42,8 @@ const PasscodeLink = ({ onClose }: PasscodeLinkProps) => {
             },
             onSuccess: (data: PasscodeItf) => {
                 navigate(`/tests/${data.test_id}`);
+                dispatch(takeTestActions.setIsPasscodeValidated(true));
+                dispatch(takeTestActions.setIsEnteringPasscode(false));
                 onClose();
             },
         });
@@ -57,24 +60,26 @@ const PasscodeLink = ({ onClose }: PasscodeLinkProps) => {
         <Modal onClose={onClose}>
             <ModalHeader title="Test passcode or link" />
             <ModalBody>
-                <div className="flex w-full">
-                    <Button
-                        onClick={() => setCurrentOption("PASSCODE")}
-                        className={`w-1/2`}
-                        primary={currentOption === "PASSCODE"}
-                        secondary={currentOption !== "PASSCODE"}
-                    >
-                        Passcode
-                    </Button>
-                    <Button
-                        onClick={() => setCurrentOption("LINK")}
-                        className={`w-1/2`}
-                        primary={currentOption === "LINK"}
-                        secondary={currentOption !== "LINK"}
-                    >
-                        Link
-                    </Button>
-                </div>
+                {!passCodeOnly && (
+                    <div className="flex w-full">
+                        <Button
+                            onClick={() => setCurrentOption("PASSCODE")}
+                            className={`w-1/2`}
+                            primary={currentOption === "PASSCODE"}
+                            secondary={currentOption !== "PASSCODE"}
+                        >
+                            Passcode
+                        </Button>
+                        <Button
+                            onClick={() => setCurrentOption("LINK")}
+                            className={`w-1/2`}
+                            primary={currentOption === "LINK"}
+                            secondary={currentOption !== "LINK"}
+                        >
+                            Link
+                        </Button>
+                    </div>
+                )}
                 <div className="mt-2">
                     {currentOption === "PASSCODE" && (
                         <Input

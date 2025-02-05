@@ -46,7 +46,7 @@ const AddChat = ({
                 {
                     members: selectedTakers,
                 },
-                option
+                option as CHAT_OPTIONS
             );
         },
         onSuccess: () => {

@@ -1,17 +1,19 @@
 import {
     PUBLIC_ANSWERS_OPTIONS,
+    QUESTION_LEVEL,
     ROLES,
     SHARE_OPTIONS,
     TEST_LEVEL,
     TEST_STATUS,
 } from "../config/config";
 import { QUESTION_TYPE } from "../config/constants/tests";
+import { TestOption } from "./tests";
 
 export interface userItf {
     username?: string;
     name: string;
     email: string;
-    role: (typeof ROLES)[keyof typeof ROLES];
+    role: ROLES;
     maker_id?: string;
     id: string;
     photo?: string;
@@ -59,14 +61,10 @@ export interface TestBodyItf {
     max_score: number;
     num_questions: number;
     num_parts: number;
-    level: (typeof TEST_LEVEL)[keyof typeof TEST_LEVEL];
-    code: string;
-    enable_close_time: boolean;
-    close_time: string;
-    share_option?: (typeof SHARE_OPTIONS)[keyof typeof SHARE_OPTIONS];
-    public_answers_option: (typeof PUBLIC_ANSWERS_OPTIONS)[keyof typeof PUBLIC_ANSWERS_OPTIONS];
-    public_answers_date: string;
+    level: TEST_LEVEL;
+    share_option?: SHARE_OPTIONS;
     passcode?: string;
+    options: TestOption;
 }
 export interface TestItf extends TestBodyItf {
     id: string;
@@ -77,7 +75,7 @@ export interface TestItf extends TestBodyItf {
     are_answers_provided: boolean;
     questions?: QuestionItf<QuestionContentItf>[];
     submissions_count?: number;
-    status: (typeof TEST_STATUS)[keyof typeof TEST_STATUS];
+    status: TEST_STATUS;
 }
 
 export interface PartBodyItf {
@@ -181,8 +179,8 @@ export interface QuestionItf<T extends QuestionContentItf> {
     order: number;
     test_id: string;
     score: number;
-    level: (typeof TEST_LEVEL)[keyof typeof TEST_LEVEL];
-    type: (typeof QUESTION_TYPE)[keyof typeof QUESTION_TYPE];
+    level: QUESTION_LEVEL;
+    type: QUESTION_TYPE;
     part_id?: string;
     content?: T;
     is_saved?: boolean;
@@ -196,8 +194,8 @@ export type QuestionBodyContentItf =
 
 export interface QuestionBodyItf<T extends QuestionBodyContentItf> {
     score: number;
-    level: (typeof TEST_LEVEL)[keyof typeof TEST_LEVEL];
-    type: (typeof QUESTION_TYPE)[keyof typeof QUESTION_TYPE];
+    level: QUESTION_LEVEL;
+    type: QUESTION_TYPE;
     order: number;
     part_id?: string;
     content: T;
@@ -280,7 +278,7 @@ export type FilterState = {
     order?: string;
     date_from?: Date;
     date_to?: Date;
-    status?: (typeof TEST_STATUS)[keyof typeof TEST_STATUS];
+    status?: TEST_STATUS;
 };
 
 export type TestRequestFilter = Pick<

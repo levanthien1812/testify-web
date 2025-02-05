@@ -13,7 +13,7 @@ export const getChats = async () => {
 
 export const createChats = async (
     chatsBody: ChatBodyItf,
-    option: (typeof CHAT_OPTIONS)[keyof typeof CHAT_OPTIONS]
+    option: CHAT_OPTIONS
 ) => {
     try {
         const response = await instance.post(

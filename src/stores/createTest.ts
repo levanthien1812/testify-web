@@ -25,12 +25,7 @@ const createTestSlice = createSlice({
             );
             if (!isValidStep) state.currentStep = state.steps?.[0].value;
         },
-        setStep(
-            state,
-            action: PayloadAction<
-                (typeof CREATE_TEST_STEPS)[keyof typeof CREATE_TEST_STEPS]
-            >
-        ) {
+        setStep(state, action: PayloadAction<CREATE_TEST_STEPS>) {
             state.currentStep = action.payload;
         },
         moveNextStep(state) {
@@ -76,19 +71,15 @@ const createTestSlice = createSlice({
             if (action.payload?.num_parts)
                 state.numParts = action.payload.num_parts;
             if (action.payload?.level) state.level = action.payload.level;
-            if (action.payload?.code) state.code = action.payload.code;
-            if (action.payload?.enable_close_time)
-                state.enableCloseTime = action.payload.enable_close_time;
-            if (action.payload?.close_time)
-                state.closeTime = action.payload.close_time;
             if (action.payload?.share_option)
                 state.shareOption = action.payload.share_option;
             if (action.payload?.public_answers_option)
-                state.publicAnswersOption =
-                    action.payload.public_answers_option;
-            if (action.payload?.public_answers_date)
-                state.publicAnswersDate = action.payload.public_answers_date;
-            if (action.payload?.testId) state.testId = action.payload.testId;
+                if (action.payload?.testId)
+                    state.testId = action.payload.testId;
+            if (action.payload?.options)
+                state.options = JSON.parse(
+                    JSON.stringify(action.payload.options)
+                );
         },
         initializeTestParts(state) {
             console.log(state);
@@ -384,14 +375,10 @@ const createTestSlice = createSlice({
             state.numQuestions = action.payload?.num_questions;
             state.numParts = action.payload?.num_parts;
             state.level = action.payload?.level;
-            state.code = action.payload?.code;
-            state.enableCloseTime = action.payload?.enable_close_time;
-            state.closeTime = action.payload?.close_time;
             state.shareOption =
                 action.payload?.share_option || SHARE_OPTIONS.RESTRICTED;
-            state.publicAnswersOption = action.payload?.public_answers_option;
-            state.publicAnswersDate = action.payload?.public_answers_date;
             state.testId = action.payload?.id;
+            state.options = action.payload?.options;
 
             state.testParts = action.payload?.parts;
             state.testParts = state.testParts.map((part) => ({

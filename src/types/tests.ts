@@ -4,6 +4,7 @@ import {
     TEST_LEVEL,
     TEST_STATUS,
 } from "../config/config";
+import { PUBLIC_ANSWER_VISIBILITY_LEVEL } from "../config/constants/tests";
 import {
     AnswerBodyContentItf,
     PasscodeItf,
@@ -24,6 +25,45 @@ export interface CreateTestStep {
     isPartiallyDone: boolean;
     isCurrentStep: boolean;
 }
+export interface TestOption {
+    allow_close_time: {
+        enable: boolean;
+        close_time?: string;
+    };
+    allow_view_submission_after_test: {
+        enable: boolean;
+    };
+    allow_multiple_submissions: {
+        enable: boolean;
+        maximum_submissions?: number;
+    };
+    allow_save_progress: {
+        enable: boolean;
+    };
+    allow_show_taker_answers_after_test: {
+        enable: boolean;
+        delay_time?: number;
+    };
+    allow_show_maker_answers_after_test: {
+        enable: boolean;
+        visibility_level?: PUBLIC_ANSWER_VISIBILITY_LEVEL;
+        public_answers_option: PUBLIC_ANSWERS_OPTIONS;
+        public_answers_date?: string;
+    };
+    allow_shuffle_questions: {
+        enable: boolean;
+    };
+    allow_shuffle_answers: {
+        enable: boolean;
+    };
+    allow_review_before_submission: {
+        enable: boolean;
+    };
+    disallow_time_limit: {
+        enable: boolean;
+        duration?: number;
+    };
+}
 
 export interface CreateTestContext {
     currentStep: string;
@@ -38,13 +78,8 @@ export interface CreateTestContext {
     maxScore: number;
     numQuestions: number;
     numParts: number;
-    level: (typeof TEST_LEVEL)[keyof typeof TEST_LEVEL];
-    code: string;
-    enableCloseTime: boolean;
-    closeTime: string;
-    shareOption?: (typeof SHARE_OPTIONS)[keyof typeof SHARE_OPTIONS];
-    publicAnswersOption: (typeof PUBLIC_ANSWERS_OPTIONS)[keyof typeof PUBLIC_ANSWERS_OPTIONS];
-    publicAnswersDate: string;
+    level: TEST_LEVEL;
+    shareOption?: SHARE_OPTIONS;
     testParts: TestPartItf[];
     testQuestions: QuestionItf<QuestionContentItf>[];
     isValidTestInfo: boolean;
@@ -57,6 +92,7 @@ export interface CreateTestContext {
     availableTakers: TakerItf[];
     testLink: string;
     passcode: PasscodeItf;
+    options: TestOption;
 }
 
 export interface TakeTestContext {
@@ -65,7 +101,7 @@ export interface TakeTestContext {
     startTime: Date;
     closeTime: Date;
     submission: SubmissionItf[];
-    testStatus: (typeof TEST_STATUS)[keyof typeof TEST_STATUS];
+    testStatus: TEST_STATUS;
     startable: boolean;
     isStarted: boolean;
     isEnded: boolean;
@@ -74,4 +110,6 @@ export interface TakeTestContext {
     submittable: boolean;
     passcode: PasscodeItf;
     testLink: string;
+    isEnteringPasscode: boolean;
+    isPasscodeValidated: boolean;
 }

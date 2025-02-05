@@ -92,7 +92,7 @@ const CreateTestPage = () => {
                 isLoading={isLoadingTest}
                 loadingText={{ text: "Loading test..." }}
             />
-            {test && (
+            {((test && testIdParam) || (!test && !testIdParam)) && (
                 <div className="xl:w-2/3 md:w-5/6 mx-auto py-10">
                     <Navigator />
                     <div className="2xl:w-3/5 w-4/5 mx-auto my-6 relative">

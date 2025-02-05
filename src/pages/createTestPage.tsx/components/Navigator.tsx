@@ -14,7 +14,7 @@ const Navigator = () => {
     const dispatch = useDispatch();
 
     const handleClickStep = (value: string) => {
-        dispatch(setStep(value as keyof typeof CREATE_TEST_STEPS));
+        dispatch(setStep(value as CREATE_TEST_STEPS));
     };
 
     const getColor = (step: CreateTestStep) => {
