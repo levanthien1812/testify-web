@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
     PUBLIC_ANSWERS_OPTIONS,
     PUBLIC_ANSWERS_OPTIONS_LABEL,
@@ -42,6 +42,8 @@ const TestInfo = () => {
         isValidTestInfo,
         options,
     } = useSelector((state: RootState) => state.createTest);
+    const [isViewingOptions, setIsViewOptions] = useState(false);
+
     const dispatch = useDispatch();
 
     const initialValues: TestBodyItf = useMemo(
@@ -297,6 +299,8 @@ const TestInfo = () => {
                             extraClass: "capitalize",
                         },
                         extraClass: "mt-4",
+                        open: isViewingOptions,
+                        onToggle: () => setIsViewOptions(!isViewingOptions),
                     }}
                 >
                     <div className="flex-col space-y-2 p-4">
@@ -318,7 +322,9 @@ const TestInfo = () => {
                             </div>
                         )}
                         <Checkbox
-                            label={{ text: "Allow view submission after test" }}
+                            label={{
+                                text: "Allow view submission after test",
+                            }}
                             {...register(
                                 "options.allow_view_submission_after_test.enable"
                             )}
@@ -418,7 +424,9 @@ const TestInfo = () => {
                             )}
                         />
                         <Checkbox
-                            label={{ text: "Allow review before submission" }}
+                            label={{
+                                text: "Allow review before submission",
+                            }}
                             {...register(
                                 "options.allow_review_before_submission.enable"
                             )}

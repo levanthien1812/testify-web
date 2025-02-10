@@ -1,5 +1,5 @@
 import React from "react";
-import { ChatItf } from "../../../types/types";
+import { ChatItf } from "../../../types/chat";
 
 type ChatInfoProps = {
     chat: ChatItf;

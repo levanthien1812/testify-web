@@ -10,6 +10,8 @@ type viewData = {
             text: string;
         };
     };
+    open?: boolean;
+    onToggle?: () => void;
     extraClass?: string;
 };
 
@@ -20,13 +22,16 @@ const Accordion = ({
     children: React.ReactNode;
     viewData: viewData;
 }) => {
-    const [open, setOpen] = useState<boolean>(true);
+    const [open, setOpen] = useState<boolean>(viewData.open || false);
 
     return (
         <div className={`border border-gray-300 ${viewData.extraClass}`}>
             <div
                 className="flex justify-between items-center px-4 py-2 bg-gray-300 cursor-pointer"
-                onClick={() => setOpen((prev) => !prev)}
+                onClick={() => {
+                    setOpen((prev) => !prev);
+                    if (viewData.onToggle) viewData.onToggle();
+                }}
             >
                 <p className="text-lg space-x-2">
                     <span className={`uppercase ${viewData.title.extraClass}`}>

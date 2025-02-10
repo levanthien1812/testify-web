@@ -1,3 +1,4 @@
+import { ChatContext } from "../../types/chat";
 import {
     CreateTestContext,
     TakeTestContext,
@@ -23,7 +24,7 @@ import {
 } from "../config";
 import { CREATE_TEST_STEPS, QUESTION_TYPE } from "./tests";
 
-export const initialOptions: TestOption = {
+export const INITIAL_OPTIONS: TestOption = {
     allow_close_time: {
         enable: false,
     },
@@ -57,7 +58,7 @@ export const initialOptions: TestOption = {
     },
 };
 
-export const initialTestInfo: TestBodyItf = {
+export const INITIAL_TEST_INFO: TestBodyItf = {
     title: "lskjfklsa",
     datetime: formatTimezone(new Date()),
     description: "",
@@ -66,7 +67,7 @@ export const initialTestInfo: TestBodyItf = {
     num_questions: 10,
     level: TEST_LEVEL.EASY,
     num_parts: 1,
-    options: initialOptions,
+    options: INITIAL_OPTIONS,
 };
 
 export const INITIAL_CREATE_TEST_CONTEXT: CreateTestContext = {
@@ -142,7 +143,7 @@ export const INITIAL_CREATE_TEST_CONTEXT: CreateTestContext = {
         valid_in: 0,
         method: "",
     },
-    options: initialOptions,
+    options: INITIAL_OPTIONS,
 };
 
 export const INITIAL_PART: TestPartItf = {

@@ -1,6 +1,6 @@
 import { instance } from "../config/axios";
 import { CHAT_OPTIONS } from "../config/config";
-import { ChatBodyItf, MessageBody } from "../types/types";
+import { ChatBodyItf, MessageBody } from "../types/chat";
 
 export const getChats = async () => {
     try {
@@ -20,6 +20,20 @@ export const createChats = async (
             `/chats?option=${option}`,
             chatsBody
         );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updateReadMessagesByChatId = async (
+    chatId: string,
+    readBy: string[]
+) => {
+    try {
+        const response = await instance.patch(`/chats/${chatId}/messages`, {
+            readBy,
+        });
         return response.data;
     } catch (error) {
         throw error;

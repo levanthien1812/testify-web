@@ -4,6 +4,10 @@ const QUERY_KEYS = {
     GET_TEST_SUBMISSION: "get-test-submission",
     GET_TEST_STATUS: "get-test-status",
     GET_SUBMISSION_ANSWERS: "get-test-answers",
+    GET_CHAT: "get-chat",
+    GET_CHATS: "get-chats",
+    GET_MESSAGES: "get-messages",
+    GET_ONLINE_USERS: "get-online-users",
 };
 
 const MUTATION_KEYS = {
@@ -21,6 +25,9 @@ const MUTATION_KEYS = {
     ADD_ANSWER: "add-answer",
     GENERATE_PASSCODE: "generate-passcode",
     CHECK_PASSCODE: "check-passcode",
+    SEND_MESSAGE: "send-message",
+    UPDATE_MESSAGE: "update-message",
+    DELETE_MESSAGE: "delete-message",
 };
 
 export { QUERY_KEYS, MUTATION_KEYS };
