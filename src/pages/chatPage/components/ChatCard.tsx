@@ -1,16 +1,49 @@
-import React, { useEffect, useMemo } from "react";
-import { ChatItf } from "../../../types/types";
+import React, { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
 import { useChatSocket } from "./ChatSocketContext";
 import { format } from "date-fns";
+import { ChatItf, MessageItf } from "../../../types/chat";
+import { SOCKET_EVENTS } from "../../../config/constants/socket";
 
 const ChatCard = ({ chat }: { chat: ChatItf }) => {
     const user = useSelector((state: RootState) => state.auth.user);
-    const { socket, onlineUsers, setCurrentChat, currentChat } =
-        useChatSocket();
+    const {
+        socket,
+        onlineUsers,
+        setCurrentChat,
+        updateChatInChats,
+        currentChat,
+    } = useChatSocket();
 
-    useEffect(() => {}, []);
+    const handleClickCard = () => {
+        setCurrentChat(chat);
+        updateChatInChats(chat.id, {
+            unread_messages: [],
+        });
+    };
+
+    useEffect(() => {
+        if (!socket) return;
+        socket.on(SOCKET_EVENTS.GET_MESSAGE, (message: MessageItf) => {
+            if (message.chat_id === chat.id && chat.id !== currentChat?.id) {
+                updateChatInChats(chat.id, {
+                    last_message: message,
+                    unread_messages: [...(chat.unread_messages || []), message],
+                } as ChatItf);
+            }
+        });
+
+        return () => {
+            socket.off(SOCKET_EVENTS.GET_MESSAGE);
+        };
+    }, [
+        socket,
+        chat.id,
+        updateChatInChats,
+        chat.unread_messages,
+        currentChat?.id,
+    ]);
 
     return (
         <div
@@ -18,7 +51,7 @@ const ChatCard = ({ chat }: { chat: ChatItf }) => {
             className={`flex items-center p-2 ${
                 currentChat?.id === chat.id ? "bg-orange-100" : "bg-slate-100"
             } shadow-md gap-2 hover:bg-slate-200 cursor-pointer max-w-full`}
-            onClick={() => setCurrentChat(chat)}
+            onClick={handleClickCard}
         >
             <div className="flex relative h-10 w-1/5 shrink-0">
                 {chat.members
@@ -30,7 +63,7 @@ const ChatCard = ({ chat }: { chat: ChatItf }) => {
                                 key={member.member.id}
                                 src={member.member.photo}
                                 alt=""
-                                className={`w-10 h-10 shrink-0 rounded-full absolute shadow-md`}
+                                className={`w-10 h-10 shrink-0 rounded-full absolute bg-white shadow-md`}
                                 style={{
                                     left: `${index * 3 * 4}px`,
                                 }}

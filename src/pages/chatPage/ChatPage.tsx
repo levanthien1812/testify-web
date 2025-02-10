@@ -3,21 +3,18 @@ import { useQuery } from "react-query";
 import { getChats } from "../../services/chat";
 import Button from "../../components/elements/Button";
 import AddChat from "./components/AddChat";
-import { ChatItf } from "../../types/types";
+import { ChatItf } from "../../types/chat";
 import Chats from "./components/Chats";
 import SelectedChat from "./components/SelectedChat";
 import ChatInfo from "./components/ChatInfo";
-import ChatSocketContext, {
-    useChatSocket,
-} from "./components/ChatSocketContext";
-import ChatSocketProvider from "./components/ChatSocketContext";
+import { useChatSocket } from "./components/ChatSocketContext";
 import { useSelector } from "react-redux";
 import { RootState } from "../../stores/rootState";
 
 const ChatPage = () => {
     const [isAddingChat, setIsAddingChat] = React.useState(false);
     const [openInfo, setOpenInfo] = useState(false);
-    const { socket, currentChat } = useChatSocket();
+    const { socket, currentChat, setChats } = useChatSocket();
     const user = useSelector((state: RootState) => state.auth.user);
 
     const {
@@ -31,6 +28,9 @@ const ChatPage = () => {
             return responseData.chats;
         },
         queryKey: ["chats"],
+        onSuccess: (data: ChatItf[]) => {
+            setChats(data);
+        },
     });
 
     useEffect(() => {
@@ -58,7 +58,7 @@ const ChatPage = () => {
                             No chats yet
                         </p>
                     )}
-                    {chats && chats.length > 0 && <Chats chats={chats} />}
+                    {chats && chats.length > 0 && <Chats />}
                 </div>
             </div>
 
@@ -68,11 +68,7 @@ const ChatPage = () => {
                 </p>
             )}
             {currentChat && (
-                <SelectedChat
-                    chat={currentChat}
-                    openInfo={openInfo}
-                    setOpenInfo={setOpenInfo}
-                />
+                <SelectedChat openInfo={openInfo} setOpenInfo={setOpenInfo} />
             )}
 
             {openInfo && currentChat && <ChatInfo chat={currentChat} />}

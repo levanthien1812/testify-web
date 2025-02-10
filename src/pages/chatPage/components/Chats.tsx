@@ -1,15 +1,13 @@
-import { ChatItf } from "../../../types/types";
+import { ChatItf } from "../../../types/chat";
 import ChatCard from "./ChatCard";
+import { useChatSocket } from "./ChatSocketContext";
 
-type ChatsProps = {
-    chats: ChatItf[];
-};
-
-const Chats = ({ chats }: ChatsProps) => {
+const Chats = () => {
+    const { chats } = useChatSocket();
 
     return (
         <div className="space-y-2">
-            {chats.map((chat) => (
+            {chats!.map((chat) => (
                 <ChatCard chat={chat} />
             ))}
         </div>

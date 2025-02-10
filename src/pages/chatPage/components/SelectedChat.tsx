@@ -1,5 +1,4 @@
 import { useEffect, useRef, useState } from "react";
-import { ChatItf, MessageItf, userItf } from "../../../types/types";
 import Input from "../../../components/elements/Input";
 import Button from "../../../components/elements/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -11,7 +10,11 @@ import {
     faFaceSmile,
 } from "@fortawesome/free-solid-svg-icons";
 import { useMutation, useQuery } from "react-query";
-import { getMessages, sendMessage } from "../../../services/chat";
+import {
+    getMessages,
+    sendMessage,
+    updateReadMessagesByChatId,
+} from "../../../services/chat";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
 import { AxiosError } from "axios";
@@ -19,63 +22,89 @@ import { toast } from "react-toastify";
 import EmojiPicker from "emoji-picker-react";
 import { format } from "date-fns";
 import { useChatSocket } from "./ChatSocketContext";
+import { ChatItf, MessageItf } from "../../../types/chat";
+import {
+    MUTATION_KEYS,
+    QUERY_KEYS,
+} from "../../../config/constants/queryMutationKeys";
+import { SOCKET_EVENTS } from "../../../config/constants/socket";
 
 type SelectedChatProps = {
-    chat: ChatItf;
     openInfo: boolean;
     setOpenInfo: (openInfo: boolean) => void;
 };
 
-const SelectedChat = ({ chat, openInfo, setOpenInfo }: SelectedChatProps) => {
+const SelectedChat = ({ openInfo, setOpenInfo }: SelectedChatProps) => {
+    const {
+        socket,
+        currentChat: chat,
+        onlineUsers,
+        setCurrentChat,
+    } = useChatSocket();
     const [currentMessageText, setCurrentMessageText] = useState("");
     const user = useSelector((state: RootState) => state.auth.user);
     const [openEmoji, setOpenEmoji] = useState(false);
-    const { socket, onlineUsers } = useChatSocket();
     const [messages, setMessages] = useState<MessageItf[]>([]);
     const [newMessage, setNewMessage] = useState<MessageItf | null>(null);
     const scrollRef = useRef<HTMLDivElement>(null);
 
+    const { mutate: updateReadMessageMutate } = useMutation({
+        mutationFn: async () => {
+            const responseData = await updateReadMessagesByChatId(chat!.id, [
+                user!.id,
+            ]);
+
+            return responseData.message;
+        },
+        mutationKey: [MUTATION_KEYS.UPDATE_MESSAGE, chat!.id],
+        onSuccess: (data) => {
+            setCurrentChat({ ...chat, unread_messages: [] } as ChatItf);
+        },
+    });
+
     const { isLoading: messagesLoading, refetch: refetchMessages } = useQuery<
         MessageItf[]
     >({
-        queryKey: ["messages", chat.id],
+        queryKey: [QUERY_KEYS.GET_MESSAGES, chat!.id],
         queryFn: async () => {
-            const responseData = await getMessages(chat.id);
+            const responseData = await getMessages(chat!.id);
             return responseData.messages;
         },
         onSuccess: (data) => {
             setMessages(data);
+            updateReadMessageMutate();
         },
     });
 
     const { mutate: sendMessageMutate } = useMutation({
         mutationFn: async () => {
             const responseData = await sendMessage({
-                chat_id: chat.id,
+                chat_id: chat!.id,
                 text: currentMessageText,
             });
 
             return responseData.message;
         },
-        mutationKey: ["messages", chat.id],
+        mutationKey: [MUTATION_KEYS.SEND_MESSAGE, chat!.id],
         onSuccess: (data) => {
             setMessages((prev) => [...prev, data]);
             setNewMessage(data);
             setCurrentMessageText("");
         },
-        onError: (err) => {
-            if (err instanceof AxiosError) {
-                toast.error(err.response?.data.message);
-            }
-        },
     });
+
+    const handlePressEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (e.key === "Enter" && currentMessageText.length > 0) {
+            sendMessageMutate();
+        }
+    };
 
     useEffect(() => {
         if (newMessage && socket) {
             socket.emit(
-                "send-message",
+                SOCKET_EVENTS.SEND_MESSAGE,
                 newMessage,
-                chat.members
+                chat!.members
                     .map((member) => member.member.id)
                     .filter((id) => id !== user!.id)
             );
@@ -83,21 +112,21 @@ const SelectedChat = ({ chat, openInfo, setOpenInfo }: SelectedChatProps) => {
         }
 
         return () => {
-            socket?.off("send-message");
+            socket?.off(SOCKET_EVENTS.SEND_MESSAGE);
         };
-    }, [newMessage, socket]);
+    }, [newMessage, socket, chat, user]);
 
     useEffect(() => {
         if (!socket) return;
-        socket.on("get-message", (message: MessageItf) => {
-            if (message.chat_id !== chat.id) return;
+        socket.on(SOCKET_EVENTS.GET_MESSAGE, (message: MessageItf) => {
+            if (message.chat_id !== chat!.id) return;
             setMessages((prev) => [...prev, message]);
         });
 
         return () => {
-            socket.off("get-message");
+            socket.off(SOCKET_EVENTS.GET_MESSAGE);
         };
-    }, [socket]);
+    }, [socket, chat]);
 
     useEffect(() => {
         if (scrollRef.current) {
@@ -110,7 +139,9 @@ const SelectedChat = ({ chat, openInfo, setOpenInfo }: SelectedChatProps) => {
             <div className="flex flex-col grow">
                 <div className="flex justify-between items-center py-2 border-b border-dashed border-gray-300">
                     <div className="flex items-center gap-2">
-                        <h3 className="text-2xl font-bold">{chat.chat_name}</h3>
+                        <h3 className="text-2xl font-bold">
+                            {chat!.chat_name}
+                        </h3>
                         <FontAwesomeIcon
                             icon={faCircle}
                             className="text-gray-300 text-[4px]"
@@ -160,11 +191,11 @@ const SelectedChat = ({ chat, openInfo, setOpenInfo }: SelectedChatProps) => {
                                         {message.sender_id !== user!.id &&
                                             (messages[index + 1]?.sender_id !==
                                             message.sender_id ? (
-                                                <div className="relative w-4 h-4">
+                                                <div className="relative w-4 h-4 rounded-full shadow-md">
                                                     <img
-                                                        className="rounded-full"
+                                                        className=""
                                                         src={
-                                                            chat.members.find(
+                                                            chat!.members.find(
                                                                 (member) =>
                                                                     member
                                                                         .member
@@ -189,7 +220,7 @@ const SelectedChat = ({ chat, openInfo, setOpenInfo }: SelectedChatProps) => {
                                                 }`}
                                                 style={{
                                                     backgroundColor:
-                                                        chat.appearances
+                                                        chat!.appearances
                                                             .messages_color,
                                                 }}
                                             >
@@ -198,7 +229,14 @@ const SelectedChat = ({ chat, openInfo, setOpenInfo }: SelectedChatProps) => {
                                                 </p>
                                             </div>
                                             {index === messages.length - 1 && (
-                                                <p className="leading-none text-xs mt-1">
+                                                <p
+                                                    className={`leading-none text-xs mt-1 ${
+                                                        message.sender_id ===
+                                                        user!.id
+                                                            ? "text-end"
+                                                            : "text-start"
+                                                    } text-gray-500`}
+                                                >
                                                     {format(
                                                         new Date(
                                                             message.created_at
@@ -219,6 +257,7 @@ const SelectedChat = ({ chat, openInfo, setOpenInfo }: SelectedChatProps) => {
                         placeholder="Type a message"
                         value={currentMessageText}
                         onChange={(e) => setCurrentMessageText(e.target.value)}
+                        onKeyDown={handlePressEnter}
                     />
 
                     <div className="relative flex justify-center">

@@ -1,20 +1,8 @@
 import React, { useEffect } from "react";
-import { useSelector } from "react-redux";
 import { io, Socket } from "socket.io-client";
-import { RootState } from "../../../stores/rootState";
-import { ChatItf } from "../../../types/types";
+import { ChatContext, ChatItf } from "../../../types/chat";
 
-interface ChatSocketContextItf {
-    socket: Socket | null;
-    onlineUsers: {
-        user_id: string;
-        socket_id: string;
-    }[];
-    currentChat: ChatItf | null;
-    setCurrentChat: (chat: ChatItf) => void;
-}
-
-const ChatSocketContext = React.createContext<ChatSocketContextItf | undefined>(
+const ChatSocketContext = React.createContext<ChatContext | undefined>(
     undefined
 );
 
@@ -27,6 +15,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
         }[]
     >([]);
     const [currentChat, setCurrentChat] = React.useState<ChatItf | null>(null);
+    const [chats, setChats] = React.useState<ChatItf[] | null>([]);
 
     useEffect(() => {
         const socket = io(process.env.REACT_APP_API_HOST!);
@@ -49,17 +38,35 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
         });
     }, [socket]);
 
-    const handleSetCurrentChat = (chat: ChatItf) => {
-        setCurrentChat(chat);
-    };
-
     return (
         <ChatSocketContext.Provider
             value={{
                 socket,
                 onlineUsers,
                 currentChat,
-                setCurrentChat: handleSetCurrentChat,
+                chats,
+                setCurrentChat: (chat: ChatItf | null) => {
+                    setCurrentChat(chat);
+                },
+                setChats: (chats: ChatItf[] | null) => {
+                    setChats(chats);
+                },
+                updateChatInChats: (
+                    chatId: string,
+                    chatBody: Partial<ChatItf>
+                ) => {
+                    if (!chats) return;
+                    const newChats = chats.map((chat) => {
+                        if (chat.id === chatId) {
+                            return {
+                                ...chat,
+                                ...chatBody,
+                            };
+                        }
+                        return chat;
+                    });
+                    setChats(newChats);
+                },
             }}
         >
             {children}
