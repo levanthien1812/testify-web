@@ -10,6 +10,8 @@ import ChatInfo from "./components/ChatInfo";
 import { useChatSocket } from "./components/ChatSocketContext";
 import { useSelector } from "react-redux";
 import { RootState } from "../../stores/rootState";
+import Loading from "../../components/loadings/Loading";
+import { SOCKET_EVENTS } from "../../config/constants/socket";
 
 const ChatPage = () => {
     const [isAddingChat, setIsAddingChat] = React.useState(false);
@@ -35,23 +37,28 @@ const ChatPage = () => {
 
     useEffect(() => {
         if (!socket) return;
-        socket.emit("add-online-users", user!.id);
-    }, [socket]);
+        socket.emit(SOCKET_EVENTS.ADD_ONLINE_USERS, user!.id);
+
+        return () => {
+            socket.emit(SOCKET_EVENTS.REMOVE_ONLINE_USERS, user!.id);
+        };
+    }, [socket, user]);
 
     return (
         <div className="mt-6 shadow-md w-5/6 h-[80vh] md:w-3/4 2xl:w-2/3 mx-auto flex p-2 bg-slate-50 gap-2">
-            <div className="w-1/3 p-2 bg-white shadow-md grow-0">
+            <div className="w-1/3 p-2 bg-white shadow-md grow-0 relative">
                 <div className="flex justify-between py-2 border-b border-dashed border-gray-300">
                     <h3 className="text-2xl font-bold">Messages</h3>
                     <Button size="sm" onClick={() => setIsAddingChat(true)}>
                         Add chat
                     </Button>
                 </div>
-                <div className="mt-4">
+                <div className="mt-4 ">
                     {isLoading && (
-                        <p className="text-center text-gray-500 text-xl">
-                            Loading chats...
-                        </p>
+                        <Loading
+                            isLoading={isLoading}
+                            loadingText={{ text: "Loading chats" }}
+                        />
                     )}
                     {chats && chats.length === 0 && (
                         <p className="text-center text-gray-500 text-xl">
@@ -59,6 +66,17 @@ const ChatPage = () => {
                         </p>
                     )}
                     {chats && chats.length > 0 && <Chats />}
+                    <div className="absolute bottom-3 left-3">
+                        <Button
+                            style={{
+                                backgroundColor: "#4158D0",
+                                backgroundImage:
+                                    "linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%)",
+                            }}
+                        >
+                            Chat with AI
+                        </Button>
+                    </div>
                 </div>
             </div>
 

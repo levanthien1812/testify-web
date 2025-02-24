@@ -8,7 +8,7 @@ const Chats = () => {
     return (
         <div className="space-y-2">
             {chats!.map((chat) => (
-                <ChatCard chat={chat} />
+                <ChatCard chat={chat} key={chat.id} />
             ))}
         </div>
     );

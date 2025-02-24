@@ -26,11 +26,18 @@ const ChatCard = ({ chat }: { chat: ChatItf }) => {
     useEffect(() => {
         if (!socket) return;
         socket.on(SOCKET_EVENTS.GET_MESSAGE, (message: MessageItf) => {
-            if (message.chat_id === chat.id && chat.id !== currentChat?.id) {
+            if (message.chat_id === chat.id) {
                 updateChatInChats(chat.id, {
                     last_message: message,
-                    unread_messages: [...(chat.unread_messages || []), message],
-                } as ChatItf);
+                });
+                if (chat.id !== currentChat?.id) {
+                    updateChatInChats(chat.id, {
+                        unread_messages: [
+                            ...(chat.unread_messages || []),
+                            message,
+                        ],
+                    });
+                }
             }
         });
 
