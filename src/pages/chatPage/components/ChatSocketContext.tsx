@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { io, Socket } from "socket.io-client";
 import { ChatContext, ChatItf } from "../../../types/chat";
+import { SOCKET_EVENTS } from "../../../config/constants/socket";
 
 const ChatSocketContext = React.createContext<ChatContext | undefined>(
     undefined
@@ -32,7 +33,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
             console.log(socket.id);
         });
 
-        socket.on("send-online-users", (users) => {
+        socket.on(SOCKET_EVENTS.SEND_ONLINE_USERS, (users) => {
             console.log(users);
             setOnlineUsers(users);
         });

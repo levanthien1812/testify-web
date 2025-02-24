@@ -28,6 +28,7 @@ import {
     QUERY_KEYS,
 } from "../../../config/constants/queryMutationKeys";
 import { SOCKET_EVENTS } from "../../../config/constants/socket";
+import Loading from "../../../components/loadings/Loading";
 
 type SelectedChatProps = {
     openInfo: boolean;
@@ -147,10 +148,12 @@ const SelectedChat = ({ openInfo, setOpenInfo }: SelectedChatProps) => {
                             className="text-gray-300 text-[4px]"
                         />
                         <p className="">
-                            {onlineUsers.find(
-                                (onlineUser) =>
-                                    onlineUser.socket_id === socket?.id &&
-                                    onlineUser.user_id === user!.id
+                            {chat &&
+                            onlineUsers.find((onlineUser) =>
+                                chat.members
+                                    .map((member) => member.member.id)
+                                    .filter((id) => id !== user!.id)
+                                    .includes(onlineUser.user_id)
                             )
                                 ? "Online"
                                 : "Offline"}
@@ -171,9 +174,10 @@ const SelectedChat = ({ openInfo, setOpenInfo }: SelectedChatProps) => {
                     ref={scrollRef}
                 >
                     {messagesLoading && (
-                        <p className="text-center text-gray-500">
-                            Loading messages ...
-                        </p>
+                        <Loading
+                            isLoading={messagesLoading}
+                            loadingText={{ text: "Loading messages..." }}
+                        />
                     )}
                     <div className="">
                         {messages &&
