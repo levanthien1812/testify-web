@@ -22,6 +22,7 @@ export interface ChatItf {
     last_message: MessageItf | null;
     created_at: Date;
     updated_at: Date;
+    messages: MessageItf[];
 }
 
 export interface MessageBody {
@@ -50,4 +51,5 @@ export interface ChatContext {
     setCurrentChat: (chat: ChatItf | null) => void;
     setChats: (chats: ChatItf[] | null) => void;
     updateChatInChats: (chatId: string, chatBody: Partial<ChatItf>) => void;
+    sendMessage: (message: MessageItf) => void;
 }

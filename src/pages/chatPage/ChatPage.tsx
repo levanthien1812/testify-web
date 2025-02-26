@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { useQuery } from "react-query";
 import { getChats } from "../../services/chat";
 import Button from "../../components/elements/Button";
@@ -6,7 +6,6 @@ import AddChat from "./components/AddChat";
 import { ChatItf } from "../../types/chat";
 import Chats from "./components/Chats";
 import SelectedChat from "./components/SelectedChat";
-import ChatInfo from "./components/ChatInfo";
 import { useChatSocket } from "./components/ChatSocketContext";
 import { useSelector } from "react-redux";
 import { RootState } from "../../stores/rootState";
@@ -15,14 +14,12 @@ import { SOCKET_EVENTS } from "../../config/constants/socket";
 
 const ChatPage = () => {
     const [isAddingChat, setIsAddingChat] = React.useState(false);
-    const [openInfo, setOpenInfo] = useState(false);
     const { socket, currentChat, setChats } = useChatSocket();
     const user = useSelector((state: RootState) => state.auth.user);
 
     const {
         data: chats,
         isLoading,
-        error,
         refetch,
     } = useQuery<ChatItf[]>({
         queryFn: async () => {
@@ -85,11 +82,7 @@ const ChatPage = () => {
                     Select a chat to start chatting
                 </p>
             )}
-            {currentChat && (
-                <SelectedChat openInfo={openInfo} setOpenInfo={setOpenInfo} />
-            )}
-
-            {openInfo && currentChat && <ChatInfo chat={currentChat} />}
+            {!!currentChat && <SelectedChat />}
 
             {isAddingChat && (
                 <AddChat

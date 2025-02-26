@@ -1,4 +1,3 @@
-import { ChatItf } from "../../../types/chat";
 import ChatCard from "./ChatCard";
 import { useChatSocket } from "./ChatSocketContext";
 

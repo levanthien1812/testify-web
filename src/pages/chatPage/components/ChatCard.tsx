@@ -1,56 +1,24 @@
-import React, { useEffect, useMemo, useState } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
 import { useChatSocket } from "./ChatSocketContext";
 import { format } from "date-fns";
-import { ChatItf, MessageItf } from "../../../types/chat";
-import { SOCKET_EVENTS } from "../../../config/constants/socket";
+import { ChatItf } from "../../../types/chat";
 
 const ChatCard = ({ chat }: { chat: ChatItf }) => {
     const user = useSelector((state: RootState) => state.auth.user);
-    const {
-        socket,
-        onlineUsers,
-        setCurrentChat,
-        updateChatInChats,
-        currentChat,
-    } = useChatSocket();
+    const { onlineUsers, setCurrentChat, updateChatInChats, currentChat } =
+        useChatSocket();
 
     const handleClickCard = () => {
-        setCurrentChat(chat);
+        setCurrentChat({
+            ...chat,
+            messages:
+                chat.messages && chat.messages.length > 0 ? chat.messages : [],
+        });
         updateChatInChats(chat.id, {
             unread_messages: [],
         });
     };
-
-    useEffect(() => {
-        if (!socket) return;
-        socket.on(SOCKET_EVENTS.GET_MESSAGE, (message: MessageItf) => {
-            if (message.chat_id === chat.id) {
-                updateChatInChats(chat.id, {
-                    last_message: message,
-                });
-                if (chat.id !== currentChat?.id) {
-                    updateChatInChats(chat.id, {
-                        unread_messages: [
-                            ...(chat.unread_messages || []),
-                            message,
-                        ],
-                    });
-                }
-            }
-        });
-
-        return () => {
-            socket.off(SOCKET_EVENTS.GET_MESSAGE);
-        };
-    }, [
-        socket,
-        chat.id,
-        updateChatInChats,
-        chat.unread_messages,
-        currentChat?.id,
-    ]);
 
     return (
         <div

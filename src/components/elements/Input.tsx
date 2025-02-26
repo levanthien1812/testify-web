@@ -20,7 +20,6 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         label,
         ...rest
     } = props;
-    console.log(rest);
     return (
         <>
             {label && (

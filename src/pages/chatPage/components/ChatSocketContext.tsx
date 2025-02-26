@@ -1,6 +1,6 @@
 import React, { useEffect } from "react";
 import { io, Socket } from "socket.io-client";
-import { ChatContext, ChatItf } from "../../../types/chat";
+import { ChatContext, ChatItf, MessageItf } from "../../../types/chat";
 import { SOCKET_EVENTS } from "../../../config/constants/socket";
 
 const ChatSocketContext = React.createContext<ChatContext | undefined>(
@@ -29,15 +29,43 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
 
     useEffect(() => {
         if (!socket) return;
-        socket.on("connect", () => {
-            console.log(socket.id);
+        socket.on(SOCKET_EVENTS.CONNECT, () => {
+            console.log(`Socket ${socket.id} connected`);
         });
 
         socket.on(SOCKET_EVENTS.SEND_ONLINE_USERS, (users) => {
-            console.log(users);
             setOnlineUsers(users);
         });
-    }, [socket]);
+
+        socket.on(SOCKET_EVENTS.GET_MESSAGE, (message: MessageItf) => {
+            if (!chats) return;
+            if (currentChat && message.chat_id === currentChat!.id) {
+                setCurrentChat(
+                    (prev) =>
+                        ({
+                            ...prev,
+                            messages: [...currentChat.messages, message],
+                        } as ChatItf)
+                );
+            } else {
+                const updatedChats = chats;
+                const chatIndex = chats.findIndex(
+                    (ch) => ch.id === message.chat_id
+                );
+                if (chatIndex < 0) return;
+                updatedChats[chatIndex].last_message = message;
+                if (updatedChats[chatIndex].unread_messages)
+                    updatedChats[chatIndex].unread_messages!.push(message);
+
+                setChats(chats);
+            }
+        });
+
+        return () => {
+            socket.off(SOCKET_EVENTS.SEND_ONLINE_USERS);
+            socket.off(SOCKET_EVENTS.GET_MESSAGE);
+        };
+    }, [socket, currentChat, chats]);
 
     return (
         <ChatSocketContext.Provider
@@ -67,6 +95,10 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                         return chat;
                     });
                     setChats(newChats);
+                },
+                sendMessage: (message: MessageItf) => {
+                    if (!socket) return;
+                    socket.emit(SOCKET_EVENTS.SEND_MESSAGE, message);
                 },
             }}
         >
