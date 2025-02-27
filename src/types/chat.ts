@@ -28,6 +28,7 @@ export interface ChatItf {
 export interface MessageBody {
     chat_id: string;
     text: string;
+    images?: string[];
     readBy?: string[];
 }
 
@@ -38,6 +39,7 @@ export interface MessageItf {
     chat_id: string;
     created_at: Date;
     updated_at: Date;
+    images: string[];
 }
 
 export interface ChatContext {
