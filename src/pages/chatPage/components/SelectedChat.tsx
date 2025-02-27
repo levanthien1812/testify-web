@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import Input from "../../../components/elements/Input";
 import Button from "../../../components/elements/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -7,6 +7,8 @@ import {
     faChevronRight,
     faCircle,
     faFaceSmile,
+    faImage,
+    faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import { useMutation, useQuery } from "react-query";
 import {
@@ -17,7 +19,6 @@ import {
 import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
 import EmojiPicker from "emoji-picker-react";
-import { format } from "date-fns";
 import { useChatSocket } from "./ChatSocketContext";
 import { ChatItf, MessageItf } from "../../../types/chat";
 import {
@@ -26,6 +27,7 @@ import {
 } from "../../../config/constants/queryMutationKeys";
 import Loading from "../../../components/loadings/Loading";
 import ChatInfo from "./ChatInfo";
+import Message from "./Message";
 
 const SelectedChat = () => {
     const {
@@ -38,7 +40,8 @@ const SelectedChat = () => {
     const user = useSelector((state: RootState) => state.auth.user);
     const [openEmoji, setOpenEmoji] = useState(false);
     const [openInfo, setOpenInfo] = useState(false);
-    const scrollRef = useRef<HTMLDivElement>(null);
+
+    const [images, setImages] = useState<string[]>([]);
 
     const { mutate: updateReadMessageMutate } = useMutation({
         mutationFn: async () => {
@@ -72,6 +75,7 @@ const SelectedChat = () => {
             const responseData = await sendMessage({
                 chat_id: chat!.id,
                 text: currentMessageText,
+                images: images,
             });
 
             return responseData.message;
@@ -80,6 +84,7 @@ const SelectedChat = () => {
         onSuccess: (data) => {
             sendMessageWS(data);
             setCurrentMessageText("");
+            setImages([]);
         },
     });
 
@@ -89,17 +94,45 @@ const SelectedChat = () => {
         }
     };
 
+    const handleChangeImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const files = e.target.files;
+        if (files) {
+            const promises: Promise<string>[] = [];
+
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                const reader = new FileReader();
+
+                const promise = new Promise<string>((resolve) => {
+                    reader.onloadend = () => {
+                        if (typeof reader.result === "string") {
+                            resolve(reader.result);
+                        }
+                    };
+                });
+
+                reader.readAsDataURL(file);
+                promises.push(promise);
+            }
+
+            Promise.all(promises).then((results) => {
+                console.log(results);
+                setImages((prevImages) => [...prevImages, ...results]);
+            });
+        }
+    };
+
+    const removeImage = (indexToRemove: number) => {
+        setImages((prevImages) =>
+            prevImages.filter((_, index) => index !== indexToRemove)
+        );
+    };
+
     useEffect(() => {
         if (chat && chat.messages?.length > 0) {
             updateReadMessageMutate();
         }
     }, [updateReadMessageMutate]);
-
-    useEffect(() => {
-        if (chat?.messages && scrollRef.current) {
-            scrollRef.current.scrollIntoView({ behavior: "smooth" });
-        }
-    }, [chat]);
 
     return (
         <>
@@ -138,10 +171,7 @@ const SelectedChat = () => {
                             />
                         </button>
                     </div>
-                    <div
-                        className="grow py-2 custom-scrollbar-y pe-1"
-                        ref={scrollRef}
-                    >
+                    <div className="grow py-2 custom-scrollbar-y pe-1">
                         {messagesLoading && (
                             <Loading
                                 isLoading={messagesLoading}
@@ -152,120 +182,95 @@ const SelectedChat = () => {
                             {chat &&
                                 chat.messages &&
                                 chat.messages.map((message, index) => (
-                                    <div
-                                        key={message.id}
-                                        className={`flex flex-col mb-1 ${
-                                            message.sender_id === user!.id
-                                                ? "items-end"
-                                                : "items-start"
-                                        }`}
-                                        ref={scrollRef}
-                                    >
-                                        <div className="flex gap-1">
-                                            {message.sender_id !== user!.id &&
-                                                (chat.messages[index + 1]
-                                                    ?.sender_id !==
-                                                message.sender_id ? (
-                                                    <div className="relative w-4 h-4 rounded-full shadow-md">
-                                                        <img
-                                                            className=""
-                                                            src={
-                                                                chat!.members.find(
-                                                                    (member) =>
-                                                                        member
-                                                                            .member
-                                                                            .id ===
-                                                                        message.sender_id
-                                                                )?.member.photo
-                                                            }
-                                                            alt=""
-                                                        />
-                                                        <div className="absolute -right-0.5 -bottom-0.5 w-2 h-2 border border-white bg-green-500 rounded-full"></div>
-                                                    </div>
-                                                ) : (
-                                                    <div className="w-4 h-4"></div>
-                                                ))}
-                                            <div>
-                                                <div
-                                                    className={`text-white rounded-full py-0.5 px-4 ${
-                                                        message.sender_id ===
-                                                        user!.id
-                                                            ? "text-end"
-                                                            : "text-start"
-                                                    }`}
-                                                    style={{
-                                                        backgroundColor:
-                                                            chat!.appearances
-                                                                .messages_color,
-                                                    }}
-                                                >
-                                                    <p className="">
-                                                        {message.text}
-                                                    </p>
-                                                </div>
-                                                {index ===
-                                                    chat.messages.length -
-                                                        1 && (
-                                                    <p
-                                                        className={`leading-none text-xs mt-1 ${
-                                                            message.sender_id ===
-                                                            user!.id
-                                                                ? "text-end"
-                                                                : "text-start"
-                                                        } text-gray-500`}
-                                                    >
-                                                        {format(
-                                                            new Date(
-                                                                message.created_at
-                                                            ),
-                                                            "HH:mm:ss"
-                                                        )}
-                                                    </p>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </div>
+                                    <Message message={message} index={index} />
                                 ))}
                         </div>
                     </div>
-                    <div className="flex border-t border-dashed border-gray-300 py-2 gap-2">
-                        <Input
-                            className="grow"
-                            placeholder="Type a message"
-                            value={currentMessageText}
-                            onChange={(e) =>
-                                setCurrentMessageText(e.target.value)
-                            }
-                            onKeyDown={handlePressEnter}
-                        />
-
-                        <div className="relative flex justify-center">
-                            <button
-                                className=""
-                                onClick={() => setOpenEmoji(!openEmoji)}
-                            >
-                                <FontAwesomeIcon
-                                    icon={faFaceSmile}
-                                    className="text-gray-500 hover:text-orange-600 text-2xl transition-all duration-150"
-                                />
-                            </button>
-                            {openEmoji && (
-                                <div className="absolute bottom-10">
-                                    <EmojiPicker
-                                        onEmojiClick={(emojiObject) =>
-                                            setCurrentMessageText(
-                                                currentMessageText +
-                                                    emojiObject.emoji
-                                            )
-                                        }
+                    <div className="border-t border-dashed border-gray-300">
+                        <div
+                            className={`flex gap-2 ${
+                                images.length > 0 ? "py-2" : ""
+                            } flex-wrap`}
+                        >
+                            {images.map((img, index) => (
+                                <div
+                                    className="relative w-[80px] h-[80px]"
+                                    key={index}
+                                >
+                                    <img
+                                        src={img}
+                                        alt={`Preview ${index}`}
+                                        className="rounded-xl w-full h-full object-cover shadow-md"
                                     />
+                                    <button
+                                        className="bg-gray-100 rounded-full hover:bg-orange-600 transition-all duration-150 ease-in-out absolute -top-1 -right-1 w-4 h-4 flex justify-center items-center z-10 hover:w-6 hover:h-6 p-2"
+                                        onClick={() => removeImage(index)}
+                                    >
+                                        <FontAwesomeIcon
+                                            icon={faTimes}
+                                            className="text-gray-500"
+                                        />
+                                    </button>
                                 </div>
-                            )}
+                            ))}
                         </div>
+                        <div className="flex py-2 gap-2 items-center">
+                            <Input
+                                className="grow"
+                                placeholder="Type a message"
+                                value={currentMessageText}
+                                onChange={(e) =>
+                                    setCurrentMessageText(e.target.value)
+                                }
+                                onKeyDown={handlePressEnter}
+                            />
 
-                        <Button onClick={() => sendMessageMutate()}>
-                            Send
-                        </Button>
+                            <div className="relative flex justify-center">
+                                <button
+                                    className=""
+                                    onClick={() => setOpenEmoji(!openEmoji)}
+                                >
+                                    <FontAwesomeIcon
+                                        icon={faFaceSmile}
+                                        className="text-gray-500 hover:text-orange-600 text-2xl transition-all duration-150"
+                                    />
+                                </button>
+                                {openEmoji && (
+                                    <div className="absolute bottom-10">
+                                        <EmojiPicker
+                                            onEmojiClick={(emojiObject) =>
+                                                setCurrentMessageText(
+                                                    currentMessageText +
+                                                        emojiObject.emoji
+                                                )
+                                            }
+                                        />
+                                    </div>
+                                )}
+                            </div>
+
+                            <div>
+                                <label htmlFor="image">
+                                    <FontAwesomeIcon
+                                        icon={faImage}
+                                        className="text-gray-500 hover:text-orange-600 text-2xl transition-all duration-150"
+                                    />
+                                </label>
+                                <input
+                                    type="file"
+                                    accept="image/*"
+                                    name="image"
+                                    id="image"
+                                    hidden
+                                    onChange={handleChangeImage}
+                                    multiple
+                                />
+                            </div>
+
+                            <Button onClick={() => sendMessageMutate()}>
+                                Send
+                            </Button>
+                        </div>
                     </div>
                 </div>
             </div>
