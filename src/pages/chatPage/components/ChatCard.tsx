@@ -79,21 +79,29 @@ const ChatCard = ({ chat }: { chat: ChatItf }) => {
                 {chat.last_message && (
                     <div className="flex justify-between gap-2">
                         <p className="text-gray-500 text-sm whitespace-nowrap overflow-hidden text-ellipsis">
-                            {chat.last_message?.sender_id === user?.id
-                                ? "You"
-                                : chat.members.find(
-                                      (member) =>
-                                          member.member.id ===
-                                          chat.last_message?.sender_id
-                                  )?.member.name}
-                            {": "}
-                            {chat.last_message?.text}
+                            <span>
+                                {chat.last_message?.sender_id === user?.id
+                                    ? "You"
+                                    : chat.members.find(
+                                          (member) =>
+                                              member.member.id ===
+                                              chat.last_message?.sender_id
+                                      )?.member.name}
+                                {": "}
+                            </span>
+
+                            {!chat.last_message.deleted ? (
+                                <span> {chat.last_message?.text}</span>
+                            ) : (
+                                <span className="italic">Message deleted</span>
+                            )}
                         </p>
                         <p className="text-gray-500 text-sm shrink-0">
                             {format(chat.last_message?.created_at, "HH:mm:ss")}
                         </p>
                     </div>
                 )}
+
                 {!chat.last_message && (
                     <div className="text-gray-500 text-sm">No messages yet</div>
                 )}
