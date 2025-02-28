@@ -47,18 +47,46 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                             messages: [...currentChat.messages, message],
                         } as ChatItf)
                 );
-            } else {
-                const updatedChats = chats;
-                const chatIndex = chats.findIndex(
-                    (ch) => ch.id === message.chat_id
-                );
-                if (chatIndex < 0) return;
-                updatedChats[chatIndex].last_message = message;
-                if (updatedChats[chatIndex].unread_messages)
-                    updatedChats[chatIndex].unread_messages!.push(message);
-
-                setChats(chats);
             }
+            const updatedChats = chats;
+            const chatIndex = chats.findIndex(
+                (ch) => ch.id === message.chat_id
+            );
+            if (chatIndex < 0) return;
+            updatedChats[chatIndex].last_message = message;
+            if (updatedChats[chatIndex].unread_messages)
+                updatedChats[chatIndex].unread_messages!.push(message);
+
+            setChats(chats);
+        });
+
+        socket.on(SOCKET_EVENTS.DELETE_MESSAGE, (message: MessageItf) => {
+            if (!chats) return;
+            if (currentChat && message.chat_id === currentChat!.id) {
+                const updatedMessages = currentChat.messages;
+                const messageIndex = currentChat.messages.findIndex(
+                    (msg) => msg.id === message.id
+                );
+                if (messageIndex < 0) return;
+                updatedMessages[messageIndex].deleted = true;
+                setCurrentChat(
+                    (prev) =>
+                        ({
+                            ...prev,
+                            messages: updatedMessages,
+                        } as ChatItf)
+                );
+            }
+            const updatedChats = chats;
+            const chatIndex = chats.findIndex(
+                (ch) => ch.id === message.chat_id
+            );
+            if (chatIndex < 0) return;
+            if (updatedChats[chatIndex].last_message!.id === message.id) {
+                updatedChats[chatIndex].last_message!.deleted = true;
+            }
+
+            setChats(chats);
         });
 
         return () => {
@@ -99,6 +127,17 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                 sendMessage: (message: MessageItf) => {
                     if (!socket) return;
                     socket.emit(SOCKET_EVENTS.SEND_MESSAGE, message);
+                },
+                removeDeletedMessage: (messageId: string) => {
+                    setCurrentChat(
+                        (prev) =>
+                            ({
+                                ...prev,
+                                messages: prev!.messages.filter(
+                                    (msg) => msg.id !== messageId
+                                ),
+                            } as ChatItf)
+                    );
                 },
             }}
         >

@@ -37,9 +37,11 @@ export interface MessageItf {
     text: string;
     sender_id: string;
     chat_id: string;
+
     created_at: Date;
     updated_at: Date;
-    images: string[];
+    deleted?: boolean;
+    images?: string[];
 }
 
 export interface ChatContext {
@@ -54,4 +56,5 @@ export interface ChatContext {
     setChats: (chats: ChatItf[] | null) => void;
     updateChatInChats: (chatId: string, chatBody: Partial<ChatItf>) => void;
     sendMessage: (message: MessageItf) => void;
+    removeDeletedMessage: (messageId: string) => void;
 }

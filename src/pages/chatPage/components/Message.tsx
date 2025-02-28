@@ -15,6 +15,9 @@ import { useMutation } from "react-query";
 import { deleteMessage } from "../../../services/chat";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
 import ConfirmModal from "../../../components/modals/ConfirmModal";
+import { SOCKET_EVENTS } from "../../../config/constants/socket";
+import MessageDetail from "./MessageDetail";
+import { isEmojiOnly } from "../../../utils/message";
 
 type MessageProps = {
     message: MessageItf;
@@ -23,11 +26,13 @@ type MessageProps = {
 
 const Message = ({ message, index }: MessageProps) => {
     const user = useSelector((state: RootState) => state.auth.user);
-    const { currentChat, setCurrentChat } = useChatSocket();
+    const { currentChat, setCurrentChat, socket, removeDeletedMessage } =
+        useChatSocket();
     const scrollRef = useRef<HTMLDivElement>(null);
     const [showAllImages, setShowAllImages] = useState(false);
     const [isHover, setIsHover] = useState(false);
     const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
+    const [isViewingDetail, setIsViewingDetail] = useState(false);
 
     const { mutate: deleteMessageMutate, isLoading: isDeletingMessage } =
         useMutation({
@@ -48,11 +53,22 @@ const Message = ({ message, index }: MessageProps) => {
                     ),
                 } as ChatItf);
                 setIsConfirmingDelete(false);
+                if (socket) {
+                    socket.emit(SOCKET_EVENTS.DELETE_MESSAGE, message);
+                }
             },
         });
 
     const handleClickShowAll = () => {
         setShowAllImages(true);
+    };
+
+    const handleClickDeleteMessage = () => {
+        if (!message.deleted) {
+            setIsConfirmingDelete(true);
+        } else {
+            removeDeletedMessage(message.id);
+        }
     };
 
     const handleDeleteMessage = () => {
@@ -108,71 +124,98 @@ const Message = ({ message, index }: MessageProps) => {
                                 : "items-start"
                         }`}
                     >
-                        {message.images && message.images.length > 0 && (
-                            <div
-                                className={`grid gap-x-1 gap-y-1 flex-wrap ${
-                                    message.sender_id === user!.id ? "" : ""
-                                }`}
-                                style={{
-                                    gridTemplateColumns: `repeat(${
-                                        message.images.length > 3
-                                            ? 3
-                                            : message.images.length
-                                    }, 80px)`,
-                                }}
-                            >
-                                {message.images
-                                    .slice(
-                                        0,
-                                        showAllImages
-                                            ? message.images.length
-                                            : 3
-                                    )
-                                    .map((img, i) => (
+                        {!message.deleted && (
+                            <>
+                                {message.images &&
+                                    message.images.length > 0 && (
                                         <div
-                                            className="relative w-[80px] h-[80px]"
-                                            key={i}
+                                            className={`grid gap-x-1 gap-y-1 flex-wrap ${
+                                                message.sender_id === user!.id
+                                                    ? ""
+                                                    : ""
+                                            }`}
+                                            style={{
+                                                gridTemplateColumns: `repeat(${
+                                                    message.images.length > 3
+                                                        ? 3
+                                                        : message.images.length
+                                                }, 80px)`,
+                                            }}
                                         >
-                                            <img
-                                                src={img}
-                                                alt={`Preview ${i}`}
-                                                className="rounded-xl w-full h-full object-cover shadow-md"
-                                            />
-                                            {message.images.length > 3 &&
-                                                !showAllImages &&
-                                                i === 2 && (
-                                                    <button
-                                                        className="absolute border-none w-full h-full rounded-xl bg-black bg-opacity-60 text-white text-xl top-0 left-0"
-                                                        onClick={
-                                                            handleClickShowAll
-                                                        }
+                                            {message.images
+                                                .slice(
+                                                    0,
+                                                    showAllImages
+                                                        ? message.images.length
+                                                        : 3
+                                                )
+                                                .map((img, i) => (
+                                                    <div
+                                                        className="relative w-[80px] h-[80px]"
+                                                        key={i}
                                                     >
-                                                        +
-                                                        {message.images.length -
-                                                            3}
-                                                    </button>
-                                                )}
+                                                        <img
+                                                            src={img}
+                                                            alt={`Preview ${i}`}
+                                                            className="rounded-xl w-full h-full object-cover shadow-md"
+                                                        />
+                                                        {message.images &&
+                                                            message.images
+                                                                .length > 3 &&
+                                                            !showAllImages &&
+                                                            i === 2 && (
+                                                                <button
+                                                                    className="absolute border-none w-full h-full rounded-xl bg-black bg-opacity-60 text-white text-xl top-0 left-0"
+                                                                    onClick={
+                                                                        handleClickShowAll
+                                                                    }
+                                                                >
+                                                                    +
+                                                                    {message
+                                                                        .images
+                                                                        .length -
+                                                                        3}
+                                                                </button>
+                                                            )}
+                                                    </div>
+                                                ))}
                                         </div>
-                                    ))}
-                            </div>
+                                    )}
+                                {showAllImages && (
+                                    <button
+                                        className="text-xs hover:underline hover:text-orange-600 text-gray-600"
+                                        onClick={() => setShowAllImages(false)}
+                                    >
+                                        Hide
+                                    </button>
+                                )}
+                                {message.text.length > 0 &&
+                                    !isEmojiOnly(message.text) && (
+                                        <div
+                                            className={`text-white rounded-full py-0.5 px-4 `}
+                                            style={{
+                                                backgroundColor:
+                                                    currentChat!.appearances
+                                                        .messages_color,
+                                            }}
+                                        >
+                                            <p className="">{message.text}</p>
+                                        </div>
+                                    )}
+
+                                {message.text.length > 0 &&
+                                    isEmojiOnly(message.text) && (
+                                        <div className={``}>
+                                            <p className="text-lg">
+                                                {message.text}
+                                            </p>
+                                        </div>
+                                    )}
+                            </>
                         )}
-                        {showAllImages && (
-                            <button
-                                className="text-xs hover:underline hover:text-orange-600 text-gray-600"
-                                onClick={() => setShowAllImages(false)}
-                            >
-                                Hide
-                            </button>
-                        )}
-                        {message.text.length > 0 && (
-                            <div
-                                className={`text-white rounded-full py-0.5 px-4 `}
-                                style={{
-                                    backgroundColor:
-                                        currentChat!.appearances.messages_color,
-                                }}
-                            >
-                                <p className="">{message.text}</p>
+                        {message.deleted && (
+                            <div className="rounded-full py-0.5 px-4 border border-gray-500 text-gray-500 bg-white italic select-none">
+                                Message has been deleted!
                             </div>
                         )}
                     </div>
@@ -181,23 +224,26 @@ const Message = ({ message, index }: MessageProps) => {
                     <div className="flex items-center gap-1">
                         <button
                             className="border-none bg-transparent"
-                            onClick={() => setIsConfirmingDelete(true)}
+                            onClick={handleClickDeleteMessage}
                         >
                             <FontAwesomeIcon
                                 icon={faTrash}
-                                className="text-sm text-gray-500 hover:text-orange-600"
+                                className="text-sm text-gray-300 hover:text-orange-600"
                             />
                         </button>
-                        <button className="border-none bg-transparent">
+                        <button
+                            className="border-none bg-transparent"
+                            onClick={() => setIsViewingDetail(true)}
+                        >
                             <FontAwesomeIcon
                                 icon={faInfoCircle}
-                                className="text-sm text-gray-500 hover:text-orange-600"
+                                className="text-sm text-gray-300 hover:text-orange-600"
                             />
                         </button>
                         <button className="border-none bg-transparent">
                             <FontAwesomeIcon
                                 icon={faPen}
-                                className="text-sm text-gray-500 hover:text-orange-600"
+                                className="text-sm text-gray-300 hover:text-orange-600"
                             />
                         </button>
                     </div>
@@ -221,6 +267,12 @@ const Message = ({ message, index }: MessageProps) => {
                     onClose={() => setIsConfirmingDelete(false)}
                     onConfirm={handleDeleteMessage}
                     isConfirming={isDeletingMessage}
+                />
+            )}
+            {isViewingDetail && (
+                <MessageDetail
+                    message={message}
+                    onClose={() => setIsViewingDetail(false)}
                 />
             )}
         </div>
