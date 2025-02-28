@@ -1,9 +1,20 @@
 import React, { useEffect, useRef, useState } from "react";
-import { MessageItf } from "../../../types/chat";
+import { ChatItf, MessageItf } from "../../../types/chat";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
 import { useChatSocket } from "./ChatSocketContext";
 import { format } from "date-fns";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+    faEdit,
+    faInfoCircle,
+    faPen,
+    faTrash,
+} from "@fortawesome/free-solid-svg-icons";
+import { useMutation } from "react-query";
+import { deleteMessage } from "../../../services/chat";
+import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
+import ConfirmModal from "../../../components/modals/ConfirmModal";
 
 type MessageProps = {
     message: MessageItf;
@@ -12,12 +23,40 @@ type MessageProps = {
 
 const Message = ({ message, index }: MessageProps) => {
     const user = useSelector((state: RootState) => state.auth.user);
-    const { currentChat } = useChatSocket();
+    const { currentChat, setCurrentChat } = useChatSocket();
     const scrollRef = useRef<HTMLDivElement>(null);
     const [showAllImages, setShowAllImages] = useState(false);
+    const [isHover, setIsHover] = useState(false);
+    const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
+
+    const { mutate: deleteMessageMutate, isLoading: isDeletingMessage } =
+        useMutation({
+            mutationFn: async () => {
+                const responseData = await deleteMessage(
+                    message.chat_id,
+                    message.id
+                );
+
+                return responseData.message;
+            },
+            mutationKey: [MUTATION_KEYS.DELETE_MESSAGE, message.id],
+            onSuccess: (data) => {
+                setCurrentChat({
+                    ...currentChat,
+                    messages: currentChat!.messages.filter(
+                        (msg) => msg.id !== message.id
+                    ),
+                } as ChatItf);
+                setIsConfirmingDelete(false);
+            },
+        });
 
     const handleClickShowAll = () => {
         setShowAllImages(true);
+    };
+
+    const handleDeleteMessage = () => {
+        deleteMessageMutate();
     };
 
     useEffect(() => {
@@ -29,16 +68,22 @@ const Message = ({ message, index }: MessageProps) => {
     return (
         <div
             key={message.id}
-            className={`flex flex-col mb-1 ${
-                message.sender_id === user!.id ? "items-end" : "items-start"
-            }`}
+            className={`flex flex-col mb-1 `}
             ref={scrollRef}
+            onMouseEnter={() => setIsHover(true)}
+            onMouseLeave={() => setIsHover(false)}
         >
-            <div className="flex gap-1">
+            <div
+                className={`flex gap-1 ${
+                    message.sender_id === user!.id
+                        ? "flex-row-reverse"
+                        : "flex-row"
+                }`}
+            >
                 {message.sender_id !== user!.id &&
                     (currentChat!.messages[index + 1]?.sender_id !==
                     message.sender_id ? (
-                        <div className="relative w-4 h-4 rounded-full shadow-md">
+                        <div className="relative w-4 h-4 rounded-full shadow-md self-end">
                             <img
                                 className=""
                                 src={
@@ -131,19 +176,53 @@ const Message = ({ message, index }: MessageProps) => {
                             </div>
                         )}
                     </div>
-                    {index === currentChat!.messages.length - 1 && (
-                        <p
-                            className={`leading-none text-xs mt-1 ${
-                                message.sender_id === user!.id
-                                    ? "text-end"
-                                    : "text-start"
-                            } text-gray-500`}
-                        >
-                            {format(new Date(message.created_at), "HH:mm:ss")}
-                        </p>
-                    )}
                 </div>
+                {isHover && (
+                    <div className="flex items-center gap-1">
+                        <button
+                            className="border-none bg-transparent"
+                            onClick={() => setIsConfirmingDelete(true)}
+                        >
+                            <FontAwesomeIcon
+                                icon={faTrash}
+                                className="text-sm text-gray-500 hover:text-orange-600"
+                            />
+                        </button>
+                        <button className="border-none bg-transparent">
+                            <FontAwesomeIcon
+                                icon={faInfoCircle}
+                                className="text-sm text-gray-500 hover:text-orange-600"
+                            />
+                        </button>
+                        <button className="border-none bg-transparent">
+                            <FontAwesomeIcon
+                                icon={faPen}
+                                className="text-sm text-gray-500 hover:text-orange-600"
+                            />
+                        </button>
+                    </div>
+                )}
             </div>
+            {index === currentChat!.messages.length - 1 && (
+                <p
+                    className={`leading-none text-xs mt-1 ${
+                        message.sender_id === user!.id
+                            ? "text-end"
+                            : "text-start"
+                    } text-gray-500`}
+                >
+                    {format(new Date(message.created_at), "HH:mm:ss")}
+                </p>
+            )}
+            {isConfirmingDelete && (
+                <ConfirmModal
+                    title="Confirm deleting message?"
+                    message="Do you really want to delete this message? This action can not be undone!"
+                    onClose={() => setIsConfirmingDelete(false)}
+                    onConfirm={handleDeleteMessage}
+                    isConfirming={isDeletingMessage}
+                />
+            )}
         </div>
     );
 };

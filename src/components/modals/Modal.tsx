@@ -20,6 +20,7 @@ type BodyProps = {
 };
 
 type FooterProps = {
+    includeCancelBtn?: boolean;
     children?: ReactNode;
 };
 
@@ -64,14 +65,19 @@ export const ModalBody = ({ children }: BodyProps) => {
     );
 };
 
-export const ModalFooter = ({ children: additionalButtons }: FooterProps) => {
+export const ModalFooter = ({
+    children: additionalButtons,
+    includeCancelBtn = true,
+}: FooterProps) => {
     const props = React.useContext(ModalContext!);
 
     return (
         <div className="px-4 py-3 gap-3 border-t flex items-center justify-end">
-            <Button primary={false} type="button" onClick={props?.onClose}>
-                Cancel
-            </Button>
+            {includeCancelBtn && (
+                <Button primary={false} type="button" onClick={props?.onClose}>
+                    Cancel
+                </Button>
+            )}
             {additionalButtons}
         </div>
     );

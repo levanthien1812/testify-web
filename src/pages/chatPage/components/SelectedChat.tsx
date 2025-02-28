@@ -70,23 +70,24 @@ const SelectedChat = () => {
         },
     });
 
-    const { mutate: sendMessageMutate } = useMutation({
-        mutationFn: async () => {
-            const responseData = await sendMessage({
-                chat_id: chat!.id,
-                text: currentMessageText,
-                images: images,
-            });
+    const { mutate: sendMessageMutate, isLoading: isSendingMessage } =
+        useMutation({
+            mutationFn: async () => {
+                const responseData = await sendMessage({
+                    chat_id: chat!.id,
+                    text: currentMessageText,
+                    images: images,
+                });
 
-            return responseData.message;
-        },
-        mutationKey: [MUTATION_KEYS.SEND_MESSAGE, chat!.id],
-        onSuccess: (data) => {
-            sendMessageWS(data);
-            setCurrentMessageText("");
-            setImages([]);
-        },
-    });
+                return responseData.message;
+            },
+            mutationKey: [MUTATION_KEYS.SEND_MESSAGE, chat!.id],
+            onSuccess: (data) => {
+                sendMessageWS(data);
+                setCurrentMessageText("");
+                setImages([]);
+            },
+        });
 
     const handlePressEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (e.key === "Enter" && currentMessageText.length > 0) {
@@ -122,7 +123,7 @@ const SelectedChat = () => {
         }
     };
 
-    const removeImage = (indexToRemove: number) => {
+    const handleRemoveImage = (indexToRemove: number) => {
         setImages((prevImages) =>
             prevImages.filter((_, index) => index !== indexToRemove)
         );
@@ -204,7 +205,7 @@ const SelectedChat = () => {
                                     />
                                     <button
                                         className="bg-gray-100 rounded-full hover:bg-orange-600 transition-all duration-150 ease-in-out absolute -top-1 -right-1 w-4 h-4 flex justify-center items-center z-10 hover:w-6 hover:h-6 p-2"
-                                        onClick={() => removeImage(index)}
+                                        onClick={() => handleRemoveImage(index)}
                                     >
                                         <FontAwesomeIcon
                                             icon={faTimes}
@@ -267,8 +268,11 @@ const SelectedChat = () => {
                                 />
                             </div>
 
-                            <Button onClick={() => sendMessageMutate()}>
-                                Send
+                            <Button
+                                onClick={() => sendMessageMutate()}
+                                disabled={isSendingMessage}
+                            >
+                                {isSendingMessage ? "Sending..." : "Send"}
                             </Button>
                         </div>
                     </div>

@@ -60,3 +60,14 @@ export const getMessages = async (chatId: string) => {
         throw error;
     }
 };
+
+export const deleteMessage = async (chatId: string, messageId: string) => {
+    try {
+        const response = await instance.delete(
+            `/chats/${chatId}/messages/${messageId}`
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
