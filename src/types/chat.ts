@@ -23,6 +23,7 @@ export interface ChatItf {
     created_at: Date;
     updated_at: Date;
     messages: MessageItf[];
+    message_being_replied?: MessageItf | null;
 }
 
 export interface MessageBody {
@@ -30,6 +31,7 @@ export interface MessageBody {
     text: string;
     images?: string[];
     readBy?: string[];
+    reply_to?: string;
 }
 
 export interface MessageItf {
@@ -42,6 +44,7 @@ export interface MessageItf {
     updated_at: Date;
     deleted?: boolean;
     images?: string[];
+    reply_to?: string;
 }
 
 export interface ChatContext {

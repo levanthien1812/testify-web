@@ -1,4 +1,10 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, {
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
 import { ChatItf, MessageItf } from "../../../types/chat";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
@@ -9,6 +15,7 @@ import {
     faEdit,
     faInfoCircle,
     faPen,
+    faReply,
     faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { useMutation } from "react-query";
@@ -22,12 +29,18 @@ import { isEmojiOnly } from "../../../utils/message";
 type MessageProps = {
     message: MessageItf;
     index: number;
+    onClickReply?: () => void;
 };
 
-const Message = ({ message, index }: MessageProps) => {
+const Message = ({ message, index, onClickReply }: MessageProps) => {
     const user = useSelector((state: RootState) => state.auth.user);
-    const { currentChat, setCurrentChat, socket, removeDeletedMessage } =
-        useChatSocket();
+    const {
+        currentChat,
+        setCurrentChat,
+        socket,
+        removeDeletedMessage,
+        updateChatInChats,
+    } = useChatSocket();
     const scrollRef = useRef<HTMLDivElement>(null);
     const [showAllImages, setShowAllImages] = useState(false);
     const [isHover, setIsHover] = useState(false);
@@ -71,6 +84,17 @@ const Message = ({ message, index }: MessageProps) => {
         }
     };
 
+    const handleClickReply = () => {
+        updateChatInChats(currentChat!.id, { message_being_replied: message });
+        setCurrentChat({
+            ...currentChat,
+            message_being_replied: message,
+        } as ChatItf);
+        onClickReply && onClickReply();
+    };
+
+    const handleClickRepliedMessage = () => {};
+
     const handleDeleteMessage = () => {
         deleteMessageMutate();
     };
@@ -80,6 +104,28 @@ const Message = ({ message, index }: MessageProps) => {
             scrollRef.current.scrollIntoView({ behavior: "smooth" });
         }
     }, [currentChat]);
+
+    const getSender = useCallback(
+        (sender_id: string) => {
+            return currentChat!.members.find(
+                (member) => member.member.id === sender_id
+            );
+        },
+        [currentChat]
+    );
+
+    const senderName = useMemo(() => {
+        if (!currentChat || !currentChat.message_being_replied) return "";
+        return (
+            getSender(currentChat.message_being_replied.sender_id)?.nick_name ||
+            getSender(currentChat.message_being_replied.sender_id)?.member.name
+        );
+    }, [currentChat, getSender]);
+
+    const repliedMessage = useMemo(() => {
+        if (!currentChat || !message.reply_to) return null;
+        return currentChat!.messages.find((msg) => msg.id === message.reply_to);
+    }, [currentChat, message.reply_to]);
 
     return (
         <div
@@ -189,6 +235,25 @@ const Message = ({ message, index }: MessageProps) => {
                                         Hide
                                     </button>
                                 )}
+                                {message.reply_to && repliedMessage && (
+                                    <div
+                                        className={`${
+                                            message.sender_id === user!.id
+                                                ? "text-end"
+                                                : "text-start"
+                                        }`}
+                                    >
+                                        <p className="text-xs text-gray-500">
+                                            Replied to: {senderName}
+                                        </p>
+                                        <p
+                                            className="text-sm hover:text-orange-600 cursor-pointer"
+                                            onClick={handleClickRepliedMessage}
+                                        >
+                                            {repliedMessage.text}
+                                        </p>
+                                    </div>
+                                )}
                                 {message.text.length > 0 &&
                                     !isEmojiOnly(message.text) && (
                                         <div
@@ -246,6 +311,17 @@ const Message = ({ message, index }: MessageProps) => {
                                 className="text-sm text-gray-300 hover:text-orange-600"
                             />
                         </button>
+                        {!message.deleted && (
+                            <button
+                                className="border-none bg-transparent"
+                                onClick={handleClickReply}
+                            >
+                                <FontAwesomeIcon
+                                    icon={faReply}
+                                    className="text-sm text-gray-300 hover:text-orange-600"
+                                />
+                            </button>
+                        )}
                     </div>
                 )}
             </div>
