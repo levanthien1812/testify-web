@@ -10,6 +10,7 @@ const ChatCard = ({ chat }: { chat: ChatItf }) => {
         useChatSocket();
 
     const handleClickCard = () => {
+        if (currentChat?.id === chat.id) return;
         setCurrentChat({
             ...chat,
             messages:
