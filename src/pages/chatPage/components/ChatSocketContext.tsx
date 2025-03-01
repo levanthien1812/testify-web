@@ -2,6 +2,8 @@ import React, { useEffect } from "react";
 import { io, Socket } from "socket.io-client";
 import { ChatContext, ChatItf, MessageItf } from "../../../types/chat";
 import { SOCKET_EVENTS } from "../../../config/constants/socket";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../stores/rootState";
 
 const ChatSocketContext = React.createContext<ChatContext | undefined>(
     undefined
@@ -17,6 +19,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
     >([]);
     const [currentChat, setCurrentChat] = React.useState<ChatItf | null>(null);
     const [chats, setChats] = React.useState<ChatItf[] | null>([]);
+    const { user } = useSelector((state: RootState) => state.auth);
 
     useEffect(() => {
         const socket = io(process.env.REACT_APP_API_HOST!);
@@ -89,9 +92,22 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
             setChats(chats);
         });
 
+        socket.on(SOCKET_EVENTS.TYPING, (data) => {
+            if (!currentChat) return;
+            setCurrentChat({
+                ...currentChat,
+                typing_info: {
+                    sender_id: data.senderId,
+                    is_typing: data.isTyping,
+                },
+            } as ChatItf);
+        });
+
         return () => {
             socket.off(SOCKET_EVENTS.SEND_ONLINE_USERS);
             socket.off(SOCKET_EVENTS.GET_MESSAGE);
+            socket.off(SOCKET_EVENTS.DELETE_MESSAGE);
+            socket.off(SOCKET_EVENTS.TYPING);
         };
     }, [socket, currentChat, chats]);
 
@@ -138,6 +154,14 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                                 ),
                             } as ChatItf)
                     );
+                },
+                emitTyping: (isTyping: boolean, chatId: string) => {
+                    if (!socket) return;
+                    socket.emit(SOCKET_EVENTS.TYPING, {
+                        isTyping,
+                        chatId,
+                        senderId: user?.id,
+                    });
                 },
             }}
         >

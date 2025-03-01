@@ -83,3 +83,4 @@ export enum CHAT_OPTIONS {
 }
 
 export const DISABLE_COPY_TIMEOUT = 2000;
+export const CLEAR_TYPING_INDICATOR_TIMEOUT = 1500;

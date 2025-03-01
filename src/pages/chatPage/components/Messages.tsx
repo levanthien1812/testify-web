@@ -7,7 +7,7 @@ import { QUERY_KEYS } from "../../../config/constants/queryMutationKeys";
 import Loading from "../../../components/loadings/Loading";
 import Message from "./Message";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faArrowDown, faArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { faArrowDown } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "motion/react";
 
 const Messages = () => {
@@ -76,7 +76,7 @@ const Messages = () => {
 
             setIsTargetVisible(isVisible);
         }
-    }, []);
+    }, [chat]);
 
     const handleClickScrollDown = () => {
         if (!chat || chat.messages.length === 0) return;
@@ -84,10 +84,10 @@ const Messages = () => {
     };
 
     useEffect(() => {
+        if (!chat || chat.messages.length === 0) return;
         checkMessageVisibility();
 
         const handleScroll = () => {
-            console.log("hello");
             checkMessageVisibility();
         };
 
@@ -105,7 +105,7 @@ const Messages = () => {
                 }
             };
         }
-    }, []);
+    }, [chat, checkMessageVisibility]);
 
     return (
         <div
