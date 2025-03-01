@@ -24,6 +24,10 @@ export interface ChatItf {
     updated_at: Date;
     messages: MessageItf[];
     message_being_replied?: MessageItf | null;
+    typing_info?: {
+        sender_id: string;
+        is_typing: boolean;
+    };
 }
 
 export interface MessageBody {
@@ -60,4 +64,5 @@ export interface ChatContext {
     updateChatInChats: (chatId: string, chatBody: Partial<ChatItf>) => void;
     sendMessage: (message: MessageItf) => void;
     removeDeletedMessage: (messageId: string) => void;
+    emitTyping: (isTyping: boolean, chatId: string) => void;
 }

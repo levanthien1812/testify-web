@@ -18,6 +18,7 @@ import EmojiPicker from "emoji-picker-react";
 import { useChatSocket } from "./ChatSocketContext";
 import { ChatItf } from "../../../types/chat";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
+import { CLEAR_TYPING_INDICATOR_TIMEOUT } from "../../../config/config";
 
 const InputMessage = () => {
     const {
@@ -25,11 +26,14 @@ const InputMessage = () => {
         setCurrentChat,
         sendMessage: sendMessageWS,
         updateChatInChats,
+        emitTyping,
     } = useChatSocket();
     const [openEmoji, setOpenEmoji] = useState(false);
     const inputMessageRef = useRef<HTMLInputElement>(null);
     const [currentMessageText, setCurrentMessageText] = useState("");
     const user = useSelector((state: RootState) => state.auth.user);
+    const [isTyping, setIsTyping] = useState(false);
+    const typeingTimeout = useRef<NodeJS.Timeout | null>(null);
 
     const [images, setImages] = useState<string[]>([]);
 
@@ -119,10 +123,25 @@ const InputMessage = () => {
         setCurrentChat({ ...chat, message_being_replied: null } as ChatItf);
     };
 
+    const handleMessageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setCurrentMessageText(e.target.value);
+        if (e.target.value.length === 0) return;
+        setIsTyping(true);
+
+        if (typeingTimeout.current) {
+            clearTimeout(typeingTimeout.current);
+        }
+
+        typeingTimeout.current = setTimeout(() => {
+            setIsTyping(false);
+        }, CLEAR_TYPING_INDICATOR_TIMEOUT);
+    };
+
     useEffect(() => {
         if (chat && chat.messages?.length > 0) {
             updateReadMessageMutate();
         }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [updateReadMessageMutate]);
 
     const getSender = useCallback(
@@ -147,6 +166,20 @@ const InputMessage = () => {
             getSender(chat.message_being_replied.sender_id)?.member.name
         );
     }, [chat, getSender]);
+
+    const typingSenderName = useMemo(() => {
+        if (!chat || !chat.typing_info) return "";
+        return (
+            getSender(chat.typing_info.sender_id)?.nick_name ||
+            getSender(chat.typing_info.sender_id)?.member.name
+        );
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [chat?.typing_info?.sender_id, getSender]);
+
+    useEffect(() => {
+        emitTyping(isTyping, chat!.id);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isTyping]);
 
     return (
         <div className="border-t border-dashed border-gray-300">
@@ -188,12 +221,19 @@ const InputMessage = () => {
                     </button>
                 </div>
             )}
+            {chat?.typing_info && chat.typing_info.is_typing && (
+                <div>
+                    <p className="text-gray-600 text-sm">
+                        {typingSenderName} is typing...
+                    </p>
+                </div>
+            )}
             <div className="flex py-2 gap-2 items-center">
                 <Input
                     className="grow"
                     placeholder="Type a message"
                     value={currentMessageText}
-                    onChange={(e) => setCurrentMessageText(e.target.value)}
+                    onChange={handleMessageChange}
                     onKeyDown={handlePressEnter}
                     ref={inputMessageRef}
                 />

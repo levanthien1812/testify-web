@@ -14,6 +14,7 @@ import InputMessage from "./InputMessage";
 
 const SelectedChat = () => {
     const { currentChat: chat, onlineUsers } = useChatSocket();
+    console.log(chat, onlineUsers);
 
     const [openInfo, setOpenInfo] = useState(false);
     const user = useSelector((state: RootState) => state.auth.user);
