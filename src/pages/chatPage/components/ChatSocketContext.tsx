@@ -93,7 +93,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
         });
 
         socket.on(SOCKET_EVENTS.TYPING, (data) => {
-            if (!currentChat) return;
+            if (!currentChat || !chats) return;
             setCurrentChat({
                 ...currentChat,
                 typing_info: {
@@ -101,6 +101,15 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                     is_typing: data.isTyping,
                 },
             } as ChatItf);
+            const updatedChats = chats;
+            const chatIndex = chats.findIndex((ch) => ch.id === data.chat_id);
+            if (chatIndex < 0) return;
+            updatedChats[chatIndex].typing_info = {
+                sender_id: data.senderId,
+                is_typing: data.isTyping,
+            };
+
+            setChats(chats);
         });
 
         return () => {

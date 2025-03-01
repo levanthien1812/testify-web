@@ -3,6 +3,7 @@ import { RootState } from "../../../stores/rootState";
 import { useChatSocket } from "./ChatSocketContext";
 import { format } from "date-fns";
 import { ChatItf } from "../../../types/chat";
+import { useCallback, useMemo } from "react";
 
 const ChatCard = ({ chat }: { chat: ChatItf }) => {
     const user = useSelector((state: RootState) => state.auth.user);
@@ -20,6 +21,24 @@ const ChatCard = ({ chat }: { chat: ChatItf }) => {
             unread_messages: [],
         });
     };
+
+    const getSender = useCallback(
+        (sender_id: string) => {
+            return chat!.members.find(
+                (member) => member.member.id === sender_id
+            );
+        },
+        [chat]
+    );
+
+    const typingSenderName = useMemo(() => {
+        if (!chat || !chat.typing_info) return "";
+        return (
+            getSender(chat.typing_info.sender_id)?.nick_name ||
+            getSender(chat.typing_info.sender_id)?.member.name
+        );
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [chat?.typing_info?.sender_id, getSender]);
 
     return (
         <div
@@ -77,7 +96,7 @@ const ChatCard = ({ chat }: { chat: ChatItf }) => {
                             </div>
                         )}
                 </div>
-                {chat.last_message && (
+                {chat.last_message && !chat.typing_info?.is_typing && (
                     <div className="flex justify-between gap-2">
                         <p className="text-gray-500 text-sm whitespace-nowrap overflow-hidden text-ellipsis">
                             <span>
@@ -99,6 +118,14 @@ const ChatCard = ({ chat }: { chat: ChatItf }) => {
                         </p>
                         <p className="text-gray-500 text-sm shrink-0">
                             {format(chat.last_message?.created_at, "HH:mm:ss")}
+                        </p>
+                    </div>
+                )}
+
+                {chat.typing_info?.is_typing && (
+                    <div>
+                        <p className="text-gray-500 text-sm italic">
+                            {typingSenderName} is typing...
                         </p>
                     </div>
                 )}

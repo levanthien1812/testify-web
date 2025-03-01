@@ -125,10 +125,19 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
             );
         }, [message.reply_to, getSender, repliedMessage]);
 
+        const isNextMessageDifferentSender = useMemo(() => {
+            return (
+                currentChat!.messages[index + 1]?.sender_id !==
+                message.sender_id
+            );
+        }, [currentChat, message.sender_id, index]);
+
         return (
             <div
                 key={message.id}
-                className={`flex flex-col mb-1`}
+                className={`flex flex-col ${
+                    isNextMessageDifferentSender ? "mb-2" : "mb-1"
+                } `}
                 ref={ref}
                 onMouseEnter={() => setIsHover(true)}
                 onMouseLeave={() => setIsHover(false)}
@@ -141,26 +150,25 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                     }`}
                 >
                     {message.sender_id !== user!.id &&
-                        (currentChat!.messages[index + 1]?.sender_id !==
-                        message.sender_id ? (
-                            <div className="relative w-4 h-4 rounded-full shadow-md self-end">
-                                <img
-                                    className=""
-                                    src={
-                                        currentChat!.members.find(
-                                            (member) =>
-                                                member.member.id ===
-                                                message.sender_id
-                                        )?.member.photo
-                                    }
-                                    alt=""
-                                />
-                                <div className="absolute -right-0.5 -bottom-0.5 w-2 h-2 border border-white bg-green-500 rounded-full"></div>
-                            </div>
-                        ) : (
-                            <div className="w-4 h-4"></div>
-                        ))}
-                    <div>
+                    isNextMessageDifferentSender ? (
+                        <div className="relative w-4 h-4 rounded-full shadow-md self-end shrink-0">
+                            <img
+                                className=""
+                                src={
+                                    currentChat!.members.find(
+                                        (member) =>
+                                            member.member.id ===
+                                            message.sender_id
+                                    )?.member.photo
+                                }
+                                alt=""
+                            />
+                            <div className="absolute -right-0.5 -bottom-0.5 w-2 h-2 border border-white bg-green-500 rounded-full"></div>
+                        </div>
+                    ) : (
+                        <div className="w-4 h-4"></div>
+                    )}
+                    <div className="max-w-[75%]">
                         <div
                             className={`flex flex-col ${
                                 message.sender_id === user!.id
@@ -264,7 +272,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                                     {message.text.length > 0 &&
                                         !isEmojiOnly(message.text) && (
                                             <div
-                                                className={`text-white rounded-full py-0.5 px-4`}
+                                                className={`text-white rounded-xl py-0.5 px-4`}
                                                 style={{
                                                     backgroundColor:
                                                         currentChat!.appearances
@@ -298,7 +306,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                     {isHover && (
                         <div className="flex items-center gap-1">
                             <button
-                                className="border-none bg-gray-100 rounded-full p-1.5 flex justify-center items-center hover:bg-gray-200"
+                                className="border-none bg-gray-100 rounded-xl w-6 h-6 flex justify-center items-center hover:bg-gray-200"
                                 onClick={handleClickDeleteMessage}
                             >
                                 <FontAwesomeIcon
@@ -307,7 +315,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                                 />
                             </button>
                             <button
-                                className="border-none bg-gray-100 rounded-full p-1.5 flex justify-center items-center hover:bg-gray-200"
+                                className="border-none bg-gray-100 rounded-xl w-6 h-6 flex justify-center items-center hover:bg-gray-200"
                                 onClick={() => setIsViewingDetail(true)}
                             >
                                 <FontAwesomeIcon
@@ -315,7 +323,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                                     className="text-sm text-gray-400 hover:text-orange-600"
                                 />
                             </button>
-                            <button className="border-none bg-gray-100 rounded-full p-1.5 flex justify-center items-center hover:bg-gray-200">
+                            <button className="border-none bg-gray-100 rounded-xl w-6 h-6 flex justify-center items-center hover:bg-gray-200">
                                 <FontAwesomeIcon
                                     icon={faPen}
                                     className="text-sm text-gray-400 hover:text-orange-600"
@@ -323,7 +331,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                             </button>
                             {!message.deleted && (
                                 <button
-                                    className="border-none bg-gray-100 rounded-full p-1.5 flex justify-center items-center hover:bg-gray-200"
+                                    className="border-none bg-gray-100 rounded-xl w-6 h-6 flex justify-center items-center hover:bg-gray-200"
                                     onClick={handleClickReply}
                                 >
                                     <FontAwesomeIcon
