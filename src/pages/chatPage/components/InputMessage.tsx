@@ -182,7 +182,7 @@ const InputMessage = () => {
     }, [isTyping]);
 
     return (
-        <div className="border-t border-dashed border-gray-300">
+        <div className="border-t border-dashed border-gray-300 py-2">
             {images.length > 0 && (
                 <div className={`flex gap-2 py-2 flex-wrap`}>
                     {images.map((img, index) => (
@@ -206,12 +206,14 @@ const InputMessage = () => {
                 </div>
             )}
             {chat?.message_being_replied && (
-                <div className="pt-1 flex justify-between items-start">
+                <div className="pt-1 flex justify-between items-start gap-2">
                     <div>
-                        <p className="text-gray-600">
+                        <p className="text-gray-600 text-sm leading-none">
                             Replying to {senderName}
                         </p>
-                        <p>Message: {chat.message_being_replied.text}</p>
+                        <p className="leading-tight mt-0.5">
+                            Message: {chat.message_being_replied.text}
+                        </p>
                     </div>
                     <button
                         onClick={handleCancelReply}
@@ -228,7 +230,7 @@ const InputMessage = () => {
                     </p>
                 </div>
             )}
-            <div className="flex py-2 gap-2 items-center">
+            <div className="flex gap-2 items-center">
                 <Input
                     className="grow"
                     placeholder="Type a message"

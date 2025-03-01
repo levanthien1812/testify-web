@@ -25,6 +25,7 @@ const Messages = () => {
         onSuccess: (data) => {
             setCurrentChat({ ...chat, messages: data } as ChatItf);
         },
+        enabled: !!chat && chat.messages.length === 0,
     });
 
     const scrollToMessage = useCallback(
