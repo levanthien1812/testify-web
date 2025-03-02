@@ -5,7 +5,7 @@ import {
     SHARE_OPTIONS,
     TEST_LEVEL,
     TEST_STATUS,
-} from "../config/config";
+} from "../config/constants/tests";
 import { QUESTION_TYPE } from "../config/constants/tests";
 import { TestOption } from "./tests";
 

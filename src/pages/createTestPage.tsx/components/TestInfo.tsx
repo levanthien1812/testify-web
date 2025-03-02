@@ -4,7 +4,7 @@ import {
     PUBLIC_ANSWERS_OPTIONS_LABEL,
     TEST_LEVEL,
     TEST_LEVEL_LABEL,
-} from "../../../config/config";
+} from "../../../config/constants/tests";
 import { TestBodyItf } from "../../../types/types";
 import { formatTimezone } from "../../../utils/time";
 import Input from "../../../components/elements/Input";

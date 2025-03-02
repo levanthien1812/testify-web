@@ -1,5 +1,5 @@
 import Joi from "joi";
-import { PUBLIC_ANSWERS_OPTIONS, TEST_LEVEL } from "../config/config";
+import { PUBLIC_ANSWERS_OPTIONS, TEST_LEVEL } from "../config/constants/tests";
 import { numGaps } from "./custom";
 
 export const partSchema = Joi.object().keys({

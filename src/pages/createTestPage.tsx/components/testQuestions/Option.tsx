@@ -1,7 +1,4 @@
-import { faTimes } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { ChangeEvent, forwardRef, useState } from "react";
-import { motion } from "framer-motion";
+import React, { forwardRef, useState } from "react";
 import Input from "../../../../components/elements/Input";
 
 interface OptionProps extends React.InputHTMLAttributes<HTMLInputElement> {

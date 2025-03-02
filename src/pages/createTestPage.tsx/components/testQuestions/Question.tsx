@@ -25,17 +25,17 @@ import Button from "../../../../components/elements/Button";
 import Input from "../../../../components/elements/Input";
 import Select from "../../../../components/elements/Select";
 import { Control, useForm, UseFormRegister } from "react-hook-form";
-import { INITIAL_QUESTION } from "../../../../config/constants/initialValues";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../stores/rootState";
 import { createTestActions } from "../../../../stores/createTest";
 import { TOAST_MESSAGES } from "../../../../config/constants/toasts";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
 import { useDispatch } from "react-redux";
-import { TEST_LEVEL, TEST_LEVEL_LABEL } from "../../../../config/config";
 import {
     QUESTION_TYPE,
     QUESTION_TYPE_LABEL,
+    TEST_LEVEL,
+    TEST_LEVEL_LABEL,
 } from "../../../../config/constants/tests";
 import { getInitialQuestionContent } from "../../../../utils/mapping";
 

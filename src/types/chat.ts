@@ -36,6 +36,7 @@ export interface MessageBody {
     images?: string[];
     readBy?: string[];
     reply_to?: string;
+    reactions?: ReactionEmoji[];
 }
 
 export interface MessageItf {
@@ -49,6 +50,7 @@ export interface MessageItf {
     deleted?: boolean;
     images?: string[];
     reply_to?: string;
+    reactions?: ReactionEmoji[];
 }
 
 export interface ChatContext {
@@ -65,4 +67,15 @@ export interface ChatContext {
     sendMessage: (message: MessageItf) => void;
     removeDeletedMessage: (messageId: string) => void;
     emitTyping: (isTyping: boolean, chatId: string) => void;
+}
+
+export interface Emoji {
+    icon: string;
+    code: string;
+}
+
+export interface ReactionEmoji {
+    emoji: string;
+    user_id: string;
+    created_at: string;
 }

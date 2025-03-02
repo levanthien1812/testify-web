@@ -65,7 +65,6 @@ const Messages = () => {
         ) {
             const chatRect =
                 messagesContainerRef.current?.getBoundingClientRect();
-            console.log(chatRect);
             const messageRect =
                 messageRefs.current[targetMessage.id]?.getBoundingClientRect();
 

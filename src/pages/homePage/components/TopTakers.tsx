@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import { useMemo } from "react";
 import { useQuery } from "react-query";
 import { getTakersStatistics } from "../../../services/user";
 import {
@@ -11,7 +11,7 @@ import {
 import { TakerStatistics } from "../../../types/types";
 import _ from "lodash";
 import Button from "../../../components/elements/Button";
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import defaultUserPhoto from "../../../assets/images/default-user-photo.png";
 
 const TopTakers = () => {

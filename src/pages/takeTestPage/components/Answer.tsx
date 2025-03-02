@@ -13,7 +13,7 @@ import {
     UserAnswerItf,
     AnswerBodyContentItf,
 } from "../../../types/types";
-import { MANUAL_SCORE_TYPES, ROLES } from "../../../config/config";
+import { MANUAL_SCORE_TYPES, ROLES } from "../../../config/constants/tests";
 import MultipleChoicesAnswer from "./MultipleChoicesAnswer";
 import FillGapsAnswer from "./FillGapsAnswer";
 import MatchingAnswer from "./MatchingAnswer";

@@ -14,7 +14,7 @@ import { toast } from "react-toastify";
 import Button from "../elements/Button";
 import defaultUserPhoto from "./../../assets/images/default-user-photo.png";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
-import { ROLES } from "../../config/config";
+import { ROLES } from "../../config/constants/tests";
 import PasscodeLink from "../modals/PasscodeLink";
 
 const Header = () => {
@@ -34,6 +34,8 @@ const Header = () => {
             window.location.href = "/login";
         },
         onError: (error) => {
+            dispatch(authActions.logout());
+            window.location.href = "/login";
             if (error instanceof AxiosError) {
                 toast.error(error.response?.data?.message);
             }

@@ -3,7 +3,7 @@ import {
     SHARE_OPTIONS,
     TEST_LEVEL,
     TEST_STATUS,
-} from "../config/config";
+} from "../config/constants/tests";
 import { PUBLIC_ANSWER_VISIBILITY_LEVEL } from "../config/constants/tests";
 import {
     AnswerBodyContentItf,
