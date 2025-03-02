@@ -18,7 +18,7 @@ import EmojiPicker from "emoji-picker-react";
 import { useChatSocket } from "./ChatSocketContext";
 import { ChatItf } from "../../../types/chat";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
-import { CLEAR_TYPING_INDICATOR_TIMEOUT } from "../../../config/config";
+import { CLEAR_TYPING_INDICATOR_TIMEOUT } from "../../../config/constants/chat";
 
 const InputMessage = () => {
     const {
@@ -77,7 +77,10 @@ const InputMessage = () => {
         });
 
     const handlePressEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter" && currentMessageText.length > 0) {
+        if (
+            e.key === "Enter" &&
+            (currentMessageText.length > 0 || images.length > 0)
+        ) {
             sendMessageMutate();
         }
     };
@@ -135,6 +138,11 @@ const InputMessage = () => {
         typeingTimeout.current = setTimeout(() => {
             setIsTyping(false);
         }, CLEAR_TYPING_INDICATOR_TIMEOUT);
+    };
+
+    const handleClickSendBtn = () => {
+        if (currentMessageText.length > 0 || images.length > 0)
+            sendMessageMutate();
     };
 
     useEffect(() => {
@@ -282,8 +290,11 @@ const InputMessage = () => {
                 </div>
 
                 <Button
-                    onClick={() => sendMessageMutate()}
-                    disabled={isSendingMessage}
+                    onClick={handleClickSendBtn}
+                    disabled={
+                        isSendingMessage ||
+                        (currentMessageText.length === 0 && images.length === 0)
+                    }
                 >
                     {isSendingMessage ? "Sending..." : "Send"}
                 </Button>

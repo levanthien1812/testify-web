@@ -13,7 +13,7 @@ import { createTestActions } from "../../../stores/createTest";
 import { useDispatch } from "react-redux";
 import CopyLink from "./testTakers/CopyLink";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
-import { SHARE_OPTIONS } from "../../../config/config";
+import { SHARE_OPTIONS } from "../../../config/constants/tests";
 import Passcode from "./testTakers/Passcode";
 import { TestBodyItf } from "../../../types/types";
 import Anyone from "./testTakers/Anyone";

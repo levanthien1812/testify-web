@@ -40,6 +40,16 @@ const ChatCard = ({ chat }: { chat: ChatItf }) => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [chat?.typing_info?.sender_id, getSender]);
 
+    const lastSenderName = useMemo(() => {
+        if (!chat || !chat.last_message) return "";
+        if (chat.last_message.sender_id === user?.id) return "You";
+        return (
+            getSender(chat.last_message.sender_id)?.nick_name ||
+            getSender(chat.last_message.sender_id)?.member.name
+        );
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [chat?.last_message?.sender_id, getSender]);
+
     return (
         <div
             key={chat.id}
@@ -58,7 +68,7 @@ const ChatCard = ({ chat }: { chat: ChatItf }) => {
                                 key={member.member.id}
                                 src={member.member.photo}
                                 alt=""
-                                className={`w-10 h-10 shrink-0 rounded-full absolute bg-white shadow-md`}
+                                className={`w-10 h-10 shrink-0 rounded-full object-cover absolute bg-white shadow-md`}
                                 style={{
                                     left: `${index * 3 * 4}px`,
                                 }}
@@ -100,18 +110,22 @@ const ChatCard = ({ chat }: { chat: ChatItf }) => {
                     <div className="flex justify-between gap-2">
                         <p className="text-gray-500 text-sm whitespace-nowrap overflow-hidden text-ellipsis">
                             <span>
-                                {chat.last_message?.sender_id === user?.id
-                                    ? "You"
-                                    : chat.members.find(
-                                          (member) =>
-                                              member.member.id ===
-                                              chat.last_message?.sender_id
-                                      )?.member.name}
+                                {lastSenderName}
                                 {": "}
                             </span>
 
                             {!chat.last_message.deleted ? (
-                                <span> {chat.last_message?.text}</span>
+                                <>
+                                    {chat.last_message.text.length > 0 && (
+                                        <span> {chat.last_message?.text}</span>
+                                    )}
+                                    {chat.last_message.images &&
+                                        chat.last_message.images.length > 0 && (
+                                            <span>
+                                                {`Sent ${chat.last_message.images.length} images`}
+                                            </span>
+                                        )}
+                                </>
                             ) : (
                                 <span className="italic">Message deleted</span>
                             )}

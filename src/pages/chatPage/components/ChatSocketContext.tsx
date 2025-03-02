@@ -112,6 +112,21 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
             setChats(chats);
         });
 
+        socket.on(SOCKET_EVENTS.RECEIVE_REACTION, (data) => {
+            if (!currentChat) return;
+            const updatedMessages = currentChat.messages;
+            const messageIndex = updatedMessages.findIndex(
+                (message) => message.id === data.message_id
+            );
+            if (messageIndex < 0) return;
+            updatedMessages[messageIndex].reactions = data.reactions;
+
+            setCurrentChat({
+                ...currentChat,
+                messages: updatedMessages,
+            } as ChatItf);
+        });
+
         return () => {
             socket.off(SOCKET_EVENTS.SEND_ONLINE_USERS);
             socket.off(SOCKET_EVENTS.GET_MESSAGE);

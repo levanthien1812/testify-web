@@ -4,7 +4,7 @@ import TestParts from "./components/TestParts";
 import { useNavigate, useParams } from "react-router";
 import { useMutation, useQuery } from "react-query";
 import { getTest, publishTest } from "../../services/test";
-import { TEST_STATUS } from "../../config/config";
+import { TEST_STATUS } from "../../config/constants/tests";
 import { toast } from "react-toastify";
 import Button from "../../components/elements/Button";
 import { useSearchParams } from "react-router-dom";

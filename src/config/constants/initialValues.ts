@@ -1,4 +1,3 @@
-import { ChatContext } from "../../types/chat";
 import {
     CreateTestContext,
     TakeTestContext,
@@ -21,7 +20,7 @@ import {
     SHARE_OPTIONS,
     TEST_LEVEL,
     TEST_STATUS,
-} from "../config";
+} from "./tests";
 import { CREATE_TEST_STEPS, QUESTION_TYPE } from "./tests";
 
 export const INITIAL_OPTIONS: TestOption = {

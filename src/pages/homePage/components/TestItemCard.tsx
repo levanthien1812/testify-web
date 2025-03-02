@@ -7,7 +7,7 @@ import { TestItf } from "../../../types/types";
 import { format } from "date-fns";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
-import { ROLES, TEST_STATUS } from "../../../config/config";
+import { ROLES, TEST_STATUS } from "../../../config/constants/tests";
 import Button from "../../../components/elements/Button";
 import { Circle } from "rc-progress";
 

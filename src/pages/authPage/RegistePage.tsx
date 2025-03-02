@@ -4,7 +4,7 @@ import { toast } from "react-toastify";
 import { AxiosError } from "axios";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../stores/auth";
-import { ROLES } from "../../config/config";
+import { ROLES } from "../../config/constants/tests";
 import Button from "../../components/elements/Button";
 import AuthInput from "./AuthInput";
 import { SubmitHandler, useForm } from "react-hook-form";

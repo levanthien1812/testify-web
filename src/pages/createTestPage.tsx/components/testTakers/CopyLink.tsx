@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import Input from "../../../../components/elements/Input";
 import Button from "../../../../components/elements/Button";
 import { toast } from "react-toastify";
-import { DISABLE_COPY_TIMEOUT } from "../../../../config/config";
+import { DISABLE_COPY_TIMEOUT } from "../../../../config/constants/tests";
 import { TOAST_MESSAGES } from "../../../../config/constants/toasts";
 
 type CopyLinkProps = {

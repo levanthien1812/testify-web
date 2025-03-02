@@ -12,7 +12,7 @@ import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import TakersChoser from "../../createTestPage.tsx/components/testTakers/TakersChoser";
 import { createChats } from "../../../services/chat";
-import { CHAT_OPTIONS } from "../../../config/config";
+import { CHAT_OPTIONS } from "../../../config/constants/chat";
 
 const AddChat = ({
     onClose,

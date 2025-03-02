@@ -17,4 +17,6 @@ export const SOCKET_EVENTS = {
     DELETE_MESSAGE: "delete-message",
     TYPING: "typing",
     STOP_TYPING: "stop-typing",
+    SEND_REACTION: "send-reaction",
+    RECEIVE_REACTION: "receive-reaction",
 };

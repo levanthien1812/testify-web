@@ -12,7 +12,7 @@ import {
     TakerItf,
     TestPartItf,
 } from "../types/types";
-import { SHARE_OPTIONS } from "../config/config";
+import { SHARE_OPTIONS } from "../config/constants/tests";
 import { PASSCODE_FORMAT, PASSCODE_METHOD } from "../config/constants/passcode";
 
 const createTestSlice = createSlice({

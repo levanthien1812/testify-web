@@ -4,7 +4,7 @@ import { login as loginService, loginGoogle } from "../../services/auth";
 import { isSuccess } from "../../utils/response";
 import { authActions } from "../../stores/auth";
 import { toast } from "react-toastify";
-import { ROLES } from "../../config/config";
+import { ROLES } from "../../config/constants/tests";
 import { AxiosError } from "axios";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import Button from "../../components/elements/Button";

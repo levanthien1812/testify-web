@@ -3,7 +3,7 @@ import { useNavigate, useParams } from "react-router";
 import { getSubmission, getTest } from "../../services/test";
 import { SubmissionItf } from "../../types/types";
 import DoingTest from "./DoingTest";
-import { SHARE_OPTIONS, TEST_STATUS } from "../../config/config";
+import { SHARE_OPTIONS, TEST_STATUS } from "../../config/constants/tests";
 import TestInfo from "./components/TestInfo";
 import Forbidden from "./components/Forbidden";
 import Submission from "./components/Submission";

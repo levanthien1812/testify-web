@@ -5,7 +5,7 @@ import Select from "../../../components/elements/Select";
 import { formatTimezone } from "../../../utils/time";
 import { FilterState } from "../../../types/types";
 import { Link } from "react-router-dom";
-import { ROLES, TEST_STATUS } from "../../../config/config";
+import { ROLES, TEST_STATUS } from "../../../config/constants/tests";
 import _ from "lodash";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";

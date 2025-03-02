@@ -8,7 +8,7 @@ import {
     TestItf,
     UserAnswerItf,
 } from "../types/types";
-import { TEST_STATUS } from "../config/config";
+import { TEST_STATUS } from "../config/constants/tests";
 import { PUBLIC_ANSWER_VISIBILITY_LEVEL } from "../config/constants/tests";
 
 const TakeTestSlice = createSlice({

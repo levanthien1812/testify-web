@@ -3,7 +3,7 @@ import RecentTests from "./components/RecentTests";
 import TopTakers from "./components/TopTakers";
 import { useSelector } from "react-redux";
 import { RootState } from "../../stores/rootState";
-import { ROLES } from "../../config/config";
+import { ROLES } from "../../config/constants/tests";
 
 const HomePage = () => {
     const user = useSelector((state: RootState) => state.auth.user);

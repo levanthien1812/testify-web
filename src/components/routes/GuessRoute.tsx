@@ -3,7 +3,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../stores/rootState";
 import HomePage from "../../pages/homePage/HomePage";
 import { Navigate, Outlet } from "react-router";
-import { ROLES } from "../../config/config";
+import { ROLES } from "../../config/constants/tests";
 
 const GuessRoute: React.FC = () => {
     const user = useSelector((state: RootState) => state.auth.user);

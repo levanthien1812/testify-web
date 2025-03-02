@@ -1,5 +1,5 @@
 import { instance } from "../config/axios";
-import { CHAT_OPTIONS } from "../config/config";
+import { CHAT_OPTIONS } from "../config/constants/chat";
 import { ChatBodyItf, MessageBody } from "../types/chat";
 
 export const getChats = async () => {
@@ -44,6 +44,21 @@ export const sendMessage = async (messageBody: MessageBody) => {
     try {
         const response = await instance.post(
             `/chats/${messageBody.chat_id}/messages`,
+            messageBody
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updateMessage = async (
+    messageId: string,
+    messageBody: Partial<MessageBody>
+) => {
+    try {
+        const response = await instance.patch(
+            `/chats/${messageBody.chat_id}/messages/${messageId}`,
             messageBody
         );
         return response.data;

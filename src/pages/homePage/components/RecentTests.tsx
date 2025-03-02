@@ -6,7 +6,7 @@ import { TestItf } from "../../../types/types";
 import Button from "../../../components/elements/Button";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
-import { ROLES } from "../../../config/config";
+import { ROLES } from "../../../config/constants/tests";
 
 const RecentTests = () => {
     const navigate = useNavigate();

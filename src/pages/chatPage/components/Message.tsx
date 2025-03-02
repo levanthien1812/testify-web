@@ -1,5 +1,5 @@
 import { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
-import { ChatItf, MessageItf } from "../../../types/chat";
+import { ChatItf, MessageBody, MessageItf } from "../../../types/chat";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
 import { useChatSocket } from "./ChatSocketContext";
@@ -12,12 +12,15 @@ import {
     faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { useMutation } from "react-query";
-import { deleteMessage } from "../../../services/chat";
+import { deleteMessage, updateMessage } from "../../../services/chat";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
 import ConfirmModal from "../../../components/modals/ConfirmModal";
 import { SOCKET_EVENTS } from "../../../config/constants/socket";
 import MessageDetail from "./MessageDetail";
 import { isEmojiOnly } from "../../../utils/message";
+import EmojiReaction from "./EmojiReaction";
+import Images from "./Images";
+import ReactionsCount from "./ReactionsCount";
 
 type MessageProps = {
     message: MessageItf;
@@ -36,7 +39,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
             removeDeletedMessage,
             updateChatInChats,
         } = useChatSocket();
-        const [showAllImages, setShowAllImages] = useState(false);
+
         const [isHover, setIsHover] = useState(false);
         const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
         const [isViewingDetail, setIsViewingDetail] = useState(false);
@@ -66,9 +69,26 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                 },
             });
 
-        const handleClickShowAll = () => {
-            setShowAllImages(true);
-        };
+        const { mutate: updateMessageMutate } = useMutation({
+            mutationFn: async (messageBody: Partial<MessageBody>) => {
+                const responseData = await updateMessage(
+                    message.id,
+                    messageBody
+                );
+
+                return responseData.message;
+            },
+            mutationKey: [MUTATION_KEYS.DELETE_MESSAGE, message.id],
+            onSuccess: (data) => {
+                if (socket) {
+                    socket.emit(SOCKET_EVENTS.SEND_REACTION, {
+                        chat_id: message.chat_id,
+                        message_id: message.id,
+                        reactions: data.reactions,
+                    });
+                }
+            },
+        });
 
         const handleClickDeleteMessage = () => {
             if (!message.deleted) {
@@ -132,6 +152,29 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
             );
         }, [currentChat, message.sender_id, index]);
 
+        const handleClickEmoji = (emojiCode: string) => {
+            const updatedReactions = message.reactions || [];
+            const index = updatedReactions.findIndex(
+                (reaction) => reaction.user_id === user!.id
+            );
+            if (index !== -1) {
+                if (updatedReactions[index].emoji === emojiCode) {
+                    updatedReactions.splice(index, 1);
+                } else {
+                    updatedReactions[index].emoji = emojiCode;
+                }
+            } else {
+                updatedReactions.push({
+                    created_at: new Date().toISOString(),
+                    emoji: emojiCode,
+                    user_id: user!.id,
+                });
+            }
+            updateMessageMutate({
+                reactions: updatedReactions,
+            });
+        };
+
         return (
             <div
                 key={message.id}
@@ -149,28 +192,33 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                             : "flex-row"
                     }`}
                 >
-                    {message.sender_id !== user!.id &&
-                    isNextMessageDifferentSender ? (
-                        <div className="relative w-4 h-4 rounded-full shadow-md self-end shrink-0">
-                            <img
-                                className=""
-                                src={
-                                    currentChat!.members.find(
-                                        (member) =>
-                                            member.member.id ===
-                                            message.sender_id
-                                    )?.member.photo
-                                }
-                                alt=""
-                            />
-                            <div className="absolute -right-0.5 -bottom-0.5 w-2 h-2 border border-white bg-green-500 rounded-full"></div>
-                        </div>
-                    ) : (
-                        <div className="w-4 h-4"></div>
+                    {message.sender_id !== user!.id && (
+                        <>
+                            {isNextMessageDifferentSender ? (
+                                // Create AvatarWithStatus component
+                                <div className="relative w-4 h-4 rounded-full shadow-md self-end shrink-0">
+                                    <img
+                                        className="w-full h-full object-cover rounded-full"
+                                        src={
+                                            currentChat!.members.find(
+                                                (member) =>
+                                                    member.member.id ===
+                                                    message.sender_id
+                                            )?.member.photo
+                                        }
+                                        alt=""
+                                    />
+                                    <div className="absolute -right-0.5 -bottom-0.5 w-2 h-2 border border-white bg-green-500 rounded-full"></div>
+                                </div>
+                            ) : (
+                                <div className="w-4 h-4"></div>
+                            )}
+                        </>
                     )}
+
                     <div className="max-w-[75%]">
                         <div
-                            className={`flex flex-col ${
+                            className={`flex flex-col relative ${
                                 message.sender_id === user!.id
                                     ? "items-end"
                                     : "items-start"
@@ -180,74 +228,8 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                                 <>
                                     {message.images &&
                                         message.images.length > 0 && (
-                                            <div
-                                                className={`grid gap-x-1 gap-y-1 flex-wrap ${
-                                                    message.sender_id ===
-                                                    user!.id
-                                                        ? ""
-                                                        : ""
-                                                }`}
-                                                style={{
-                                                    gridTemplateColumns: `repeat(${
-                                                        message.images.length >
-                                                        3
-                                                            ? 3
-                                                            : message.images
-                                                                  .length
-                                                    }, 80px)`,
-                                                }}
-                                            >
-                                                {message.images
-                                                    .slice(
-                                                        0,
-                                                        showAllImages
-                                                            ? message.images
-                                                                  .length
-                                                            : 3
-                                                    )
-                                                    .map((img, i) => (
-                                                        <div
-                                                            className="relative w-[80px] h-[80px]"
-                                                            key={i}
-                                                        >
-                                                            <img
-                                                                src={img}
-                                                                alt={`Preview ${i}`}
-                                                                className="rounded-xl w-full h-full object-cover shadow-md"
-                                                            />
-                                                            {message.images &&
-                                                                message.images
-                                                                    .length >
-                                                                    3 &&
-                                                                !showAllImages &&
-                                                                i === 2 && (
-                                                                    <button
-                                                                        className="absolute border-none w-full h-full rounded-xl bg-black bg-opacity-60 text-white text-xl top-0 left-0"
-                                                                        onClick={
-                                                                            handleClickShowAll
-                                                                        }
-                                                                    >
-                                                                        +
-                                                                        {message
-                                                                            .images
-                                                                            .length -
-                                                                            3}
-                                                                    </button>
-                                                                )}
-                                                        </div>
-                                                    ))}
-                                            </div>
+                                            <Images message={message} />
                                         )}
-                                    {showAllImages && (
-                                        <button
-                                            className="text-xs hover:underline hover:text-orange-600 text-gray-600"
-                                            onClick={() =>
-                                                setShowAllImages(false)
-                                            }
-                                        >
-                                            Hide
-                                        </button>
-                                    )}
                                     {message.reply_to && repliedMessage && (
                                         <div
                                             className={`${
@@ -272,7 +254,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                                     {message.text.length > 0 &&
                                         !isEmojiOnly(message.text) && (
                                             <div
-                                                className={`text-white rounded-xl py-0.5 px-4`}
+                                                className={`text-white rounded-xl py-1 px-4 leading-tight`}
                                                 style={{
                                                     backgroundColor:
                                                         currentChat!.appearances
@@ -294,12 +276,29 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                                                 </p>
                                             </div>
                                         )}
+                                    {message.reactions &&
+                                        message.reactions.length > 0 && (
+                                            <ReactionsCount
+                                                reactions={message.reactions}
+                                            />
+                                        )}
                                 </>
                             )}
                             {message.deleted && (
-                                <div className="rounded-full py-0.5 px-4 border border-gray-500 text-gray-500 bg-white italic select-none">
+                                <div className="text-sm rounded-xl py-1 px-4 border border-gray-500 text-gray-500 bg-white italic select-none leading-tight">
                                     Message has been deleted!
                                 </div>
+                            )}
+                            {isHover && !message.deleted && (
+                                <EmojiReaction
+                                    onEmojiClick={handleClickEmoji}
+                                    selectedEmoji={
+                                        message.reactions?.find(
+                                            (reaction) =>
+                                                reaction.user_id === user!.id
+                                        )?.emoji
+                                    }
+                                />
                             )}
                         </div>
                     </div>
@@ -323,12 +322,14 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                                     className="text-sm text-gray-400 hover:text-orange-600"
                                 />
                             </button>
-                            <button className="border-none bg-gray-100 rounded-xl w-6 h-6 flex justify-center items-center hover:bg-gray-200">
-                                <FontAwesomeIcon
-                                    icon={faPen}
-                                    className="text-sm text-gray-400 hover:text-orange-600"
-                                />
-                            </button>
+                            {!message.deleted && (
+                                <button className="border-none bg-gray-100 rounded-xl w-6 h-6 flex justify-center items-center hover:bg-gray-200">
+                                    <FontAwesomeIcon
+                                        icon={faPen}
+                                        className="text-sm text-gray-400 hover:text-orange-600"
+                                    />
+                                </button>
+                            )}
                             {!message.deleted && (
                                 <button
                                     className="border-none bg-gray-100 rounded-xl w-6 h-6 flex justify-center items-center hover:bg-gray-200"
