@@ -48,7 +48,7 @@ const ReactionsCount = ({ reactions }: ReactionsCountProps) => {
     return (
         <>
             <div
-                className="absolute right-0 -bottom-5 bg-white shadow-md shadow-gray-200 rounded-lg p-0.5 flex gap-2 items-center cursor-pointer hover:bg-gray"
+                className="absolute right-0 -bottom-5 bg-white border border-gray-100 rounded-lg px-0.5 flex gap-2 items-center cursor-pointer hover:bg-gray-100 z-20"
                 onClick={handleClick}
             >
                 {emojiCountsMapped}

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { MessageItf } from "../../../types/chat";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
+import { formatImageUrl } from "../../../utils/formatImageUrl";
 
 type ImageProps = {
     message: MessageItf;
@@ -35,7 +36,7 @@ const Images = ({ message }: ImageProps) => {
                     .map((img, i) => (
                         <div className="relative w-[80px] h-[80px]" key={i}>
                             <img
-                                src={img}
+                                src={formatImageUrl(img)}
                                 alt={`Preview ${i}`}
                                 className="rounded-xl w-full h-full object-cover shadow-md"
                             />
@@ -47,7 +48,7 @@ const Images = ({ message }: ImageProps) => {
                                         className="absolute border-none w-full h-full rounded-xl bg-black bg-opacity-60 text-white text-xl top-0 left-0"
                                         onClick={handleClickShowAll}
                                     >
-                                        +{message.images!.length - 3}
+                                        +{message.images!.length - 2}
                                     </button>
                                 )}
                         </div>

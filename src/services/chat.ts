@@ -42,9 +42,28 @@ export const updateReadMessagesByChatId = async (
 
 export const sendMessage = async (messageBody: MessageBody) => {
     try {
+        const formData = new FormData();
+
+        for (const [key, value] of Object.entries(messageBody)) {
+            if (key !== "images") {
+                formData.append(key, value);
+            } else {
+                if (messageBody.images && messageBody.images.length > 0) {
+                    for (let i = 0; i < messageBody.images.length; i++) {
+                        formData.append("files[]", messageBody.images[i]);
+                    }
+                }
+            }
+        }
+
         const response = await instance.post(
             `/chats/${messageBody.chat_id}/messages`,
-            messageBody
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }
         );
         return response.data;
     } catch (error) {

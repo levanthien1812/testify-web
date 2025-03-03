@@ -33,7 +33,7 @@ export interface ChatItf {
 export interface MessageBody {
     chat_id: string;
     text: string;
-    images?: string[];
+    images?: FileList;
     readBy?: string[];
     reply_to?: string;
     reactions?: ReactionEmoji[];

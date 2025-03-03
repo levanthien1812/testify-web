@@ -180,6 +180,10 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                 key={message.id}
                 className={`flex flex-col ${
                     isNextMessageDifferentSender ? "mb-2" : "mb-1"
+                } ${
+                    message.reactions && message.reactions.length > 0
+                        ? "mb-5"
+                        : ""
                 } `}
                 ref={ref}
                 onMouseEnter={() => setIsHover(true)}
