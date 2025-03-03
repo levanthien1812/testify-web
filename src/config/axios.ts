@@ -34,7 +34,7 @@ instance.interceptors.response.use(
         const originalRequest = error.config;
 
         if (
-            error.response.status === HttpStatusCode.Unauthorized &&
+            error.response?.status === HttpStatusCode.Unauthorized &&
             !originalRequest._retry
         ) {
             originalRequest._retry = true;

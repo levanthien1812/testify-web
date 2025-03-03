@@ -35,7 +35,8 @@ const InputMessage = () => {
     const [isTyping, setIsTyping] = useState(false);
     const typeingTimeout = useRef<NodeJS.Timeout | null>(null);
 
-    const [images, setImages] = useState<string[]>([]);
+    const [images, setImages] = useState<FileList | null>(null);
+    const [previewURLs, setPreviewURLs] = useState<string[]>([]);
 
     const { mutate: updateReadMessageMutate } = useMutation({
         mutationFn: async () => {
@@ -57,8 +58,10 @@ const InputMessage = () => {
                 const responseData = await sendMessage({
                     chat_id: chat!.id,
                     text: currentMessageText,
-                    images: images,
-                    reply_to: chat?.message_being_replied?.id,
+                    ...(chat!.message_being_replied
+                        ? { reply_to: chat?.message_being_replied?.id }
+                        : {}),
+                    ...(images ? { images } : {}),
                 });
 
                 return responseData.message;
@@ -67,7 +70,8 @@ const InputMessage = () => {
             onSuccess: (data) => {
                 sendMessageWS(data);
                 setCurrentMessageText("");
-                setImages([]);
+                setImages(null);
+                setPreviewURLs([]);
                 updateChatInChats(chat!.id, { message_being_replied: null });
                 setCurrentChat({
                     ...chat,
@@ -79,44 +83,29 @@ const InputMessage = () => {
     const handlePressEnter = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (
             e.key === "Enter" &&
-            (currentMessageText.length > 0 || images.length > 0)
+            (currentMessageText.length > 0 || (images && images.length > 0))
         ) {
             sendMessageMutate();
         }
     };
 
     const handleChangeImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const files = e.target.files;
-        if (files) {
-            const promises: Promise<string>[] = [];
-
-            for (let i = 0; i < files.length; i++) {
-                const file = files[i];
-                const reader = new FileReader();
-
-                const promise = new Promise<string>((resolve) => {
-                    reader.onloadend = () => {
-                        if (typeof reader.result === "string") {
-                            resolve(reader.result);
-                        }
-                    };
-                });
-
-                reader.readAsDataURL(file);
-                promises.push(promise);
-            }
-
-            Promise.all(promises).then((results) => {
-                console.log(results);
-                setImages((prevImages) => [...prevImages, ...results]);
-            });
-        }
+        const selectedFiles = e.target.files;
+        console.log(selectedFiles);
+        if (!selectedFiles) return;
+        setImages(selectedFiles);
     };
 
     const handleRemoveImage = (indexToRemove: number) => {
-        setImages((prevImages) =>
-            prevImages.filter((_, index) => index !== indexToRemove)
-        );
+        if (!images) return;
+
+        const dt = new DataTransfer();
+        for (let i = 0; i < images.length; i++) {
+            if (i !== indexToRemove) {
+                dt.items.add(images[i]);
+            }
+        }
+        setImages(dt.files);
     };
 
     const handleCancelReply = () => {
@@ -141,7 +130,7 @@ const InputMessage = () => {
     };
 
     const handleClickSendBtn = () => {
-        if (currentMessageText.length > 0 || images.length > 0)
+        if (currentMessageText.length > 0 || (images && images.length > 0))
             sendMessageMutate();
     };
 
@@ -167,6 +156,43 @@ const InputMessage = () => {
         }
     }, [inputMessageRef, chat?.message_being_replied]);
 
+    useEffect(() => {
+        if (!images) return;
+
+        const filePromises: Promise<string>[] = [];
+        for (let i = 0; i < images.length; i++) {
+            const file = images[i];
+
+            const promise = new Promise<string>((resolve, reject) => {
+                const reader = new FileReader();
+
+                reader.onload = (event) => {
+                    if (typeof event.target?.result === "string") {
+                        resolve(event.target.result);
+                    } else {
+                        reject("Failed to read file as data URL.");
+                    }
+                };
+
+                reader.onerror = (error) => {
+                    reject(error);
+                };
+
+                reader.readAsDataURL(file);
+            });
+
+            filePromises.push(promise);
+        }
+
+        Promise.all(filePromises)
+            .then((results) => {
+                setPreviewURLs(results);
+            })
+            .catch((error) => {
+                console.error("Error loading previews:", error);
+            });
+    }, [images]);
+
     const senderName = useMemo(() => {
         if (!chat || !chat.message_being_replied) return "";
         return (
@@ -191,9 +217,9 @@ const InputMessage = () => {
 
     return (
         <div className="border-t border-dashed border-gray-300 py-2">
-            {images.length > 0 && (
+            {previewURLs.length > 0 && (
                 <div className={`flex gap-2 py-2 flex-wrap`}>
-                    {images.map((img, index) => (
+                    {previewURLs.map((img, index) => (
                         <div className="relative w-[80px] h-[80px]" key={index}>
                             <img
                                 src={img}
@@ -293,7 +319,7 @@ const InputMessage = () => {
                     onClick={handleClickSendBtn}
                     disabled={
                         isSendingMessage ||
-                        (currentMessageText.length === 0 && images.length === 0)
+                        (currentMessageText.length === 0 && !!!images)
                     }
                 >
                     {isSendingMessage ? "Sending..." : "Send"}
