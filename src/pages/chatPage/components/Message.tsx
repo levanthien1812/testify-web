@@ -36,7 +36,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
             currentChat,
             setCurrentChat,
             socket,
-            removeDeletedMessage,
+            removeMessage,
             updateChatInChats,
         } = useChatSocket();
 
@@ -52,19 +52,16 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                         message.id
                     );
 
-                    return responseData.message;
+                    return responseData;
                 },
                 mutationKey: [MUTATION_KEYS.DELETE_MESSAGE, message.id],
                 onSuccess: (data) => {
-                    setCurrentChat({
-                        ...currentChat,
-                        messages: currentChat!.messages.filter(
-                            (msg) => msg.id !== message.id
-                        ),
-                    } as ChatItf);
                     setIsConfirmingDelete(false);
-                    if (socket) {
+                    if (socket && data?.deleted) {
                         socket.emit(SOCKET_EVENTS.DELETE_MESSAGE, message);
+                    }
+                    if (data.message?.removed_for) {
+                        removeMessage(message.id);
                     }
                 },
             });
@@ -91,10 +88,13 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
         });
 
         const handleClickDeleteMessage = () => {
-            if (!message.deleted) {
+            if (
+                !message.deleted ||
+                (message.remove_for && message.remove_for.includes(user!.id))
+            ) {
                 setIsConfirmingDelete(true);
             } else {
-                removeDeletedMessage(message.id);
+                removeMessage(message.id);
             }
         };
 

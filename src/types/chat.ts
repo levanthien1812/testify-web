@@ -51,6 +51,7 @@ export interface MessageItf {
     images?: string[];
     reply_to?: string;
     reactions?: ReactionEmoji[];
+    remove_for?: string[];
 }
 
 export interface ChatContext {
@@ -65,7 +66,7 @@ export interface ChatContext {
     setChats: (chats: ChatItf[] | null) => void;
     updateChatInChats: (chatId: string, chatBody: Partial<ChatItf>) => void;
     sendMessage: (message: MessageItf) => void;
-    removeDeletedMessage: (messageId: string) => void;
+    removeMessage: (messageId: string) => void;
     emitTyping: (isTyping: boolean, chatId: string) => void;
 }
 
