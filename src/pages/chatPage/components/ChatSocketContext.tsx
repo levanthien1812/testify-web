@@ -51,7 +51,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                         } as ChatItf)
                 );
             }
-            const updatedChats = chats;
+            const updatedChats = JSON.parse(JSON.stringify(chats));
             const chatIndex = chats.findIndex(
                 (ch) => ch.id === message.chat_id
             );
@@ -60,7 +60,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
             if (updatedChats[chatIndex].unread_messages)
                 updatedChats[chatIndex].unread_messages!.push(message);
 
-            setChats(chats);
+            setChats(updatedChats);
         });
 
         socket.on(SOCKET_EVENTS.DELETE_MESSAGE, (message: MessageItf) => {
@@ -80,7 +80,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                         } as ChatItf)
                 );
             }
-            const updatedChats = chats;
+            const updatedChats = JSON.parse(JSON.stringify(chats));
             const chatIndex = chats.findIndex(
                 (ch) => ch.id === message.chat_id
             );
@@ -89,27 +89,29 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                 updatedChats[chatIndex].last_message!.deleted = true;
             }
 
-            setChats(chats);
+            setChats(updatedChats);
         });
 
         socket.on(SOCKET_EVENTS.TYPING, (data) => {
             if (!currentChat || !chats) return;
-            setCurrentChat({
-                ...currentChat,
-                typing_info: {
-                    sender_id: data.senderId,
-                    is_typing: data.isTyping,
-                },
-            } as ChatItf);
-            const updatedChats = chats;
+            if (currentChat.id === data.chat_id) {
+                setCurrentChat({
+                    ...currentChat,
+                    typing_info: {
+                        sender_id: data.sender_id,
+                        is_typing: data.is_typing,
+                    },
+                } as ChatItf);
+            }
+            const updatedChats = JSON.parse(JSON.stringify(chats));
             const chatIndex = chats.findIndex((ch) => ch.id === data.chat_id);
             if (chatIndex < 0) return;
             updatedChats[chatIndex].typing_info = {
-                sender_id: data.senderId,
-                is_typing: data.isTyping,
+                sender_id: data.sender_id,
+                is_typing: data.is_typing,
             };
 
-            setChats(chats);
+            setChats(updatedChats);
         });
 
         socket.on(SOCKET_EVENTS.RECEIVE_REACTION, (data) => {
@@ -121,10 +123,12 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
             if (messageIndex < 0) return;
             updatedMessages[messageIndex].reactions = data.reactions;
 
-            setCurrentChat({
-                ...currentChat,
-                messages: updatedMessages,
-            } as ChatItf);
+            if (currentChat.id === data.chat_id) {
+                setCurrentChat({
+                    ...currentChat,
+                    messages: updatedMessages,
+                } as ChatItf);
+            }
         });
 
         return () => {
@@ -132,6 +136,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
             socket.off(SOCKET_EVENTS.GET_MESSAGE);
             socket.off(SOCKET_EVENTS.DELETE_MESSAGE);
             socket.off(SOCKET_EVENTS.TYPING);
+            socket.off(SOCKET_EVENTS.RECEIVE_REACTION);
         };
     }, [socket, currentChat, chats]);
 
@@ -168,7 +173,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                     if (!socket) return;
                     socket.emit(SOCKET_EVENTS.SEND_MESSAGE, message);
                 },
-                removeDeletedMessage: (messageId: string) => {
+                removeMessage: (messageId: string) => {
                     setCurrentChat(
                         (prev) =>
                             ({
@@ -182,9 +187,9 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                 emitTyping: (isTyping: boolean, chatId: string) => {
                     if (!socket) return;
                     socket.emit(SOCKET_EVENTS.TYPING, {
-                        isTyping,
-                        chatId,
-                        senderId: user?.id,
+                        is_typing: isTyping,
+                        chat_id: chatId,
+                        sender_id: user?.id,
                     });
                 },
             }}
