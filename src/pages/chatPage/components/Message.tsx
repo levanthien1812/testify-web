@@ -117,9 +117,9 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
             deleteMessageMutate();
         };
 
-        useEffect(() => {
-            scrollToMessage(message.id, false);
-        }, [message.id, scrollToMessage]);
+        // useEffect(() => {
+        //     scrollToMessage(message.id, false);
+        // }, [message.id, scrollToMessage]);
 
         const repliedMessage = useMemo(() => {
             if (!currentChat || !message.reply_to) return null;

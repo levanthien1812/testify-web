@@ -86,9 +86,19 @@ export const updateMessage = async (
     }
 };
 
-export const getMessages = async (chatId: string) => {
+export const getMessages = async (
+    chatId: string,
+    query?: { limit?: number; page?: number }
+) => {
     try {
-        const response = await instance.get(`/chats/${chatId}/messages`);
+        let queryString = "";
+        if (query?.limit && query?.page) {
+            queryString = `?limit=${query.limit}&page=${query.page}`;
+        }
+
+        const response = await instance.get(
+            `/chats/${chatId}/messages${queryString}`
+        );
         return response.data;
     } catch (error) {
         throw error;

@@ -34,3 +34,5 @@ export const MESSAGE_EMOJIS: { [key: string]: { text: string; icon: string } } =
             icon: "😮",
         },
     };
+
+export const MESSAGES_PER_FETCH = 40;
