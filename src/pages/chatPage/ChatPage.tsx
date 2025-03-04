@@ -28,7 +28,13 @@ const ChatPage = () => {
         },
         queryKey: ["chats"],
         onSuccess: (data: ChatItf[]) => {
-            setChats(data);
+            setChats(
+                data.map((chat) => ({
+                    ...chat,
+                    scroll_position: 0,
+                    unread_messages: [],
+                }))
+            );
         },
     });
 

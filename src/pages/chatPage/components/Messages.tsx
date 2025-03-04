@@ -9,21 +9,40 @@ import Message from "./Message";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowDown } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "motion/react";
+import { MESSAGES_PER_FETCH } from "../../../config/constants/chat";
 
 const Messages = () => {
-    const { currentChat: chat, setCurrentChat } = useChatSocket();
+    const {
+        currentChat: chat,
+        setCurrentChat,
+        updateChatInChats,
+    } = useChatSocket();
     const messageRefs = useRef<Record<string, HTMLDivElement | null>>({});
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const [isTargetVisible, setIsTargetVisible] = useState(true);
+    const [fetchTimes, setFetchTimes] = useState<number>(1);
+    const sentinelRef = useRef<HTMLDivElement>(null);
 
-    const { isLoading: messagesLoading } = useQuery<MessageItf[]>({
+    const { isLoading: messagesLoading, refetch: refetchMessages } = useQuery<
+        MessageItf[]
+    >({
         queryKey: [QUERY_KEYS.GET_MESSAGES, chat!.id],
         queryFn: async () => {
-            const responseData = await getMessages(chat!.id);
+            const responseData = await getMessages(chat!.id, {
+                page: fetchTimes,
+                limit: MESSAGES_PER_FETCH,
+            });
             return responseData.messages;
         },
         onSuccess: (data) => {
-            setCurrentChat({ ...chat, messages: data } as ChatItf);
+            const updatedMessages = [...data, ...chat!.messages];
+            setCurrentChat({
+                ...chat,
+                messages: updatedMessages,
+            } as ChatItf);
+            updateChatInChats(chat!.id, {
+                messages: updatedMessages,
+            });
         },
         enabled: !!chat && chat.messages.length === 0,
     });
@@ -83,11 +102,17 @@ const Messages = () => {
         scrollToMessage(chat.messages[chat.messages.length - 1].id, false);
     };
 
+    // Show/Hide scroll-to-bottom button when scrolling the messages
     useEffect(() => {
         if (!chat || chat.messages.length === 0) return;
         checkMessageVisibility();
 
         const handleScroll = () => {
+            if (messagesContainerRef.current) {
+                updateChatInChats(chat!.id, {
+                    scroll_position: messagesContainerRef.current.scrollTop,
+                });
+            }
             checkMessageVisibility();
         };
 
@@ -107,6 +132,54 @@ const Messages = () => {
         }
     }, [chat, checkMessageVisibility]);
 
+    // Load more message when scroll up
+    useEffect(() => {
+        if (!chat || chat.messages.length === 0) return;
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (
+                    entries[0].isIntersecting &&
+                    chat!.messages.length >= fetchTimes * MESSAGES_PER_FETCH
+                ) {
+                    console.log("caught");
+                    setFetchTimes((prev) => prev + 1);
+                }
+            },
+            {
+                threshold: 1,
+            }
+        );
+
+        if (messagesContainerRef.current) {
+            messagesContainerRef.current.scrollTop = chat!.scroll_position || 0;
+        }
+        if (messageRefs.current[chat.messages[0].id]) {
+            observer.observe(messageRefs.current[chat.messages[0].id]!);
+        }
+
+        return () => {
+            if (messageRefs.current[chat.messages[0].id]) {
+                observer.unobserve(messageRefs.current[chat.messages[0].id]!);
+            }
+        };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [chat?.messages]);
+
+    useEffect(() => {
+        refetchMessages();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [fetchTimes]);
+
+    useEffect(() => {
+        if (chat && chat.messages.length > 0 && chat.scroll_position === 0) {
+            scrollToMessage(
+                chat!.messages[chat!.messages.length - 1].id,
+                false
+            );
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [chat]);
+
     return (
         <div
             className="grow py-2 custom-scrollbar-y pe-1"
@@ -119,7 +192,7 @@ const Messages = () => {
                 />
             )}
             <div className="relative">
-                <div>
+                <div ref={sentinelRef}>
                     {chat &&
                         chat.messages &&
                         chat.messages.map((message, index) => (

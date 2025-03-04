@@ -3,7 +3,7 @@ import { RootState } from "../../../stores/rootState";
 import { useChatSocket } from "./ChatSocketContext";
 import { format } from "date-fns";
 import { ChatItf } from "../../../types/chat";
-import { useCallback, useMemo } from "react";
+import { useCallback, useMemo, useRef } from "react";
 
 const ChatCard = ({ chat }: { chat: ChatItf }) => {
     const user = useSelector((state: RootState) => state.auth.user);
@@ -11,14 +11,13 @@ const ChatCard = ({ chat }: { chat: ChatItf }) => {
         useChatSocket();
 
     const handleClickCard = () => {
+        console.log(chat.scroll_position);
         if (currentChat?.id === chat.id) return;
         setCurrentChat({
             ...chat,
             messages:
                 chat.messages && chat.messages.length > 0 ? chat.messages : [],
-        });
-        updateChatInChats(chat.id, {
-            unread_messages: [],
+            scroll_position: chat.scroll_position || 0,
         });
     };
 

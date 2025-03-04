@@ -1,5 +1,6 @@
 import { Socket } from "socket.io-client";
 import { userItf } from "./types";
+import { MutableRefObject } from "react";
 
 export interface ChatBodyItf {
     members: string[];
@@ -28,6 +29,7 @@ export interface ChatItf {
         sender_id: string;
         is_typing: boolean;
     };
+    scroll_position?: number;
 }
 
 export interface MessageBody {
