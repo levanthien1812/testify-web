@@ -11,7 +11,6 @@ const ChatCard = ({ chat }: { chat: ChatItf }) => {
         useChatSocket();
 
     const handleClickCard = () => {
-        console.log(chat.scroll_position);
         if (currentChat?.id === chat.id) return;
         setCurrentChat({
             ...chat,

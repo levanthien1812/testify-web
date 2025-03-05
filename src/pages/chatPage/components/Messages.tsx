@@ -121,27 +121,27 @@ const Messages = () => {
                 "scroll",
                 handleScroll
             );
-            return () => {
-                if (messagesContainerRef.current) {
-                    messagesContainerRef.current.removeEventListener(
-                        "scroll",
-                        handleScroll
-                    );
-                }
-            };
         }
+        return () => {
+            if (messagesContainerRef.current) {
+                messagesContainerRef.current.removeEventListener(
+                    "scroll",
+                    handleScroll
+                );
+            }
+        };
     }, [chat, checkMessageVisibility]);
 
     // Load more message when scroll up
     useEffect(() => {
         if (!chat || chat.messages.length === 0) return;
+
         const observer = new IntersectionObserver(
             (entries) => {
                 if (
                     entries[0].isIntersecting &&
                     chat!.messages.length >= fetchTimes * MESSAGES_PER_FETCH
                 ) {
-                    console.log("caught");
                     setFetchTimes((prev) => prev + 1);
                 }
             },
@@ -150,15 +150,18 @@ const Messages = () => {
             }
         );
 
-        if (messagesContainerRef.current) {
-            messagesContainerRef.current.scrollTop = chat!.scroll_position || 0;
-        }
-        if (messageRefs.current[chat.messages[0].id]) {
+        if (
+            chat.messages.length > 0 &&
+            messageRefs.current[chat.messages[0].id]
+        ) {
             observer.observe(messageRefs.current[chat.messages[0].id]!);
         }
 
         return () => {
-            if (messageRefs.current[chat.messages[0].id]) {
+            if (
+                chat.messages.length > 0 &&
+                messageRefs.current[chat.messages[0].id]
+            ) {
                 observer.unobserve(messageRefs.current[chat.messages[0].id]!);
             }
         };
@@ -166,19 +169,28 @@ const Messages = () => {
     }, [chat?.messages]);
 
     useEffect(() => {
+        if (!chat || chat.messages.length === 0) return;
+
+        if (messagesContainerRef.current) {
+            if (chat.scroll_position) {
+                messagesContainerRef.current.scrollTop = chat.scroll_position;
+                setCurrentChat({ ...chat, scroll_position: undefined });
+            } else if (!chat.is_accessed) {
+                messagesContainerRef.current.scrollTop =
+                    messagesContainerRef.current.scrollHeight;
+                setCurrentChat({ ...chat, is_accessed: true } as ChatItf);
+            } else {
+                messagesContainerRef.current.scrollTop +=
+                    messagesContainerRef.current.scrollHeight / 6;
+            }
+        }
+    }, [chat?.messages]);
+
+    useEffect(() => {
+        if (fetchTimes === 1) return;
         refetchMessages();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [fetchTimes]);
-
-    useEffect(() => {
-        if (chat && chat.messages.length > 0 && chat.scroll_position === 0) {
-            scrollToMessage(
-                chat!.messages[chat!.messages.length - 1].id,
-                false
-            );
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [chat]);
 
     return (
         <div
