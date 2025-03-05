@@ -30,6 +30,7 @@ export interface ChatItf {
         is_typing: boolean;
     };
     scroll_position?: number;
+    is_accessed?: boolean;
 }
 
 export interface MessageBody {

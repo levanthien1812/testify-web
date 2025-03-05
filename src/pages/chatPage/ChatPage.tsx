@@ -33,6 +33,7 @@ const ChatPage = () => {
                     ...chat,
                     scroll_position: 0,
                     unread_messages: [],
+                    is_accessed: false,
                 }))
             );
         },
