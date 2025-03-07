@@ -3,16 +3,16 @@ import Modal, {
     ModalBody,
     ModalFooter,
     ModalHeader,
-} from "../../../components/modals/Modal";
-import Button from "../../../components/elements/Button";
+} from "../../../../components/modals/Modal";
+import Button from "../../../../components/elements/Button";
 import { useMutation, useQuery } from "react-query";
-import { userItf } from "../../../types/types";
-import { getTakers } from "../../../services/user";
+import { userItf } from "../../../../types/types";
+import { getTakers } from "../../../../services/user";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
-import TakersChoser from "../../createTestPage.tsx/components/testTakers/TakersChoser";
-import { createChats } from "../../../services/chat";
-import { CHAT_OPTIONS } from "../../../config/constants/chat";
+import TakersChoser from "../../../createTestPage.tsx/components/testTakers/TakersChoser";
+import { createChats } from "../../../../services/chat";
+import { CHAT_OPTIONS } from "../../../../config/constants/chat";
 
 const AddChat = ({
     onClose,

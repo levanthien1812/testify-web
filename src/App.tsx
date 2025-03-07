@@ -81,11 +81,25 @@ function App() {
                         },
                         {
                             path: "/chat",
-                            element: (
-                                <ChatSocketProvider>
-                                    <ChatPage />
-                                </ChatSocketProvider>
-                            ),
+
+                            children: [
+                                {
+                                    index: true,
+                                    element: (
+                                        <ChatSocketProvider>
+                                            <ChatPage />
+                                        </ChatSocketProvider>
+                                    ),
+                                },
+                                {
+                                    path: ":chatId",
+                                    element: (
+                                        <ChatSocketProvider>
+                                            <ChatPage />
+                                        </ChatSocketProvider>
+                                    ),
+                                },
+                            ],
                         },
                     ],
                 },

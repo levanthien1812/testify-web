@@ -1,24 +1,25 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
-import Input from "../../../components/elements/Input";
-import Button from "../../../components/elements/Button";
+import Input from "../../../../components/elements/Input";
+import Button from "../../../../components/elements/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faFaceSmile,
     faImage,
+    faPaperPlane,
     faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import { useMutation } from "react-query";
 import {
     sendMessage,
     updateReadMessagesByChatId,
-} from "../../../services/chat";
+} from "../../../../services/chat";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../stores/rootState";
+import { RootState } from "../../../../stores/rootState";
 import EmojiPicker from "emoji-picker-react";
-import { useChatSocket } from "./ChatSocketContext";
-import { ChatItf } from "../../../types/chat";
-import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
-import { CLEAR_TYPING_INDICATOR_TIMEOUT } from "../../../config/constants/chat";
+import { useChatSocket } from "../ChatSocketContext";
+import { ChatItf } from "../../../../types/chat";
+import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
+import { CLEAR_TYPING_INDICATOR_TIMEOUT } from "../../../../config/constants/chat";
 
 const InputMessage = () => {
     const {
@@ -37,20 +38,6 @@ const InputMessage = () => {
 
     const [images, setImages] = useState<FileList | null>(null);
     const [previewURLs, setPreviewURLs] = useState<string[]>([]);
-
-    const { mutate: updateReadMessageMutate } = useMutation({
-        mutationFn: async () => {
-            const responseData = await updateReadMessagesByChatId(chat!.id, [
-                user!.id,
-            ]);
-
-            return responseData.message;
-        },
-        mutationKey: [MUTATION_KEYS.UPDATE_MESSAGE, chat!.id],
-        onSuccess: (data) => {
-            setCurrentChat({ ...chat, unread_messages: [] } as ChatItf);
-        },
-    });
 
     const { mutate: sendMessageMutate, isLoading: isSendingMessage } =
         useMutation({
@@ -133,13 +120,6 @@ const InputMessage = () => {
         if (currentMessageText.length > 0 || (images && images.length > 0))
             sendMessageMutate();
     };
-
-    useEffect(() => {
-        if (chat && chat.messages?.length > 0) {
-            updateReadMessageMutate();
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [updateReadMessageMutate]);
 
     const getSender = useCallback(
         (sender_id: string) => {
@@ -321,8 +301,9 @@ const InputMessage = () => {
                         isSendingMessage ||
                         (currentMessageText.length === 0 && !!!images)
                     }
+                    className="px-2"
                 >
-                    {isSendingMessage ? "Sending..." : "Send"}
+                    <FontAwesomeIcon icon={faPaperPlane} />
                 </Button>
             </div>
         </div>

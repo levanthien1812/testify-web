@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
-import { ReactionEmoji } from "../../../types/chat";
-import { MESSAGE_EMOJIS } from "../../../config/constants/chat";
+import { ReactionEmoji } from "../../../../types/chat";
+import { MESSAGE_EMOJIS } from "../../../../config/constants/chat";
 import DetailReactions from "./DetailReactions";
 
 type ReactionsCountProps = {

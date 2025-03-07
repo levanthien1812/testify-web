@@ -29,15 +29,22 @@ export interface ChatItf {
         sender_id: string;
         is_typing: boolean;
     };
+    fetch_times?: number;
     scroll_position?: number;
     is_accessed?: boolean;
+    search_string?: string;
+    search_result_no?: number;
+    search_index?: number;
+    search_result_total?: number;
+    prev_search_message_id?: string;
+    curr_search_message_id?: string;
 }
 
 export interface MessageBody {
     chat_id: string;
     text: string;
     images?: FileList;
-    readBy?: string[];
+    read_by?: string[];
     reply_to?: string;
     reactions?: ReactionEmoji[];
 }
@@ -55,6 +62,8 @@ export interface MessageItf {
     reply_to?: string;
     reactions?: ReactionEmoji[];
     remove_for?: string[];
+    read_by: string[];
+    is_read: boolean;
 }
 
 export interface ChatContext {
@@ -71,6 +80,8 @@ export interface ChatContext {
     sendMessage: (message: MessageItf) => void;
     removeMessage: (messageId: string) => void;
     emitTyping: (isTyping: boolean, chatId: string) => void;
+    findSearchResult: () => void;
+    incrementFetchTimes: () => void;
 }
 
 export interface Emoji {

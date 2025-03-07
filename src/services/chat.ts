@@ -26,14 +26,11 @@ export const createChats = async (
     }
 };
 
-export const updateReadMessagesByChatId = async (
-    chatId: string,
-    readBy: string[]
-) => {
+export const updateReadMessagesByChatId = async (chatId: string) => {
     try {
-        const response = await instance.patch(`/chats/${chatId}/messages`, {
-            readBy,
-        });
+        const response = await instance.patch(
+            `/chats/${chatId}/messages/update-readby`
+        );
         return response.data;
     } catch (error) {
         throw error;

@@ -4,6 +4,7 @@ import { ChatContext, ChatItf, MessageItf } from "../../../types/chat";
 import { SOCKET_EVENTS } from "../../../config/constants/socket";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
+import { getNum } from "../../../utils/primitives";
 
 const ChatSocketContext = React.createContext<ChatContext | undefined>(
     undefined
@@ -57,8 +58,14 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
             );
             if (chatIndex < 0) return;
             updatedChats[chatIndex].last_message = message;
-            if (updatedChats[chatIndex].unread_messages)
+            if (
+                updatedChats[chatIndex].unread_messages &&
+                currentChat?.id !== message.chat_id
+            ) {
                 updatedChats[chatIndex].unread_messages!.push(message);
+            } else {
+                updatedChats[chatIndex].unread_messages = [];
+            }
 
             setChats(updatedChats);
         });
@@ -131,6 +138,8 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
             }
         });
 
+        socket.on(SOCKET_EVENTS.READ_MESSAGES, (data) => {});
+
         return () => {
             socket.off(SOCKET_EVENTS.SEND_ONLINE_USERS);
             socket.off(SOCKET_EVENTS.GET_MESSAGE);
@@ -191,6 +200,74 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                         chat_id: chatId,
                         sender_id: user?.id,
                     });
+                },
+                findSearchResult() {
+                    if (
+                        !currentChat ||
+                        !currentChat.search_index ||
+                        !currentChat.search_string ||
+                        currentChat.search_string.trim().length <= 1
+                    )
+                        return;
+                    const mappedMessages = currentChat.messages.map((msg) =>
+                        msg.text.toLowerCase()
+                    );
+
+                    const totalResult = mappedMessages.filter((msg) =>
+                        msg.includes(currentChat.search_string!)
+                    ).length;
+
+                    let isResultFound = false;
+
+                    if (currentChat.search_string.length >= 2) {
+                        for (let i = currentChat.search_index; i >= 0; i--) {
+                            if (
+                                mappedMessages[i] &&
+                                mappedMessages[i].includes(
+                                    currentChat.search_string.toLowerCase()
+                                )
+                            ) {
+                                isResultFound = true;
+                                setCurrentChat({
+                                    ...currentChat,
+                                    ...(currentChat.search_index <
+                                    currentChat.messages.length - 1
+                                        ? {
+                                              prev_search_message_id:
+                                                  currentChat.messages[
+                                                      currentChat.search_index +
+                                                          1
+                                                  ].id,
+                                          }
+                                        : {}),
+                                    curr_search_message_id:
+                                        currentChat.messages[i].id,
+                                    search_index: i - 1,
+                                    search_result_no:
+                                        getNum(currentChat.search_result_no) +
+                                        1,
+                                    search_result_total: totalResult,
+                                });
+                                break;
+                            }
+                        }
+                        if (!isResultFound) {
+                            setCurrentChat({
+                                ...currentChat,
+                                fetch_times:
+                                    getNum(currentChat.fetch_times) + 1,
+                            });
+                        }
+                    }
+                },
+                incrementFetchTimes() {
+                    if (currentChat && currentChat.fetch_times) {
+                        setCurrentChat({
+                            ...currentChat,
+                            is_accessed: true,
+                            fetch_times: currentChat.fetch_times + 1,
+                        });
+                    }
                 },
             }}
         >

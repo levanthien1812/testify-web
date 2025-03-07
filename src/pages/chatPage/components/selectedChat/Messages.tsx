@@ -1,26 +1,33 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { useQuery } from "react-query";
-import { getMessages } from "../../../services/chat";
-import { useChatSocket } from "./ChatSocketContext";
-import { ChatItf, MessageItf } from "../../../types/chat";
-import { QUERY_KEYS } from "../../../config/constants/queryMutationKeys";
-import Loading from "../../../components/loadings/Loading";
+import { useMutation, useQuery } from "react-query";
+import {
+    getMessages,
+    updateReadMessagesByChatId,
+} from "../../../../services/chat";
+import { useChatSocket } from "../ChatSocketContext";
+import { ChatItf, MessageItf } from "../../../../types/chat";
+import {
+    MUTATION_KEYS,
+    QUERY_KEYS,
+} from "../../../../config/constants/queryMutationKeys";
+import Loading from "../../../../components/loadings/Loading";
 import Message from "./Message";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowDown } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "motion/react";
-import { MESSAGES_PER_FETCH } from "../../../config/constants/chat";
+import { MESSAGES_PER_FETCH } from "../../../../config/constants/chat";
+import { getNum } from "../../../../utils/primitives";
 
 const Messages = () => {
     const {
         currentChat: chat,
         setCurrentChat,
         updateChatInChats,
+        incrementFetchTimes,
     } = useChatSocket();
     const messageRefs = useRef<Record<string, HTMLDivElement | null>>({});
     const messagesContainerRef = useRef<HTMLDivElement>(null);
     const [isTargetVisible, setIsTargetVisible] = useState(true);
-    const [fetchTimes, setFetchTimes] = useState<number>(1);
     const sentinelRef = useRef<HTMLDivElement>(null);
 
     const { isLoading: messagesLoading, refetch: refetchMessages } = useQuery<
@@ -29,7 +36,7 @@ const Messages = () => {
         queryKey: [QUERY_KEYS.GET_MESSAGES, chat!.id],
         queryFn: async () => {
             const responseData = await getMessages(chat!.id, {
-                page: fetchTimes,
+                page: chat?.fetch_times,
                 limit: MESSAGES_PER_FETCH,
             });
             return responseData.messages;
@@ -39,16 +46,38 @@ const Messages = () => {
             setCurrentChat({
                 ...chat,
                 messages: updatedMessages,
+                search_index:
+                    data.length - 1 > 0
+                        ? data.length + getNum(chat?.search_index)
+                        : 0,
             } as ChatItf);
             updateChatInChats(chat!.id, {
                 messages: updatedMessages,
             });
         },
-        enabled: !!chat && chat.messages.length === 0,
+        enabled: false,
+    });
+
+    const { mutate: updateReadMessageMutate } = useMutation({
+        mutationFn: async () => {
+            const responseData = await updateReadMessagesByChatId(chat!.id);
+
+            return responseData.message;
+        },
+        mutationKey: [MUTATION_KEYS.UPDATE_MESSAGE, chat!.id],
+        onSuccess: (data) => {
+            setCurrentChat({ ...chat, unread_messages: [] } as ChatItf);
+        },
     });
 
     const scrollToMessage = useCallback(
-        (messageId: string, focus: boolean = true) => {
+        (
+            messageId: string,
+            options: { focus: boolean; clearFocus: boolean } = {
+                focus: false,
+                clearFocus: false,
+            }
+        ) => {
             if (messageRefs.current) {
                 const targetMessage = messageRefs.current[messageId];
                 if (!targetMessage) return;
@@ -59,15 +88,17 @@ const Messages = () => {
                 });
                 const targetMessageText =
                     targetMessage.querySelector("#message-text");
-                if (!targetMessageText || !focus) return;
+                if (!targetMessageText || !options.focus) return;
 
                 const focusClasses = ["ring-2", "ring-orange-600"];
 
                 targetMessageText.classList.add(...focusClasses);
 
-                setTimeout(() => {
-                    targetMessageText.classList.remove(...focusClasses);
-                }, 1500);
+                if (options.clearFocus) {
+                    setTimeout(() => {
+                        targetMessageText.classList.remove(...focusClasses);
+                    }, 1500);
+                }
             }
         },
         [messageRefs]
@@ -99,7 +130,7 @@ const Messages = () => {
 
     const handleClickScrollDown = () => {
         if (!chat || chat.messages.length === 0) return;
-        scrollToMessage(chat.messages[chat.messages.length - 1].id, false);
+        scrollToMessage(chat.messages[chat.messages.length - 1].id);
     };
 
     // Show/Hide scroll-to-bottom button when scrolling the messages
@@ -140,9 +171,10 @@ const Messages = () => {
             (entries) => {
                 if (
                     entries[0].isIntersecting &&
-                    chat!.messages.length >= fetchTimes * MESSAGES_PER_FETCH
+                    chat!.messages.length >=
+                        chat.fetch_times! * MESSAGES_PER_FETCH
                 ) {
-                    setFetchTimes((prev) => prev + 1);
+                    incrementFetchTimes();
                 }
             },
             {
@@ -187,10 +219,45 @@ const Messages = () => {
     }, [chat?.messages]);
 
     useEffect(() => {
-        if (fetchTimes === 1) return;
         refetchMessages();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [fetchTimes]);
+    }, [chat?.fetch_times]);
+
+    useEffect(() => {
+        if (chat && chat.messages?.length > 0) {
+            updateReadMessageMutate();
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [chat?.id]);
+
+    useEffect(() => {
+        if (
+            !chat ||
+            !chat.search_index ||
+            !chat.search_string ||
+            !chat.curr_search_message_id ||
+            chat.search_string.trim().length <= 1
+        )
+            return;
+
+        if (
+            chat.prev_search_message_id &&
+            messageRefs.current[chat.prev_search_message_id]
+        ) {
+            const messageTextToBlur =
+                messageRefs.current[chat.prev_search_message_id]?.querySelector(
+                    "#message-text"
+                );
+
+            messageTextToBlur?.classList.remove("ring-2", "ring-600-orange");
+        }
+
+        scrollToMessage(chat.curr_search_message_id, {
+            focus: true,
+            clearFocus: false,
+        });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [chat?.search_result_no]);
 
     return (
         <div
