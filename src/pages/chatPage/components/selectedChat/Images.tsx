@@ -1,8 +1,8 @@
 import React, { useState } from "react";
-import { MessageItf } from "../../../types/chat";
+import { MessageItf } from "../../../../types/chat";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../stores/rootState";
-import { formatImageUrl } from "../../../utils/formatImageUrl";
+import { RootState } from "../../../../stores/rootState";
+import { formatImageUrl } from "../../../../utils/formatImageUrl";
 
 type ImageProps = {
     message: MessageItf;

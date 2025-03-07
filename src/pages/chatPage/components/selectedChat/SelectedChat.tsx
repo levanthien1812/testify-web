@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faChevronLeft,
@@ -6,9 +6,9 @@ import {
     faCircle,
 } from "@fortawesome/free-solid-svg-icons";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../stores/rootState";
-import { useChatSocket } from "./ChatSocketContext";
-import ChatInfo from "./ChatInfo";
+import { RootState } from "../../../../stores/rootState";
+import { useChatSocket } from "../ChatSocketContext";
+import ChatInfo from "../chatInfo/ChatInfo";
 import Messages from "./Messages";
 import InputMessage from "./InputMessage";
 

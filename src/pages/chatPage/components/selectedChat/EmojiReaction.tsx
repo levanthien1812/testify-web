@@ -1,5 +1,5 @@
 import React from "react";
-import { MESSAGE_EMOJIS } from "../../../config/constants/chat";
+import { MESSAGE_EMOJIS } from "../../../../config/constants/chat";
 import { AnimatePresence, motion } from "framer-motion";
 
 type EmojiReactionProps = {

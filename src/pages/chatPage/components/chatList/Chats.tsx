@@ -1,5 +1,5 @@
 import ChatCard from "./ChatCard";
-import { useChatSocket } from "./ChatSocketContext";
+import { useChatSocket } from "../ChatSocketContext";
 
 const Chats = () => {
     const { chats } = useChatSocket();

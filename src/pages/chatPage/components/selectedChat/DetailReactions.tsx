@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect } from "react";
-import InfoModal from "../../../components/modals/InfoModal";
-import { ReactionEmoji } from "../../../types/chat";
-import { MESSAGE_EMOJIS } from "../../../config/constants/chat";
-import { useChatSocket } from "./ChatSocketContext";
-import { userItf } from "../../../types/types";
+import InfoModal from "../../../../components/modals/InfoModal";
+import { ReactionEmoji } from "../../../../types/chat";
+import { MESSAGE_EMOJIS } from "../../../../config/constants/chat";
+import { useChatSocket } from "../ChatSocketContext";
+import { userItf } from "../../../../types/types";
 
 type DetailReactionsProps = {
     onClose: () => void;

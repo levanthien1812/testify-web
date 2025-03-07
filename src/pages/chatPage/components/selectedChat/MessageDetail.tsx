@@ -1,6 +1,6 @@
 import React from "react";
-import InfoModal from "../../../components/modals/InfoModal";
-import { MessageItf } from "../../../types/chat";
+import InfoModal from "../../../../components/modals/InfoModal";
+import { MessageItf } from "../../../../types/chat";
 import { format } from "date-fns";
 
 type MessageDetailProps = {

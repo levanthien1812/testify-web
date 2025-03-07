@@ -1,8 +1,8 @@
 import { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
-import { ChatItf, MessageBody, MessageItf } from "../../../types/chat";
+import { ChatItf, MessageBody, MessageItf } from "../../../../types/chat";
 import { useSelector } from "react-redux";
-import { RootState } from "../../../stores/rootState";
-import { useChatSocket } from "./ChatSocketContext";
+import { RootState } from "../../../../stores/rootState";
+import { useChatSocket } from "../ChatSocketContext";
 import { format } from "date-fns";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
@@ -12,12 +12,12 @@ import {
     faTrash,
 } from "@fortawesome/free-solid-svg-icons";
 import { useMutation } from "react-query";
-import { deleteMessage, updateMessage } from "../../../services/chat";
-import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
-import ConfirmModal from "../../../components/modals/ConfirmModal";
-import { SOCKET_EVENTS } from "../../../config/constants/socket";
+import { deleteMessage, updateMessage } from "../../../../services/chat";
+import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
+import ConfirmModal from "../../../../components/modals/ConfirmModal";
+import { SOCKET_EVENTS } from "../../../../config/constants/socket";
 import MessageDetail from "./MessageDetail";
-import { isEmojiOnly } from "../../../utils/message";
+import { isEmojiOnly } from "../../../../utils/message";
 import EmojiReaction from "./EmojiReaction";
 import Images from "./Images";
 import ReactionsCount from "./ReactionsCount";
@@ -26,7 +26,10 @@ type MessageProps = {
     message: MessageItf;
     index: number;
     onClickReply?: () => void;
-    scrollToMessage: (id: string, focus?: boolean) => void;
+    scrollToMessage: (
+        id: string,
+        options?: { focus: boolean; clearFocus: boolean }
+    ) => void;
 };
 
 const Message = forwardRef<HTMLDivElement, MessageProps>(
@@ -258,7 +261,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                                     {message.text.length > 0 &&
                                         !isEmojiOnly(message.text) && (
                                             <div
-                                                className={`text-white rounded-xl py-1 px-4 leading-tight`}
+                                                className={`text-white rounded-xl py-1 px-4 leading-tight focus:ring-2 focus:ring-orange-600`}
                                                 style={{
                                                     backgroundColor:
                                                         currentChat!.appearances

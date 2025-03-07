@@ -1,14 +1,13 @@
 import { useSelector } from "react-redux";
-import { RootState } from "../../../stores/rootState";
-import { useChatSocket } from "./ChatSocketContext";
+import { RootState } from "../../../../stores/rootState";
+import { useChatSocket } from "../ChatSocketContext";
 import { format } from "date-fns";
-import { ChatItf } from "../../../types/chat";
-import { useCallback, useMemo, useRef } from "react";
+import { ChatItf } from "../../../../types/chat";
+import { useCallback, useMemo } from "react";
 
 const ChatCard = ({ chat }: { chat: ChatItf }) => {
     const user = useSelector((state: RootState) => state.auth.user);
-    const { onlineUsers, setCurrentChat, updateChatInChats, currentChat } =
-        useChatSocket();
+    const { onlineUsers, setCurrentChat, currentChat } = useChatSocket();
 
     const handleClickCard = () => {
         if (currentChat?.id === chat.id) return;
@@ -17,6 +16,7 @@ const ChatCard = ({ chat }: { chat: ChatItf }) => {
             messages:
                 chat.messages && chat.messages.length > 0 ? chat.messages : [],
             scroll_position: chat.scroll_position || 0,
+            search_string: "",
         });
     };
 
