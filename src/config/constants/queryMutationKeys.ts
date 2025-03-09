@@ -28,6 +28,7 @@ const MUTATION_KEYS = {
     SEND_MESSAGE: "send-message",
     UPDATE_MESSAGE: "update-message",
     DELETE_MESSAGE: "delete-message",
+    UPDATE_CHAT: "update-chat",
 };
 
 export { QUERY_KEYS, MUTATION_KEYS };

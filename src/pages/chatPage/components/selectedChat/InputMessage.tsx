@@ -9,10 +9,7 @@ import {
     faTimes,
 } from "@fortawesome/free-solid-svg-icons";
 import { useMutation } from "react-query";
-import {
-    sendMessage,
-    updateReadMessagesByChatId,
-} from "../../../../services/chat";
+import { sendMessage } from "../../../../services/chat";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../../stores/rootState";
 import EmojiPicker from "emoji-picker-react";

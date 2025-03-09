@@ -11,6 +11,18 @@ export const getChats = async () => {
     }
 };
 
+export const updateChat = async (
+    chatId: string,
+    chatBody: Partial<ChatBodyItf>
+) => {
+    try {
+        const response = await instance.patch(`chat/${chatId}`, chatBody);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 export const createChats = async (
     chatsBody: ChatBodyItf,
     option: CHAT_OPTIONS
@@ -106,6 +118,22 @@ export const deleteMessage = async (chatId: string, messageId: string) => {
     try {
         const response = await instance.delete(
             `/chats/${chatId}/messages/${messageId}`
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updaetNickname = async (
+    chatId: string,
+    memberId: string,
+    nickname: string
+) => {
+    try {
+        const response = await instance.patch(
+            `chats/${chatId}/update-nickname`,
+            { memberId, nickname }
         );
         return response.data;
     } catch (error) {

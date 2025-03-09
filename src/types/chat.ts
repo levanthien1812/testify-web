@@ -82,6 +82,12 @@ export interface ChatContext {
     emitTyping: (isTyping: boolean, chatId: string) => void;
     findSearchResult: () => void;
     incrementFetchTimes: () => void;
+    cancelSearching: () => void;
+    updateNickname: (
+        chatId: string,
+        memberId: string,
+        nickname: string
+    ) => void;
 }
 
 export interface Emoji {

@@ -3,7 +3,7 @@ import { RootState } from "../../../../stores/rootState";
 import { useChatSocket } from "../ChatSocketContext";
 import { format } from "date-fns";
 import { ChatItf } from "../../../../types/chat";
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 
 const ChatCard = ({ chat }: { chat: ChatItf }) => {
     const user = useSelector((state: RootState) => state.auth.user);
@@ -47,6 +47,10 @@ const ChatCard = ({ chat }: { chat: ChatItf }) => {
         );
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [chat?.last_message?.sender_id, getSender]);
+
+    // useEffect(() => {
+    //     updateChatName(chat.id);
+    // }, [updateChatName, chat.id]);
 
     return (
         <div

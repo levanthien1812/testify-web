@@ -161,6 +161,7 @@ const Messages = () => {
                 );
             }
         };
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [chat, checkMessageVisibility]);
 
     // Load more message when scroll up
@@ -231,14 +232,31 @@ const Messages = () => {
     }, [chat?.id]);
 
     useEffect(() => {
-        if (
-            !chat ||
-            !chat.search_index ||
-            !chat.search_string ||
-            !chat.curr_search_message_id ||
-            chat.search_string.trim().length <= 1
-        )
+        if (!chat || !chat.search_index) return;
+
+        if (chat.search_result_no === 0 || chat.search_string?.length === 0) {
+            if (
+                chat.curr_search_message_id &&
+                messageRefs.current[chat.curr_search_message_id]
+            ) {
+                const messageTextToBlur =
+                    messageRefs.current[
+                        chat.curr_search_message_id
+                    ]?.querySelector("#message-text");
+
+                messageTextToBlur?.classList.remove(
+                    "ring-2",
+                    "ring-600-orange"
+                );
+            }
+
+            setCurrentChat({
+                ...chat,
+                prev_search_message_id: undefined,
+                curr_search_message_id: undefined,
+            });
             return;
+        }
 
         if (
             chat.prev_search_message_id &&
@@ -252,10 +270,12 @@ const Messages = () => {
             messageTextToBlur?.classList.remove("ring-2", "ring-600-orange");
         }
 
-        scrollToMessage(chat.curr_search_message_id, {
-            focus: true,
-            clearFocus: false,
-        });
+        if (chat.curr_search_message_id) {
+            scrollToMessage(chat.curr_search_message_id, {
+                focus: true,
+                clearFocus: false,
+            });
+        }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [chat?.search_result_no]);
 
