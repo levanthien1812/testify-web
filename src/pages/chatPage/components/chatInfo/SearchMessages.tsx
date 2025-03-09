@@ -1,11 +1,14 @@
 import React, { ChangeEvent, useEffect, useRef } from "react";
 import Input from "../../../../components/elements/Input";
 import { useChatSocket } from "../ChatSocketContext";
-import { debounce } from "../../../../utils/time";
 import { ChatItf } from "../../../../types/chat";
 import Button from "../../../../components/elements/Button";
 
-const SearchMessages = () => {
+type SearchMessagesProps = {
+    onClose: () => void;
+};
+
+const SearchMessages = ({ onClose }: SearchMessagesProps) => {
     const { currentChat, setCurrentChat, findSearchResult } = useChatSocket();
     const handleClickNext = () => {
         findSearchResult();
@@ -37,6 +40,7 @@ const SearchMessages = () => {
 
     return (
         <div>
+            <p className="text-lg">Search messages in chats</p>
             <Input
                 placeholder="Search in chat"
                 sizing="sm"
@@ -45,15 +49,18 @@ const SearchMessages = () => {
                 ref={inputRef}
                 onKeyDown={handlePressEnter}
             />
-            {currentChat?.search_result_no && (
+            {currentChat?.search_result_no! > 0 && (
                 <p className="text-sm text-right">
                     {currentChat?.search_result_no}/
-                    {currentChat.search_result_total} results found
+                    {currentChat?.search_result_total} results found
                 </p>
             )}
             <div className="flex gap-1 mt-1">
                 <Button size="sm" onClick={handleClickNext}>
                     {currentChat?.search_result_no! > 1 ? "Find next" : "Find"}
+                </Button>
+                <Button size="sm" onClick={onClose} primary={false}>
+                    Cancel
                 </Button>
             </div>
         </div>

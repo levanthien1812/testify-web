@@ -5,6 +5,7 @@ import { SOCKET_EVENTS } from "../../../config/constants/socket";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
 import { getNum } from "../../../utils/primitives";
+import { getChatName } from "../../../utils/chat";
 
 const ChatSocketContext = React.createContext<ChatContext | undefined>(
     undefined
@@ -268,6 +269,45 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                             fetch_times: currentChat.fetch_times + 1,
                         });
                     }
+                },
+                cancelSearching() {
+                    if (currentChat) {
+                        setCurrentChat({
+                            ...currentChat,
+                            search_index: currentChat.messages.length - 1,
+                            search_result_no: 0,
+                            search_result_total: 0,
+                            search_string: "",
+                        });
+                    }
+                },
+                updateNickname(chatId, memberId, nickname) {
+                    if (!currentChat || !chats) return;
+
+                    const updatedMembers = currentChat.members.map((member) => {
+                        if (member.member.id === memberId)
+                            return { ...member, nick_name: nickname };
+                        return member;
+                    });
+
+                    const updatedChatname = getChatName(updatedMembers, user!);
+
+                    setCurrentChat({
+                        ...currentChat,
+                        members: updatedMembers,
+                        chat_name: updatedChatname,
+                    });
+
+                    const updatedChats = chats.map((chat) => {
+                        if (chat.id === chatId)
+                            return {
+                                ...chat,
+                                members: updatedMembers,
+                                chat_name: updatedChatname,
+                            };
+                        return chat;
+                    });
+                    setChats(updatedChats);
                 },
             }}
         >

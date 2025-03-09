@@ -12,6 +12,7 @@ import { RootState } from "../../stores/rootState";
 import Loading from "../../components/loadings/Loading";
 import { SOCKET_EVENTS } from "../../config/constants/socket";
 import { useNavigate, useParams } from "react-router";
+import { getChatName } from "../../utils/chat";
 
 const ChatPage = () => {
     const [isAddingChat, setIsAddingChat] = React.useState(false);
@@ -32,13 +33,16 @@ const ChatPage = () => {
         queryKey: ["chats"],
         onSuccess: (data: ChatItf[]) => {
             setChats(
-                data.map((chat) => ({
-                    ...chat,
-                    scroll_position: 0,
-                    unread_messages: [],
-                    is_accessed: false,
-                    fetch_times: 1,
-                }))
+                data.map((chat) => {
+                    return {
+                        ...chat,
+                        scroll_position: 0,
+                        unread_messages: [],
+                        is_accessed: false,
+                        fetch_times: 1,
+                        chat_name: getChatName(chat.members, user!),
+                    };
+                })
             );
         },
     });

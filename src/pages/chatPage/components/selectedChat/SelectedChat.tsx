@@ -49,7 +49,7 @@ const SelectedChat = () => {
                         >
                             <FontAwesomeIcon
                                 icon={
-                                    !openInfo ? faChevronRight : faChevronLeft
+                                    !openInfo ? faChevronLeft : faChevronRight
                                 }
                                 className="w-3 h-3 text-gray-700"
                             />
