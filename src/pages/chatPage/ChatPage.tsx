@@ -13,10 +13,12 @@ import Loading from "../../components/loadings/Loading";
 import { SOCKET_EVENTS } from "../../config/constants/socket";
 import { useNavigate, useParams } from "react-router";
 import { getChatName } from "../../utils/chat";
+import ChatInfo from "./components/chatInfo/ChatInfo";
 
 const ChatPage = () => {
     const [isAddingChat, setIsAddingChat] = React.useState(false);
-    const { socket, currentChat, setChats, setCurrentChat } = useChatSocket();
+    const { socket, currentChat, setChats, setCurrentChat, isOpeningChatInfo } =
+        useChatSocket();
     const user = useSelector((state: RootState) => state.auth.user);
     const params = useParams();
     const navigate = useNavigate();
@@ -75,8 +77,10 @@ const ChatPage = () => {
     }, [chats, navigate, params.chatId, setCurrentChat]);
 
     return (
-        <div className="mt-6 shadow-md w-5/6 h-[80vh] xl:w-3/4 2xl:w-2/3 mx-auto flex p-2 bg-slate-50 gap-2">
-            <div className="w-1/3 p-2 bg-white shadow-md grow-0 relative">
+        <div
+            className={`mt-6 shadow-md w-5/6 h-[80vh] xl:w-3/4 2xl:w-2/3 mx-auto flex p-2 bg-slate-50 gap-2`}
+        >
+            <div className="p-2 bg-white shadow-md relative flex-[1] min-w-[30%]">
                 <div className="flex justify-between py-2 border-b border-dashed border-gray-300">
                     <h3 className="text-2xl font-bold">Messages</h3>
                     <Button size="sm" onClick={() => setIsAddingChat(true)}>
@@ -109,13 +113,14 @@ const ChatPage = () => {
                     </div>
                 </div>
             </div>
-
             {!currentChat && (
                 <p className="text-center mt-8 text-gray-500 text-xl grow">
                     Select a chat to start chatting
                 </p>
             )}
             {!!currentChat && <SelectedChat />}
+
+            {isOpeningChatInfo && <ChatInfo />}
 
             {isAddingChat && (
                 <AddChat

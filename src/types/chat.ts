@@ -1,6 +1,7 @@
 import { Socket } from "socket.io-client";
 import { userItf } from "./types";
 import { MutableRefObject } from "react";
+import { MESSAGE_TYPE, NOTIFICATION_TYPE } from "../config/constants/chat";
 
 export interface ChatBodyItf {
     members: string[];
@@ -55,6 +56,7 @@ export interface MessageItf {
     sender_id: string;
     chat_id: string;
 
+    type: MESSAGE_TYPE;
     created_at: Date;
     updated_at: Date;
     deleted?: boolean;
@@ -64,6 +66,7 @@ export interface MessageItf {
     remove_for?: string[];
     read_by: string[];
     is_read: boolean;
+    notification_type?: NOTIFICATION_TYPE;
 }
 
 export interface ChatContext {
@@ -74,6 +77,8 @@ export interface ChatContext {
     }[];
     chats: ChatItf[] | null;
     currentChat: ChatItf | null;
+    isOpeningChatInfo: boolean;
+    setIsOpeningChatInfo: (isOpeningChatInfo: boolean) => void;
     setCurrentChat: (chat: ChatItf | null) => void;
     setChats: (chats: ChatItf[] | null) => void;
     updateChatInChats: (chatId: string, chatBody: Partial<ChatItf>) => void;
