@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import { ChatContext, ChatItf, MessageItf } from "../../../types/chat";
 import { SOCKET_EVENTS } from "../../../config/constants/socket";
@@ -21,6 +21,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
     >([]);
     const [currentChat, setCurrentChat] = React.useState<ChatItf | null>(null);
     const [chats, setChats] = React.useState<ChatItf[] | null>([]);
+    const [isOpeningChatInfo, setIsOpeningChatInfo] = useState(false);
     const { user } = useSelector((state: RootState) => state.auth);
 
     useEffect(() => {
@@ -157,6 +158,10 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                 onlineUsers,
                 currentChat,
                 chats,
+                isOpeningChatInfo,
+                setIsOpeningChatInfo: (isOpeningChatInfo) => {
+                    setIsOpeningChatInfo(isOpeningChatInfo);
+                },
                 setCurrentChat: (chat: ChatItf | null) => {
                     setCurrentChat(chat);
                 },

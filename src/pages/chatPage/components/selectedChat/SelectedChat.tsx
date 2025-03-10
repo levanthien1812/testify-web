@@ -13,54 +13,58 @@ import Messages from "./Messages";
 import InputMessage from "./InputMessage";
 
 const SelectedChat = () => {
-    const { currentChat: chat, onlineUsers } = useChatSocket();
-
-    const [openInfo, setOpenInfo] = useState(false);
+    const {
+        currentChat: chat,
+        onlineUsers,
+        setIsOpeningChatInfo,
+        isOpeningChatInfo,
+    } = useChatSocket();
     const user = useSelector((state: RootState) => state.auth.user);
 
     return (
-        <>
-            <div className="flex w-2/3 p-2 bg-white shadow-md">
-                <div className="flex flex-col grow">
-                    <div className="flex justify-between items-center py-2 border-b border-dashed border-gray-300">
-                        <div className="flex items-center gap-2">
-                            <h3 className="text-2xl font-bold">
-                                {chat!.chat_name}
-                            </h3>
-                            <FontAwesomeIcon
-                                icon={faCircle}
-                                className="text-gray-300 text-[4px]"
-                            />
-                            <p className="">
-                                {chat &&
-                                onlineUsers.find((onlineUser) =>
-                                    chat.members
-                                        .map((member) => member.member.id)
-                                        .filter((id) => id !== user!.id)
-                                        .includes(onlineUser.user_id)
-                                )
-                                    ? "Online"
-                                    : "Offline"}
-                            </p>
-                        </div>
-                        <button
-                            className="flex items-center bg-gray-300 hover:bg-gray-400 p-2 leading-none rounded-full"
-                            onClick={(e) => setOpenInfo(!openInfo)}
-                        >
-                            <FontAwesomeIcon
-                                icon={
-                                    !openInfo ? faChevronLeft : faChevronRight
-                                }
-                                className="w-3 h-3 text-gray-700"
-                            />
-                        </button>
+        <div className="flex p-2 bg-white shadow-md flex-[2]">
+            <div className="flex flex-col grow">
+                <div className="flex justify-between items-center py-2 border-b border-dashed border-gray-300">
+                    <div className="flex items-center gap-2">
+                        <h3 className="text-2xl font-bold">
+                            {chat!.chat_name}
+                        </h3>
+                        <FontAwesomeIcon
+                            icon={faCircle}
+                            className="text-gray-300 text-[4px]"
+                        />
+                        <p className="">
+                            {chat &&
+                            onlineUsers.find((onlineUser) =>
+                                chat.members
+                                    .map((member) => member.member.id)
+                                    .filter((id) => id !== user!.id)
+                                    .includes(onlineUser.user_id)
+                            )
+                                ? "Online"
+                                : "Offline"}
+                        </p>
                     </div>
-                    <Messages />
-                    <InputMessage />
+                    <button
+                        className="flex items-center bg-gray-300 hover:bg-gray-400 p-2 leading-none rounded-full"
+                        onClick={(e) =>
+                            setIsOpeningChatInfo(!isOpeningChatInfo)
+                        }
+                    >
+                        <FontAwesomeIcon
+                            icon={
+                                !isOpeningChatInfo
+                                    ? faChevronLeft
+                                    : faChevronRight
+                            }
+                            className="w-3 h-3 text-gray-700"
+                        />
+                    </button>
                 </div>
+                <Messages />
+                <InputMessage />
             </div>
-            {openInfo && <ChatInfo />}
-        </>
+        </div>
     );
 };
 

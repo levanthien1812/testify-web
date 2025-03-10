@@ -7,6 +7,7 @@ import { useMutation } from "react-query";
 import { updaetNickname } from "../../../../services/chat";
 import { useChatSocket } from "../ChatSocketContext";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
+import { SOCKET_EVENTS } from "../../../../config/constants/socket";
 
 type NicknameProps = {
     member: {
@@ -16,7 +17,7 @@ type NicknameProps = {
 };
 
 const Nickname = ({ member }: NicknameProps) => {
-    const { currentChat, updateNickname } = useChatSocket();
+    const { currentChat, updateNickname, socket } = useChatSocket();
     const [nickname, setNickname] = useState(
         member.nick_name || member.member.name
     );
@@ -29,12 +30,15 @@ const Nickname = ({ member }: NicknameProps) => {
                 member.member.id,
                 nickname
             );
-            return response.chat;
+            return response;
         },
         mutationKey: [MUTATION_KEYS.UPDATE_CHAT],
-        onSuccess: () => {
+        onSuccess: (data) => {
             setIsEdittingNickname(false);
             updateNickname(currentChat!.id, member.member.id, nickname);
+            if (socket) {
+                socket.emit(SOCKET_EVENTS.CHANGE_NICKNAME, data.message);
+            }
         },
     });
 

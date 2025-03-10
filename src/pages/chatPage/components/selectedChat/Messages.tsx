@@ -15,8 +15,12 @@ import Message from "./Message";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowDown } from "@fortawesome/free-solid-svg-icons";
 import { motion } from "motion/react";
-import { MESSAGES_PER_FETCH } from "../../../../config/constants/chat";
+import {
+    MESSAGE_TYPE,
+    MESSAGES_PER_FETCH,
+} from "../../../../config/constants/chat";
 import { getNum } from "../../../../utils/primitives";
+import NotificationMessage from "./NotificationMessage";
 
 const Messages = () => {
     const {
@@ -294,17 +298,25 @@ const Messages = () => {
                 <div ref={sentinelRef}>
                     {chat &&
                         chat.messages &&
-                        chat.messages.map((message, index) => (
-                            <Message
-                                message={message}
-                                index={index}
-                                scrollToMessage={scrollToMessage}
-                                ref={(el) =>
-                                    (messageRefs.current[message.id] = el)
-                                }
-                                key={message.id}
-                            />
-                        ))}
+                        chat.messages.map((message, index) =>
+                            message.type === MESSAGE_TYPE.MESSAGE ? (
+                                <Message
+                                    message={message}
+                                    index={index}
+                                    scrollToMessage={scrollToMessage}
+                                    ref={(el) =>
+                                        (messageRefs.current[message.id] = el)
+                                    }
+                                    key={message.id}
+                                />
+                            ) : (
+                                <NotificationMessage
+                                    message={message}
+                                    index={index}
+                                    key={message.id}
+                                />
+                            )
+                        )}
                 </div>
                 {!isTargetVisible && (
                     <div className="sticky bottom-2 bg-transparent z-20 flex justify-center w-full">
