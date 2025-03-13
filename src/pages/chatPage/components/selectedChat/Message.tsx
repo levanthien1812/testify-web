@@ -21,6 +21,7 @@ import { isEmojiOnly } from "../../../../utils/message";
 import EmojiReaction from "./EmojiReaction";
 import Images from "./Images";
 import ReactionsCount from "./ReactionsCount";
+import { Link } from "react-router-dom";
 
 type MessageProps = {
     message: MessageItf;
@@ -46,6 +47,26 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
         const [isHover, setIsHover] = useState(false);
         const [isConfirmingDelete, setIsConfirmingDelete] = useState(false);
         const [isViewingDetail, setIsViewingDetail] = useState(false);
+
+        const enhancedMessageText = useMemo(() => {
+            if (
+                message.text.length > 0 &&
+                !isEmojiOnly(message.text) &&
+                message?.link_preview &&
+                message.links
+            ) {
+                let updatedMessageText = message.text;
+                message.links.forEach((link) => {
+                    updatedMessageText = updatedMessageText.replace(
+                        link,
+                        `<a href="${link}" target="_blank" class="underline hover:text-orange-600" rel="noopener noreferrer">${link}</a>`
+                    );
+                });
+                return updatedMessageText;
+            } else {
+                return message.text;
+            }
+        }, [message.text]);
 
         const { mutate: deleteMessageMutate, isLoading: isDeletingMessage } =
             useMutation({
@@ -269,9 +290,42 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                                                 }}
                                                 id="message-text"
                                             >
-                                                <p className="">
-                                                    {message.text}
-                                                </p>
+                                                <div
+                                                    dangerouslySetInnerHTML={{
+                                                        __html: enhancedMessageText,
+                                                    }}
+                                                ></div>
+                                                {message.link_preview &&
+                                                    message.links &&
+                                                    message.links.length >
+                                                        0 && (
+                                                        <div
+                                                            className={`block ${
+                                                                message.sender_id ===
+                                                                user!.id
+                                                                    ? "text-end"
+                                                                    : "text-start"
+                                                            }`}
+                                                        >
+                                                            <Link
+                                                                to={
+                                                                    message
+                                                                        .links[0]
+                                                                }
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className={`w-[full] h-[150px] block`}
+                                                            >
+                                                                <img
+                                                                    src={
+                                                                        message.link_preview
+                                                                    }
+                                                                    alt="link-preview"
+                                                                    className="w-full h-full object-cover rounded-xl"
+                                                                />
+                                                            </Link>
+                                                        </div>
+                                                    )}
                                             </div>
                                         )}
 
