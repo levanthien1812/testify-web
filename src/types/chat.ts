@@ -67,6 +67,8 @@ export interface MessageItf {
     read_by: string[];
     is_read: boolean;
     notification_type?: NOTIFICATION_TYPE;
+    link_preview?: string;
+    links?: string[];
 }
 
 export interface ChatContext {
