@@ -4,6 +4,7 @@ import { useChatSocket } from "../ChatSocketContext";
 import { format } from "date-fns";
 import { ChatItf } from "../../../../types/chat";
 import { useCallback, useEffect, useMemo } from "react";
+import ChatImage from "./ChatImage";
 
 const ChatCard = ({ chat }: { chat: ChatItf }) => {
     const user = useSelector((state: RootState) => state.auth.user);
@@ -60,33 +61,10 @@ const ChatCard = ({ chat }: { chat: ChatItf }) => {
             } shadow-md gap-2 hover:bg-slate-200 cursor-pointer max-w-full`}
             onClick={handleClickCard}
         >
-            <div className="flex relative h-10 w-1/5 shrink-0">
-                {chat.members
-                    .filter((member) => member.member.id !== user?.id)
-                    .slice(0, 2)
-                    .map((member, index) => {
-                        return (
-                            <img
-                                key={member.member.id}
-                                src={member.member.photo}
-                                alt=""
-                                className={`w-10 h-10 shrink-0 rounded-full object-cover absolute bg-white shadow-md`}
-                                style={{
-                                    left: `${index * 3 * 4}px`,
-                                }}
-                            />
-                        );
-                    })}
-                {chat.members.length > 3 && (
-                    <div
-                        className={`w-10 h-10 shrink-0 rounded-full absolute shadow-md flex bg-white items-center justify-center text-gray-600 opacity-80 font-bold`}
-                        style={{
-                            left: `${(chat.members.length - 2 - 1) * 3 * 4}px`,
-                        }}
-                    >
-                        +{chat.members.length - 3}
-                    </div>
-                )}
+            <div className="flex relative h-10 shrink-0">
+                <ChatImage
+                    members={chat.members.map((member) => member.member)}
+                />
                 {onlineUsers.find((onlineUser) =>
                     chat.members
                         .map((member) => member.member.id)

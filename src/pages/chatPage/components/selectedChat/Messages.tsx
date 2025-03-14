@@ -285,7 +285,7 @@ const Messages = () => {
 
     return (
         <div
-            className="grow py-2 custom-scrollbar-y pe-1"
+            className="grow p-2 custom-scrollbar-y pe-1"
             ref={messagesContainerRef}
         >
             {messagesLoading && (

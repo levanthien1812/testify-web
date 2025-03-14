@@ -16,7 +16,7 @@ export const updateChat = async (
     chatBody: Partial<ChatBodyItf>
 ) => {
     try {
-        const response = await instance.patch(`chat/${chatId}`, chatBody);
+        const response = await instance.patch(`chats/${chatId}`, chatBody);
         return response.data;
     } catch (error) {
         throw error;
