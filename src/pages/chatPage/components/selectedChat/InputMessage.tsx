@@ -193,7 +193,7 @@ const InputMessage = () => {
     }, [isTyping]);
 
     return (
-        <div className="border-t border-dashed border-gray-300 py-2">
+        <div className="border-t border-dashed border-gray-300 p-2 bg-opacity-40 bg-white">
             {previewURLs.length > 0 && (
                 <div className={`flex gap-2 py-2 flex-wrap`}>
                     {previewURLs.map((img, index) => (

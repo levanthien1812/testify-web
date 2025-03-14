@@ -3,6 +3,8 @@ import Input from "../../../../components/elements/Input";
 import { useChatSocket } from "../ChatSocketContext";
 import { ChatItf } from "../../../../types/chat";
 import Button from "../../../../components/elements/Button";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 
 type SearchMessagesProps = {
     onClose: () => void;
@@ -40,6 +42,13 @@ const SearchMessages = ({ onClose }: SearchMessagesProps) => {
 
     return (
         <div>
+            <button
+                className="text-gray-400 hover:text-gray-500 hover:underline flex items-center gap-1 text-sm"
+                onClick={onClose}
+            >
+                <FontAwesomeIcon icon={faChevronLeft} className="text-xs" />
+                Back
+            </button>
             <p className="text-lg">Search messages in chats</p>
             <Input
                 placeholder="Search in chat"
@@ -58,9 +67,6 @@ const SearchMessages = ({ onClose }: SearchMessagesProps) => {
             <div className="flex gap-1 mt-1">
                 <Button size="sm" onClick={handleClickNext}>
                     {currentChat?.search_result_no! > 1 ? "Find next" : "Find"}
-                </Button>
-                <Button size="sm" onClick={onClose} primary={false}>
-                    Cancel
                 </Button>
             </div>
         </div>

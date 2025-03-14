@@ -22,6 +22,10 @@ import EmojiReaction from "./EmojiReaction";
 import Images from "./Images";
 import ReactionsCount from "./ReactionsCount";
 import { Link } from "react-router-dom";
+import {
+    MESSAGE_BACKGROUND_COLORS,
+    MESSAGE_FONT_SIZES,
+} from "../../../../config/constants/chat";
 
 type MessageProps = {
     message: MessageItf;
@@ -49,24 +53,40 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
         const [isViewingDetail, setIsViewingDetail] = useState(false);
 
         const enhancedMessageText = useMemo(() => {
+            let updatedMessageText = message.text;
+
+            if (
+                currentChat?.curr_search_message_id === message.id &&
+                currentChat?.search_string
+            ) {
+                updatedMessageText = updatedMessageText.replaceAll(
+                    currentChat.search_string.trim(),
+                    `<span class="bg-yellow-500">${currentChat.search_string}</span>`
+                );
+            }
+
             if (
                 message.text.length > 0 &&
                 !isEmojiOnly(message.text) &&
                 message?.link_preview &&
                 message.links
             ) {
-                let updatedMessageText = message.text;
                 message.links.forEach((link) => {
                     updatedMessageText = updatedMessageText.replace(
                         link,
                         `<a href="${link}" target="_blank" class="underline hover:text-orange-600" rel="noopener noreferrer">${link}</a>`
                     );
                 });
-                return updatedMessageText;
-            } else {
-                return message.text;
             }
-        }, [message.text]);
+            return updatedMessageText;
+        }, [
+            message.text,
+            message.links,
+            message.link_preview,
+            currentChat?.curr_search_message_id,
+            currentChat?.search_string,
+            message.id,
+        ]);
 
         const { mutate: deleteMessageMutate, isLoading: isDeletingMessage } =
             useMutation({
@@ -246,7 +266,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
 
                     <div className="max-w-[75%]">
                         <div
-                            className={`flex flex-col relative ${
+                            className={`flex flex-col relative w-full ${
                                 message.sender_id === user!.id
                                     ? "items-end"
                                     : "items-start"
@@ -282,11 +302,35 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                                     {message.text.length > 0 &&
                                         !isEmojiOnly(message.text) && (
                                             <div
-                                                className={`text-white rounded-xl py-1 px-4 leading-tight focus:ring-2 focus:ring-orange-600`}
+                                                className={`w-full text-white rounded-xl text-md py-1 px-4 leading-tight focus:ring-2 focus:ring-orange-600`}
                                                 style={{
-                                                    backgroundColor:
-                                                        currentChat!.appearances
-                                                            .messages_color,
+                                                    backgroundColor: currentChat
+                                                        ?.appearances
+                                                        .messages_color
+                                                        ? MESSAGE_BACKGROUND_COLORS[
+                                                              currentChat!
+                                                                  .appearances
+                                                                  .messages_color
+                                                          ].color_code
+                                                        : "#000",
+                                                    fontSize: currentChat
+                                                        ?.appearances
+                                                        .messages_font_size
+                                                        ? MESSAGE_FONT_SIZES[
+                                                              currentChat!
+                                                                  .appearances
+                                                                  .messages_font_size
+                                                          ].font_size
+                                                        : "16px",
+                                                    lineHeight: currentChat
+                                                        ?.appearances
+                                                        .messages_font_size
+                                                        ? MESSAGE_FONT_SIZES[
+                                                              currentChat!
+                                                                  .appearances
+                                                                  .messages_font_size
+                                                          ].line_height
+                                                        : "1.5",
                                                 }}
                                                 id="message-text"
                                             >
@@ -294,6 +338,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                                                     dangerouslySetInnerHTML={{
                                                         __html: enhancedMessageText,
                                                     }}
+                                                    className="w-full break-words "
                                                 ></div>
                                                 {message.link_preview &&
                                                     message.links &&

@@ -5,6 +5,11 @@ import { MESSAGE_TYPE, NOTIFICATION_TYPE } from "../config/constants/chat";
 
 export interface ChatBodyItf {
     members: string[];
+    appearances?: {
+        background_color: string;
+        messages_color: string;
+        messages_font_size: string;
+    };
 }
 
 export interface ChatItf {
@@ -19,6 +24,7 @@ export interface ChatItf {
     appearances: {
         background_color: string;
         messages_color: string;
+        messages_font_size: string;
     };
     unread_messages?: MessageItf[];
     last_message: MessageItf | null;
