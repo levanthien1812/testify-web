@@ -37,7 +37,11 @@ const Nickname = ({ member }: NicknameProps) => {
             setIsEdittingNickname(false);
             updateNickname(currentChat!.id, member.member.id, nickname);
             if (socket) {
-                socket.emit(SOCKET_EVENTS.CHANGE_NICKNAME, data.message);
+                socket.emit(SOCKET_EVENTS.CHANGE_NICKNAME, {
+                    message: data.message,
+                    memberId: member.member.id,
+                    nickname: nickname,
+                });
             }
         },
     });

@@ -1,6 +1,7 @@
 import React from "react";
 import {
     CHAT_BACKGROUND_COLORS,
+    DEFAULT_APPEARANCES,
     MESSAGE_BACKGROUND_COLORS,
     MESSAGE_FONT_SIZES,
 } from "../../../../config/constants/chat";
@@ -11,27 +12,32 @@ import Button from "../../../../components/elements/Button";
 import { useMutation } from "react-query";
 import { updateChat } from "../../../../services/chat";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
+import { SOCKET_EVENTS } from "../../../../config/constants/socket";
+import { ChatAppearancesItf } from "../../../../types/chat";
 
 type ChatAppearancesProps = {
     onClose: () => void;
 };
 
 const ChatAppearances = ({ onClose }: ChatAppearancesProps) => {
-    const { currentChat, setCurrentChat } = useChatSocket();
+    const { currentChat, setCurrentChat, socket } = useChatSocket();
 
     const { mutate: updateChatMutate, isLoading: isUpdatingChat } = useMutation(
         {
-            mutationFn: async () => {
+            mutationFn: async (appearances: Partial<ChatAppearancesItf>) => {
                 const response = await updateChat(currentChat?.id!, {
-                    appearances: currentChat?.appearances,
+                    appearances: appearances,
                 });
                 return response;
             },
             mutationKey: [MUTATION_KEYS.UPDATE_CHAT],
             onSuccess: (data) => {
-                // if (socket) {
-                //     socket.emit(SOCKET_EVENTS.CHANGE_NICKNAME, data.message);
-                // }
+                if (socket) {
+                    socket.emit(SOCKET_EVENTS.CHANGE_APPREARANCES, {
+                        message: data.message,
+                        appearances: data.chat?.appearances,
+                    });
+                }
             },
         }
     );
@@ -44,6 +50,9 @@ const ChatAppearances = ({ onClose }: ChatAppearancesProps) => {
                 background_color: color,
             },
         });
+        updateChatMutate({
+            background_color: color,
+        });
     };
 
     const handleChooseMessageBgColor = (color: string) => {
@@ -53,6 +62,9 @@ const ChatAppearances = ({ onClose }: ChatAppearancesProps) => {
                 ...currentChat!.appearances,
                 messages_color: color,
             },
+        });
+        updateChatMutate({
+            messages_color: color,
         });
     };
 
@@ -64,10 +76,17 @@ const ChatAppearances = ({ onClose }: ChatAppearancesProps) => {
                 messages_font_size: size,
             },
         });
+        updateChatMutate({
+            messages_font_size: size,
+        });
     };
 
-    const handleClickSave = () => {
-        updateChatMutate();
+    const handleClickReset = () => {
+        setCurrentChat({
+            ...currentChat!,
+            appearances: DEFAULT_APPEARANCES,
+        });
+        updateChatMutate(DEFAULT_APPEARANCES);
     };
 
     return (
@@ -155,10 +174,7 @@ const ChatAppearances = ({ onClose }: ChatAppearancesProps) => {
                 </ul>
             </div>
             <div className="flex gap-1 mt-2">
-                <Button size="sm" onClick={handleClickSave}>
-                    {isUpdatingChat ? "Saving..." : "Save"}
-                </Button>
-                <Button size="sm" onClick={handleClickSave} primary={false}>
+                <Button size="sm" onClick={handleClickReset}>
                     Reset
                 </Button>
             </div>
