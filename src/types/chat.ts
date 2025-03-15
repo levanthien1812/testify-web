@@ -1,15 +1,16 @@
 import { Socket } from "socket.io-client";
 import { userItf } from "./types";
-import { MutableRefObject } from "react";
 import { MESSAGE_TYPE, NOTIFICATION_TYPE } from "../config/constants/chat";
+
+export interface ChatAppearancesItf {
+    background_color: string;
+    messages_color: string;
+    messages_font_size: string;
+}
 
 export interface ChatBodyItf {
     members: string[];
-    appearances?: {
-        background_color: string;
-        messages_color: string;
-        messages_font_size: string;
-    };
+    appearances?: Partial<ChatAppearancesItf>;
 }
 
 export interface ChatItf {
@@ -21,11 +22,7 @@ export interface ChatItf {
     is_group_chat: boolean;
     group_admin: string | userItf | null;
     chat_name: string | null;
-    appearances: {
-        background_color: string;
-        messages_color: string;
-        messages_font_size: string;
-    };
+    appearances: ChatAppearancesItf;
     unread_messages?: MessageItf[];
     last_message: MessageItf | null;
     created_at: Date;

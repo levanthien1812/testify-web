@@ -6,6 +6,10 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
 import { getNum } from "../../../utils/primitives";
 import { getChatName } from "../../../utils/chat";
+import {
+    MESSAGE_TYPE,
+    NOTIFICATION_TYPE,
+} from "../../../config/constants/chat";
 
 const ChatSocketContext = React.createContext<ChatContext | undefined>(
     undefined
@@ -138,6 +142,32 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                     messages: updatedMessages,
                 } as ChatItf);
             }
+        });
+
+        socket.on(SOCKET_EVENTS.RECEIVE_CHANGE_NICKNAME, (data) => {
+            if (!currentChat || currentChat.id !== data.chat_id) return;
+
+            const updatedMembers = currentChat!.members.map((member) => {
+                if (member.member.id === data.member_id)
+                    return { ...member, nick_name: data.nickname };
+                return member;
+            });
+
+            setCurrentChat({
+                ...currentChat!,
+                members: updatedMembers,
+            } as ChatItf);
+        });
+
+        socket.on(SOCKET_EVENTS.RECEIVE_CHANGE_APPREARANCES, (data) => {
+            if (!currentChat || currentChat.id !== data.chat_id) return;
+            setCurrentChat({
+                ...currentChat,
+                appearances: {
+                    ...currentChat.appearances,
+                    ...data.appearances,
+                },
+            } as ChatItf);
         });
 
         socket.on(SOCKET_EVENTS.READ_MESSAGES, (data) => {});

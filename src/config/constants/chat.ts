@@ -1,3 +1,5 @@
+import { ChatAppearancesItf } from "../../types/chat";
+
 export enum CHAT_OPTIONS {
     INDIVIDUAL = "INDIVIDUAL",
     GROUP = "GROUP",
@@ -39,7 +41,9 @@ export enum MESSAGE_TYPE {
 }
 
 export enum NOTIFICATION_TYPE {
-    THEME_CHANGED = "THEME_CHANGED",
+    APPEARANCES_CHANGED_BACKGROUND_COLOR = "BACKGROUND_COLOR_CHANGED",
+    APPEARANCES_CHANGED_MESSAGES_COLOR = "MESSAGES_COLOR_CHANGED",
+    APPEARANCES_CHANGED_MESSAGES_FONT_SIZE = "MESSAGES_FONT_SIZE_CHANGED",
     NICK_NAME_CHANGED = "NICK_NAME_CHANGED",
     NICK_NAME_REMOVED = "NICK_NAME_REMOVED",
 }
@@ -127,3 +131,9 @@ export const MESSAGE_FONT_SIZES: {
 };
 
 export const MESSAGES_PER_FETCH = 40;
+
+export const DEFAULT_APPEARANCES: ChatAppearancesItf = {
+    background_color: "lightBlue",
+    messages_color: "blueGray",
+    messages_font_size: "medium",
+};
