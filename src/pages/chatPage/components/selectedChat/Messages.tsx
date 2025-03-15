@@ -127,6 +127,7 @@ const Messages = () => {
             const isVisible =
                 messageRect.top >= chatRect.top &&
                 messageRect.bottom <= chatRect.bottom;
+            console.log(isVisible);
 
             setIsTargetVisible(isVisible);
         }
@@ -313,6 +314,9 @@ const Messages = () => {
                                 <NotificationMessage
                                     message={message}
                                     index={index}
+                                    ref={(el) =>
+                                        (messageRefs.current[message.id] = el)
+                                    }
                                     key={message.id}
                                 />
                             )

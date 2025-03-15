@@ -1,4 +1,4 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import { MessageItf } from "../../../../types/chat";
 
 type NotificationMessageProps = {
@@ -6,12 +6,15 @@ type NotificationMessageProps = {
     index: number;
 };
 
-const NotificationMessage = ({ message, index }: NotificationMessageProps) => {
+const NotificationMessage = forwardRef<
+    HTMLDivElement,
+    NotificationMessageProps
+>(({ message, index }, ref) => {
     return (
-        <div>
+        <div ref={ref}>
             <p className="text-center text-gray-600 text-sm">{message.text}</p>{" "}
         </div>
     );
-};
+});
 
 export default NotificationMessage;
