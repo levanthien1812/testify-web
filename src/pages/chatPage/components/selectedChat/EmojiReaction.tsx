@@ -5,15 +5,24 @@ import { AnimatePresence, motion } from "framer-motion";
 type EmojiReactionProps = {
     onEmojiClick: (emoji: string) => void;
     selectedEmoji: string | undefined;
+    isMessageSentByCurrentUser: boolean;
 };
 
-const EmojiReaction = ({ onEmojiClick, selectedEmoji }: EmojiReactionProps) => {
+const EmojiReaction = ({
+    onEmojiClick,
+    selectedEmoji,
+    isMessageSentByCurrentUser,
+}: EmojiReactionProps) => {
     const handleClickEmoji = (emojiCode: string) => {
         onEmojiClick(emojiCode);
     };
 
     return (
-        <div className="absolute -top-7 right-0 flex gap-1 bg-gray-100 rounded-xl p-0.5 shadow-md items-end">
+        <div
+            className={`absolute -top-7 ${
+                !isMessageSentByCurrentUser ? "left-0" : "right-0"
+            } flex gap-1 bg-gray-100 rounded-xl p-0.5 shadow-md items-end`}
+        >
             <AnimatePresence>
                 {Object.keys(MESSAGE_EMOJIS).map((emoji, index) => (
                     <motion.button

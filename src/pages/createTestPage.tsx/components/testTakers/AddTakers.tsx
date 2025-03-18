@@ -52,7 +52,16 @@ const AddTakers = ({ onClose }: AddTakersProps) => {
             <ModalHeader title="Add takers" />
             <ModalBody>
                 {!isCreateTaker && availableTakers && !isFetching && (
-                    <TakersChoser label="Select available takers" />
+                    <TakersChoser
+                        label="Select available takers"
+                        selectedTestTakers={selectedTestTakers}
+                        takers={availableTakers}
+                        onSelect={(takers: TakerItf[]) =>
+                            dispatch(
+                                createTestActions.addSelectedTestTakers(takers)
+                            )
+                        }
+                    />
                 )}
                 {isFetching && (
                     <Loading

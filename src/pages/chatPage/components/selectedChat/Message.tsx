@@ -196,6 +196,10 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
             );
         }, [currentChat, message.sender_id, index]);
 
+        const isMessageSentByCurrentUser = useMemo(() => {
+            return message.sender_id === user!.id;
+        }, [message.sender_id, user]);
+
         const handleClickEmoji = (emojiCode: string) => {
             const updatedReactions = message.reactions || [];
             const index = updatedReactions.findIndex(
@@ -267,7 +271,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                     <div className="max-w-[75%]">
                         <div
                             className={`flex flex-col relative w-full ${
-                                message.sender_id === user!.id
+                                isMessageSentByCurrentUser
                                     ? "items-end"
                                     : "items-start"
                             }`}
@@ -281,7 +285,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                                     {message.reply_to && repliedMessage && (
                                         <div
                                             className={`${
-                                                message.sender_id === user!.id
+                                                isMessageSentByCurrentUser
                                                     ? "text-end"
                                                     : "text-start"
                                             }`}
@@ -404,6 +408,9 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                                                 reaction.user_id === user!.id
                                         )?.emoji
                                     }
+                                    isMessageSentByCurrentUser={
+                                        isMessageSentByCurrentUser
+                                    }
                                 />
                             )}
                         </div>
@@ -453,7 +460,7 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                 {index === currentChat!.messages.length - 1 && (
                     <p
                         className={`leading-none text-xs mt-1 ${
-                            message.sender_id === user!.id
+                            isMessageSentByCurrentUser
                                 ? "text-end"
                                 : "text-start"
                         } text-gray-500`}

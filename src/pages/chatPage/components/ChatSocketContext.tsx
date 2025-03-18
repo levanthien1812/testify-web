@@ -10,6 +10,7 @@ import {
     MESSAGE_TYPE,
     NOTIFICATION_TYPE,
 } from "../../../config/constants/chat";
+import { TakerItf } from "../../../types/types";
 
 const ChatSocketContext = React.createContext<ChatContext | undefined>(
     undefined
@@ -26,6 +27,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
     const [currentChat, setCurrentChat] = React.useState<ChatItf | null>(null);
     const [chats, setChats] = React.useState<ChatItf[] | null>([]);
     const [isOpeningChatInfo, setIsOpeningChatInfo] = useState(false);
+    const [availableTakers, setAvailableTakers] = useState<TakerItf[]>([]);
     const { user } = useSelector((state: RootState) => state.auth);
 
     useEffect(() => {
@@ -170,6 +172,11 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
             } as ChatItf);
         });
 
+        socket.on(SOCKET_EVENTS.RECEIVE_ADD_CHAT, (data) => {
+            if (!chats) return;
+            setChats([...chats, data.chat]);
+        });
+
         socket.on(SOCKET_EVENTS.READ_MESSAGES, (data) => {});
 
         return () => {
@@ -178,6 +185,10 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
             socket.off(SOCKET_EVENTS.DELETE_MESSAGE);
             socket.off(SOCKET_EVENTS.TYPING);
             socket.off(SOCKET_EVENTS.RECEIVE_REACTION);
+            socket.off(SOCKET_EVENTS.RECEIVE_CHANGE_NICKNAME);
+            socket.off(SOCKET_EVENTS.RECEIVE_CHANGE_APPREARANCES);
+            socket.off(SOCKET_EVENTS.READ_MESSAGES);
+            socket.off(SOCKET_EVENTS.RECEIVE_ADD_CHAT);
         };
     }, [socket, currentChat, chats]);
 
@@ -189,6 +200,10 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                 currentChat,
                 chats,
                 isOpeningChatInfo,
+                availableTakers,
+                setAvailableTakers: (data) => {
+                    setAvailableTakers(data);
+                },
                 setIsOpeningChatInfo: (isOpeningChatInfo) => {
                     setIsOpeningChatInfo(isOpeningChatInfo);
                 },

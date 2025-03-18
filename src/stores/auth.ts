@@ -13,9 +13,9 @@ const authSlice = createSlice({
     name: "auth",
     initialState,
     reducers: {
-        authenticate(action, payload) {
-            const user: userItf = payload.payload.user;
-            const tokens = payload.payload.tokens;
+        authenticate(state, action) {
+            const user: userItf = action.payload.user;
+            const tokens = action.payload.tokens;
 
             Cookies.set("user", JSON.stringify(user), {
                 expires: new Date(tokens.refresh.expires),
@@ -27,16 +27,28 @@ const authSlice = createSlice({
                 expires: new Date(tokens.refresh.expires),
             });
 
-            action.user = user;
-            action.isAuthened = true;
+            state.user = user;
+            state.isAuthened = true;
         },
 
-        logout(action) {
-            action.user = null;
-            action.isAuthened = false;
+        logout(state) {
+            state.user = null;
+            state.isAuthened = false;
             Cookies.remove("user");
             Cookies.remove("access_token");
             Cookies.remove("refresh_token");
+        },
+
+        blockUser(state, action) {
+            if (!state.user) return;
+            if (!state.user.blocked_users) {
+                state.user.blocked_users = [];
+            }
+
+            const blockedUserId = action.payload;
+            if (!state.user?.blocked_users.includes(blockedUserId)) {
+                state.user?.blocked_users.push(blockedUserId);
+            }
         },
     },
 });

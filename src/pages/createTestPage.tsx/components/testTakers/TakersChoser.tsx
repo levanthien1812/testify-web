@@ -1,31 +1,29 @@
 import { useEffect, useState } from "react";
 import { TakerItf } from "../../../../types/types";
 import Input from "../../../../components/elements/Input";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../stores/rootState";
-import { createTestActions } from "../../../../stores/createTest";
-import { useDispatch } from "react-redux";
 
 type TakersChoserProps = {
     label?: string;
+    takers: TakerItf[];
+    selectedTestTakers: TakerItf[];
+    onSelect: (takers: TakerItf[]) => void;
 };
 
-const TakersChoser = ({ label = "Choose takers" }: TakersChoserProps) => {
+const TakersChoser = ({
+    label = "Choose takers",
+    takers = [],
+    selectedTestTakers = [],
+    onSelect,
+}: TakersChoserProps) => {
     const [filteredTakers, setFilteredTakers] = useState<TakerItf[]>([]);
     const [search, setSearch] = useState("");
     const [selectAll, setSelectAll] = useState<boolean>(false);
-    const dispatch = useDispatch();
-
-    const { selectedTestTakers, availableTakers } = useSelector(
-        (state: RootState) => state.createTest
-    );
-    const { saveSelectedTestTakers, addSelectedTestTakers } = createTestActions;
 
     useEffect(() => {
-        if (availableTakers) {
+        if (takers) {
             if (search.length > 0) {
                 setFilteredTakers(
-                    availableTakers.filter(
+                    takers.filter(
                         (taker) =>
                             taker.name
                                 .toLowerCase()
@@ -36,24 +34,27 @@ const TakersChoser = ({ label = "Choose takers" }: TakersChoserProps) => {
                     )
                 );
             } else {
-                setFilteredTakers(availableTakers);
+                setFilteredTakers(takers);
             }
         }
-    }, [search, availableTakers]);
+    }, [search, takers]);
 
     const handleSelectAllTakers = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSelectAll(e.target.checked);
         if (e.target.checked) {
-            dispatch(
-                saveSelectedTestTakers({ selectedTestTakers: filteredTakers })
-            );
+            // dispatch(
+            //     saveSelectedTestTakers({ selectedTestTakers: filteredTakers })
+            // );
+            onSelect(filteredTakers);
         } else {
-            dispatch(saveSelectedTestTakers({ selectedTestTakers: [] }));
+            // dispatch(saveSelectedTestTakers({ selectedTestTakers: [] }));
+            onSelect([]);
         }
     };
 
     const handleSelectTaker = (taker: TakerItf) => {
-        dispatch(addSelectedTestTakers([taker]));
+        // dispatch(addSelectedTestTakers([taker]));
+        onSelect([taker]);
     };
 
     return (
