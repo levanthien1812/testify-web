@@ -1,5 +1,5 @@
 import { Socket } from "socket.io-client";
-import { userItf } from "./types";
+import { TakerItf, userItf } from "./types";
 import { MESSAGE_TYPE, NOTIFICATION_TYPE } from "../config/constants/chat";
 
 export interface ChatAppearancesItf {
@@ -83,6 +83,7 @@ export interface ChatContext {
     chats: ChatItf[] | null;
     currentChat: ChatItf | null;
     isOpeningChatInfo: boolean;
+    availableTakers: TakerItf[];
     setIsOpeningChatInfo: (isOpeningChatInfo: boolean) => void;
     setCurrentChat: (chat: ChatItf | null) => void;
     setChats: (chats: ChatItf[] | null) => void;
@@ -98,6 +99,7 @@ export interface ChatContext {
         memberId: string,
         nickname: string
     ) => void;
+    setAvailableTakers: (availabelTakers: TakerItf[]) => void;
 }
 
 export interface Emoji {

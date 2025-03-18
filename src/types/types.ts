@@ -1,5 +1,4 @@
 import {
-    PUBLIC_ANSWERS_OPTIONS,
     QUESTION_LEVEL,
     ROLES,
     SHARE_OPTIONS,
@@ -17,6 +16,7 @@ export interface userItf {
     maker_id?: string;
     id: string;
     photo?: string;
+    blocked_users?: string[];
 }
 
 export interface authInitialStateItf {

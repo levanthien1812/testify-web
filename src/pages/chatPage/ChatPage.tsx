@@ -122,12 +122,7 @@ const ChatPage = () => {
 
             {isOpeningChatInfo && <ChatInfo />}
 
-            {isAddingChat && (
-                <AddChat
-                    onClose={() => setIsAddingChat(false)}
-                    onAfterUpdate={refetch}
-                />
-            )}
+            {isAddingChat && <AddChat onClose={() => setIsAddingChat(false)} />}
         </div>
     );
 };

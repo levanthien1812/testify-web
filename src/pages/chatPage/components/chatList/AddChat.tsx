@@ -6,59 +6,63 @@ import Modal, {
 } from "../../../../components/modals/Modal";
 import Button from "../../../../components/elements/Button";
 import { useMutation, useQuery } from "react-query";
-import { userItf } from "../../../../types/types";
+import { TakerItf, userItf } from "../../../../types/types";
 import { getTakers } from "../../../../services/user";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import TakersChoser from "../../../createTestPage.tsx/components/testTakers/TakersChoser";
 import { createChats } from "../../../../services/chat";
 import { CHAT_OPTIONS } from "../../../../config/constants/chat";
+import { useChatSocket } from "../ChatSocketContext";
+import { QUERY_KEYS } from "../../../../config/constants/queryMutationKeys";
+import { SOCKET_EVENTS } from "../../../../config/constants/socket";
 
-const AddChat = ({
-    onClose,
-    onAfterUpdate,
-}: {
-    onClose: () => void;
-    onAfterUpdate: () => void;
-}) => {
-    const [selectedTakers, setSelectedTakers] = useState<string[]>([]);
+const AddChat = ({ onClose }: { onClose: () => void }) => {
+    const [selectedTakers, setSelectedTakers] = useState<TakerItf[]>([]);
+    const { availableTakers, setAvailableTakers, socket, setChats, chats } =
+        useChatSocket();
 
     const { data: takers, isFetching } = useQuery<userItf[]>({
         queryFn: async () => {
             const data = await getTakers();
             return data.takers;
         },
-        queryKey: ["getTakers"],
-        onError: (err) => {
-            if (err instanceof AxiosError) {
-                toast.error(err.response?.data.message);
-            }
+        onSuccess: (data) => {
+            setAvailableTakers(data);
         },
+        queryKey: [QUERY_KEYS.GET_AVAILABLE_TAKERS],
     });
 
-    const handleAfterSelect = (takers: string[]) => {
+    const handleAfterSelect = (takers: TakerItf[]) => {
         setSelectedTakers(takers);
     };
 
     const { mutate, isLoading } = useMutation({
         mutationFn: async (option: string) => {
-            await createChats(
+            const responseData = await createChats(
                 {
-                    members: selectedTakers,
+                    members: selectedTakers.map((taker) => taker.id!),
                 },
                 option as CHAT_OPTIONS
             );
+
+            return responseData;
         },
-        onSuccess: () => {
+        onSuccess: (data) => {
             onClose();
-            onAfterUpdate();
-        },
-        onError: (err) => {
-            if (err instanceof AxiosError) {
-                toast.error(err.response?.data.message);
+            if (socket) {
+                socket.emit(SOCKET_EVENTS.ADD_CHATS, data);
             }
         },
     });
+
+    const handleAddIndividual = () => {
+        mutate(CHAT_OPTIONS.INDIVIDUAL);
+    };
+
+    const handleAddGroup = () => {
+        mutate(CHAT_OPTIONS.GROUP);
+    };
 
     return (
         <Modal onClose={onClose}>
@@ -68,14 +72,19 @@ const AddChat = ({
                     <p className="text-center text-gray-500">Loading...</p>
                 )}
                 {takers && (
-                    <TakersChoser label="Select member to create chat with" />
+                    <TakersChoser
+                        label="Select member to create chat with"
+                        takers={availableTakers}
+                        selectedTestTakers={selectedTakers}
+                        onSelect={handleAfterSelect}
+                    />
                 )}
             </ModalBody>
             <ModalFooter>
-                <Button onClick={() => mutate(CHAT_OPTIONS.GROUP)}>
+                <Button onClick={handleAddGroup} disabled={isLoading}>
                     Add group
                 </Button>
-                <Button onClick={() => mutate(CHAT_OPTIONS.INDIVIDUAL)}>
+                <Button onClick={handleAddIndividual} disabled={isLoading}>
                     Add individual
                 </Button>
             </ModalFooter>

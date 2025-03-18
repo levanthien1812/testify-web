@@ -19,3 +19,13 @@ export const getTakers = async () => {
         throw error;
     }
 };
+
+export const blockUser = async (id: string) => {
+    try {
+        const response = await instance.patch(`users/block/${id}`);
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};

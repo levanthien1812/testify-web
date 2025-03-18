@@ -1,10 +1,16 @@
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useChatSocket } from "../ChatSocketContext";
-import { faFont, faPalette, faSearch } from "@fortawesome/free-solid-svg-icons";
+import {
+    faFont,
+    faPalette,
+    faSearch,
+    faUserSlash,
+} from "@fortawesome/free-solid-svg-icons";
 import { useState } from "react";
 import SearchMessages from "./SearchMessages";
 import SetNicknames from "./SetNicknames";
 import ChatAppearances from "./ChatAppearances";
+import BlockChat from "./BlockChat";
 
 const ChatInfo = () => {
     const { cancelSearching } = useChatSocket();
@@ -13,6 +19,7 @@ const ChatInfo = () => {
     const [isSettingNickNames, setIsSettingNickNames] =
         useState<boolean>(false);
     const [isChatAppearances, setIsChatAppearances] = useState<boolean>(false);
+    const [isBlockingChat, setIsBlockingChat] = useState<boolean>(false);
 
     const handleClickSearch = () => {
         setIsSearchingMessages(true);
@@ -47,7 +54,8 @@ const ChatInfo = () => {
             <div className="mt-2">
                 {!isSearchingMessages &&
                     !isSettingNickNames &&
-                    !isChatAppearances && (
+                    !isChatAppearances &&
+                    !isBlockingChat && (
                         <div className="space-y-2">
                             <button
                                 className="flex items-center hover:text-orange-600"
@@ -79,6 +87,16 @@ const ChatInfo = () => {
                                 />
                                 <span className="ms-2">Chat appearances</span>
                             </button>
+                            <button
+                                className="flex items-center hover:text-orange-600"
+                                onClick={() => setIsBlockingChat(true)}
+                            >
+                                <FontAwesomeIcon
+                                    icon={faUserSlash}
+                                    className=" w-6"
+                                />
+                                <span className="ms-2">Block chat</span>
+                            </button>
                         </div>
                     )}
                 {isSearchingMessages && (
@@ -89,6 +107,9 @@ const ChatInfo = () => {
                 )}
                 {isChatAppearances && (
                     <ChatAppearances onClose={handleCloseChatAppearances} />
+                )}
+                {isBlockingChat && (
+                    <BlockChat onClose={() => setIsBlockingChat(false)} />
                 )}
             </div>
         </div>
