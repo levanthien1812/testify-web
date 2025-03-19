@@ -42,6 +42,7 @@ export interface ChatItf {
     search_result_total?: number;
     prev_search_message_id?: string;
     curr_search_message_id?: string;
+    is_chat_blocked?: boolean;
 }
 
 export interface MessageBody {

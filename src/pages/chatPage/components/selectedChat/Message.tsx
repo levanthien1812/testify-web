@@ -399,23 +399,26 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                                     Message has been deleted!
                                 </div>
                             )}
-                            {isHover && !message.deleted && (
-                                <EmojiReaction
-                                    onEmojiClick={handleClickEmoji}
-                                    selectedEmoji={
-                                        message.reactions?.find(
-                                            (reaction) =>
-                                                reaction.user_id === user!.id
-                                        )?.emoji
-                                    }
-                                    isMessageSentByCurrentUser={
-                                        isMessageSentByCurrentUser
-                                    }
-                                />
-                            )}
+                            {isHover &&
+                                !message.deleted &&
+                                !currentChat?.is_chat_blocked && (
+                                    <EmojiReaction
+                                        onEmojiClick={handleClickEmoji}
+                                        selectedEmoji={
+                                            message.reactions?.find(
+                                                (reaction) =>
+                                                    reaction.user_id ===
+                                                    user!.id
+                                            )?.emoji
+                                        }
+                                        isMessageSentByCurrentUser={
+                                            isMessageSentByCurrentUser
+                                        }
+                                    />
+                                )}
                         </div>
                     </div>
-                    {isHover && (
+                    {isHover && !currentChat?.is_chat_blocked && (
                         <div className="flex items-center gap-1">
                             <button
                                 className="border-none bg-gray-100 rounded-xl w-6 h-6 flex justify-center items-center hover:bg-gray-200"

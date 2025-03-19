@@ -50,6 +50,18 @@ const authSlice = createSlice({
                 state.user?.blocked_users.push(blockedUserId);
             }
         },
+
+        setBlockedUsers(state, action) {
+            if (!state.user) return;
+
+            state.user.blocked_users = action.payload;
+        },
+
+        setBlockedBy(state, action) {
+            if (!state.user) return;
+
+            state.user.blocked_by = action.payload;
+        },
     },
 });
 

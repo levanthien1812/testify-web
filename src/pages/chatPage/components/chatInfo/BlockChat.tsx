@@ -34,7 +34,7 @@ const BlockChat = ({ onClose }: BlockChatProps) => {
         },
         mutationKey: [MUTATION_KEYS.BLOCK_USER],
         onSuccess: (data) => {
-            dispatch(authActions.blockUser(data.blockedUserId));
+            dispatch(authActions.blockUser(data.blockedUser.id));
             if (socket) {
                 socket.emit(SOCKET_EVENTS.BLOCK_USER, data);
             }
