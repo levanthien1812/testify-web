@@ -14,6 +14,11 @@ import { SOCKET_EVENTS } from "../../config/constants/socket";
 import { useNavigate, useParams } from "react-router";
 import { getChatName } from "../../utils/chat";
 import ChatInfo from "./components/chatInfo/ChatInfo";
+import { QUERY_KEYS } from "../../config/constants/queryMutationKeys";
+import { userItf } from "../../types/types";
+import { getBlockedInfo } from "../../services/user";
+import { useDispatch } from "react-redux";
+import { authActions } from "../../stores/auth";
 
 const ChatPage = () => {
     const [isAddingChat, setIsAddingChat] = React.useState(false);
@@ -21,18 +26,15 @@ const ChatPage = () => {
         useChatSocket();
     const user = useSelector((state: RootState) => state.auth.user);
     const params = useParams();
+    const dispatch = useDispatch();
     const navigate = useNavigate();
 
-    const {
-        data: chats,
-        isLoading,
-        refetch,
-    } = useQuery<ChatItf[]>({
+    const { data: chats, isLoading: isLoadingChats } = useQuery<ChatItf[]>({
         queryFn: async () => {
             const responseData = await getChats();
             return responseData.chats;
         },
-        queryKey: ["chats"],
+        queryKey: [QUERY_KEYS.GET_CHATS],
         onSuccess: (data: ChatItf[]) => {
             setChats(
                 data.map((chat) => {
@@ -45,6 +47,28 @@ const ChatPage = () => {
                         chat_name: getChatName(chat.members, user!),
                     };
                 })
+            );
+        },
+    });
+
+    const { data: blockedInfo, isLoading: isLoadingBlockedInfo } = useQuery({
+        queryFn: async () => {
+            const responseData = await getBlockedInfo();
+            return responseData;
+        },
+        queryKey: [QUERY_KEYS.GET_BLOCKED_USERS],
+        onSuccess: (data) => {
+            dispatch(
+                authActions.setBlockedUsers(
+                    data.blockedUsers.map(
+                        (blockedUser: userItf) => blockedUser.id
+                    )
+                )
+            );
+            dispatch(
+                authActions.setBlockedBy(
+                    data.blockedBy.map((blockedBy: userItf) => blockedBy.id)
+                )
             );
         },
     });
@@ -88,9 +112,9 @@ const ChatPage = () => {
                     </Button>
                 </div>
                 <div className="mt-4 ">
-                    {isLoading && (
+                    {isLoadingChats && (
                         <Loading
-                            isLoading={isLoading}
+                            isLoading={isLoadingChats}
                             loadingText={{ text: "Loading chats" }}
                         />
                     )}

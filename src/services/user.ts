@@ -20,9 +20,19 @@ export const getTakers = async () => {
     }
 };
 
-export const blockUser = async (id: string) => {
+export const blockUser = async (userIdToBlock: string) => {
     try {
-        const response = await instance.patch(`users/block/${id}`);
+        const response = await instance.patch(`users/block/${userIdToBlock}`);
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getBlockedInfo = async () => {
+    try {
+        const response = await instance.get(`users/block`);
 
         return response.data;
     } catch (error) {

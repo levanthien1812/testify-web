@@ -17,6 +17,7 @@ export interface userItf {
     id: string;
     photo?: string;
     blocked_users?: string[];
+    blocked_by?: string[];
 }
 
 export interface authInitialStateItf {

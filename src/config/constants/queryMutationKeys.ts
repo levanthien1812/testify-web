@@ -8,6 +8,7 @@ const QUERY_KEYS = {
     GET_CHATS: "get-chats",
     GET_MESSAGES: "get-messages",
     GET_ONLINE_USERS: "get-online-users",
+    GET_BLOCKED_USERS: "get-blocked-users",
 };
 
 const MUTATION_KEYS = {

@@ -20,6 +20,7 @@ const ChatInfo = () => {
         useState<boolean>(false);
     const [isChatAppearances, setIsChatAppearances] = useState<boolean>(false);
     const [isBlockingChat, setIsBlockingChat] = useState<boolean>(false);
+    const { currentChat } = useChatSocket();
 
     const handleClickSearch = () => {
         setIsSearchingMessages(true);
@@ -67,36 +68,44 @@ const ChatInfo = () => {
                                 />
                                 <span className="ms-2">Search in chat</span>
                             </button>
-                            <button
-                                className="flex items-center hover:text-orange-600"
-                                onClick={handleClickNickNames}
-                            >
-                                <FontAwesomeIcon
-                                    icon={faFont}
-                                    className=" w-6"
-                                />
-                                <span className="ms-2">Set nicknames</span>
-                            </button>
-                            <button
-                                className="flex items-center hover:text-orange-600"
-                                onClick={handleClickChatAppearances}
-                            >
-                                <FontAwesomeIcon
-                                    icon={faPalette}
-                                    className=" w-6"
-                                />
-                                <span className="ms-2">Chat appearances</span>
-                            </button>
-                            <button
-                                className="flex items-center hover:text-orange-600"
-                                onClick={() => setIsBlockingChat(true)}
-                            >
-                                <FontAwesomeIcon
-                                    icon={faUserSlash}
-                                    className=" w-6"
-                                />
-                                <span className="ms-2">Block chat</span>
-                            </button>
+                            {!currentChat?.is_chat_blocked && (
+                                <button
+                                    className="flex items-center hover:text-orange-600"
+                                    onClick={handleClickNickNames}
+                                >
+                                    <FontAwesomeIcon
+                                        icon={faFont}
+                                        className=" w-6"
+                                    />
+                                    <span className="ms-2">Set nicknames</span>
+                                </button>
+                            )}
+                            {!currentChat?.is_chat_blocked && (
+                                <button
+                                    className="flex items-center hover:text-orange-600"
+                                    onClick={handleClickChatAppearances}
+                                >
+                                    <FontAwesomeIcon
+                                        icon={faPalette}
+                                        className=" w-6"
+                                    />
+                                    <span className="ms-2">
+                                        Chat appearances
+                                    </span>
+                                </button>
+                            )}
+                            {!currentChat?.is_chat_blocked && (
+                                <button
+                                    className="flex items-center hover:text-orange-600"
+                                    onClick={() => setIsBlockingChat(true)}
+                                >
+                                    <FontAwesomeIcon
+                                        icon={faUserSlash}
+                                        className=" w-6"
+                                    />
+                                    <span className="ms-2">Block chat</span>
+                                </button>
+                            )}
                         </div>
                     )}
                 {isSearchingMessages && (

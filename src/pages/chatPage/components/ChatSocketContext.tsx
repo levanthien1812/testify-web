@@ -40,6 +40,30 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
     }, []);
 
     useEffect(() => {
+        if (!chats || chats.length === 0 || !user) return;
+        const updatedChats = chats.map((chat) => {
+            let isChatBlocked = false;
+            const otherMember = chat.members.find(
+                (member) => member.member.id !== user?.id
+            );
+
+            if (
+                user.blocked_users &&
+                user.blocked_users.includes(otherMember!.member.id)
+            )
+                isChatBlocked = true;
+            if (
+                user.blocked_by &&
+                user.blocked_by.includes(otherMember!.member.id)
+            )
+                isChatBlocked = true;
+            return { ...chat, is_chat_blocked: isChatBlocked };
+        });
+
+        setChats(updatedChats);
+    }, [chats, user]);
+
+    useEffect(() => {
         if (!socket) return;
         socket.on(SOCKET_EVENTS.CONNECT, () => {
             console.log(`Socket ${socket.id} connected`);
