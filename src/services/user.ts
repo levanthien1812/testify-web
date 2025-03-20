@@ -30,6 +30,18 @@ export const blockUser = async (userIdToBlock: string) => {
     }
 };
 
+export const unblockUser = async (userIdToUnblock: string) => {
+    try {
+        const response = await instance.patch(
+            `users/unblock/${userIdToUnblock}`
+        );
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 export const getBlockedInfo = async () => {
     try {
         const response = await instance.get(`users/block`);

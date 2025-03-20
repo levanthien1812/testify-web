@@ -13,12 +13,14 @@ export interface ChatBodyItf {
     appearances?: Partial<ChatAppearancesItf>;
 }
 
+export interface MemberItf {
+    member: userItf;
+    nick_name: string | null;
+}
+
 export interface ChatItf {
     id: string;
-    members: {
-        member: userItf;
-        nick_name: string | null;
-    }[];
+    members: MemberItf[];
     is_group_chat: boolean;
     group_admin: string | userItf | null;
     chat_name: string | null;
@@ -43,6 +45,8 @@ export interface ChatItf {
     prev_search_message_id?: string;
     curr_search_message_id?: string;
     is_chat_blocked?: boolean;
+    member_to_block?: MemberItf;
+    member_to_be_blocked?: MemberItf;
 }
 
 export interface MessageBody {

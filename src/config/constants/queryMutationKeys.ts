@@ -31,6 +31,7 @@ const MUTATION_KEYS = {
     DELETE_MESSAGE: "delete-message",
     UPDATE_CHAT: "update-chat",
     BLOCK_USER: "block-user",
+    UNBLOCK_USER: "unblock-user",
 };
 
 export { QUERY_KEYS, MUTATION_KEYS };

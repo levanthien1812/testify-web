@@ -127,8 +127,6 @@ const Messages = () => {
             const isVisible =
                 messageRect.top >= chatRect.top &&
                 messageRect.bottom <= chatRect.bottom;
-            console.log(isVisible);
-
             setIsTargetVisible(isVisible);
         }
     }, [chat]);
