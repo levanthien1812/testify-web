@@ -51,6 +51,36 @@ const authSlice = createSlice({
             }
         },
 
+        beBlockedByUser(state, action) {
+            if (!state.user) return;
+            if (!state.user.blocked_by) {
+                state.user.blocked_by = [];
+            }
+
+            const userId = action.payload;
+            if (!state.user?.blocked_by.includes(userId)) {
+                state.user?.blocked_by.push(userId);
+            }
+        },
+
+        unblockUser(state, action) {
+            if (!state.user || !state.user.blocked_users) return;
+
+            const blockedUserId = action.payload;
+            state.user.blocked_users = state.user.blocked_users.filter(
+                (id) => id !== blockedUserId
+            );
+        },
+
+        beUnblockedByUser(state, action) {
+            if (!state.user || !state.user.blocked_by) return;
+
+            const userId = action.payload;
+            state.user.blocked_by = state.user.blocked_by.filter(
+                (id) => id !== userId
+            );
+        },
+
         setBlockedUsers(state, action) {
             if (!state.user) return;
 

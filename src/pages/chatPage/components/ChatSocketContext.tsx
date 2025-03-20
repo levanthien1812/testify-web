@@ -11,6 +11,8 @@ import {
     NOTIFICATION_TYPE,
 } from "../../../config/constants/chat";
 import { TakerItf } from "../../../types/types";
+import { useDispatch } from "react-redux";
+import { authActions } from "../../../stores/auth";
 
 const ChatSocketContext = React.createContext<ChatContext | undefined>(
     undefined
@@ -29,6 +31,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
     const [isOpeningChatInfo, setIsOpeningChatInfo] = useState(false);
     const [availableTakers, setAvailableTakers] = useState<TakerItf[]>([]);
     const { user } = useSelector((state: RootState) => state.auth);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         const socket = io(process.env.REACT_APP_API_HOST!);
@@ -43,25 +46,42 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
         if (!chats || chats.length === 0 || !user) return;
         const updatedChats = chats.map((chat) => {
             let isChatBlocked = false;
+
             const otherMember = chat.members.find(
                 (member) => member.member.id !== user?.id
             );
+            const userMember = chat.members.find(
+                (member) => member.member.id === user?.id
+            );
+            let memberToBlock = userMember,
+                memberToBeBlocked = otherMember;
 
             if (
                 user.blocked_users &&
                 user.blocked_users.includes(otherMember!.member.id)
-            )
+            ) {
                 isChatBlocked = true;
+                memberToBeBlocked = otherMember;
+                memberToBlock = userMember;
+            }
             if (
                 user.blocked_by &&
                 user.blocked_by.includes(otherMember!.member.id)
-            )
+            ) {
                 isChatBlocked = true;
-            return { ...chat, is_chat_blocked: isChatBlocked };
+                memberToBeBlocked = userMember;
+                memberToBlock = otherMember;
+            }
+            return {
+                ...chat,
+                is_chat_blocked: isChatBlocked,
+                member_to_be_blocked: memberToBeBlocked,
+                member_to_block: memberToBlock,
+            };
         });
 
         setChats(updatedChats);
-    }, [chats, user]);
+    }, [chats?.length, user]);
 
     useEffect(() => {
         if (!socket) return;
@@ -201,6 +221,20 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
             setChats([...chats, data.chat]);
         });
 
+        socket.on(SOCKET_EVENTS.RECEIVE_BLOCK_USER, (data) => {
+            if (!currentChat) return;
+            if (data.blocked_user_id !== user?.id) return;
+
+            dispatch(authActions.beBlockedByUser({ userId: data.user_id }));
+        });
+
+        socket.on(SOCKET_EVENTS.RECEIVE_UNBLOCK_USER, (data) => {
+            if (!currentChat) return;
+            if (data.blocked_user_id !== user?.id) return;
+
+            dispatch(authActions.beUnblockedByUser({ userId: data.user_id }));
+        });
+
         socket.on(SOCKET_EVENTS.READ_MESSAGES, (data) => {});
 
         return () => {
@@ -213,6 +247,8 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
             socket.off(SOCKET_EVENTS.RECEIVE_CHANGE_APPREARANCES);
             socket.off(SOCKET_EVENTS.READ_MESSAGES);
             socket.off(SOCKET_EVENTS.RECEIVE_ADD_CHAT);
+            socket.off(SOCKET_EVENTS.RECEIVE_BLOCK_USER);
+            socket.off(SOCKET_EVENTS.RECEIVE_UNBLOCK_USER);
         };
     }, [socket, currentChat, chats]);
 

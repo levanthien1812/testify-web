@@ -21,22 +21,21 @@ const BlockChat = ({ onClose }: BlockChatProps) => {
     const { user } = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch();
 
-    const memberToBlock = useMemo(() => {
-        return currentChat!.members.find(
-            (member) => member.member.id !== user?.id
-        )?.member;
-    }, [currentChat, user]);
-
     const { mutate: blockUserMutate, isLoading: isBlockingUser } = useMutation({
         mutationFn: async () => {
-            const response = await blockUser(memberToBlock?.id!);
+            const response = await blockUser(
+                currentChat?.member_to_be_blocked?.member?.id!
+            );
             return response;
         },
         mutationKey: [MUTATION_KEYS.BLOCK_USER],
         onSuccess: (data) => {
-            dispatch(authActions.blockUser(data.blockedUser.id));
+            dispatch(authActions.blockUser(data.blockedUser?.id));
             if (socket) {
-                socket.emit(SOCKET_EVENTS.BLOCK_USER, data);
+                socket.emit(SOCKET_EVENTS.BLOCK_USER, {
+                    user_id: user?.id,
+                    blocked_user_id: data.blockedUser?.id,
+                });
             }
         },
     });
@@ -56,8 +55,11 @@ const BlockChat = ({ onClose }: BlockChatProps) => {
             </button>
             <p className="mt-2">
                 You are about to block{" "}
-                <span className="font-bold"> {memberToBlock?.name}</span>.
-                Blocking will prevent you and this user from:
+                <span className="font-bold">
+                    {" "}
+                    {currentChat?.member_to_be_blocked?.member?.name}
+                </span>
+                . Blocking will prevent you and this user from:
             </p>
             <ul className="list-disc pl-4">
                 <li>Sending each other new messages.</li>
@@ -76,7 +78,7 @@ const BlockChat = ({ onClose }: BlockChatProps) => {
                 className="w-full mt-2 bg-red-600 hover:bg-red-700"
                 disabled={isBlockingUser}
             >
-                Block {memberToBlock?.name}
+                Block {currentChat?.member_to_be_blocked?.member?.name}
             </Button>
         </div>
     );
