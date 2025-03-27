@@ -8,8 +8,6 @@ import Button from "../../../../components/elements/Button";
 import { useMutation, useQuery } from "react-query";
 import { TakerItf, userItf } from "../../../../types/types";
 import { getTakers } from "../../../../services/user";
-import { AxiosError } from "axios";
-import { toast } from "react-toastify";
 import TakersChoser from "../../../createTestPage.tsx/components/testTakers/TakersChoser";
 import { createChats } from "../../../../services/chat";
 import { CHAT_OPTIONS } from "../../../../config/constants/chat";

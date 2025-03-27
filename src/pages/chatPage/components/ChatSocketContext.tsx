@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
-import { ChatContext, ChatItf, MessageItf } from "../../../types/chat";
+import {
+    AIChatItf,
+    ChatContext,
+    ChatItf,
+    MessageItf,
+} from "../../../types/chat";
 import { SOCKET_EVENTS } from "../../../config/constants/socket";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../stores/rootState";
 import { getNum } from "../../../utils/primitives";
 import { getChatName } from "../../../utils/chat";
-import {
-    MESSAGE_TYPE,
-    NOTIFICATION_TYPE,
-} from "../../../config/constants/chat";
 import { TakerItf } from "../../../types/types";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../../stores/auth";
@@ -28,8 +29,13 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
     >([]);
     const [currentChat, setCurrentChat] = React.useState<ChatItf | null>(null);
     const [chats, setChats] = React.useState<ChatItf[] | null>([]);
+    const [AIChats, setAIChats] = useState<AIChatItf[]>([]);
     const [isOpeningChatInfo, setIsOpeningChatInfo] = useState(false);
     const [availableTakers, setAvailableTakers] = useState<TakerItf[]>([]);
+    const [isChattingWithAI, setIsChattingWithAI] = useState(false);
+    const [currentAIChat, setCurrentAIChat] = React.useState<AIChatItf | null>(
+        null
+    );
     const { user } = useSelector((state: RootState) => state.auth);
     const dispatch = useDispatch();
 
@@ -259,8 +265,12 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                 onlineUsers,
                 currentChat,
                 chats,
+                aiChats: AIChats,
                 isOpeningChatInfo,
                 availableTakers,
+                isChattingWithAI,
+                currentAIChat,
+
                 setAvailableTakers: (data) => {
                     setAvailableTakers(data);
                 },
@@ -418,6 +428,15 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                         return chat;
                     });
                     setChats(updatedChats);
+                },
+                setChattingWithAI(isChattingWithAI) {
+                    setIsChattingWithAI(isChattingWithAI);
+                },
+                setAIChats(AIChats) {
+                    setAIChats(AIChats || []);
+                },
+                setCurrentAIChat(AIChat) {
+                    setCurrentAIChat(AIChat);
                 },
             }}
         >
