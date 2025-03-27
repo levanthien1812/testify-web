@@ -49,6 +49,21 @@ export interface ChatItf {
     member_to_be_blocked?: MemberItf;
 }
 
+export interface AIChatMessageItf {
+    role: string;
+    content: string;
+    timestamp: string;
+}
+
+export interface AIChatItf {
+    user_id: string;
+    id: string;
+    conversation: AIChatMessageItf[];
+    chat_name: string;
+    created_at: string;
+    updated_at?: string;
+}
+
 export interface MessageBody {
     chat_id: string;
     text: string;
@@ -86,12 +101,18 @@ export interface ChatContext {
         socket_id: string;
     }[];
     chats: ChatItf[] | null;
+    aiChats: AIChatItf[] | null;
     currentChat: ChatItf | null;
+    currentAIChat: AIChatItf | null;
     isOpeningChatInfo: boolean;
     availableTakers: TakerItf[];
+    isChattingWithAI: boolean;
+    setChattingWithAI: (isChattingWithAI: boolean) => void;
     setIsOpeningChatInfo: (isOpeningChatInfo: boolean) => void;
     setCurrentChat: (chat: ChatItf | null) => void;
+    setCurrentAIChat: (chat: AIChatItf | null) => void;
     setChats: (chats: ChatItf[] | null) => void;
+    setAIChats: (chats: AIChatItf[] | null) => void;
     updateChatInChats: (chatId: string, chatBody: Partial<ChatItf>) => void;
     sendMessage: (message: MessageItf) => void;
     removeMessage: (messageId: string) => void;
