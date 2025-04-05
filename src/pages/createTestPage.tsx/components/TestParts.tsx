@@ -10,6 +10,7 @@ import { useDispatch } from "react-redux";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";
+import ErrorInfo from "../../../components/errors/ErrorInfo";
 
 const TestParts = () => {
     const {
@@ -70,16 +71,13 @@ const TestParts = () => {
                         <span className="font-bold">{numQuestions}</span>
                     </p>
                 </div>
-                {!isValidParts &&
-                    <p className="text-orange-600">
-                        <FontAwesomeIcon
-                            icon={faCircleExclamation}
-                            className="mr-2"
-                        />
+                {!isValidParts && (
+                    <ErrorInfo
+                        message="
                         Total parts scores and questions must be equal to test score
-                        and questions
-                    </p>
-                }
+                        and questions"
+                    />
+                )}
                 {numParts > 1 &&
                     testParts.map((part, index) => (
                         <Part key={index} part={part} />

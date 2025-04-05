@@ -92,6 +92,7 @@ export interface TestPartItf extends PartBodyItf {
     test_id?: string;
     questions?: QuestionItf<QuestionContentItf>[];
     is_saved?: boolean;
+    // error?: Omit<PartBodyItf, "order">;
 }
 
 export interface MultipleChoiceQuestionBodyItf {
@@ -185,6 +186,7 @@ export interface QuestionItf<T extends QuestionContentItf> {
     part_id?: string;
     content?: T;
     is_saved?: boolean;
+    is_content_provided?: boolean;
 }
 
 export type QuestionBodyContentItf =

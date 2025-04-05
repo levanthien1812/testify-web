@@ -20,6 +20,7 @@ const MUTATION_KEYS = {
     UPDATE_PART: "update-part",
     CREATE_QUESTION: "create-question",
     UPDATE_QUESTION: "update-question",
+    DELETE_QUESTION: "delete-question",
     CREATE_TAKERS: "create-takers",
     ADD_TAKER: "add-taker",
     VALIDATE_QUESTIONS: "validate-questions",

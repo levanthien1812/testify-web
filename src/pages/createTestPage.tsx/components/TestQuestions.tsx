@@ -7,6 +7,7 @@ import Wrapper from "../../../components/wrappers/Wrapper";
 import { createTestActions } from "../../../stores/createTest";
 import { useDispatch } from "react-redux";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
+import ErrorInfo from "../../../components/errors/ErrorInfo";
 
 const TestQuestions = () => {
     const { testId, testParts, isValidQuestions } = useSelector(
@@ -51,6 +52,9 @@ const TestQuestions = () => {
                 },
             }}
         >
+            {!isValidQuestions && (
+                <ErrorInfo message="Make sure all questions info are provided and total questions scores is equal to test/part score" />
+            )}
             <div className="space-y-3 mt-4">
                 {testParts.length > 0 &&
                     testParts.map(

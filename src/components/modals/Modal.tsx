@@ -33,7 +33,7 @@ const Modal = ({ children, onClose, className }: ModalProps) => {
         <ModalContext.Provider value={{ onClose }}>
             <Backdrop onClose={onClose} />
             <div
-                className={`fixed top-0 left-0 right-0 bottom-0 m-auto bg-white shadow-md w-fit h-fit min-w-40 md:min-w-80 2xl:min-w-[500px] z-50 ${className}`}
+                className={`fixed top-0 left-0 right-0 bottom-0 m-auto bg-white shadow-md w-fit h-fit min-w-40 md:min-w-80 2xl:min-w-[500px] lg:max-w-[800px] 2xl:max-w-[700px] z-50 ${className}`}
             >
                 {children}
             </div>

@@ -188,6 +188,18 @@ export const saveQuestion = async (
     }
 };
 
+export const deleteQuestion = async (testId: string, questionId: string) => {
+    try {
+        const response = await instance.delete(
+            `/tests/${testId}/questions/${questionId}`
+        );
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 export const addAnswer = async (
     testId: string,
     questionId: string,

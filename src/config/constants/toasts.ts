@@ -5,6 +5,7 @@ const TOAST_MESSAGES = {
     PART_UPDATED_SUCCESSFULLY: "Part updated successfully",
     CREATE_QUESTION_SUCCESSFULLY: "Create question successfuly",
     UPDATE_QUESTION_SUCCESSFULLY: "Update question successfuly",
+    DELETE_QUESTION_SUCCESSFULLY: "Delete question successfuly",
     CREATE_TAKERS_SUCCESSFULLY: "Create takers successfuly",
     ADD_TAKER_SUCCESSFULLY: "Add taker successfuly",
     ADD_ANSWER_SUCCESSFULLY: "Add answer successfuly",

@@ -19,7 +19,9 @@ import { pickFieldsFromObject } from "../../../../utils/object";
 const Part: React.FC<{
     part: TestPartItf;
 }> = ({ part }) => {
-    const { testId } = useSelector((state: RootState) => state.createTest);
+    const { testId, maxScore } = useSelector(
+        (state: RootState) => state.createTest
+    );
     const { saveTestParts, validate: validateParts } = createTestActions;
     const dispatch = useDispatch();
 
@@ -74,7 +76,8 @@ const Part: React.FC<{
     });
 
     const onSubmit = (data: PartBodyItf) => {
-        if (!part.id) createPartMutate(data);
+        if (!part.id)
+            createPartMutate(pickFieldsFromObject(data, INITIAL_PART));
         else updatePartMutate(pickFieldsFromObject(data, INITIAL_PART));
     };
 
@@ -96,32 +99,23 @@ const Part: React.FC<{
                 onSubmit={handleSubmit(onSubmit)}
                 className="border border-gray-300 px-4 py-4 space-y-3"
             >
-                <div className="flex gap-4 items-end">
-                    <label htmlFor="name" className="w-1/5 shrink-0">
-                        Part name:{" "}
-                    </label>
+                <div className="grid grid-cols-[2fr_5fr] gap-2">
                     <Input
                         {...register("name", {
                             required: "Name is required",
                         })}
                         error={errors?.name && errors?.name.message}
+                        label={{ text: "Name" }}
+                        required
                     />
-                </div>
-                <div className="flex gap-4 items-end">
-                    <label htmlFor="description" className="w-1/5 shrink-0">
-                        Description:{" "}
-                    </label>
+
                     <Input
                         {...register("description")}
                         error={
                             errors?.description && errors?.description.message
                         }
+                        label={{ text: "Description" }}
                     />
-                </div>
-                <div className="flex gap-4 items-end mt-4">
-                    <label htmlFor="score" className="w-1/5 shrink-0">
-                        Score:{" "}
-                    </label>
                     <Input
                         type="number"
                         min={0}
@@ -132,13 +126,16 @@ const Part: React.FC<{
                                 value: 1,
                                 message: "Score must be greater than 0",
                             },
+                            max: {
+                                value: maxScore,
+                                message: "Score must be less than test score",
+                            },
                             valueAsNumber: true,
                         })}
                         error={errors?.score && errors?.score.message}
+                        label={{ text: "Score" }}
+                        required
                     />
-                    <label htmlFor="num_questions" className="w-1/5 shrink-0">
-                        Num of questions:{" "}
-                    </label>
                     <Input
                         type="number"
                         step={1}
@@ -155,6 +152,8 @@ const Part: React.FC<{
                             errors?.num_questions &&
                             errors?.num_questions.message
                         }
+                        label={{ text: "Number of questions" }}
+                        required
                     />
                 </div>
 

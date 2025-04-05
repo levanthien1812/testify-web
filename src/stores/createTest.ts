@@ -174,7 +174,6 @@ const createTestSlice = createSlice({
                 questionInfo: Partial<QuestionItf<QuestionContentItf>>;
             }>
         ) {
-            console.log(action.payload.questionInfo);
             if (action.payload?.partId) {
                 const partIndex = state.testParts.findIndex(
                     (part) => part.id === action.payload.partId
@@ -453,6 +452,26 @@ const createTestSlice = createSlice({
             ) {
                 state.passcode.format = PASSCODE_FORMAT["XXX-YYY"];
             }
+        },
+        deleteQuestion(state, action) {
+            const question = action.payload;
+
+            state.numQuestions = state.numQuestions - 1;
+
+            if (question?.part_id) {
+                state.testParts = state.testParts?.map((part) => {
+                    if (part.id === question?.part_id) {
+                        part.num_questions = part.num_questions - 1;
+                    }
+                    return part;
+                });
+            }
+
+            state.testQuestions = state.testQuestions?.filter(
+                (ques) => ques.id !== question.id
+            );
+
+            state.currentStep = CREATE_TEST_STEPS.TEST_PARTS;
         },
     },
 });
