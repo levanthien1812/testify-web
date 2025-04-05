@@ -267,9 +267,14 @@ const TestInfo = () => {
                         {...register("num_questions", {
                             required: "Number of questions is required",
                             min: {
-                                value: 1,
+                                value:
+                                    allValues.num_parts > 1
+                                        ? allValues.num_parts
+                                        : 1,
                                 message:
-                                    "Number of questions must be greater than 0",
+                                    allValues.num_parts > 1
+                                        ? `Number of questions must be at least ${allValues.num_parts}`
+                                        : "Number of questions must be greater than 0",
                             },
                             valueAsNumber: true,
                         })}
@@ -279,6 +284,11 @@ const TestInfo = () => {
                             errors?.num_questions.message
                         }
                         label={{ text: "Number of questions" }}
+                        helperText={
+                            allValues.num_parts > 1
+                                ? `Must be at least ${allValues.num_parts} questions (one for each part)`
+                                : ""
+                        }
                     />
                     <Select
                         className="grow capitalize"

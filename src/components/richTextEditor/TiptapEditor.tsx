@@ -3,12 +3,9 @@ import "./styles.scss";
 import Color from "@tiptap/extension-color";
 import ListItem from "@tiptap/extension-list-item";
 import TextStyle from "@tiptap/extension-text-style";
-import {
-    Editor,
-    EditorContextValue,
-    EditorProvider,
-    useCurrentEditor,
-} from "@tiptap/react";
+import Text from "@tiptap/extension-text";
+import Paragraph from "@tiptap/extension-paragraph";
+import { EditorProvider, useCurrentEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
 import { MouseEventHandler, ReactNode, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -199,7 +196,7 @@ const TextEditor = ({
             }}
             editorProps={{
                 attributes: {
-                    class: "border border-black outline-none px-4 py-1 focus:border-orange-600 bg-white h-14",
+                    class: "border border-black outline-none px-4 py-1 focus:border-orange-600 bg-white h-20",
                 },
             }}
         ></EditorProvider>

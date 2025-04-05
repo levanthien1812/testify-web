@@ -18,7 +18,10 @@ import MulitpleChoiceQuestion from "./MultipleChoicesQuestion";
 import FillGapsQuestion from "./FillGapsQuestion";
 import MatchingQuestion from "./MatchingQuestion";
 import { useMutation } from "react-query";
-import { saveQuestion } from "../../../../services/test";
+import {
+    deleteQuestion as deleteQuestionApi,
+    saveQuestion,
+} from "../../../../services/test";
 import { toast } from "react-toastify";
 import ResponseQuestion from "./ResponseQuestion";
 import Button from "../../../../components/elements/Button";
@@ -38,6 +41,9 @@ import {
     TEST_LEVEL_LABEL,
 } from "../../../../config/constants/tests";
 import { getInitialQuestionContent } from "../../../../utils/mapping";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faCheck } from "@fortawesome/free-solid-svg-icons";
+import ConfirmModal from "../../../../components/modals/ConfirmModal";
 
 type QuestionProps = {
     question: QuestionItf<QuestionContentItf>;
@@ -46,9 +52,13 @@ type QuestionProps = {
 
 const Question = ({ question, part }: QuestionProps) => {
     const [open, setOpen] = useState<boolean>(false);
-    const { testId } = useSelector((state: RootState) => state.createTest);
-    const { saveTestQuestions, validate } = createTestActions;
+    const { testId, numQuestions } = useSelector(
+        (state: RootState) => state.createTest
+    );
+    const { saveTestQuestions, validate, deleteQuestion } = createTestActions;
     const dispatch = useDispatch();
+    const [isDeletingQuestion, setIsDeletingQuestion] =
+        useState<boolean>(false);
 
     const {
         handleSubmit,
@@ -67,7 +77,6 @@ const Question = ({ question, part }: QuestionProps) => {
         if (!question?.id) {
             setValue("content", getInitialQuestionContent(allValues?.type));
         }
-        console.log(allValues);
         dispatch(
             saveTestQuestions({
                 partId: part?.id,
@@ -126,13 +135,24 @@ const Question = ({ question, part }: QuestionProps) => {
                         partId: part?.id,
                         questionOrder: question.order,
                         questionInfo: {
-                            id: data?.question?.id,
-                            is_saved: true,
+                            ...data.question,
                             content: data?.content,
                         },
                     })
                 );
                 setOpen(false);
+            },
+        });
+
+    const { mutate: deleteQuestionMutate, isLoading: deleteQuestionLoading } =
+        useMutation({
+            mutationFn: async () =>
+                await deleteQuestionApi(testId!, question.id!),
+            mutationKey: [MUTATION_KEYS.DELETE_QUESTION],
+            onSuccess: (data) => {
+                toast.success(TOAST_MESSAGES.DELETE_QUESTION_SUCCESSFULLY);
+                dispatch(deleteQuestion(question));
+                setIsDeletingQuestion(false);
             },
         });
 
@@ -159,15 +179,46 @@ const Question = ({ question, part }: QuestionProps) => {
         }
     };
 
+    const handleClearContent = () => {
+        setValue("content", getInitialQuestionContent(question?.type));
+        dispatch(
+            saveTestQuestions({
+                partId: part?.id,
+                questionOrder: question.order,
+                questionInfo: {
+                    content: getInitialQuestionContent(question?.type),
+                },
+            })
+        );
+    };
+
     return (
         <>
             <div
-                className={`bg-orange-100 p-2 text-center cursor-pointer hover:bg-orange-200 ${
-                    question && "border border-orange-500"
+                className={`bg-orange-100 p-2 cursor-pointer hover:bg-orange-200 relative ${
+                    question.is_content_provided && "border border-orange-500"
                 }`}
                 onClick={() => setOpen(true)}
             >
-                Question {question?.order}
+                <p className="text-center">Question {question?.order}</p>
+                {question.is_content_provided && (
+                    <>
+                        <div
+                            className="absolute bottom-0 right-0 w-0 h-0 z-0"
+                            style={{
+                                borderRight: "8px solid rgb(249 115 22)",
+                                borderBottom: "8px solid rgb(249 115 22)",
+                                borderTop: "8px solid transparent",
+                                borderLeft: "8px solid transparent",
+                            }}
+                        >
+                            <FontAwesomeIcon
+                                icon={faCheck}
+                                className="text-white leading-none"
+                            />
+                        </div>
+                    </>
+                )}
             </div>
             {open && (
                 <Modal onClose={() => setOpen(false)}>
@@ -175,12 +226,11 @@ const Question = ({ question, part }: QuestionProps) => {
                     <ModalBody>
                         <form
                             onSubmit={handleSubmit(onSubmit)}
-                            className="w-[600px]"
+                            className="w-[600px] relative"
                         >
                             <div className="flex gap-4">
-                                <div className="space-y-2 w-1/3 shrink-0">
+                                <div className="space-y-2 w-1/3 shrink-0 flex flex-col">
                                     <div>
-                                        <label htmlFor="score">Score: </label>
                                         <Input
                                             type="number"
                                             min={0}
@@ -196,24 +246,12 @@ const Question = ({ question, part }: QuestionProps) => {
                                                 errors?.score &&
                                                 errors?.score.message
                                             }
+                                            label={{ text: "Score" }}
+                                            required
                                         />
                                     </div>
 
                                     <div>
-                                        <label htmlFor="level">Level: </label>
-                                        <Select
-                                            className="grow capitalize"
-                                            {...register("level")}
-                                            options={Object.values(
-                                                TEST_LEVEL
-                                            ).map((level) => ({
-                                                label: TEST_LEVEL_LABEL[level],
-                                                value: level,
-                                            }))}
-                                        />
-                                    </div>
-                                    <div>
-                                        <label htmlFor="type">Type: </label>
                                         <Select
                                             className="grow capitalize"
                                             {...register("type", {
@@ -233,8 +271,37 @@ const Question = ({ question, part }: QuestionProps) => {
                                                 ],
                                                 value: type,
                                             }))}
+                                            label={{ text: "Type" }}
+                                            required
                                         />
                                     </div>
+                                    <div>
+                                        <label htmlFor="level">Level: </label>
+                                        <Select
+                                            className="grow capitalize"
+                                            {...register("level")}
+                                            options={Object.values(
+                                                TEST_LEVEL
+                                            ).map((level) => ({
+                                                label: TEST_LEVEL_LABEL[level],
+                                                value: level,
+                                            }))}
+                                        />
+                                    </div>
+                                    {question?.content && (
+                                        <div className="grow flex flex-col justify-end">
+                                            <Button
+                                                primary={false}
+                                                type="button"
+                                                onClick={() =>
+                                                    handleClearContent()
+                                                }
+                                                size="sm"
+                                            >
+                                                Clear content
+                                            </Button>
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="border-l border-gray-300 border-dashed"></div>
                                 <div className="grow overflow-hidden">
@@ -321,30 +388,60 @@ const Question = ({ question, part }: QuestionProps) => {
                                 </div>
                             </div>
 
-                            <div className="flex justify-end mt-4 gap-2 border-t border-gray-300 pt-4">
-                                <Button
-                                    primary={false}
-                                    type="button"
-                                    onClick={() => setOpen(false)}
-                                >
-                                    Cancel
-                                </Button>
-                                <Button
-                                    disabled={
-                                        createQuestionLoading ||
-                                        updateQuestionLoading
-                                    }
-                                    type="submit"
-                                >
-                                    {!(
-                                        createQuestionLoading ||
-                                        updateQuestionLoading
-                                    )
-                                        ? "Save"
-                                        : "Saving..."}
-                                </Button>
+                            <div className="flex justify-between mt-4 gap-2 border-t border-gray-300 pt-4">
+                                <div className="flex gap-2">
+                                    <Button
+                                        primary={false}
+                                        type="button"
+                                        onClick={() =>
+                                            setIsDeletingQuestion(true)
+                                        }
+                                        className="bg-red-500 text-white hover:bg-red-600"
+                                        disabled={
+                                            part
+                                                ? part?.num_questions <= 1
+                                                : numQuestions <= 1
+                                        }
+                                    >
+                                        Delete
+                                    </Button>
+                                </div>
+                                <div className="flex gap-2">
+                                    <Button
+                                        primary={false}
+                                        type="button"
+                                        onClick={() => setOpen(false)}
+                                    >
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        disabled={
+                                            createQuestionLoading ||
+                                            updateQuestionLoading
+                                        }
+                                        type="submit"
+                                    >
+                                        {!(
+                                            createQuestionLoading ||
+                                            updateQuestionLoading
+                                        )
+                                            ? "Save"
+                                            : "Saving..."}
+                                    </Button>
+                                </div>
                             </div>
                         </form>
+                        {isDeletingQuestion && (
+                            <ConfirmModal
+                                message="Are you sure you want to delete this question? After doing this, you will have to set the part's score again (if any) and the order of other questions might be changed. You can try clear content and create new question as an alternative! Are you still want to delete?"
+                                onConfirm={() => {
+                                    deleteQuestionMutate();
+                                }}
+                                onClose={() => setIsDeletingQuestion(false)}
+                                title="Delete Question"
+                                isConfirming={deleteQuestionLoading}
+                            />
+                        )}
                     </ModalBody>
                 </Modal>
             )}

@@ -29,10 +29,7 @@ const ResponseQuestion: React.FC<{
                         required: "Text is required",
                     }}
                     render={({ field: { onChange, value } }) => (
-                        <TextEditor
-                            content={value}
-                            setContent={onChange}
-                        />
+                        <TextEditor content={value} setContent={onChange} />
                     )}
                 />
                 {errors.content?.text && (
@@ -42,7 +39,6 @@ const ResponseQuestion: React.FC<{
                 )}
             </div>
             <div className="flex flex-col items-start mt-2">
-                <label htmlFor="min_length">Minimum length of response: </label>
                 <Input
                     type="number"
                     min={1}
@@ -57,10 +53,11 @@ const ResponseQuestion: React.FC<{
                         errors.content?.min_length &&
                         errors.content.min_length.message
                     }
+                    label={{ text: "Minimum length of response" }}
+                    required
                 />
             </div>
             <div className="flex flex-col items-start mt-2">
-                <label htmlFor="max_length">Maximum length: </label>
                 <Input
                     type="number"
                     min={1}
@@ -75,6 +72,8 @@ const ResponseQuestion: React.FC<{
                         errors.content?.max_length &&
                         errors.content.max_length.message
                     }
+                    label={{ text: "Maximum length of response" }}
+                    required
                 />
             </div>
         </>
