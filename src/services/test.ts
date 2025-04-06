@@ -188,10 +188,17 @@ export const saveQuestion = async (
     }
 };
 
-export const deleteQuestion = async (testId: string, questionId: string) => {
+export const deleteQuestion = async (
+    testId: string,
+    questionId: string,
+    questionBody: Partial<QuestionBodyItf<QuestionBodyContentItf>>
+) => {
     try {
         const response = await instance.delete(
-            `/tests/${testId}/questions/${questionId}`
+            `/tests/${testId}/questions/${questionId}`,
+            {
+                data: questionBody,
+            }
         );
 
         return response.data;

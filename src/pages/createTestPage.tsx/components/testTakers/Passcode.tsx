@@ -18,17 +18,19 @@ import { generatePasscode } from "../../../../services/test";
 const Passcode = () => {
     const { passcode } = useSelector((state: RootState) => state.createTest);
     const { testId } = useSelector((state: RootState) => state.createTest);
+    const { validate, setPasscode } = createTestActions;
     const dispatch = useDispatch();
 
     const handlePasscodeChange = (
         e: ChangeEvent<HTMLSelectElement | HTMLInputElement>
     ) => {
         dispatch(
-            createTestActions.setPasscode({
+            setPasscode({
                 ...passcode,
                 [e.target.name]: e.target.value,
             })
         );
+        dispatch(validate());
     };
 
     const { mutate, isLoading: isGeneratingPasscode } = useMutation({
@@ -43,6 +45,7 @@ const Passcode = () => {
         mutationKey: MUTATION_KEYS.GENERATE_PASSCODE,
         onSuccess: (res) => {
             dispatch(createTestActions.setPasscode(res));
+            dispatch(validate());
         },
     });
 

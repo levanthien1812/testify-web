@@ -147,7 +147,10 @@ const Question = ({ question, part }: QuestionProps) => {
     const { mutate: deleteQuestionMutate, isLoading: deleteQuestionLoading } =
         useMutation({
             mutationFn: async () =>
-                await deleteQuestionApi(testId!, question.id!),
+                await deleteQuestionApi(testId!, question.id!, {
+                    order: question.order,
+                    part_id: part?.id,
+                }),
             mutationKey: [MUTATION_KEYS.DELETE_QUESTION],
             onSuccess: (data) => {
                 toast.success(TOAST_MESSAGES.DELETE_QUESTION_SUCCESSFULLY);

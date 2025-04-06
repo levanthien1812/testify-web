@@ -131,6 +131,7 @@ export const INITIAL_CREATE_TEST_CONTEXT: CreateTestContext = {
     isValidCurrentPart: false,
     isValidQuestions: false,
     isValidParts: false,
+    isValidShareOption: false,
     testTakers: [],
     selectedTestTakers: [],
     joinedTakers: [],

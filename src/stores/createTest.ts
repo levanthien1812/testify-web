@@ -138,6 +138,8 @@ const createTestSlice = createSlice({
                         ...[...Array(numQuestions - partQuestions?.length)].map(
                             (item, index) => ({
                                 ...INITIAL_QUESTION,
+                                test_id: state.testId!,
+                                part_id: state.testParts[partIndex].id,
                                 order: partQuestions?.length + index + 1,
                             })
                         ),
@@ -347,6 +349,42 @@ const createTestSlice = createSlice({
                     }
                     break;
                 }
+                case CREATE_TEST_STEPS.TEST_ANSWERS: {
+                    break;
+                }
+                case CREATE_TEST_STEPS.TEST_TAKERS: {
+                    state.isValidShareOption = false;
+                    switch (state.shareOption) {
+                        case SHARE_OPTIONS.RESTRICTED: {
+                            if (state.selectedTestTakers.length > 0) {
+                                state.isValidShareOption = true;
+                            }
+                            break;
+                        }
+                        case SHARE_OPTIONS.ANYONE: {
+                            state.isValidShareOption = true;
+                            break;
+                        }
+                        case SHARE_OPTIONS.PASSCODE: {
+                            if (
+                                state.passcode.method ===
+                                    PASSCODE_METHOD.AUTO_GENERATED &&
+                                state.passcode.format &&
+                                state.passcode.code
+                            ) {
+                                state.isValidShareOption = true;
+                            }
+                            if (
+                                state.passcode.method ===
+                                    PASSCODE_METHOD.MANUALLY_ENTERED &&
+                                state.passcode.code
+                            ) {
+                                state.isValidShareOption = true;
+                            }
+                            break;
+                        }
+                    }
+                }
             }
         },
         validateCurrentPart(
@@ -463,6 +501,16 @@ const createTestSlice = createSlice({
                     if (part.id === question?.part_id) {
                         part.num_questions = part.num_questions - 1;
                     }
+
+                    part.questions = part.questions
+                        ?.filter((ques) => ques.id !== question.id)
+                        .map((ques) => {
+                            if (ques.order > question.order) {
+                                ques.order = ques.order - 1;
+                            }
+                            return ques;
+                        });
+
                     return part;
                 });
             }
@@ -472,6 +520,36 @@ const createTestSlice = createSlice({
             );
 
             state.currentStep = CREATE_TEST_STEPS.TEST_PARTS;
+        },
+        handleNavigation(state, action) {
+            switch (action.payload) {
+                case CREATE_TEST_STEPS.TEST_INFORMATION: {
+                    state.currentStep = CREATE_TEST_STEPS.TEST_INFORMATION;
+                    break;
+                }
+                case CREATE_TEST_STEPS.TEST_PARTS: {
+                    if (state.isValidTestInfo) {
+                        state.currentStep = CREATE_TEST_STEPS.TEST_PARTS;
+                    }
+                    break;
+                }
+                case CREATE_TEST_STEPS.TEST_QUESTIONS: {
+                    if (state.isValidParts) {
+                        state.currentStep = CREATE_TEST_STEPS.TEST_QUESTIONS;
+                    }
+                    break;
+                }
+                case CREATE_TEST_STEPS.TEST_ANSWERS: {
+                    if (state.isValidQuestions) {
+                        state.currentStep = CREATE_TEST_STEPS.TEST_ANSWERS;
+                    }
+                    break;
+                }
+                case CREATE_TEST_STEPS.TEST_TAKERS: {
+                    state.currentStep = CREATE_TEST_STEPS.TEST_TAKERS;
+                    break;
+                }
+            }
         },
     },
 });
