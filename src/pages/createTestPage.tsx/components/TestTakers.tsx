@@ -19,11 +19,16 @@ import { TestBodyItf } from "../../../types/types";
 import Anyone from "./testTakers/Anyone";
 
 const TestTakers = () => {
-    const { testId, shareOption, testLink, testTakers, passcode } = useSelector(
-        (state: RootState) => state.createTest
-    );
+    const {
+        testId,
+        shareOption,
+        testLink,
+        testTakers,
+        passcode,
+        isValidShareOption,
+    } = useSelector((state: RootState) => state.createTest);
     const navigate = useNavigate();
-    const { moveNextStep, movePrevStep } = createTestActions;
+    const { moveNextStep, movePrevStep, validate } = createTestActions;
     const dispatch = useDispatch();
 
     const { mutate: updateTestMutate, isLoading: isUpdatingTest } = useMutation(
@@ -75,6 +80,11 @@ const TestTakers = () => {
         }
     };
 
+    const handleChangeShareOption = (value: string) => {
+        dispatch(createTestActions.saveTestInfo({ share_option: value }));
+        dispatch(validate());
+    };
+
     return (
         <Wrapper
             viewData={{
@@ -86,12 +96,15 @@ const TestTakers = () => {
                 },
                 bottomButtons: {
                     containButton: {
-                        text: "Finish",
+                        text: "Save & Finish",
                         loadingText: "Finishing...",
                         onClick: () => {
                             handleSaveTestTakers();
                         },
-                        disabled: isUpdatingTest || isAssigningTakers,
+                        disabled:
+                            isUpdatingTest ||
+                            isAssigningTakers ||
+                            !isValidShareOption,
                         isLoading: isUpdatingTest || isAssigningTakers,
                     },
                     outlinedButton: {
@@ -110,11 +123,7 @@ const TestTakers = () => {
                     id="share-select"
                     value={shareOption}
                     onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                        dispatch(
-                            createTestActions.saveTestInfo({
-                                share_option: e.target.value,
-                            })
-                        )
+                        handleChangeShareOption(e.target.value)
                     }
                     options={[
                         {

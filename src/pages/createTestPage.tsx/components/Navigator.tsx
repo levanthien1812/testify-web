@@ -10,11 +10,12 @@ const Navigator = () => {
     const { steps, currentStep } = useSelector(
         (state: RootState) => state.createTest
     );
-    const { setStep } = createTestActions;
+    const { setStep, handleNavigation } = createTestActions;
     const dispatch = useDispatch();
 
     const handleClickStep = (value: string) => {
-        dispatch(setStep(value as CREATE_TEST_STEPS));
+        // dispatch(setStep(value as CREATE_TEST_STEPS));
+        dispatch(handleNavigation(value as CREATE_TEST_STEPS));
     };
 
     const getColor = (step: CreateTestStep) => {

@@ -86,6 +86,7 @@ export interface CreateTestContext {
     isValidCurrentPart: boolean;
     isValidParts: boolean;
     isValidQuestions: boolean;
+    isValidShareOption: boolean;
     testTakers: TakerItf[];
     selectedTestTakers: TakerItf[];
     joinedTakers: TakerItf[];
@@ -93,6 +94,7 @@ export interface CreateTestContext {
     testLink: string;
     passcode: PasscodeItf;
     options: TestOption;
+    status: TEST_STATUS;
 }
 
 export interface TakeTestContext {
@@ -112,4 +114,9 @@ export interface TakeTestContext {
     testLink: string;
     isEnteringPasscode: boolean;
     isPasscodeValidated: boolean;
+}
+
+export interface ViewTestContext {
+    test: TestItf | null;
+    submissions: SubmissionItf[];
 }

@@ -13,25 +13,30 @@ import Modal, {
 import TestQuestionsAndAnswers from "../takeTestPage/components/TestQuestionsAndAnswers";
 import TestAnswers from "../createTestPage.tsx/components/TestAnswers";
 import Button from "../../components/elements/Button";
+import { viewTestActions } from "../../stores/viewTest";
+import { useSelector } from "react-redux";
+import { RootState } from "../../stores/rootState";
+import { useDispatch } from "react-redux";
 
 const ViewTestPage = () => {
     const { testId } = useParams();
     const [viewQuestionsAndAnswers, setViewQuestionsAndAnswers] =
         useState(false);
     const [viewProvideAnswers, setViewProvideAnswers] = useState(false);
+    const { test } = useSelector((state: RootState) => state.viewTest);
+    const { setTest } = viewTestActions;
+    const dispatch = useDispatch();
 
-    const {
-        isLoading: isLoadingTest,
-        data: test,
-        refetch: refetchTest,
-    } = useQuery<TestItf>({
-        queryKey: ["test", testId],
-        queryFn: async () => {
-            const responseData = await getTest(testId!);
-            return responseData.test;
-        },
-        retry: false,
-    });
+    const { isLoading: isLoadingTest, refetch: refetchTest } =
+        useQuery<TestItf>({
+            queryKey: ["test", testId],
+            queryFn: async () => {
+                const responseData = await getTest(testId!);
+                dispatch(setTest(responseData.test));
+                return responseData.test;
+            },
+            retry: false,
+        });
 
     const {
         isLoading: isLoadingSubmissions,
@@ -87,7 +92,7 @@ const ViewTestPage = () => {
                     <ModalBody>
                         {test.are_answers_provided === false && (
                             <div className="bg-orange-200 px-8 py-2">
-                                Please answer all questions{" "}
+                                Please provide answers for all questions{" "}
                                 <button
                                     className="underline hover:font-bold"
                                     onClick={() => {

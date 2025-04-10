@@ -2,6 +2,7 @@ import {
     CreateTestContext,
     TakeTestContext,
     TestOption,
+    ViewTestContext,
 } from "../../types/tests";
 import {
     FillGapsQuestionItf,
@@ -131,6 +132,7 @@ export const INITIAL_CREATE_TEST_CONTEXT: CreateTestContext = {
     isValidCurrentPart: false,
     isValidQuestions: false,
     isValidParts: false,
+    isValidShareOption: false,
     testTakers: [],
     selectedTestTakers: [],
     joinedTakers: [],
@@ -143,6 +145,7 @@ export const INITIAL_CREATE_TEST_CONTEXT: CreateTestContext = {
         method: "",
     },
     options: INITIAL_OPTIONS,
+    status: TEST_STATUS.DRAFT,
 };
 
 export const INITIAL_PART: TestPartItf = {
@@ -205,4 +208,9 @@ export const INITIAL_TAKE_TEST_CONTEXT: TakeTestContext = {
     testLink: "",
     isEnteringPasscode: false,
     isPasscodeValidated: false,
+};
+
+export const INITIAL_VIEW_TEST_CONTEXT: ViewTestContext = {
+    test: null,
+    submissions: [],
 };
