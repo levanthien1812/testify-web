@@ -416,6 +416,7 @@ const createTestSlice = createSlice({
                 action.payload?.share_option || SHARE_OPTIONS.RESTRICTED;
             state.testId = action.payload?.id;
             state.options = action.payload?.options;
+            state.status = action.payload?.status;
 
             state.testParts = action.payload?.parts;
             state.testParts = state.testParts.map((part) => ({

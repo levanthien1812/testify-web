@@ -9,6 +9,7 @@ const QUERY_KEYS = {
     GET_MESSAGES: "get-messages",
     GET_ONLINE_USERS: "get-online-users",
     GET_BLOCKED_USERS: "get-blocked-users",
+    GET_PASSCODE: "get-passcode",
 };
 
 const MUTATION_KEYS = {

@@ -296,11 +296,22 @@ export const generatePasscode = async (
         throw error;
     }
 };
+
 export const checkPasscode = async (passcode: string) => {
     try {
         const response = await instance.post(`/tests/passcode/check`, {
             passcode,
         });
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getPasscode = async (testId: string) => {
+    try {
+        const response = await instance.get(`/tests/${testId}/passcode`);
 
         return response.data;
     } catch (error) {

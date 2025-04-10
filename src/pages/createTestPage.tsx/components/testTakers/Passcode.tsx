@@ -11,13 +11,20 @@ import { useDispatch } from "react-redux";
 import { createTestActions } from "../../../../stores/createTest";
 import Input from "../../../../components/elements/Input";
 import Button from "../../../../components/elements/Button";
-import { useMutation } from "react-query";
-import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
-import { generatePasscode } from "../../../../services/test";
+import { useMutation, useQuery } from "react-query";
+import {
+    MUTATION_KEYS,
+    QUERY_KEYS,
+} from "../../../../config/constants/queryMutationKeys";
+import { generatePasscode, getPasscode } from "../../../../services/test";
+import { SHARE_OPTIONS } from "../../../../config/constants/tests";
+import Loading from "../../../../components/loadings/Loading";
 
 const Passcode = () => {
     const { passcode } = useSelector((state: RootState) => state.createTest);
-    const { testId } = useSelector((state: RootState) => state.createTest);
+    const { testId, shareOption } = useSelector(
+        (state: RootState) => state.createTest
+    );
     const { validate, setPasscode } = createTestActions;
     const dispatch = useDispatch();
 
@@ -32,6 +39,20 @@ const Passcode = () => {
         );
         dispatch(validate());
     };
+
+    const { isLoading: isLoadingPasscode } = useQuery({
+        queryFn: async () => {
+            const data = await getPasscode(testId!);
+
+            return data.passcode;
+        },
+        queryKey: [QUERY_KEYS.GET_PASSCODE, { testId: testId }],
+        onSuccess: (data) => {
+            if (!data) return;
+            dispatch(setPasscode(data));
+        },
+        enabled: shareOption === SHARE_OPTIONS.PASSCODE,
+    });
 
     const { mutate, isLoading: isGeneratingPasscode } = useMutation({
         mutationFn: async () => {
@@ -74,6 +95,13 @@ const Passcode = () => {
                     guideOption="Select a method"
                 />
             </div>
+
+            {isLoadingPasscode && (
+                <Loading
+                    isLoading={isLoadingPasscode}
+                    loadingText={{ text: "Loading passcode info..." }}
+                />
+            )}
             {passcode.method === PASSCODE_METHOD.AUTO_GENERATED && (
                 <div>
                     <div className="flex gap-4 items-end mt-4">

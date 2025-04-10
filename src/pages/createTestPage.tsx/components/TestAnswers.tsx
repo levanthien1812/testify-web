@@ -7,9 +7,7 @@ import { createTestActions } from "../../../stores/createTest";
 import { useDispatch } from "react-redux";
 
 const TestAnswers = () => {
-    const { testParts, testQuestions } = useSelector(
-        (state: RootState) => state.createTest
-    );
+    const { test } = useSelector((state: RootState) => state.viewTest);
     const { moveNextStep, movePrevStep } = createTestActions;
     const dispatch = useDispatch();
 
@@ -39,13 +37,14 @@ const TestAnswers = () => {
             }}
         >
             <div className={`space-y-3 mt-4`}>
-                {testParts.length > 0 &&
-                    testParts.map((part) => (
+                {test &&
+                    test.parts.length > 0 &&
+                    test.parts.map((part) => (
                         <Questions part={part} withAnswer={true} />
                     ))}
-                {testParts.length === 0 && (
+                {test && test.parts.length === 0 && (
                     <div className={`px-4 py-4 space-y-2`}>
-                        {testQuestions!.map((question) => (
+                        {test.questions!.map((question) => (
                             <Answer question={question} key={question.id} />
                         ))}
                     </div>
