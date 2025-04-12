@@ -14,6 +14,8 @@ import {
     useFieldArray,
     UseFormRegister,
 } from "react-hook-form";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../stores/rootState";
 
 const MulitpleChoiceQuestion: React.FC<{
     content: MultipleChoiceQuestionBodyItf;
@@ -30,6 +32,8 @@ const MulitpleChoiceQuestion: React.FC<{
         name: "content.options",
     });
 
+    const { editibility } = useSelector((state: RootState) => state.createTest);
+
     return (
         <>
             <div className="flex flex-col">
@@ -43,6 +47,7 @@ const MulitpleChoiceQuestion: React.FC<{
                     render={({ field: { onChange, value } }) => (
                         <TextEditor content={value} setContent={onChange} />
                     )}
+                    disabled={!editibility.TEST_QUESTIONS.content}
                 />
                 {errors.content?.text && (
                     <p className="text-end text-orange-600 text-sm italic mt-1 leading-4">
@@ -65,6 +70,7 @@ const MulitpleChoiceQuestion: React.FC<{
                             error={
                                 errors.content?.options?.[index]?.text?.message
                             }
+                            disabled={!editibility.TEST_QUESTIONS.content}
                         />
                     ))}
 
@@ -73,7 +79,10 @@ const MulitpleChoiceQuestion: React.FC<{
                         type="button"
                         className="w-full"
                         onClick={() => appendOption({ text: "" })}
-                        disabled={content?.options?.length >= 10}
+                        disabled={
+                            content?.options?.length >= 10 &&
+                            !editibility.TEST_QUESTIONS.content
+                        }
                     >
                         Add option
                     </Button>
@@ -84,6 +93,7 @@ const MulitpleChoiceQuestion: React.FC<{
                     <ImagesChoser
                         images={content.images || null}
                         {...register("content.images", {})}
+                        disabled={!editibility.TEST_QUESTIONS.content}
                     />
                 </div>
             </div>

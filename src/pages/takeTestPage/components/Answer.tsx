@@ -33,9 +33,9 @@ type QuestionProps = {
     userAnswer?: UserAnswerItf<AnswerBodyContentItf>;
 };
 
-const Answer = ({ question, userAnswer: answer }: QuestionProps) => {
+const Answer = ({ question, userAnswer }: QuestionProps) => {
     const [manualScore, setManualScore] = useState<number>(
-        answer ? answer.score || 0 : 0
+        userAnswer ? userAnswer.score || 0 : 0
     );
     const [isUpdatingScore, setIsUpdatingScore] = useState<boolean>(false);
     const user = useSelector((state: RootState) => state.auth.user);
@@ -49,13 +49,13 @@ const Answer = ({ question, userAnswer: answer }: QuestionProps) => {
             mutationFn: async () => {
                 const data = await updateTakerAnswer(
                     question.test_id,
-                    answer!.id!,
+                    userAnswer!.id!,
                     { score: manualScore! }
                 );
 
                 return data;
             },
-            mutationKey: ["updateTakerAnswer", { answer_id: answer?.id }],
+            mutationKey: ["updateTakerAnswer", { answer_id: userAnswer?.id }],
             onSuccess: () => {},
             onError: (error) => {
                 if (error instanceof AxiosError) {
@@ -77,7 +77,7 @@ const Answer = ({ question, userAnswer: answer }: QuestionProps) => {
     return (
         <div
             className={`px-4 py-2 ${
-                needManualScore && answer && !answer.score
+                needManualScore && userAnswer && !userAnswer.score
                     ? "bg-orange-100"
                     : "bg-white"
             }`}
@@ -86,17 +86,17 @@ const Answer = ({ question, userAnswer: answer }: QuestionProps) => {
                 <span className="underline">Question {question.order}:</span>{" "}
                 <span className="font-bold italic">
                     (
-                    {answer
-                        ? `${answer.score}/${question.score}`
-                        : answer === null
+                    {userAnswer
+                        ? `${userAnswer.score}/${question.score}`
+                        : userAnswer === null
                         ? `0/${question.score}`
                         : question.score}{" "}
                     points)
                 </span>{" "}
-                {answer !== undefined && !needManualScore && (
+                {userAnswer !== undefined && !needManualScore && (
                     <span className="font-bold italic">
-                        {answer !== null ? (
-                            answer.score! > 0 ? (
+                        {userAnswer !== null ? (
+                            userAnswer.score! > 0 ? (
                                 <span className="text-green-600">
                                     Correct ✅
                                 </span>
@@ -114,31 +114,33 @@ const Answer = ({ question, userAnswer: answer }: QuestionProps) => {
                     questionContent={
                         question.content as MultipleChoiceQuestionItf
                     }
-                    answerContent={answer?.content as MultipleChoiceAnswerItf}
+                    answerContent={
+                        userAnswer?.content as MultipleChoiceAnswerItf
+                    }
                 />
             )}
             {question.type === QUESTION_TYPE.FILL_IN_THE_GAPS && (
                 <FillGapsAnswer
                     questionContent={question.content as FillGapsQuestionItf}
-                    answerContent={answer?.content as FillGapsAnswerItf}
+                    answerContent={userAnswer?.content as FillGapsAnswerItf}
                 />
             )}
             {question.type === QUESTION_TYPE.MATCHING && (
                 <MatchingAnswer
                     questionContent={question.content as MatchingQuestionItf}
-                    answerContent={answer?.content as MatchingAnswerItf}
+                    answerContent={userAnswer?.content as MatchingAnswerItf}
                 />
             )}
             {question.type === QUESTION_TYPE.RESPONSE && (
                 <ResponseAnswer
                     questionContent={question.content as ResponseQuestionItf}
-                    answerContent={answer?.content as ResponseAnswerItf}
+                    answerContent={userAnswer?.content as ResponseAnswerItf}
                 />
             )}
 
             {user?.role === ROLES.MAKER && needManualScore && (
                 <div className="border-t pt-2 border-gray-400 border-dashed space-x-2">
-                    {((answer && !answer.score) || isUpdatingScore) && (
+                    {((userAnswer && !userAnswer.score) || isUpdatingScore) && (
                         <>
                             <label htmlFor="manualScore">Score: </label>
                             <Input
@@ -170,7 +172,9 @@ const Answer = ({ question, userAnswer: answer }: QuestionProps) => {
                                     size="sm"
                                     onClick={() => {
                                         setManualScore(
-                                            answer ? answer.score || 0 : 0
+                                            userAnswer
+                                                ? userAnswer.score || 0
+                                                : 0
                                         );
                                         setIsUpdatingScore(false);
                                     }}
@@ -180,7 +184,7 @@ const Answer = ({ question, userAnswer: answer }: QuestionProps) => {
                             )}
                         </>
                     )}
-                    {answer && answer.score && !isUpdatingScore && (
+                    {userAnswer && userAnswer.score && !isUpdatingScore && (
                         <Button
                             size="sm"
                             onClick={() => setIsUpdatingScore(true)}

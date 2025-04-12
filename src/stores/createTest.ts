@@ -1,10 +1,14 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {
+    DRAFT_EDITIBILITY_CONFIG,
+    PUBLISHED_EDITABILITY_CONFIG,
+    OPENED_EDITABILITY_CONFIG,
+    CLOSED_EDITABILITY_CONFIG,
     INITIAL_CREATE_TEST_CONTEXT,
     INITIAL_PART,
     INITIAL_QUESTION,
 } from "../config/constants/initialValues";
-import { CREATE_TEST_STEPS } from "../config/constants/tests";
+import { CREATE_TEST_STEPS, TEST_STATUS } from "../config/constants/tests";
 import {
     PasscodeItf,
     QuestionContentItf,
@@ -462,6 +466,25 @@ const createTestSlice = createSlice({
 
             state.testQuestions = action.payload?.questions;
             state.testTakers = action.payload?.taker_ids;
+
+            switch (state.status) {
+                case TEST_STATUS.DRAFT: {
+                    state.editibility = DRAFT_EDITIBILITY_CONFIG;
+                    break;
+                }
+                case TEST_STATUS.PUBLISHED: {
+                    state.editibility = PUBLISHED_EDITABILITY_CONFIG;
+                    break;
+                }
+                case TEST_STATUS.OPENED: {
+                    state.editibility = OPENED_EDITABILITY_CONFIG;
+                    break;
+                }
+                case TEST_STATUS.CLOSED: {
+                    state.editibility = CLOSED_EDITABILITY_CONFIG;
+                    break;
+                }
+            }
         },
         reset(state) {
             return INITIAL_CREATE_TEST_CONTEXT;

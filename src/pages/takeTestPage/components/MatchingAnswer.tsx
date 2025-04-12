@@ -78,7 +78,7 @@ const MatchingAnswer = ({
                             key={matching.left}
                             className={`${
                                 questionContent.answer &&
-                                answerContent.matchings
+                                answerContent?.matchings
                                     ? isCorrectMatching(matching)
                                         ? "bg-green-100"
                                         : "bg-red-100"

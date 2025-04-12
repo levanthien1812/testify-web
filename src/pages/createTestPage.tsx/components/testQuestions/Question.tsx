@@ -52,7 +52,7 @@ type QuestionProps = {
 
 const Question = ({ question, part }: QuestionProps) => {
     const [open, setOpen] = useState<boolean>(false);
-    const { testId, numQuestions } = useSelector(
+    const { testId, numQuestions, editibility } = useSelector(
         (state: RootState) => state.createTest
     );
     const { saveTestQuestions, validate, deleteQuestion } = createTestActions;
@@ -251,6 +251,10 @@ const Question = ({ question, part }: QuestionProps) => {
                                             }
                                             label={{ text: "Score" }}
                                             required
+                                            disabled={
+                                                !editibility.TEST_QUESTIONS
+                                                    .score
+                                            }
                                         />
                                     </div>
 
@@ -276,10 +280,12 @@ const Question = ({ question, part }: QuestionProps) => {
                                             }))}
                                             label={{ text: "Type" }}
                                             required
+                                            disabled={
+                                                !editibility.TEST_QUESTIONS.type
+                                            }
                                         />
                                     </div>
                                     <div>
-                                        <label htmlFor="level">Level: </label>
                                         <Select
                                             className="grow capitalize"
                                             {...register("level")}
@@ -289,22 +295,28 @@ const Question = ({ question, part }: QuestionProps) => {
                                                 label: TEST_LEVEL_LABEL[level],
                                                 value: level,
                                             }))}
+                                            disabled={
+                                                !editibility.TEST_QUESTIONS
+                                                    .level
+                                            }
+                                            label={{ text: "Level" }}
                                         />
                                     </div>
-                                    {question?.content && (
-                                        <div className="grow flex flex-col justify-end">
-                                            <Button
-                                                primary={false}
-                                                type="button"
-                                                onClick={() =>
-                                                    handleClearContent()
-                                                }
-                                                size="sm"
-                                            >
-                                                Clear content
-                                            </Button>
-                                        </div>
-                                    )}
+                                    {question?.content &&
+                                        editibility.TEST_QUESTIONS.content && (
+                                            <div className="grow flex flex-col justify-end">
+                                                <Button
+                                                    primary={false}
+                                                    type="button"
+                                                    onClick={() =>
+                                                        handleClearContent()
+                                                    }
+                                                    size="sm"
+                                                >
+                                                    Clear content
+                                                </Button>
+                                            </div>
+                                        )}
                                 </div>
                                 <div className="border-l border-gray-300 border-dashed"></div>
                                 <div className="grow overflow-hidden">

@@ -168,7 +168,7 @@ const TakerSubmissionDetail = ({
                     {testWithAnswers && (
                         <TestQuestionsAndAnswers
                             test={testWithAnswers}
-                            answers={[]}
+                            userAnswers={[]}
                         />
                     )}
                 </div>

@@ -66,7 +66,7 @@ const Submission = ({ submission }: SubmissionProps) => {
             </Button>
 
             {viewDetail && (
-                <TestQuetionsAndAnswers test={test!} answers={answers} />
+                <TestQuetionsAndAnswers test={test!} userAnswers={answers} />
             )}
         </div>
     );
