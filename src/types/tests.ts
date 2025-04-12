@@ -1,4 +1,5 @@
 import {
+    CREATE_TEST_STEPS,
     PUBLIC_ANSWERS_OPTIONS,
     SHARE_OPTIONS,
     TEST_LEVEL,
@@ -95,6 +96,7 @@ export interface CreateTestContext {
     passcode: PasscodeItf;
     options: TestOption;
     status: TEST_STATUS;
+    editibility: EditabilityConfig;
 }
 
 export interface TakeTestContext {
@@ -119,4 +121,47 @@ export interface TakeTestContext {
 export interface ViewTestContext {
     test: TestItf | null;
     submissions: SubmissionItf[];
+}
+
+export interface EditabilityConfig {
+    [CREATE_TEST_STEPS.TEST_INFORMATION]: {
+        title: boolean;
+        datetime: boolean;
+        description: boolean;
+        duration: boolean;
+        max_score: boolean;
+        num_questions: boolean;
+        num_parts: boolean;
+        level: boolean;
+        options: {
+            allow_close_time: boolean;
+            allow_view_submission_after_test: boolean;
+            allow_multiple_submissions: boolean;
+            allow_save_progress: boolean;
+            allow_show_taker_answers_after_test: boolean;
+            allow_show_maker_answers_after_test: boolean;
+            allow_shuffle_questions: boolean;
+            allow_shuffle_answers: boolean;
+            allow_review_before_submission: boolean;
+            disallow_time_limit: boolean;
+        };
+    };
+    [CREATE_TEST_STEPS.TEST_PARTS]: {
+        name: boolean;
+        score: boolean;
+        description: boolean;
+        num_questions: boolean;
+        order: boolean;
+    };
+    [CREATE_TEST_STEPS.TEST_QUESTIONS]: {
+        score: boolean;
+        level: boolean;
+        type: boolean;
+        order: boolean;
+        content: boolean;
+    };
+    [CREATE_TEST_STEPS.TEST_ANSWERS]: {};
+    [CREATE_TEST_STEPS.TEST_TAKERS]: {
+        share_option: boolean;
+    };
 }

@@ -17,6 +17,7 @@ import { viewTestActions } from "../../stores/viewTest";
 import { useSelector } from "react-redux";
 import { RootState } from "../../stores/rootState";
 import { useDispatch } from "react-redux";
+import { Link } from "react-router-dom";
 
 const ViewTestPage = () => {
     const { testId } = useParams();
@@ -61,6 +62,12 @@ const ViewTestPage = () => {
                 >
                     <span>View questions and answers</span>
                 </button>
+                <Link
+                    to={`/tests/${testId}/edit`}
+                    className="ml-2 text-orange-600 underline hover:italic"
+                >
+                    Update test
+                </Link>
             </div>
 
             <div className=" mt-4">
@@ -117,7 +124,7 @@ const ViewTestPage = () => {
                                 </Button>
                             </div>
                         )}
-                        <TestQuestionsAndAnswers test={test} answers={[]} />
+                        <TestQuestionsAndAnswers test={test} userAnswers={[]} />
                     </ModalBody>
                     <ModalFooter></ModalFooter>
                 </Modal>

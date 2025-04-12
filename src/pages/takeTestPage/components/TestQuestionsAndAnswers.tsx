@@ -8,18 +8,20 @@ import Answer from "./Answer";
 
 type TestQuestionsAndAnswersProps = {
     test: TestItf;
-    answers: UserAnswerItf<AnswerBodyContentItf>[];
+    userAnswers: UserAnswerItf<AnswerBodyContentItf>[];
 };
 
 const TestQuestionsAndAnswers = ({
     test,
-    answers,
+    userAnswers,
 }: TestQuestionsAndAnswersProps) => {
     const getUserAnswer = useCallback(
         (questionId: string) => {
-            return answers.find((answer) => answer.question_id === questionId);
+            return userAnswers.find(
+                (answer) => answer.question_id === questionId
+            );
         },
-        [answers]
+        [userAnswers]
     );
     return (
         <div className="mt-4">

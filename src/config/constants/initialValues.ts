@@ -1,5 +1,6 @@
 import {
     CreateTestContext,
+    EditabilityConfig,
     TakeTestContext,
     TestOption,
     ViewTestContext,
@@ -68,6 +69,178 @@ export const INITIAL_TEST_INFO: TestBodyItf = {
     level: TEST_LEVEL.EASY,
     num_parts: 1,
     options: INITIAL_OPTIONS,
+};
+
+export const DRAFT_EDITIBILITY_CONFIG: EditabilityConfig = {
+    [CREATE_TEST_STEPS.TEST_INFORMATION]: {
+        title: true,
+        datetime: true,
+        description: true,
+        duration: true,
+        max_score: true,
+        num_questions: true,
+        num_parts: true,
+        level: true,
+        options: {
+            allow_close_time: true,
+            allow_view_submission_after_test: true,
+            allow_multiple_submissions: true,
+            allow_save_progress: true,
+            allow_show_taker_answers_after_test: true,
+            allow_show_maker_answers_after_test: true,
+            allow_shuffle_questions: true,
+            allow_shuffle_answers: true,
+            allow_review_before_submission: true,
+            disallow_time_limit: true,
+        },
+    },
+    [CREATE_TEST_STEPS.TEST_PARTS]: {
+        name: true,
+        score: true,
+        description: true,
+        num_questions: true,
+        order: true,
+    },
+    [CREATE_TEST_STEPS.TEST_QUESTIONS]: {
+        score: true,
+        level: true,
+        type: true,
+        order: true,
+        content: true,
+    },
+    [CREATE_TEST_STEPS.TEST_ANSWERS]: {},
+    [CREATE_TEST_STEPS.TEST_TAKERS]: {
+        share_option: true,
+    },
+};
+
+export const PUBLISHED_EDITABILITY_CONFIG: EditabilityConfig = {
+    [CREATE_TEST_STEPS.TEST_INFORMATION]: {
+        title: false,
+        datetime: false,
+        description: false,
+        duration: false,
+        max_score: false,
+        num_questions: false,
+        num_parts: false,
+        level: false,
+        options: {
+            allow_close_time: false,
+            allow_view_submission_after_test: true,
+            allow_multiple_submissions: false,
+            allow_save_progress: false,
+            allow_show_taker_answers_after_test: true,
+            allow_show_maker_answers_after_test: true,
+            allow_shuffle_questions: false,
+            allow_shuffle_answers: false,
+            allow_review_before_submission: true,
+            disallow_time_limit: false,
+        },
+    },
+    [CREATE_TEST_STEPS.TEST_PARTS]: {
+        name: true,
+        score: false,
+        description: true,
+        num_questions: false,
+        order: false,
+    },
+    [CREATE_TEST_STEPS.TEST_QUESTIONS]: {
+        score: false,
+        level: true,
+        type: false,
+        order: false,
+        content: true,
+    },
+    [CREATE_TEST_STEPS.TEST_ANSWERS]: {},
+    [CREATE_TEST_STEPS.TEST_TAKERS]: {
+        share_option: true,
+    },
+};
+
+export const OPENED_EDITABILITY_CONFIG: EditabilityConfig = {
+    [CREATE_TEST_STEPS.TEST_INFORMATION]: {
+        title: false,
+        datetime: false,
+        description: false,
+        duration: false,
+        max_score: false,
+        num_questions: false,
+        num_parts: false,
+        level: false,
+        options: {
+            allow_close_time: false,
+            allow_view_submission_after_test: true,
+            allow_multiple_submissions: false,
+            allow_save_progress: false,
+            allow_show_taker_answers_after_test: false,
+            allow_show_maker_answers_after_test: false,
+            allow_shuffle_questions: false,
+            allow_shuffle_answers: false,
+            allow_review_before_submission: false,
+            disallow_time_limit: false,
+        },
+    },
+    [CREATE_TEST_STEPS.TEST_PARTS]: {
+        name: true,
+        score: false,
+        description: true,
+        num_questions: false,
+        order: false,
+    },
+    [CREATE_TEST_STEPS.TEST_QUESTIONS]: {
+        score: false,
+        level: true,
+        type: false,
+        order: false,
+        content: true,
+    },
+    [CREATE_TEST_STEPS.TEST_ANSWERS]: {},
+    [CREATE_TEST_STEPS.TEST_TAKERS]: {
+        share_option: false,
+    },
+};
+
+export const CLOSED_EDITABILITY_CONFIG: EditabilityConfig = {
+    [CREATE_TEST_STEPS.TEST_INFORMATION]: {
+        title: false,
+        datetime: false,
+        description: false,
+        duration: false,
+        max_score: false,
+        num_questions: false,
+        num_parts: false,
+        level: false,
+        options: {
+            allow_close_time: false,
+            allow_view_submission_after_test: false,
+            allow_multiple_submissions: false,
+            allow_save_progress: false,
+            allow_show_taker_answers_after_test: false,
+            allow_show_maker_answers_after_test: false,
+            allow_shuffle_questions: false,
+            allow_shuffle_answers: false,
+            allow_review_before_submission: false,
+            disallow_time_limit: false,
+        },
+    },
+    [CREATE_TEST_STEPS.TEST_PARTS]: {
+        name: false,
+        score: false,
+        description: false,
+        num_questions: false,
+        order: false,
+    },
+    [CREATE_TEST_STEPS.TEST_QUESTIONS]: {
+        score: false,
+        level: false,
+        type: false,
+        order: false,
+        content: false,
+    },
+    [CREATE_TEST_STEPS.TEST_ANSWERS]: {},
+    [CREATE_TEST_STEPS.TEST_TAKERS]: {
+        share_option: false,
+    },
 };
 
 export const INITIAL_CREATE_TEST_CONTEXT: CreateTestContext = {
@@ -146,6 +319,7 @@ export const INITIAL_CREATE_TEST_CONTEXT: CreateTestContext = {
     },
     options: INITIAL_OPTIONS,
     status: TEST_STATUS.DRAFT,
+    editibility: DRAFT_EDITIBILITY_CONFIG,
 };
 
 export const INITIAL_PART: TestPartItf = {

@@ -57,6 +57,15 @@ const StatusPanel = () => {
                             </Button>
                         </div>
                     )}
+                    {status === TEST_STATUS.PUBLISHED ||
+                        (status === TEST_STATUS.OPENED && (
+                            <div>
+                                <p>
+                                    This test is now published/opened! Some
+                                    fields will not be editable.
+                                </p>
+                            </div>
+                        ))}
                     <div className="flex justify-end mt-2">
                         <Button
                             primary={false}

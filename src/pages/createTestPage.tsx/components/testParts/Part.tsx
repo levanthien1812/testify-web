@@ -19,7 +19,7 @@ import { pickFieldsFromObject } from "../../../../utils/object";
 const Part: React.FC<{
     part: TestPartItf;
 }> = ({ part }) => {
-    const { testId, maxScore } = useSelector(
+    const { testId, maxScore, editibility } = useSelector(
         (state: RootState) => state.createTest
     );
     const { saveTestParts, validate: validateParts } = createTestActions;
@@ -107,6 +107,7 @@ const Part: React.FC<{
                         error={errors?.name && errors?.name.message}
                         label={{ text: "Name" }}
                         required
+                        disabled={!editibility.TEST_PARTS.name}
                     />
 
                     <Input
@@ -115,6 +116,7 @@ const Part: React.FC<{
                             errors?.description && errors?.description.message
                         }
                         label={{ text: "Description" }}
+                        disabled={!editibility.TEST_PARTS.description}
                     />
                     <Input
                         type="number"
@@ -135,6 +137,7 @@ const Part: React.FC<{
                         error={errors?.score && errors?.score.message}
                         label={{ text: "Score" }}
                         required
+                        disabled={!editibility.TEST_PARTS.score}
                     />
                     <Input
                         type="number"
@@ -154,6 +157,7 @@ const Part: React.FC<{
                         }
                         label={{ text: "Number of questions" }}
                         required
+                        disabled={!editibility.TEST_PARTS.num_questions}
                     />
                 </div>
 
