@@ -1,4 +1,4 @@
-import React, { ChangeEvent } from "react";
+import React, { ChangeEvent, useEffect } from "react";
 import Select from "../../../../components/elements/Select";
 import { RootState } from "../../../../stores/rootState";
 import { useSelector } from "react-redux";
@@ -66,13 +66,18 @@ const Passcode = () => {
         mutationKey: MUTATION_KEYS.GENERATE_PASSCODE,
         onSuccess: (res) => {
             dispatch(createTestActions.setPasscode(res));
-            dispatch(validate());
         },
     });
 
     const handleGeneratePasscode = () => {
         mutate();
     };
+
+    useEffect(() => {
+        if (passcode) {
+            dispatch(validate());
+        }
+    }, [dispatch, validate, passcode]);
 
     return (
         <div>

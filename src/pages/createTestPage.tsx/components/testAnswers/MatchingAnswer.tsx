@@ -6,6 +6,7 @@ import {
 import DraggableItem from "./DraggableItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import Button from "../../../../components/elements/Button";
 
 type MatchingAnswerProps = {
     content: MatchingQuestionItf;
@@ -133,14 +134,16 @@ const MatchingAnswer = ({
                                         )?.text
                                     }
                                 </span>
-                                <button
+                                <Button
                                     onClick={() =>
                                         handleDeleteMatching(matching.left)
                                     }
-                                    className="hover:font-bold"
+                                    size="sm"
+                                    primary={false}
+                                    className="shrink-0"
                                 >
                                     Clear
-                                </button>
+                                </Button>
                             </div>
                         ))}
                     </div>

@@ -66,6 +66,10 @@ const TestTakers = () => {
         }
     }, [dispatch, shareOption]);
 
+    useEffect(() => {
+        dispatch(validate());
+    }, [validate, dispatch]);
+
     const handleSaveTestTakers = async () => {
         updateTestMutate({ share_option: shareOption });
         switch (shareOption) {
