@@ -1,14 +1,14 @@
 /* Basic editor styles */
 .tiptap {
 
-    display: flex;
+    // display: flex;
     // border: 1px solid black;
     // padding: 4px 8px;
     // outline: none;
 
     gap: 10px;
     >*+* {
-        margin-top: 0.75em;
+        margin-top: 0.2em;
     }
 
     ul,

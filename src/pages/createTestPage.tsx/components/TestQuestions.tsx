@@ -8,12 +8,13 @@ import { createTestActions } from "../../../stores/createTest";
 import { useDispatch } from "react-redux";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
 import ErrorInfo from "../../../components/errors/ErrorInfo";
+import { useEffect } from "react";
 
 const TestQuestions = () => {
     const { testId, testParts, isValidQuestions } = useSelector(
         (state: RootState) => state.createTest
     );
-    const { moveNextStep, movePrevStep } = createTestActions;
+    const { moveNextStep, movePrevStep, validate } = createTestActions;
     const dispatch = useDispatch();
 
     const {
@@ -28,6 +29,10 @@ const TestQuestions = () => {
             dispatch(moveNextStep());
         },
     });
+
+    useEffect(() => {
+        dispatch(validate());
+    }, [validate, dispatch]);
 
     return (
         <Wrapper

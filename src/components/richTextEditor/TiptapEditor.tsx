@@ -5,15 +5,17 @@ import ListItem from "@tiptap/extension-list-item";
 import TextStyle from "@tiptap/extension-text-style";
 import Text from "@tiptap/extension-text";
 import Paragraph from "@tiptap/extension-paragraph";
+import Image from "@tiptap/extension-image";
 import { EditorProvider, useCurrentEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { MouseEventHandler, ReactNode, useEffect } from "react";
+import { MouseEventHandler, ReactNode, useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faA,
     faArrowTurnDown,
     faBold,
     faCode,
+    faImage,
     faItalic,
     faListOl,
     faListUl,
@@ -97,6 +99,18 @@ const MenuBar = ({
                 <FontAwesomeIcon icon={faItalic} />
             </EditorButton>
             <EditorButton
+                onClick={() => {
+                    const url = window.prompt("Enter image URL:");
+                    if (url) {
+                        editor.chain().focus().setImage({ src: url }).run();
+                    }
+                }}
+                disabled={!editor}
+                className={editor.isActive("italic") ? "is-active" : ""}
+            >
+                <FontAwesomeIcon icon={faImage} />
+            </EditorButton>
+            <EditorButton
                 onClick={() => editor.chain().focus().toggleStrike().run()}
                 disabled={!editor.can().chain().focus().toggleStrike().run()}
                 className={editor.isActive("strike") ? "is-active" : ""}
@@ -162,15 +176,19 @@ const MenuBar = ({
 
 const extensions = [
     Color.configure({ types: [TextStyle.name, ListItem.name] }),
-    TextStyle.configure(),
+    TextStyle.configure({}),
+    Image,
+    ListItem,
+    Paragraph,
+    Text,
     StarterKit.configure({
         bulletList: {
             keepMarks: true,
-            keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
+            keepAttributes: false,
         },
         orderedList: {
             keepMarks: true,
-            keepAttributes: false, // TODO : Making this as `false` becase marks are not preserved when I try to preserve attrs, awaiting a bit of help
+            keepAttributes: false,
         },
     }),
 ];
@@ -181,6 +199,26 @@ type TextEditorProps = {
     withInsertGapButton?: boolean;
 };
 
+const HelperButtons = ({
+    onInscrease,
+    onDecrease,
+}: {
+    onInscrease: () => void;
+    onDecrease: () => void;
+}) => {
+    return (
+        <div className="flex gap-2 justify-end">
+            <button type="button" onClick={onInscrease}>
+                +
+            </button>
+            <button type="button" onClick={onDecrease}>
+                -
+            </button>
+        </div>
+    );
+};
+
+const editorClasses = `max-w-none border border-black outline-none px-4 py-1 focus:border-orange-600 bg-white overflow-y-scroll custom-scrollbar-y resize-none max-h-[400px]`;
 const TextEditor = ({
     content,
     setContent,
@@ -196,7 +234,7 @@ const TextEditor = ({
             }}
             editorProps={{
                 attributes: {
-                    class: "border border-black outline-none px-4 py-1 focus:border-orange-600 bg-white h-20",
+                    class: editorClasses,
                 },
             }}
         ></EditorProvider>
