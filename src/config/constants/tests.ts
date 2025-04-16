@@ -103,3 +103,49 @@ export enum SHARE_OPTIONS {
     RESTRICTED = "RESTRICTED",
     PASSCODE = "PASSCODE",
 }
+
+export const TEST_OPTIONS_LABELS: Record<
+    string,
+    { MAKER: string; TAKER: string }
+> = {
+    ALLOW_CLOSE_TIME: {
+        MAKER: "Allow close time",
+        TAKER: "Has close time",
+    },
+    ALLOW_VIEW_SUBMISSION_AFTER_TEST: {
+        MAKER: "Allow view submissions",
+        TAKER: "Can view submission after test",
+    },
+    ALLOW_MULTIPLE_SUBMISSIONS: {
+        MAKER: "Allow multiple submissions",
+        TAKER: "Can submit multiple times",
+    },
+    ALLOW_SAVE_PROGRESS: {
+        MAKER: "Allow save progress",
+        TAKER: "Can save progress",
+    },
+    ALLOW_SHOW_TAKER_ANSWERS_AFTER_TEST: {
+        MAKER: "Allow show taker answers",
+        TAKER: "Can view your answers after test",
+    },
+    ALLOW_SHOW_MAKER_ANSWERS_AFTER_TEST: {
+        MAKER: "Allow show correct answers",
+        TAKER: "Can view correct answers after test",
+    },
+    ALLOW_SHUFFLE_QUESTIONS: {
+        MAKER: "Allow shuffle questions",
+        TAKER: "Questions are shuffled",
+    },
+    ALLOW_SHUFFLE_ANSWERS: {
+        MAKER: "Allow shuffle answers",
+        TAKER: "Answers are shuffled",
+    },
+    ALLOW_REVIEW_BEFORE_SUBMISSION: {
+        MAKER: "Allow review before submission",
+        TAKER: "Can review before submitting",
+    },
+    DISALLOW_TIME_LIMIT: {
+        MAKER: "Disallow time limit",
+        TAKER: "No time limit",
+    },
+};

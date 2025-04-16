@@ -36,7 +36,9 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>((props, ref) => {
                     ref={ref}
                 />
                 <label
-                    className={`shrink-0 ${label.extraClass}`}
+                    className={`shrink-0 ${label.extraClass} ${
+                        sizing === "md" && "text-md"
+                    } ${sizing === "sm" && "text-sm"} `}
                     htmlFor={props.name}
                 >
                     {label.text}

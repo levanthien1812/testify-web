@@ -1,6 +1,8 @@
 import React from "react";
 import { TestItf } from "../../../types/types";
 import { format } from "date-fns";
+import Checkbox from "../../../components/elements/Checkbox";
+import Options from "./Options";
 
 type TestInfoProps = {
     test: TestItf;
@@ -67,6 +69,8 @@ const TestInfo = ({ test }: TestInfoProps) => {
                     </p>
                 </div>
             )}
+
+            {test && <Options />}
         </div>
     );
 };

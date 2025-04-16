@@ -2,7 +2,7 @@ import {
     CreateTestContext,
     EditabilityConfig,
     TakeTestContext,
-    TestOption,
+    TestOptions,
     ViewTestContext,
 } from "../../types/tests";
 import {
@@ -25,37 +25,47 @@ import {
 } from "./tests";
 import { CREATE_TEST_STEPS, QUESTION_TYPE } from "./tests";
 
-export const INITIAL_OPTIONS: TestOption = {
+export const INITIAL_OPTIONS: TestOptions = {
     allow_close_time: {
         enable: false,
+        let_taker_know: true,
     },
     allow_view_submission_after_test: {
         enable: false,
+        let_taker_know: true,
     },
     allow_multiple_submissions: {
         enable: false,
+        let_taker_know: true,
     },
     allow_save_progress: {
         enable: false,
+        let_taker_know: true,
     },
     allow_show_taker_answers_after_test: {
         enable: false,
+        let_taker_know: false,
     },
     allow_show_maker_answers_after_test: {
         enable: false,
         public_answers_option: PUBLIC_ANSWERS_OPTIONS.AFTER_CLOSE_TIME,
+        let_taker_know: false,
     },
     allow_shuffle_questions: {
         enable: false,
+        let_taker_know: false,
     },
     allow_shuffle_answers: {
         enable: false,
+        let_taker_know: false,
     },
     allow_review_before_submission: {
         enable: false,
+        let_taker_know: false,
     },
     disallow_time_limit: {
         enable: false,
+        let_taker_know: true,
     },
 };
 
