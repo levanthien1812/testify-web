@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import {
     PUBLIC_ANSWERS_OPTIONS,
-    PUBLIC_ANSWERS_OPTIONS_LABEL,
     TEST_LEVEL,
     TEST_LEVEL_LABEL,
 } from "../../../config/constants/tests";
@@ -9,7 +8,7 @@ import { TestBodyItf } from "../../../types/types";
 import { formatTimezone } from "../../../utils/time";
 import Input from "../../../components/elements/Input";
 import Select from "../../../components/elements/Select";
-import { useForm } from "react-hook-form";
+import { FormProvider, useForm } from "react-hook-form";
 import Wrapper from "../../../components/wrappers/Wrapper";
 import { createTestActions } from "../../../stores/createTest";
 import { useSelector } from "react-redux";
@@ -18,8 +17,7 @@ import { useMutation } from "react-query";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
 import { createTest, updateTest } from "../../../services/test";
 import { useDispatch } from "react-redux";
-import Accordion from "../../../components/accordions/Accordion";
-import Checkbox from "../../../components/elements/Checkbox";
+import TestOptions from "./testInfo/TestOptions";
 
 const TestInfo = () => {
     const {
@@ -43,7 +41,6 @@ const TestInfo = () => {
         options,
         editibility,
     } = useSelector((state: RootState) => state.createTest);
-    const [isViewingOptions, setIsViewOptions] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -95,15 +92,17 @@ const TestInfo = () => {
             },
         });
 
+    const methods = useForm<TestBodyItf>({
+        defaultValues: initialValues,
+    });
+
     const {
         handleSubmit,
         formState: { errors },
         register,
         setValue,
         watch,
-    } = useForm<TestBodyItf>({
-        defaultValues: initialValues,
-    });
+    } = methods;
 
     const onSubmit = async (data: TestBodyItf) => {
         if (!testId) createTestMutate(data);
@@ -193,315 +192,133 @@ const TestInfo = () => {
                 },
             }}
         >
-            <form className="mt-4 ">
-                <div className="grid grid-cols-[2fr_5fr] gap-2">
-                    <Input
-                        {...register("title", {
-                            required: "Title is required",
-                        })}
-                        error={errors?.title && errors?.title.message}
-                        required
-                        disabled={!editibility.TEST_INFORMATION.title}
-                        label={{
-                            text: "Test title",
-                        }}
-                    />
-                    <Input
-                        {...register("description")}
-                        label={{ text: "Test description" }}
-                        disabled={!editibility.TEST_INFORMATION.description}
-                    />
-                    <Input
-                        type="datetime-local"
-                        {...register("datetime", {
-                            required: "Start time is required",
-                        })}
-                        error={errors?.datetime && errors?.datetime.message}
-                        label={{ text: "Start time" }}
-                        disabled={!editibility.TEST_INFORMATION.datetime}
-                        required
-                    />
-                    <Input
-                        type="number"
-                        step={5}
-                        {...register("duration", {
-                            required: "Duration is required",
-                            min: {
-                                value: 1,
-                                message: "Duration must be greater than 0",
-                            },
-                        })}
-                        disabled={options.disallow_time_limit.enable}
-                        error={errors?.duration && errors?.duration.message}
-                        label={{ text: "Duration (mins)" }}
-                    />
-                    <Input
-                        type="number"
-                        step={1}
-                        {...register("max_score", {
-                            required: "Max score is required",
-                            min: {
-                                value: 1,
-                                message: "Max score must be greater than 0",
-                            },
-                        })}
-                        required
-                        error={errors?.max_score && errors?.max_score.message}
-                        label={{ text: "Max score" }}
-                        disabled={!editibility.TEST_INFORMATION.max_score}
-                    />
-                    <Input
-                        type="number"
-                        step={1}
-                        {...register("num_parts", {
-                            required: "Number of parts is required",
-                            min: {
-                                value: 1,
-                                message:
-                                    "Number of parts must be greater than 0",
-                            },
-                            valueAsNumber: true,
-                        })}
-                        required
-                        error={errors?.num_parts && errors?.num_parts.message}
-                        label={{ text: "Number of parts" }}
-                        disabled={!editibility.TEST_INFORMATION.num_parts}
-                    />
-                    <Input
-                        type="number"
-                        step={1}
-                        {...register("num_questions", {
-                            required: "Number of questions is required",
-                            min: {
-                                value:
-                                    allValues.num_parts > 1
-                                        ? allValues.num_parts
-                                        : 1,
-                                message:
-                                    allValues.num_parts > 1
-                                        ? `Number of questions must be at least ${allValues.num_parts}`
-                                        : "Number of questions must be greater than 0",
-                            },
-                            valueAsNumber: true,
-                        })}
-                        required
-                        error={
-                            errors?.num_questions &&
-                            errors?.num_questions.message
-                        }
-                        label={{ text: "Number of questions" }}
-                        helperText={
-                            allValues.num_parts > 1
-                                ? `Must be at least ${allValues.num_parts} questions (one for each part)`
-                                : ""
-                        }
-                        disabled={!editibility.TEST_INFORMATION.num_questions}
-                    />
-                    <Select
-                        className="grow capitalize"
-                        {...register("level")}
-                        options={Object.values(TEST_LEVEL).map((level) => ({
-                            label: TEST_LEVEL_LABEL[level],
-                            value: level,
-                        }))}
-                        label={{
-                            text: "Level",
-                        }}
-                        disabled={!editibility.TEST_INFORMATION.level}
-                    />
-                </div>
-                <Accordion
-                    viewData={{
-                        title: {
-                            text: "Options",
-                            extraClass: "capitalize",
-                        },
-                        extraClass: "mt-4",
-                        open: isViewingOptions,
-                        onToggle: () => setIsViewOptions(!isViewingOptions),
-                    }}
-                >
-                    <div className="flex-col space-y-2 p-4">
-                        <Checkbox
-                            label={{ text: "Allow close time" }}
-                            {...register("options.allow_close_time.enable")}
-                            disabled={
-                                !editibility.TEST_INFORMATION.options
-                                    .allow_close_time
-                            }
-                        />
-                        {options.allow_close_time.enable &&
-                            editibility.TEST_INFORMATION.options
-                                .allow_close_time && (
-                                <div className="grid grid-cols-[2fr_5fr] px-4 py-2 bg-orange-50">
-                                    <Input
-                                        type="datetime-local"
-                                        {...register(
-                                            "options.allow_close_time.close_time"
-                                        )}
-                                        label={{
-                                            text: "Close time",
-                                        }}
-                                    />
-                                </div>
-                            )}
-                        <Checkbox
+            <FormProvider {...methods}>
+                <form className="mt-4 ">
+                    <div className="grid grid-cols-[2fr_5fr] gap-2">
+                        <Input
+                            {...register("title", {
+                                required: "Title is required",
+                            })}
+                            error={errors?.title && errors?.title.message}
+                            required
+                            disabled={!editibility.TEST_INFORMATION.title}
                             label={{
-                                text: "Allow view submission after test",
+                                text: "Test title",
                             }}
-                            {...register(
-                                "options.allow_view_submission_after_test.enable"
-                            )}
+                        />
+                        <Input
+                            {...register("description")}
+                            label={{ text: "Test description" }}
+                            disabled={!editibility.TEST_INFORMATION.description}
+                        />
+                        <Input
+                            type="datetime-local"
+                            {...register("datetime", {
+                                required: "Start time is required",
+                            })}
+                            error={errors?.datetime && errors?.datetime.message}
+                            label={{ text: "Start time" }}
+                            disabled={!editibility.TEST_INFORMATION.datetime}
+                            required
+                        />
+                        <Input
+                            type="number"
+                            step={5}
+                            {...register("duration", {
+                                required: "Duration is required",
+                                min: {
+                                    value: 1,
+                                    message: "Duration must be greater than 0",
+                                },
+                            })}
+                            disabled={options.disallow_time_limit.enable}
+                            error={errors?.duration && errors?.duration.message}
+                            label={{ text: "Duration (mins)" }}
+                        />
+                        <Input
+                            type="number"
+                            step={1}
+                            {...register("max_score", {
+                                required: "Max score is required",
+                                min: {
+                                    value: 1,
+                                    message: "Max score must be greater than 0",
+                                },
+                            })}
+                            required
+                            error={
+                                errors?.max_score && errors?.max_score.message
+                            }
+                            label={{ text: "Max score" }}
+                            disabled={!editibility.TEST_INFORMATION.max_score}
+                        />
+                        <Input
+                            type="number"
+                            step={1}
+                            {...register("num_parts", {
+                                required: "Number of parts is required",
+                                min: {
+                                    value: 1,
+                                    message:
+                                        "Number of parts must be greater than 0",
+                                },
+                                valueAsNumber: true,
+                            })}
+                            required
+                            error={
+                                errors?.num_parts && errors?.num_parts.message
+                            }
+                            label={{ text: "Number of parts" }}
+                            disabled={!editibility.TEST_INFORMATION.num_parts}
+                        />
+                        <Input
+                            type="number"
+                            step={1}
+                            {...register("num_questions", {
+                                required: "Number of questions is required",
+                                min: {
+                                    value:
+                                        allValues.num_parts > 1
+                                            ? allValues.num_parts
+                                            : 1,
+                                    message:
+                                        allValues.num_parts > 1
+                                            ? `Number of questions must be at least ${allValues.num_parts}`
+                                            : "Number of questions must be greater than 0",
+                                },
+                                valueAsNumber: true,
+                            })}
+                            required
+                            error={
+                                errors?.num_questions &&
+                                errors?.num_questions.message
+                            }
+                            label={{ text: "Number of questions" }}
+                            helperText={
+                                allValues.num_parts > 1
+                                    ? `Must be at least ${allValues.num_parts} questions (one for each part)`
+                                    : ""
+                            }
                             disabled={
-                                !editibility.TEST_INFORMATION.options
-                                    .allow_view_submission_after_test
+                                !editibility.TEST_INFORMATION.num_questions
                             }
                         />
-                        <Checkbox
-                            label={{ text: "Allow multiple submissions" }}
-                            {...register(
-                                "options.allow_multiple_submissions.enable"
-                            )}
-                            disabled={
-                                !editibility.TEST_INFORMATION.options
-                                    .allow_multiple_submissions
-                            }
-                        />
-                        {options.allow_multiple_submissions.enable &&
-                            editibility.TEST_INFORMATION.options
-                                .allow_multiple_submissions && (
-                                <div className="grid grid-cols-[2fr_5fr] px-4 py-2 bg-orange-50">
-                                    <Input
-                                        type="number"
-                                        {...register(
-                                            "options.allow_multiple_submissions.maximum_submissions"
-                                        )}
-                                        label={{
-                                            text: "Maximum submissions",
-                                        }}
-                                    />
-                                </div>
-                            )}
-                        <Checkbox
-                            label={{ text: "Allow save progress" }}
-                            {...register("options.allow_save_progress.enable")}
-                            disabled={
-                                !editibility.TEST_INFORMATION.options
-                                    .allow_save_progress
-                            }
-                        />
-                        <Checkbox
+                        <Select
+                            className="grow capitalize"
+                            {...register("level")}
+                            options={Object.values(TEST_LEVEL).map((level) => ({
+                                label: TEST_LEVEL_LABEL[level],
+                                value: level,
+                            }))}
                             label={{
-                                text: "Allow showing taker's answers after test",
+                                text: "Level",
                             }}
-                            {...register(
-                                "options.allow_show_taker_answers_after_test.enable"
-                            )}
-                            disabled={
-                                !editibility.TEST_INFORMATION.options
-                                    .allow_show_taker_answers_after_test
-                            }
-                        />
-                        <Checkbox
-                            label={{
-                                text: "Allow showing maker's answers after test",
-                            }}
-                            {...register(
-                                "options.allow_show_maker_answers_after_test.enable"
-                            )}
-                            disabled={
-                                !editibility.TEST_INFORMATION.options
-                                    .allow_show_maker_answers_after_test
-                            }
-                        />
-                        {options.allow_show_maker_answers_after_test.enable &&
-                            editibility.TEST_INFORMATION.options
-                                .allow_show_maker_answers_after_test && (
-                                <div className="grid grid-cols-[2fr_5fr] gap-2 px-4 py-2 bg-orange-50">
-                                    <Select
-                                        className="w-0 grow capitalize"
-                                        {...register(
-                                            "options.allow_show_maker_answers_after_test.public_answers_option",
-                                            {
-                                                required:
-                                                    "Public answers option is required",
-                                            }
-                                        )}
-                                        label={{
-                                            text: "Public answers options",
-                                        }}
-                                        options={Object.values(
-                                            PUBLIC_ANSWERS_OPTIONS
-                                        ).map((publicAnswersOption) => ({
-                                            label: PUBLIC_ANSWERS_OPTIONS_LABEL[
-                                                publicAnswersOption
-                                            ],
-                                            value: publicAnswersOption,
-                                        }))}
-                                    />
-
-                                    {options.allow_show_maker_answers_after_test
-                                        .public_answers_option ===
-                                        PUBLIC_ANSWERS_OPTIONS.SPECIFIC_DATE && (
-                                        <Input
-                                            type="datetime-local"
-                                            label={{
-                                                text: "Public answers date",
-                                            }}
-                                            {...register(
-                                                "options.allow_show_maker_answers_after_test.public_answers_date",
-                                                {
-                                                    required:
-                                                        "Public answers date is required",
-                                                }
-                                            )}
-                                        />
-                                    )}
-                                </div>
-                            )}
-                        <Checkbox
-                            label={{ text: "Allow shuffling questions" }}
-                            {...register(
-                                "options.allow_shuffle_questions.enable"
-                            )}
-                            disabled={
-                                !editibility.TEST_INFORMATION.options
-                                    .allow_shuffle_questions
-                            }
-                        />
-                        <Checkbox
-                            label={{ text: "Allow shuffling answers" }}
-                            {...register(
-                                "options.allow_shuffle_answers.enable"
-                            )}
-                            disabled={
-                                !editibility.TEST_INFORMATION.options
-                                    .allow_shuffle_answers
-                            }
-                        />
-                        <Checkbox
-                            label={{
-                                text: "Allow review before submission",
-                            }}
-                            {...register(
-                                "options.allow_review_before_submission.enable"
-                            )}
-                            disabled={
-                                !editibility.TEST_INFORMATION.options
-                                    .allow_review_before_submission
-                            }
-                        />
-                        <Checkbox
-                            label={{ text: "Disallow time limit" }}
-                            {...register("options.disallow_time_limit.enable")}
-                            disabled={
-                                !editibility.TEST_INFORMATION.options
-                                    .disallow_time_limit
-                            }
+                            disabled={!editibility.TEST_INFORMATION.level}
                         />
                     </div>
-                </Accordion>
-            </form>
+                    <TestOptions />
+                </form>
+            </FormProvider>
         </Wrapper>
     );
 };

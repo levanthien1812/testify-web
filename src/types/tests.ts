@@ -26,44 +26,56 @@ export interface CreateTestStep {
     isPartiallyDone: boolean;
     isCurrentStep: boolean;
 }
-export interface TestOption {
-    allow_close_time: {
-        enable: boolean;
-        close_time?: string;
-    };
-    allow_view_submission_after_test: {
-        enable: boolean;
-    };
-    allow_multiple_submissions: {
-        enable: boolean;
-        maximum_submissions?: number;
-    };
-    allow_save_progress: {
-        enable: boolean;
-    };
-    allow_show_taker_answers_after_test: {
-        enable: boolean;
-        delay_time?: number;
-    };
-    allow_show_maker_answers_after_test: {
-        enable: boolean;
-        visibility_level?: PUBLIC_ANSWER_VISIBILITY_LEVEL;
-        public_answers_option: PUBLIC_ANSWERS_OPTIONS;
-        public_answers_date?: string;
-    };
-    allow_shuffle_questions: {
-        enable: boolean;
-    };
-    allow_shuffle_answers: {
-        enable: boolean;
-    };
-    allow_review_before_submission: {
-        enable: boolean;
-    };
-    disallow_time_limit: {
-        enable: boolean;
-        duration?: number;
-    };
+
+export interface BaseOption {
+    enable: boolean;
+    let_taker_know: boolean;
+}
+
+export interface AllowCloseTimeOption extends BaseOption {
+    close_time?: string;
+}
+
+export interface AllowViewSubmission extends BaseOption {
+    delay_time?: number;
+}
+
+export interface AllowMultipleSubmissions extends BaseOption {
+    maximum_submissions?: number;
+}
+
+export interface AllowSaveProgress extends BaseOption {}
+
+export interface AllowShowTakerAnswers extends BaseOption {
+    delay_time?: number;
+}
+
+export interface AllowShowMakerAnswers extends BaseOption {
+    visibility_level?: PUBLIC_ANSWER_VISIBILITY_LEVEL;
+    public_answers_option: PUBLIC_ANSWERS_OPTIONS;
+    public_answers_date?: string;
+}
+
+export interface AllowShuffleQuestions extends BaseOption {}
+
+export interface AllowShuffleAnswers extends BaseOption {}
+
+export interface AllowReviewBeforeSubmission extends BaseOption {}
+
+export interface DisallowTimeLimit extends BaseOption {
+    duration?: number;
+}
+export interface TestOptions {
+    allow_close_time: AllowCloseTimeOption;
+    allow_view_submission_after_test: AllowViewSubmission;
+    allow_multiple_submissions: AllowMultipleSubmissions;
+    allow_save_progress: AllowSaveProgress;
+    allow_show_taker_answers_after_test: AllowShowTakerAnswers;
+    allow_show_maker_answers_after_test: AllowShowMakerAnswers;
+    allow_shuffle_questions: AllowShuffleQuestions;
+    allow_shuffle_answers: AllowShuffleAnswers;
+    allow_review_before_submission: AllowReviewBeforeSubmission;
+    disallow_time_limit: DisallowTimeLimit;
 }
 
 export interface CreateTestContext {
@@ -94,7 +106,7 @@ export interface CreateTestContext {
     availableTakers: TakerItf[];
     testLink: string;
     passcode: PasscodeItf;
-    options: TestOption;
+    options: TestOptions;
     status: TEST_STATUS;
     editibility: EditabilityConfig;
 }

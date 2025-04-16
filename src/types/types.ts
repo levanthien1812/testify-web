@@ -6,7 +6,7 @@ import {
     TEST_STATUS,
 } from "../config/constants/tests";
 import { QUESTION_TYPE } from "../config/constants/tests";
-import { TestOption } from "./tests";
+import { TestOptions } from "./tests";
 
 export interface userItf {
     username?: string;
@@ -65,7 +65,7 @@ export interface TestBodyItf {
     level: TEST_LEVEL;
     share_option?: SHARE_OPTIONS;
     passcode?: string;
-    options: TestOption;
+    options: TestOptions;
 }
 export interface TestItf extends TestBodyItf {
     id: string;
