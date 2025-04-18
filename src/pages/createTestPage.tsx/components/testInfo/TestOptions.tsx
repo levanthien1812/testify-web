@@ -6,6 +6,7 @@ import Checkbox from "../../../../components/elements/Checkbox";
 import { RootState } from "../../../../stores/rootState";
 import { useSelector } from "react-redux";
 import {
+    ALLOWED_MAXIMUM_SUBMISSIONS,
     PUBLIC_ANSWERS_OPTIONS,
     PUBLIC_ANSWERS_OPTIONS_LABEL,
     TEST_OPTIONS_LABELS,
@@ -147,6 +148,9 @@ const TestOptions = () => {
                                         !editibility.TEST_INFORMATION.options
                                             .allow_multiple_submissions
                                     }
+                                    min={2}
+                                    max={ALLOWED_MAXIMUM_SUBMISSIONS}
+                                    helperText="Allowed maximum submissions is 10"
                                 />
                             </div>
                         )

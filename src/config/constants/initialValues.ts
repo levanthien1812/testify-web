@@ -37,6 +37,7 @@ export const INITIAL_OPTIONS: TestOptions = {
     allow_multiple_submissions: {
         enable: false,
         let_taker_know: true,
+        maximum_submissions: 3,
     },
     allow_save_progress: {
         enable: false,
@@ -375,7 +376,7 @@ export const INITIAL_TAKE_TEST_CONTEXT: TakeTestContext = {
     closeTime: new Date(),
     startTime: new Date(),
     test: null,
-    submission: [],
+    submissions: [],
     testStatus: TEST_STATUS.DRAFT,
     startable: false,
     isStarted: false,

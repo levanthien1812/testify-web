@@ -116,7 +116,7 @@ export interface TakeTestContext {
     answers: UserAnswerItf<AnswerBodyContentItf>[];
     startTime: Date;
     closeTime: Date;
-    submission: SubmissionItf[];
+    submissions: SubmissionItf[];
     testStatus: TEST_STATUS;
     startable: boolean;
     isStarted: boolean;

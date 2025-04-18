@@ -1,33 +1,27 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { MatchingAnswerItf, MatchingQuestionItf } from "../../../types/types";
 import DraggableItem from "../../createTestPage.tsx/components/testAnswers/DraggableItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
+import { USER_ANSWER_STATUS } from "../../../config/constants/tests";
 
 type MatchingAnswerProps = {
     questionContent: MatchingQuestionItf;
     answerContent: MatchingAnswerItf;
+    answerStatus: USER_ANSWER_STATUS;
 };
 
 const MatchingAnswer = ({
     questionContent,
     answerContent,
+    answerStatus,
 }: MatchingAnswerProps) => {
-    const matchings = useMemo(() => {
-        if (answerContent === undefined) {
-            return questionContent.answer?.matchings || [];
-        } else if (answerContent !== null) {
-            return answerContent.matchings || [];
-        }
-
-        return [];
-
-        // return userAnswer ? userAnswer.answer || [] : content.answer || [];
-    }, [questionContent, answerContent]);
+    const makerAnswer = questionContent.answer?.matchings;
+    const userAnswer = answerContent?.matchings;
 
     const isCorrectMatching = (matching: { left: string; right: string }) => {
         if (questionContent.answer) {
-            return questionContent.answer.matchings.find(
+            return questionContent.answer.matchings?.find(
                 (answer) =>
                     answer.left === matching.left &&
                     answer.right === matching.right
@@ -36,6 +30,19 @@ const MatchingAnswer = ({
             return false;
         }
     };
+
+    const getClasses = useCallback(
+        (matching: { left: string; right: string }) => {
+            if (!makerAnswer && userAnswer) return "bg-gray-100 text-blue-600";
+
+            if (makerAnswer && isCorrectMatching(matching))
+                return `bg-green-100 text-green-600`;
+            if (makerAnswer && !isCorrectMatching(matching))
+                return `bg-red-100 text-red-600`;
+            return `bg-gray-100 text-black`;
+        },
+        [answerStatus, makerAnswer, userAnswer]
+    );
 
     return (
         <>
@@ -73,17 +80,12 @@ const MatchingAnswer = ({
             <div className="mt-2">
                 <p>Matchings:</p>
                 <div className="border border-gray-500 px-4 py-2 space-y-2">
-                    {matchings.map((matching) => (
+                    {userAnswer.map((matching) => (
                         <div
                             key={matching.left}
-                            className={`${
-                                questionContent.answer &&
-                                answerContent?.matchings
-                                    ? isCorrectMatching(matching)
-                                        ? "bg-green-100"
-                                        : "bg-red-100"
-                                    : "bg-gray-100"
-                            } px-4 py-1  grid grid-cols-9 items-center gap-2 relative`}
+                            className={`${getClasses(
+                                matching
+                            )} px-4 py-1 grid grid-cols-9 items-center gap-2 relative`}
                         >
                             <span className="col-span-4">
                                 {

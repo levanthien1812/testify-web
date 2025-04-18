@@ -149,3 +149,23 @@ export const TEST_OPTIONS_LABELS: Record<
         TAKER: "No time limit",
     },
 };
+
+export const ALLOWED_MAXIMUM_SUBMISSIONS = 10;
+
+export enum USER_ANSWER_STATUS {
+    WRONG = "WRONG",
+    CORRECT = "CORRECT",
+    NOT_ANSWERED = "NOT_ANSWERED",
+    PARTIALLY_CORRECT = "PARTIALLY_CORRECT",
+    NOT_EVALUATED = "NOT_EVALUATED",
+    NOTHING = "NOTHING",
+}
+
+export const USER_ANSWER_STATUS_LABEL: Record<USER_ANSWER_STATUS, string> = {
+    [USER_ANSWER_STATUS.WRONG]: "Wrong ❌",
+    [USER_ANSWER_STATUS.CORRECT]: "Correct ✅",
+    [USER_ANSWER_STATUS.NOT_ANSWERED]: "Not answered",
+    [USER_ANSWER_STATUS.PARTIALLY_CORRECT]: "Partially correct",
+    [USER_ANSWER_STATUS.NOT_EVALUATED]: "Not evaluated",
+    [USER_ANSWER_STATUS.NOTHING]: "",
+};

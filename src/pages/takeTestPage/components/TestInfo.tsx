@@ -63,9 +63,9 @@ const TestInfo = ({ test }: TestInfoProps) => {
 
             {test.description && (
                 <div className="bg-gray-100 px-6 py-4 mt-2">
-                    <p className="text-lg">
+                    <p className="text-md">
                         Description:{" "}
-                        <span className="italic"> {test.description}</span>
+                        <span className="italic">{test.description}</span>
                     </p>
                 </div>
             )}

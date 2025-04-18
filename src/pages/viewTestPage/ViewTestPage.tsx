@@ -18,6 +18,7 @@ import { useSelector } from "react-redux";
 import { RootState } from "../../stores/rootState";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
+import { QUERY_KEYS } from "../../config/constants/queryMutationKeys";
 
 const ViewTestPage = () => {
     const { testId } = useParams();
@@ -44,7 +45,7 @@ const ViewTestPage = () => {
         data: submissions,
         refetch: refetchSubmissions,
     } = useQuery<SubmissionItf[]>({
-        queryKey: ["test-submissions", testId],
+        queryKey: [QUERY_KEYS.GET_TEST_SUBMISSIONS, testId],
         queryFn: async () => {
             const responseData = await getSubmissions(testId!);
             return responseData.submissions;
@@ -137,7 +138,7 @@ const ViewTestPage = () => {
                 >
                     <ModalHeader title="Provide Answers" />
                     <ModalBody>
-                        <TestAnswers />
+                        <TestAnswers test={test} />
                     </ModalBody>
                     <ModalFooter></ModalFooter>
                 </Modal>

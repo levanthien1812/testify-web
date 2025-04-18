@@ -1,22 +1,15 @@
 import { useEffect } from "react";
 import TestInfo from "./components/TestInfo";
 import TestParts from "./components/TestParts";
-import { useNavigate, useParams } from "react-router";
-import { useMutation, useQuery } from "react-query";
-import { getTest, publishTest } from "../../services/test";
-import { TEST_STATUS } from "../../config/constants/tests";
-import { toast } from "react-toastify";
-import Button from "../../components/elements/Button";
+import { useParams } from "react-router";
+import { useQuery } from "react-query";
+import { getTest } from "../../services/test";
 import { useSearchParams } from "react-router-dom";
 import { useSelector } from "react-redux";
 import { RootState } from "../../stores/rootState";
 import Navigator from "./components/Navigator";
 import { CREATE_TEST_STEPS } from "../../config/constants/tests";
-import {
-    MUTATION_KEYS,
-    QUERY_KEYS,
-} from "../../config/constants/queryMutationKeys";
-import { TOAST_MESSAGES } from "../../config/constants/toasts";
+import { QUERY_KEYS } from "../../config/constants/queryMutationKeys";
 import TestQuestions from "./components/TestQuestions";
 import TestAnswers from "./components/TestAnswers";
 import TestTakers from "./components/TestTakers";
@@ -87,7 +80,7 @@ const CreateTestPage = () => {
                             <TestQuestions />
                         )}
                         {currentStep === CREATE_TEST_STEPS.TEST_ANSWERS &&
-                            test && <TestAnswers />}
+                            test && <TestAnswers test={test} />}
                         {currentStep === CREATE_TEST_STEPS.TEST_TAKERS &&
                             test && <TestTakers />}
                     </div>

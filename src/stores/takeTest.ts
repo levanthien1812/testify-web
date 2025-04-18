@@ -9,7 +9,6 @@ import {
     UserAnswerItf,
 } from "../types/types";
 import { TEST_STATUS } from "../config/constants/tests";
-import { PUBLIC_ANSWER_VISIBILITY_LEVEL } from "../config/constants/tests";
 
 const TakeTestSlice = createSlice({
     initialState: INITIAL_TAKE_TEST_CONTEXT,
@@ -21,7 +20,7 @@ const TakeTestSlice = createSlice({
             state.test.parts = state.test.parts?.map((part) => {
                 if (part.questions && part.questions.length > 0) {
                     part.questions = part.questions.map((question) => {
-                        let answer = {};
+                        let answer = null;
                         if (question?.content?.answer) {
                             answer = {
                                 ...question?.content?.answer,
@@ -97,8 +96,16 @@ const TakeTestSlice = createSlice({
                 state.answers = questionIds.map((id) => ({ question_id: id }));
             }
         },
-        setAnswers(state, action) {
-            state.answers = action.payload;
+        setSubmissionAnswers(state, action) {
+            state.submissions = state.submissions.map((submission) => {
+                if (submission.id === action.payload.submissionId) {
+                    return {
+                        ...submission,
+                        answers: action.payload.answers,
+                    };
+                }
+                return submission;
+            });
         },
         setSubmittable(state, action) {
             state.submittable = action.payload;
@@ -117,6 +124,9 @@ const TakeTestSlice = createSlice({
         },
         setIsPasscodeValidated(state, action) {
             state.isPasscodeValidated = action.payload;
+        },
+        setSubmissions(state, action) {
+            state.submissions = action.payload;
         },
     },
 });

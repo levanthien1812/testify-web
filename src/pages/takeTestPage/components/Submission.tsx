@@ -18,7 +18,7 @@ type SubmissionProps = {
 
 const Submission = ({ submission }: SubmissionProps) => {
     const [viewDetail, setViewDetail] = React.useState(false);
-    const { test, answers } = useSelector((state: RootState) => state.takeTest);
+    const { test } = useSelector((state: RootState) => state.takeTest);
     const dispatch = useDispatch();
 
     useQuery({
@@ -27,9 +27,17 @@ const Submission = ({ submission }: SubmissionProps) => {
                 test!.id!,
                 submission.id!
             );
-            dispatch(takeTestActions.setAnswers(responseData.answers));
+            dispatch(
+                takeTestActions.setSubmissionAnswers({
+                    submissionId: submission.id!,
+                    answers: responseData.answers,
+                })
+            );
         },
-        queryKey: QUERY_KEYS.GET_SUBMISSION_ANSWERS,
+        queryKey: [
+            QUERY_KEYS.GET_SUBMISSION_ANSWERS,
+            { submission_id: submission.id },
+        ],
     });
 
     const handleViewDetail = () => {
@@ -37,9 +45,7 @@ const Submission = ({ submission }: SubmissionProps) => {
     };
 
     return (
-        <div className="border-t px-8 py-4">
-            <p className="text-lg">Your submission</p>
-
+        <div className="border-t py-2">
             <p>
                 Submit time:{" "}
                 {format(new Date(submission.submit_time), "dd/MM/yyyy HH:mm")}
@@ -66,7 +72,10 @@ const Submission = ({ submission }: SubmissionProps) => {
             </Button>
 
             {viewDetail && (
-                <TestQuetionsAndAnswers test={test!} userAnswers={answers} />
+                <TestQuetionsAndAnswers
+                    test={test!}
+                    userAnswers={submission.answers}
+                />
             )}
         </div>
     );

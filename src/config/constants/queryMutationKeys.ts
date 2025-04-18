@@ -10,6 +10,7 @@ const QUERY_KEYS = {
     GET_ONLINE_USERS: "get-online-users",
     GET_BLOCKED_USERS: "get-blocked-users",
     GET_PASSCODE: "get-passcode",
+    GET_TEST_SUBMISSIONS: "get-test-submissions",
 };
 
 const MUTATION_KEYS = {
@@ -34,6 +35,8 @@ const MUTATION_KEYS = {
     UPDATE_CHAT: "update-chat",
     BLOCK_USER: "block-user",
     UNBLOCK_USER: "unblock-user",
+    UPDATE_TAKER_ANSWER: "update-taker-answer",
+    SUBMIT_ANSWERS: "submit-answers",
 };
 
 export { QUERY_KEYS, MUTATION_KEYS };

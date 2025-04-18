@@ -12,6 +12,7 @@ import { RootState } from "../../stores/rootState";
 import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../stores/takeTest";
 import { TOAST_MESSAGES } from "../../config/constants/toasts";
+import { MUTATION_KEYS } from "../../config/constants/queryMutationKeys";
 
 type DoingTestProps = {
     onAfterSubmit: () => void;
@@ -36,6 +37,10 @@ const DoingTest = ({ onAfterSubmit }: DoingTestProps) => {
             );
             return responseData.answers;
         },
+        mutationKey: [
+            MUTATION_KEYS.SUBMIT_ANSWERS,
+            { test_id: test!.id, date: new Date() },
+        ],
         onSuccess: (data) => {
             toast.success(TOAST_MESSAGES.TEST_SUBMITTED_SUCCESSFULLY);
             dispatch(takeTestActions.setIsEnded(true));

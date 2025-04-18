@@ -13,7 +13,12 @@ import {
     UserAnswerItf,
     AnswerBodyContentItf,
 } from "../../../types/types";
-import { MANUAL_SCORE_TYPES, ROLES } from "../../../config/constants/tests";
+import {
+    MANUAL_SCORE_TYPES,
+    ROLES,
+    USER_ANSWER_STATUS,
+    USER_ANSWER_STATUS_LABEL,
+} from "../../../config/constants/tests";
 import MultipleChoicesAnswer from "./MultipleChoicesAnswer";
 import FillGapsAnswer from "./FillGapsAnswer";
 import MatchingAnswer from "./MatchingAnswer";
@@ -27,10 +32,11 @@ import { RootState } from "../../../stores/rootState";
 import Button from "../../../components/elements/Button";
 import Input from "../../../components/elements/Input";
 import { QUESTION_TYPE } from "../../../config/constants/tests";
+import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
 
 type QuestionProps = {
     question: QuestionItf<QuestionContentItf>;
-    userAnswer?: UserAnswerItf<AnswerBodyContentItf>;
+    userAnswer?: UserAnswerItf<AnswerBodyContentItf> | null;
 };
 
 const Answer = ({ question, userAnswer }: QuestionProps) => {
@@ -55,7 +61,10 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
 
                 return data;
             },
-            mutationKey: ["updateTakerAnswer", { answer_id: userAnswer?.id }],
+            mutationKey: [
+                MUTATION_KEYS.UPDATE_TAKER_ANSWER,
+                { answer_id: userAnswer?.id },
+            ],
             onSuccess: () => {},
             onError: (error) => {
                 if (error instanceof AxiosError) {
@@ -74,6 +83,29 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
         updateScoreMutate();
     };
 
+    const points = useMemo(() => {
+        if (userAnswer && userAnswer.score) {
+            return `${userAnswer.score}/${question.score}`;
+        }
+        return question.score;
+    }, [userAnswer, question.score]);
+
+    const status = useMemo<USER_ANSWER_STATUS>(() => {
+        if (userAnswer && userAnswer.is_correct === true) {
+            return USER_ANSWER_STATUS.CORRECT;
+        }
+        if (userAnswer && userAnswer.is_correct === false) {
+            return USER_ANSWER_STATUS.WRONG;
+        }
+        if (userAnswer === undefined || userAnswer === null) {
+            return USER_ANSWER_STATUS.NOT_ANSWERED;
+        }
+        if (userAnswer && userAnswer.score === undefined) {
+            return USER_ANSWER_STATUS.NOT_EVALUATED;
+        }
+        return USER_ANSWER_STATUS.NOTHING;
+    }, [userAnswer]);
+
     return (
         <div
             className={`px-4 py-2 ${
@@ -84,30 +116,10 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
         >
             <div>
                 <span className="underline">Question {question.order}:</span>{" "}
-                <span className="font-bold italic">
-                    (
-                    {userAnswer
-                        ? `${userAnswer.score}/${question.score}`
-                        : userAnswer === null
-                        ? `0/${question.score}`
-                        : question.score}{" "}
-                    points)
-                </span>{" "}
-                {userAnswer !== undefined && !needManualScore && (
-                    <span className="font-bold italic">
-                        {userAnswer !== null ? (
-                            userAnswer.score! > 0 ? (
-                                <span className="text-green-600">
-                                    Correct ✅
-                                </span>
-                            ) : (
-                                <span className="text-red-600">Wrong ❌</span>
-                            )
-                        ) : (
-                            "No answer"
-                        )}
-                    </span>
-                )}
+                <span className="font-bold italic">{`(${points} points)`}</span>{" "}
+                <span className="italic">
+                    {USER_ANSWER_STATUS_LABEL[status]}
+                </span>
             </div>
             {question.type === QUESTION_TYPE.MULTIPLE_CHOICES && (
                 <MultipleChoicesAnswer
@@ -117,18 +129,21 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
                     answerContent={
                         userAnswer?.content as MultipleChoiceAnswerItf
                     }
+                    answerStatus={status}
                 />
             )}
             {question.type === QUESTION_TYPE.FILL_IN_THE_GAPS && (
                 <FillGapsAnswer
                     questionContent={question.content as FillGapsQuestionItf}
                     answerContent={userAnswer?.content as FillGapsAnswerItf}
+                    answerStatus={status}
                 />
             )}
             {question.type === QUESTION_TYPE.MATCHING && (
                 <MatchingAnswer
                     questionContent={question.content as MatchingQuestionItf}
                     answerContent={userAnswer?.content as MatchingAnswerItf}
+                    answerStatus={status}
                 />
             )}
             {question.type === QUESTION_TYPE.RESPONSE && (

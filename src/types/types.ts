@@ -248,6 +248,7 @@ export type UserAnswerItf<T extends AnswerBodyContentItf> = {
     date?: Date;
     content?: T;
     score?: number;
+    is_correct?: boolean;
 };
 
 export interface TakerBodyItf {
@@ -271,6 +272,7 @@ export interface SubmissionItf {
     start_time: Date;
     submit_time: Date;
     is_evaluated: boolean;
+    answers?: UserAnswerItf<AnswerBodyContentItf>[];
 }
 
 export type FilterState = {

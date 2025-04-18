@@ -1,27 +1,34 @@
-import { useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import { FillGapsAnswerItf, FillGapsQuestionItf } from "../../../types/types";
 import Input from "../../../components/elements/Input";
+import { USER_ANSWER_STATUS } from "../../../config/constants/tests";
 
 type FillGapsAnswerProps = {
     questionContent: FillGapsQuestionItf;
     answerContent: FillGapsAnswerItf;
+    answerStatus: USER_ANSWER_STATUS;
 };
 
 const FillGapsAnswer = ({
     questionContent,
     answerContent,
+    answerStatus,
 }: FillGapsAnswerProps) => {
-    const gaps = useMemo(() => {
-        if (answerContent === undefined) {
-            return questionContent.answer?.gaps || [];
-        } else if (answerContent !== null) {
-            return answerContent.gaps || [];
-        }
+    const makerAnswer = questionContent.answer?.gaps;
+    const userAnswer = answerContent?.gaps;
 
-        return [];
+    const getLabelClasses = useCallback(
+        (index: number) => {
+            if (!makerAnswer) return "border-gray-500 text-black";
 
-        // return answerContent ? answerContent.answer : content.answer || [];
-    }, [answerContent, questionContent]);
+            if (makerAnswer[index] === userAnswer[index])
+                return "border-green-600 text-blue";
+            if (makerAnswer[index] !== userAnswer[index])
+                return "border-red-600 text-red";
+            return "border-gray-500 text-black";
+        },
+        [answerStatus, makerAnswer, userAnswer]
+    );
 
     return (
         <>
@@ -44,7 +51,7 @@ const FillGapsAnswer = ({
                         <Input
                             type="text"
                             name={`gap-${index + 1}`}
-                            value={gaps[index]}
+                            value={userAnswer[index]}
                             id={`gap-${index + 1}`}
                             className={`border ${
                                 answerContent && questionContent.answer
