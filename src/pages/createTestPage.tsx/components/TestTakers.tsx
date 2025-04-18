@@ -26,6 +26,7 @@ const TestTakers = () => {
         testTakers,
         passcode,
         isValidShareOption,
+        editibility,
     } = useSelector((state: RootState) => state.createTest);
     const navigate = useNavigate();
     const { moveNextStep, movePrevStep, validate } = createTestActions;
@@ -121,7 +122,7 @@ const TestTakers = () => {
             }}
         >
             <div className="mt-4 px-8 py-4 bg-orange-100 space-x-2">
-                <label htmlFor="share-select">Share the test with: </label>
+                <label htmlFor="share-select">Choose access method: </label>
                 <Select
                     name="share-select"
                     id="share-select"
@@ -143,14 +144,18 @@ const TestTakers = () => {
                             label: "Passcode",
                         },
                     ]}
+                    disabled={!editibility.TEST_TAKERS.share_option}
                 />
                 <div className="flex items-center gap-2 mt-1">
                     <FontAwesomeIcon icon={faInfoCircle} />
 
                     <p className="text-gray-700 italic">
-                        {shareOption === SHARE_OPTIONS.ANYONE
-                            ? "Anyone with the test's link can access the test and do it"
-                            : "Only those whose email included in the specified emails can access the test"}
+                        {shareOption === SHARE_OPTIONS.ANYONE &&
+                            "Anyone with the test's link can access the test"}
+                        {shareOption === SHARE_OPTIONS.RESTRICTED &&
+                            "Only those whose email included in the specified emails can access the test"}
+                        {shareOption === SHARE_OPTIONS.PASSCODE &&
+                            "Anyone with valid passcode can access the test"}
                     </p>
                 </div>
             </div>

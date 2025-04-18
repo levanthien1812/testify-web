@@ -8,7 +8,7 @@ import Answer from "./Answer";
 
 type TestQuestionsAndAnswersProps = {
     test: TestItf;
-    userAnswers: UserAnswerItf<AnswerBodyContentItf>[];
+    userAnswers: UserAnswerItf<AnswerBodyContentItf>[] | undefined;
 };
 
 const TestQuestionsAndAnswers = ({
@@ -17,6 +17,7 @@ const TestQuestionsAndAnswers = ({
 }: TestQuestionsAndAnswersProps) => {
     const getUserAnswer = useCallback(
         (questionId: string) => {
+            if (!userAnswers) return null;
             return userAnswers.find(
                 (answer) => answer.question_id === questionId
             );
@@ -25,32 +26,38 @@ const TestQuestionsAndAnswers = ({
     );
     return (
         <div className="mt-4">
-            {test.num_parts > 1 &&
-                test.parts.map((part) => {
-                    return (
-                        <div key={part.id} className="">
-                            <div className="text-lg bg-gray-200 px-4 py-1">
-                                <span className="underline">
-                                    Part {part.order}:
-                                </span>{" "}
-                                <span className="uppercase"> {part.name}</span>
-                            </div>
+            {test.num_parts > 1 && (
+                <div className="space-y-4">
+                    {test.parts.map((part) => {
+                        return (
+                            <div key={part.id} className="">
+                                <div className="text-lg bg-gray-200 px-4 py-1">
+                                    <span className="underline">
+                                        Part {part.order}:
+                                    </span>{" "}
+                                    <span className="uppercase">
+                                        {" "}
+                                        {part.name}
+                                    </span>
+                                </div>
 
-                            <div>
-                                {part.questions &&
-                                    part.questions.map((question) => (
-                                        <Answer
-                                            key={question.id}
-                                            question={question}
-                                            userAnswer={getUserAnswer(
-                                                question.id!
-                                            )}
-                                        />
-                                    ))}
+                                <div>
+                                    {part.questions &&
+                                        part.questions.map((question) => (
+                                            <Answer
+                                                key={question.id}
+                                                question={question}
+                                                userAnswer={getUserAnswer(
+                                                    question.id!
+                                                )}
+                                            />
+                                        ))}
+                                </div>
                             </div>
-                        </div>
-                    );
-                })}
+                        );
+                    })}
+                </div>
+            )}
             {test.num_parts <= 1 &&
                 test.questions!.map((question) => (
                     <Answer

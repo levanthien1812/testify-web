@@ -34,7 +34,7 @@ const ResponseAnswer = ({
                 name="response"
                 readOnly
                 value={response}
-                className="border border-gray-500 px-2 py-1 grow focus:border-orange-600 outline-none leading-5 w-full"
+                className="border border-gray-500 px-2 py-1 grow focus:border-orange-600 outline-none leading-5 w-full mt-2"
                 rows={6}
             ></textarea>
         </div>

@@ -1,12 +1,11 @@
 import { useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router";
-import { getSubmission, getTest } from "../../services/test";
+import { getSubmissions, getTest } from "../../services/test";
 import { SubmissionItf } from "../../types/types";
 import DoingTest from "./DoingTest";
 import { SHARE_OPTIONS, TEST_STATUS } from "../../config/constants/tests";
 import TestInfo from "./components/TestInfo";
 import Forbidden from "./components/Forbidden";
-import Submission from "./components/Submission";
 import Button from "../../components/elements/Button";
 import { QUERY_KEYS } from "../../config/constants/queryMutationKeys";
 import { useSelector } from "react-redux";
@@ -17,6 +16,7 @@ import Loading from "../../components/loadings/Loading";
 import { useEffect, useState } from "react";
 import Error from "../../components/errors/Error";
 import PasscodeLink from "../../components/modals/PasscodeLink";
+import Submissions from "./components/Submissions";
 
 const TakeTestPage = () => {
     const { testId } = useParams();
@@ -30,23 +30,29 @@ const TakeTestPage = () => {
         includeTakerAnswers,
         isEnteringPasscode,
         isPasscodeValidated,
+        submissions,
     } = useSelector((state: RootState) => state.takeTest);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const {
-        isLoading: isLoadingSubmission,
-        data: submission,
-        refetch: refetchSubmission,
-    } = useQuery<SubmissionItf>({
-        queryFn: async () => {
-            const responseData = await getSubmission(testId!);
-            return responseData.submission;
-        },
-        queryKey: [QUERY_KEYS.GET_TEST_SUBMISSION, { test_id: testId }],
-        enabled: false,
-    });
+    const { isLoading: isLoadingSubmissions, refetch: refetchSubmissions } =
+        useQuery<SubmissionItf[]>({
+            queryFn: async () => {
+                const responseData = await getSubmissions(testId!);
+                return responseData.submissions;
+            },
+            queryKey: [QUERY_KEYS.GET_TEST_SUBMISSION, { test_id: testId }],
+            enabled:
+                !!test &&
+                test.options.allow_view_submission_after_test.enable &&
+                (test.share_option === SHARE_OPTIONS.PASSCODE
+                    ? isPasscodeValidated
+                    : true),
+            onSuccess: (data) => {
+                dispatch(takeTestActions.setSubmissions(data));
+            },
+        });
 
     const { isLoading: isLoadingTest, refetch: refetchTest } = useQuery({
         queryKey: [
@@ -101,10 +107,10 @@ const TakeTestPage = () => {
             test?.share_option === SHARE_OPTIONS.PASSCODE &&
             isPasscodeValidated
         ) {
-            refetchSubmission();
+            refetchSubmissions();
             refetchTest();
         }
-    }, [test, isPasscodeValidated, refetchSubmission, refetchTest]);
+    }, [test, isPasscodeValidated, refetchSubmissions, refetchTest]);
 
     return (
         <div className="w-[840px] mx-auto mt-6 bg-white shadow-lg">
@@ -127,7 +133,11 @@ const TakeTestPage = () => {
                     <TestInfo test={test} />
                     {(test.status === TEST_STATUS.PUBLISHED ||
                         test.status === TEST_STATUS.OPENED) &&
-                        !submission && (
+                        (test.options.allow_multiple_submissions.enable
+                            ? submissions.length <
+                              test.options.allow_multiple_submissions
+                                  .maximum_submissions!
+                            : submissions.length === 0) && (
                             <div className="flex justify-center mt-4">
                                 <Button
                                     size="lg"
@@ -150,7 +160,7 @@ const TakeTestPage = () => {
                     )} */}
                 </div>
             )}
-            {(isLoadingTest || isLoadingSubmission) && (
+            {(isLoadingTest || isLoadingSubmissions) && (
                 <Loading
                     isLoading={isLoadingTest}
                     loadingText={{ text: "Loading test's information..." }}
@@ -161,13 +171,11 @@ const TakeTestPage = () => {
                 <DoingTest
                     onAfterSubmit={async () => {
                         await refetchTest();
-                        await refetchSubmission();
+                        await refetchSubmissions();
                     }}
                 />
             )}
-            {submission && test && !isLoadingSubmission && (
-                <Submission submission={submission} />
-            )}
+            {submissions.length > 0 && <Submissions />}
         </div>
     );
 };

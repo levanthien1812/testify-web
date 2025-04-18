@@ -1,13 +1,11 @@
 import Answer from "./testAnswers/Answer";
 import Questions from "./testQuestions/Questions";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../stores/rootState";
 import Wrapper from "../../../components/wrappers/Wrapper";
 import { createTestActions } from "../../../stores/createTest";
 import { useDispatch } from "react-redux";
+import { TestItf } from "../../../types/types";
 
-const TestAnswers = () => {
-    const { test } = useSelector((state: RootState) => state.viewTest);
+const TestAnswers = ({ test }: { test: TestItf }) => {
     const { moveNextStep, movePrevStep } = createTestActions;
     const dispatch = useDispatch();
 
