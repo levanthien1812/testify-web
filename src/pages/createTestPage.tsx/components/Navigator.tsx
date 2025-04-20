@@ -10,7 +10,7 @@ const Navigator = () => {
     const { steps, currentStep } = useSelector(
         (state: RootState) => state.createTest
     );
-    const { setStep, handleNavigation } = createTestActions;
+    const { handleNavigation } = createTestActions;
     const dispatch = useDispatch();
 
     const handleClickStep = (value: string) => {

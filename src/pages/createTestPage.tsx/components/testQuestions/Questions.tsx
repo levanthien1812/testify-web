@@ -14,7 +14,7 @@ const Questions: React.FC<{
     part?: TestPartItf;
     withAnswer?: boolean;
 }> = ({ part, withAnswer = false }) => {
-    const { testQuestions, testId } = useSelector(
+    const { testQuestions } = useSelector(
         (state: RootState) => state.createTest
     );
     const questions = useMemo(() => {
@@ -50,7 +50,7 @@ const Questions: React.FC<{
                                     <Question
                                         question={question}
                                         part={part}
-                                        key={index}
+                                        key={question.id}
                                     />
                                 ) : (
                                     <Answer
@@ -67,8 +67,8 @@ const Questions: React.FC<{
             {!part && (
                 <div className="px-4 py-4 grid grid-cols-4 gap-2">
                     {questions &&
-                        questions.map((question, index) => (
-                            <Question question={question} key={index} />
+                        questions.map((question) => (
+                            <Question question={question} key={question.id} />
                         ))}{" "}
                 </div>
             )}

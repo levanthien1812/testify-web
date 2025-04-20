@@ -7,6 +7,7 @@ import {
     INITIAL_CREATE_TEST_CONTEXT,
     INITIAL_PART,
     INITIAL_QUESTION,
+    INITIAL_OPTIONS,
 } from "../config/constants/initialValues";
 import { CREATE_TEST_STEPS, TEST_STATUS } from "../config/constants/tests";
 import {
@@ -18,6 +19,7 @@ import {
 } from "../types/types";
 import { SHARE_OPTIONS } from "../config/constants/tests";
 import { PASSCODE_FORMAT, PASSCODE_METHOD } from "../config/constants/passcode";
+import { sortQuestionFn } from "../utils/array";
 
 const createTestSlice = createSlice({
     initialState: INITIAL_CREATE_TEST_CONTEXT,
@@ -407,6 +409,50 @@ const createTestSlice = createSlice({
                 state.isValidCurrentPart = true;
             }
         },
+        handleReorderQuestion(
+            state,
+            action: PayloadAction<{
+                startIndex: number;
+                endIndex: number;
+                partId?: string;
+            }>
+        ) {
+            if (action.payload.partId) {
+                const partIndex = state.testParts.findIndex(
+                    (part) => part.id === action.payload.partId
+                );
+                const partQuestions = state.testParts[partIndex].questions;
+                if (!partQuestions) return;
+                partQuestions[action.payload.startIndex].order =
+                    action.payload.endIndex + 1;
+                partQuestions[action.payload.endIndex].order =
+                    action.payload.startIndex + 1;
+                partQuestions.sort(sortQuestionFn);
+
+                state.testParts[partIndex].questions = partQuestions;
+
+                // TODO: HANDLE WHEN DRAG QUESTION FROM ONE PART TO ANOTHER
+            } else {
+                state.testQuestions[action.payload.startIndex].order =
+                    action.payload.endIndex + 1;
+                state.testQuestions[action.payload.endIndex].order =
+                    action.payload.startIndex + 1;
+                state.testQuestions.sort(sortQuestionFn);
+            }
+        },
+        handleReorderQuestions(state, action) {
+            if (action.payload.part_id) {
+                const partIndex = state.testParts.findIndex(
+                    (part) => part.id === action.payload.question.part_id
+                );
+                const partQuestions = state.testParts[partIndex].questions;
+                if (!partQuestions) return;
+                partQuestions.sort(sortQuestionFn);
+                state.testParts[partIndex].questions = partQuestions;
+            } else {
+                state.testQuestions.sort(sortQuestionFn);
+            }
+        },
         setTestFromAPI(state, action) {
             state.testTitle = action.payload?.title;
             state.testDatetime = action.payload?.datetime;
@@ -419,7 +465,7 @@ const createTestSlice = createSlice({
             state.shareOption =
                 action.payload?.share_option || SHARE_OPTIONS.RESTRICTED;
             state.testId = action.payload?.id;
-            state.options = action.payload?.options;
+            state.options = action.payload?.options || INITIAL_OPTIONS;
             state.status = action.payload?.status;
 
             state.testParts = action.payload?.parts;

@@ -11,6 +11,8 @@ const TOAST_MESSAGES = {
     ADD_ANSWER_SUCCESSFULLY: "Add answer successfuly",
     UNABLE_TO_COPY: "Unable to copy link! Try again later.",
     TEST_SUBMITTED_SUCCESSFULLY: "Test is submitted successfully",
+    CANNOT_MOVE_QUESTION_TO_ANOTHER_PART:
+        "Cannot move question to another part",
 };
 
 export { TOAST_MESSAGES };

@@ -41,9 +41,8 @@ import {
     TEST_LEVEL_LABEL,
 } from "../../../../config/constants/tests";
 import { getInitialQuestionContent } from "../../../../utils/mapping";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheck } from "@fortawesome/free-solid-svg-icons";
 import ConfirmModal from "../../../../components/modals/ConfirmModal";
+import QuestionDraggable from "./QuestionDraggable";
 
 type QuestionProps = {
     question: QuestionItf<QuestionContentItf>;
@@ -74,7 +73,7 @@ const Question = ({ question, part }: QuestionProps) => {
     const allValues = watch();
 
     useEffect(() => {
-        if (!question?.id) {
+        if (!question?.id && allValues?.type !== question.type) {
             setValue("content", getInitialQuestionContent(allValues?.type));
         }
         dispatch(
@@ -197,32 +196,10 @@ const Question = ({ question, part }: QuestionProps) => {
 
     return (
         <>
-            <div
-                className={`bg-orange-100 p-2 cursor-pointer hover:bg-orange-200 relative ${
-                    question.is_content_provided && "border border-orange-500"
-                }`}
+            <QuestionDraggable
+                question={question}
                 onClick={() => setOpen(true)}
-            >
-                <p className="text-center">Question {question?.order}</p>
-                {question.is_content_provided && (
-                    <>
-                        <div
-                            className="absolute bottom-0 right-0 w-0 h-0 z-0"
-                            style={{
-                                borderRight: "8px solid rgb(249 115 22)",
-                                borderBottom: "8px solid rgb(249 115 22)",
-                                borderTop: "8px solid transparent",
-                                borderLeft: "8px solid transparent",
-                            }}
-                        >
-                            <FontAwesomeIcon
-                                icon={faCheck}
-                                className="text-white leading-none"
-                            />
-                        </div>
-                    </>
-                )}
-            </div>
+            />
             {open && (
                 <Modal onClose={() => setOpen(false)}>
                     <ModalHeader title={`Question ${question?.order}`} />

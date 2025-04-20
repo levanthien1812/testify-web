@@ -16,6 +16,7 @@ const RecentTests = () => {
         queryKey: ["tests"],
         queryFn: async () => {
             const data = await getTests();
+            console.log(data.tests.length);
             return data.tests;
         },
     });
