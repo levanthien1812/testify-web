@@ -9,8 +9,17 @@ const viewTestSlice = createSlice({
             console.log(action.payload);
             state.test = action.payload;
         },
-        setSubmission(state, action) {
+        setSubmissions(state, action) {
             state.submissions = action.payload;
+        },
+        setCurrentSubmissionBeingViewed(state, action) {
+            state.currentSubmissionBeingViewed = action.payload;
+        },
+        updateCurrentSubmission(state, action) {
+            state.currentSubmissionBeingViewed = {
+                ...state.currentSubmissionBeingViewed,
+                ...action.payload,
+            };
         },
     },
 });

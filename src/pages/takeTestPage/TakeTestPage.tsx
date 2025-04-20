@@ -175,7 +175,7 @@ const TakeTestPage = () => {
                     }}
                 />
             )}
-            {submissions.length > 0 && <Submissions />}
+            {submissions.length > 0 && !isStarted && <Submissions />}
         </div>
     );
 };

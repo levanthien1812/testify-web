@@ -1,7 +1,16 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "react-query";
-import { SubmissionItf, TestItf, userItf } from "../../../types/types";
-import { getTestWithTakerAnswers } from "../../../services/test";
+import {
+    AnswerBodyContentItf,
+    SubmissionItf,
+    TestItf,
+    UserAnswerItf,
+    userItf,
+} from "../../../types/types";
+import {
+    getSubmissionAnswers,
+    getTestWithTakerAnswers,
+} from "../../../services/test";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import Modal, {
@@ -12,12 +21,12 @@ import Modal, {
 import TestQuestionsAndAnswers from "../../takeTestPage/components/TestQuestionsAndAnswers";
 import { useParams } from "react-router";
 import { format } from "date-fns";
-
-type TakerSubmissionDetailProps = {
-    submission: SubmissionItf;
-    takerId: string;
-    onClose: () => void;
-};
+import { useSelector } from "react-redux";
+import { RootState } from "../../../stores/rootState";
+import { takeTestActions } from "../../../stores/takeTest";
+import { useDispatch } from "react-redux";
+import { QUERY_KEYS } from "../../../config/constants/queryMutationKeys";
+import { viewTestActions } from "../../../stores/viewTest";
 
 const TakerInfoItem = ({
     label,
@@ -40,14 +49,13 @@ const TakerInfoItem = ({
     );
 };
 
-const TakerSubmissionDetail = ({
-    submission,
-    takerId,
-    onClose,
-}: TakerSubmissionDetailProps) => {
-    const { testId } = useParams();
+const TakerSubmissionDetail = () => {
+    const { test, currentSubmissionBeingViewed: submission } = useSelector(
+        (state: RootState) => state.viewTest
+    );
     const sentinelRef = useRef<HTMLDivElement>(null);
     const [isSticky, setIsSticky] = useState(false);
+    const dispatch = useDispatch();
 
     useEffect(() => {
         const observer = new IntersectionObserver(
@@ -70,26 +78,34 @@ const TakerSubmissionDetail = ({
         };
     }, []);
 
-    const { isLoading: isLoadingTest, data: testWithAnswers } =
-        useQuery<TestItf>({
-            queryKey: ["test", { test_id: testId, taker_id: takerId }],
+    const { isLoading: isLoadingSubmissions, data: submissionAnswers } =
+        useQuery({
             queryFn: async () => {
-                const responseData = await getTestWithTakerAnswers(
-                    testId!,
-                    takerId!
+                const responseData = await getSubmissionAnswers(
+                    test!.id!,
+                    submission!.id
                 );
-                return responseData.test;
+                return responseData.answers;
             },
-            onError: (error) => {
-                if (error instanceof AxiosError) {
-                    toast.error(error.response?.data.message);
-                }
+            onSuccess: (data) => {
+                dispatch(
+                    viewTestActions.updateCurrentSubmission({
+                        answers: data,
+                    })
+                );
             },
-            retry: false,
+            queryKey: [
+                QUERY_KEYS.GET_SUBMISSION_ANSWERS,
+                { submission_id: submission!.id },
+            ],
         });
-
     return (
-        <Modal onClose={onClose} className="w-5/6 md:w-2/3 lg:w-1/2">
+        <Modal
+            onClose={() =>
+                dispatch(viewTestActions.setCurrentSubmissionBeingViewed(null))
+            }
+            className="w-5/6 md:w-2/3 lg:w-1/2"
+        >
             <ModalHeader title={`Taker's submissions detail`} />
             <ModalBody>
                 <div className="relative">
@@ -103,25 +119,32 @@ const TakerSubmissionDetail = ({
                         >
                             <div
                                 className={`${
-                                    !isSticky && "row-span-4 col-span-2"
-                                } overflow-hidden self-start rounded-full shadow-md m-3`}
+                                    isSticky
+                                        ? "hidden"
+                                        : "row-span-4 col-span-2"
+                                } overflow-hidden self-start rounded-full shadow-md m-3 flex justify-center items-center`}
                             >
-                                <img
-                                    src={(submission.taker_id as userItf).photo}
-                                    alt=""
-                                    className=""
-                                />
+                                <div className="w-12 h-12">
+                                    <img
+                                        src={
+                                            (submission.taker_id as userItf)
+                                                ?.photo
+                                        }
+                                        alt=""
+                                        className="rounded-full w-full h-full object-cover"
+                                    />
+                                </div>
                             </div>
                             <TakerInfoItem
                                 label="Taker's name"
-                                text={(submission.taker_id as userItf).name}
+                                text={(submission.taker_id as userItf)?.name}
                                 className={
-                                    isSticky ? "col-span-2" : "col-span-3"
+                                    isSticky ? "col-span-4" : "col-span-3"
                                 }
                             />
                             <TakerInfoItem
                                 label="Taker's email"
-                                text={(submission.taker_id as userItf).email}
+                                text={(submission.taker_id as userItf)?.email}
                                 className={isSticky ? "hidden" : "col-span-3"}
                             />
                             <TakerInfoItem
@@ -143,32 +166,30 @@ const TakerSubmissionDetail = ({
                             <TakerInfoItem
                                 label="Correct answers"
                                 text={submission.correct_answers || 0}
-                                className={
-                                    isSticky ? "col-span-2" : "col-span-3"
-                                }
+                                className={isSticky ? "hidden" : "col-span-3"}
                             />
                             <TakerInfoItem
                                 label="Wrong answers"
                                 text={submission.wrong_answers || 0}
-                                className={
-                                    isSticky ? "col-span-2" : "col-span-3"
-                                }
+                                className={isSticky ? "hidden" : "col-span-3"}
                             />
                             <TakerInfoItem
                                 label="Score"
                                 text={submission.score || 0}
                                 className={
-                                    isSticky ? "col-span-1" : "col-span-3"
+                                    isSticky ? "col-span-4" : "col-span-3"
                                 }
                             />
                         </div>
                     )}
                     <div className="sentinel" ref={sentinelRef}></div>
-                    {isLoadingTest && <p className="text-center">Loading...</p>}
-                    {testWithAnswers && (
+                    {isLoadingSubmissions && (
+                        <p className="text-center">Loading...</p>
+                    )}
+                    {submissionAnswers && (
                         <TestQuestionsAndAnswers
-                            test={testWithAnswers}
-                            userAnswers={[]}
+                            test={test!}
+                            userAnswers={submissionAnswers}
                         />
                     )}
                 </div>

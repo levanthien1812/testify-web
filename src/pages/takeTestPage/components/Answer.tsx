@@ -37,6 +37,7 @@ import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
 type QuestionProps = {
     question: QuestionItf<QuestionContentItf>;
     userAnswer?: UserAnswerItf<AnswerBodyContentItf> | null;
+    onUpdateScore?: () => void;
 };
 
 const Answer = ({ question, userAnswer }: QuestionProps) => {
@@ -103,6 +104,9 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
         if (userAnswer && userAnswer.score === undefined) {
             return USER_ANSWER_STATUS.NOT_EVALUATED;
         }
+        if (userAnswer && needManualScore) {
+            return USER_ANSWER_STATUS.MANUALLY_SCORED;
+        }
         return USER_ANSWER_STATUS.NOTHING;
     }, [userAnswer]);
 
@@ -117,7 +121,7 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
             <div>
                 <span className="underline">Question {question.order}:</span>{" "}
                 <span className="font-bold italic">{`(${points} points)`}</span>{" "}
-                <span className="italic">
+                <span className="text-sm bg-yellow-500 text-white rounded-full px-2 shadow-sm ms-2">
                     {USER_ANSWER_STATUS_LABEL[status]}
                 </span>
             </div>

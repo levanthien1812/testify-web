@@ -133,6 +133,7 @@ export interface TakeTestContext {
 export interface ViewTestContext {
     test: TestItf | null;
     submissions: SubmissionItf[];
+    currentSubmissionBeingViewed: SubmissionItf | null;
 }
 
 export interface EditabilityConfig {
