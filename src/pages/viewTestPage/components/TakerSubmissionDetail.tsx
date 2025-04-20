@@ -41,8 +41,8 @@ const TakerInfoItem = ({
         <div
             className={`border border-dashed flex flex-col border-gray-400 px-2 py-1 transition-all ease-in-out duration-300 self-center ${className} `}
         >
-            <span className="leading-tight">{label}:</span>
-            <span className="font-bold bg-orange-500 text-white w-fit px-2 rounded-full">
+            <span className="leading-tight text-sm">{label}:</span>
+            <span className="font-bold bg-orange-500 text-white w-fit px-2 rounded-full text-sm">
                 {text}
             </span>
         </div>
@@ -60,7 +60,6 @@ const TakerSubmissionDetail = () => {
     useEffect(() => {
         const observer = new IntersectionObserver(
             ([entry]) => {
-                console.log(entry.isIntersecting);
                 setIsSticky(!entry.isIntersecting);
             },
             {
@@ -111,10 +110,8 @@ const TakerSubmissionDetail = () => {
                 <div className="relative">
                     {submission && (
                         <div
-                            className={`grid grid-cols-8 gap-1 bg-orange-100 border border-dashed border-orange-600 relative ${
-                                isSticky
-                                    ? "sticky shadow-lg -top-4 z-20 py-1 px-2"
-                                    : " px-4 py-2"
+                            className={`grid grid-cols-8 gap-1 bg-orange-100 border border-dashed border-orange-600 relative p-1 ${
+                                isSticky ? "sticky shadow-lg -top-4 z-20" : ""
                             }`}
                         >
                             <div
@@ -122,18 +119,15 @@ const TakerSubmissionDetail = () => {
                                     isSticky
                                         ? "hidden"
                                         : "row-span-4 col-span-2"
-                                } overflow-hidden self-start rounded-full shadow-md m-3 flex justify-center items-center`}
+                                } overflow-hidden self-start rounded-full shadow-md m-3 flex justify-center items-center w-20 h-20 mx-auto`}
                             >
-                                <div className="w-12 h-12">
-                                    <img
-                                        src={
-                                            (submission.taker_id as userItf)
-                                                ?.photo
-                                        }
-                                        alt=""
-                                        className="rounded-full w-full h-full object-cover"
-                                    />
-                                </div>
+                                <img
+                                    src={
+                                        (submission.taker_id as userItf)?.photo
+                                    }
+                                    alt=""
+                                    className="rounded-full w-full h-full object-cover"
+                                />
                             </div>
                             <TakerInfoItem
                                 label="Taker's name"
