@@ -80,38 +80,39 @@ const MatchingAnswer = ({
             <div className="mt-2">
                 <p>Matchings:</p>
                 <div className="border border-gray-500 px-4 py-2 space-y-2">
-                    {userAnswer.map((matching) => (
-                        <div
-                            key={matching.left}
-                            className={`${getClasses(
-                                matching
-                            )} px-4 py-1 grid grid-cols-9 items-center gap-2 relative`}
-                        >
-                            <span className="col-span-4">
-                                {
-                                    questionContent.left_items.find(
-                                        (left_item) =>
-                                            left_item.id === matching.left
-                                    )?.text
-                                }
-                            </span>
-                            <span className="col-span-1 text-center">
-                                <FontAwesomeIcon
-                                    icon={faArrowRight}
-                                    className="text-xs"
-                                />
-                            </span>
+                    {userAnswer &&
+                        userAnswer.map((matching) => (
+                            <div
+                                key={matching.left}
+                                className={`${getClasses(
+                                    matching
+                                )} px-4 py-1 grid grid-cols-9 items-center gap-2 relative`}
+                            >
+                                <span className="col-span-4">
+                                    {
+                                        questionContent.left_items.find(
+                                            (left_item) =>
+                                                left_item.id === matching.left
+                                        )?.text
+                                    }
+                                </span>
+                                <span className="col-span-1 text-center">
+                                    <FontAwesomeIcon
+                                        icon={faArrowRight}
+                                        className="text-xs"
+                                    />
+                                </span>
 
-                            <span className="col-span-4">
-                                {
-                                    questionContent.right_items.find(
-                                        (right_item) =>
-                                            right_item.id === matching.right
-                                    )?.text
-                                }
-                            </span>
-                        </div>
-                    ))}
+                                <span className="col-span-4">
+                                    {
+                                        questionContent.right_items.find(
+                                            (right_item) =>
+                                                right_item.id === matching.right
+                                        )?.text
+                                    }
+                                </span>
+                            </div>
+                        ))}
                 </div>
             </div>
         </>

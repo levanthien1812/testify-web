@@ -25,7 +25,9 @@ const ViewTestPage = () => {
     const [viewQuestionsAndAnswers, setViewQuestionsAndAnswers] =
         useState(false);
     const [viewProvideAnswers, setViewProvideAnswers] = useState(false);
-    const { test } = useSelector((state: RootState) => state.viewTest);
+    const { test, submissions } = useSelector(
+        (state: RootState) => state.viewTest
+    );
     const { setTest } = viewTestActions;
     const dispatch = useDispatch();
 
@@ -40,17 +42,18 @@ const ViewTestPage = () => {
             retry: false,
         });
 
-    const {
-        isLoading: isLoadingSubmissions,
-        data: submissions,
-        refetch: refetchSubmissions,
-    } = useQuery<SubmissionItf[]>({
-        queryKey: [QUERY_KEYS.GET_TEST_SUBMISSIONS, testId],
-        queryFn: async () => {
-            const responseData = await getSubmissions(testId!);
-            return responseData.submissions;
-        },
-    });
+    const { isLoading: isLoadingSubmissions, refetch: refetchSubmissions } =
+        useQuery<SubmissionItf[]>({
+            queryKey: [QUERY_KEYS.GET_TEST_SUBMISSIONS, testId],
+            queryFn: async () => {
+                const responseData = await getSubmissions(testId!);
+                return responseData.submissions;
+            },
+            onSuccess: (data) => {
+                dispatch(viewTestActions.setSubmissions(data));
+            },
+            retry: false,
+        });
 
     return (
         <div className="xl:w-2/3 md:w-5/6 mx-auto py-10 shadow-lg px-8">

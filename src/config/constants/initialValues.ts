@@ -398,4 +398,5 @@ export const INITIAL_TAKE_TEST_CONTEXT: TakeTestContext = {
 export const INITIAL_VIEW_TEST_CONTEXT: ViewTestContext = {
     test: null,
     submissions: [],
+    currentSubmissionBeingViewed: null,
 };
