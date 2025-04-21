@@ -37,6 +37,7 @@ const MUTATION_KEYS = {
     UNBLOCK_USER: "unblock-user",
     UPDATE_TAKER_ANSWER: "update-taker-answer",
     SUBMIT_ANSWERS: "submit-answers",
+    REORDER_QUESTIONS: "reorder-questions",
 };
 
 export { QUERY_KEYS, MUTATION_KEYS };

@@ -188,6 +188,28 @@ export const saveQuestion = async (
     }
 };
 
+export const reorderQuestions = async (
+    testId: string,
+    startOrder: number,
+    endOrder: number,
+    partId: string
+) => {
+    try {
+        const response = await instance.patch(
+            `/tests/${testId}/questions/reorder`,
+            {
+                startOrder,
+                endOrder,
+                partId,
+            }
+        );
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 export const deleteQuestion = async (
     testId: string,
     questionId: string,
