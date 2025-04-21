@@ -1,8 +1,7 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { MessageItf } from "../../../../types/chat";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../stores/rootState";
 import { formatImageUrl } from "../../../../utils/formatImageUrl";
+import { useAppSelector } from "../../../../hooks/hooks";
 
 type ImageProps = {
     message: MessageItf;
@@ -10,7 +9,7 @@ type ImageProps = {
 
 const Images = ({ message }: ImageProps) => {
     const [showAllImages, setShowAllImages] = useState(false);
-    const user = useSelector((state: RootState) => state.auth.user);
+    const user = useAppSelector((state) => state.auth.user);
 
     const handleClickShowAll = () => {
         setShowAllImages(true);

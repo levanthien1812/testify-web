@@ -19,10 +19,9 @@ import { faRotateRight } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../../components/elements/Button";
 import Input from "../../../components/elements/Input";
 import Select from "../../../components/elements/Select";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../stores/rootState";
 import { useDispatch } from "react-redux";
 import { viewTestActions } from "../../../stores/viewTest";
+import { useAppSelector } from "../../../hooks/hooks";
 
 type SubmissionsTableProps = {
     submissions: SubmissionItf[];
@@ -113,8 +112,8 @@ const SubmissionsTable = ({ submissions, refetch }: SubmissionsTableProps) => {
     const [enableFilter, setEnableFilter] = useState(false);
     const [filters, setFilters] = useState<ColumnFiltersState>([]);
     const [selectedTakerId, setSelectedTakerId] = useState<string | null>();
-    const { currentSubmissionBeingViewed } = useSelector(
-        (state: RootState) => state.viewTest
+    const { currentSubmissionBeingViewed } = useAppSelector(
+        (state) => state.viewTest
     );
     const dispatch = useDispatch();
 

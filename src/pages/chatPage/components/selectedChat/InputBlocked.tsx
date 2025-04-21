@@ -1,17 +1,15 @@
-import React, { useMemo } from "react";
 import { useChatSocket } from "../ChatSocketContext";
-import { RootState } from "../../../../stores/rootState";
-import { useSelector } from "react-redux";
 import { unblockUser } from "../../../../services/user";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
 import { useDispatch } from "react-redux";
 import { useMutation } from "react-query";
 import { SOCKET_EVENTS } from "../../../../config/constants/socket";
 import { authActions } from "../../../../stores/auth";
+import { useAppSelector } from "../../../../hooks/hooks";
 
 const InputBlocked = () => {
     const { currentChat, socket } = useChatSocket();
-    const { user } = useSelector((state: RootState) => state.auth);
+    const { user } = useAppSelector((state) => state.auth);
     const dispatch = useDispatch();
 
     const { mutate: unblockUserMutate, isLoading: isUnblockingUser } =

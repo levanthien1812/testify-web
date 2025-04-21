@@ -1,14 +1,12 @@
-import Cookies from "js-cookie";
-import React, { Children } from "react";
-import { useSelector } from "react-redux";
+import React from "react";
 import { Navigate, Outlet } from "react-router";
-import { RootState } from "../../stores/rootState";
 import { toast } from "react-toastify";
+import { useAppSelector } from "../../hooks/hooks";
 
 const ProtectedRoute: React.FC<{
     allowedRoles: string[] | undefined;
 }> = ({ allowedRoles }) => {
-    const user = useSelector((state: RootState) => state.auth.user);
+    const user = useAppSelector((state) => state.auth.user);
     if (!user) {
         return <Navigate to={"/login"} />;
     }
@@ -20,7 +18,7 @@ const ProtectedRoute: React.FC<{
             return <Navigate to={"/home"} />;
         }
     }
-    
+
     return <Outlet />;
 };
 

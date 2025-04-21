@@ -3,8 +3,6 @@ import Accordion from "../../../../components/accordions/Accordion";
 import { useFormContext } from "react-hook-form";
 import TestOption from "./TestOption";
 import Checkbox from "../../../../components/elements/Checkbox";
-import { RootState } from "../../../../stores/rootState";
-import { useSelector } from "react-redux";
 import {
     ALLOWED_MAXIMUM_SUBMISSIONS,
     PUBLIC_ANSWERS_OPTIONS,
@@ -13,12 +11,13 @@ import {
 } from "../../../../config/constants/tests";
 import Input from "../../../../components/elements/Input";
 import Select from "../../../../components/elements/Select";
+import { useAppSelector } from "../../../../hooks/hooks";
 
 const TestOptions = () => {
     const [isViewingOptions, setIsViewOptions] = useState(false);
     const { register } = useFormContext();
-    const { options, editibility } = useSelector(
-        (state: RootState) => state.createTest
+    const { options, editibility } = useAppSelector(
+        (state) => state.createTest
     );
 
     return (

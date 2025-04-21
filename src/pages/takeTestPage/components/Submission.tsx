@@ -4,13 +4,12 @@ import { formatTime } from "../../../utils/time";
 import { SubmissionItf } from "../../../types/types";
 import TestQuetionsAndAnswers from "./TestQuestionsAndAnswers";
 import Button from "../../../components/elements/Button";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../stores/rootState";
 import { useQuery } from "react-query";
 import { QUERY_KEYS } from "../../../config/constants/queryMutationKeys";
 import { getSubmissionAnswers } from "../../../services/test";
 import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../../stores/takeTest";
+import { useAppSelector } from "../../../hooks/hooks";
 
 type SubmissionProps = {
     submission: SubmissionItf;
@@ -18,7 +17,7 @@ type SubmissionProps = {
 
 const Submission = ({ submission }: SubmissionProps) => {
     const [viewDetail, setViewDetail] = React.useState(false);
-    const { test } = useSelector((state: RootState) => state.takeTest);
+    const { test } = useAppSelector((state) => state.takeTest);
     const dispatch = useDispatch();
 
     useQuery({

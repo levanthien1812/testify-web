@@ -6,8 +6,6 @@ import { toast } from "react-toastify";
 import Button from "../../../../components/elements/Button";
 import Input from "../../../../components/elements/Input";
 import { useForm } from "react-hook-form";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../stores/rootState";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
 import { TOAST_MESSAGES } from "../../../../config/constants/toasts";
 import { createTestActions } from "../../../../stores/createTest";
@@ -15,12 +13,13 @@ import Accordion from "../../../../components/accordions/Accordion";
 import { useDispatch } from "react-redux";
 import { INITIAL_PART } from "../../../../config/constants/initialValues";
 import { pickFieldsFromObject } from "../../../../utils/object";
+import { useAppSelector } from "../../../../hooks/hooks";
 
 const Part: React.FC<{
     part: TestPartItf;
 }> = ({ part }) => {
-    const { testId, maxScore, editibility } = useSelector(
-        (state: RootState) => state.createTest
+    const { testId, maxScore, editibility } = useAppSelector(
+        (state) => state.createTest
     );
     const { saveTestParts, validate: validateParts } = createTestActions;
     const dispatch = useDispatch();

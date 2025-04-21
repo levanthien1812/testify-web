@@ -1,15 +1,11 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../stores/rootState";
 import { createTestActions } from "../../../stores/createTest";
 import { CreateTestStep } from "../../../types/tests";
 import { useDispatch } from "react-redux";
 import { CREATE_TEST_STEPS } from "../../../config/constants/tests";
+import { useAppSelector } from "../../../hooks/hooks";
 
 const Navigator = () => {
-    const { steps, currentStep } = useSelector(
-        (state: RootState) => state.createTest
-    );
+    const { steps, currentStep } = useAppSelector((state) => state.createTest);
     const { handleNavigation } = createTestActions;
     const dispatch = useDispatch();
 

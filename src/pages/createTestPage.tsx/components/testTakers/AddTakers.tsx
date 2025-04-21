@@ -10,12 +10,11 @@ import { getAvailableTakers } from "../../../../services/test";
 import Button from "../../../../components/elements/Button";
 import { TakerItf } from "../../../../types/types";
 import TakersChoser from "./TakersChoser";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../stores/rootState";
 import { createTestActions } from "../../../../stores/createTest";
 import { QUERY_KEYS } from "../../../../config/constants/queryMutationKeys";
 import { useDispatch } from "react-redux";
 import Loading from "../../../../components/loadings/Loading";
+import { useAppSelector } from "../../../../hooks/hooks";
 
 type AddTakersProps = {
     onClose: () => void;
@@ -23,8 +22,8 @@ type AddTakersProps = {
 
 const AddTakers = ({ onClose }: AddTakersProps) => {
     const [isCreateTaker, setIsCreateTaker] = useState<boolean>(false);
-    const { testId, availableTakers, selectedTestTakers } = useSelector(
-        (state: RootState) => state.createTest
+    const { testId, availableTakers, selectedTestTakers } = useAppSelector(
+        (state) => state.createTest
     );
     const { setAvailableTakers } = createTestActions;
     const dispatch = useDispatch();

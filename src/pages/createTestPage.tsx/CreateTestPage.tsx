@@ -5,8 +5,6 @@ import { useParams } from "react-router";
 import { useQuery } from "react-query";
 import { getTest } from "../../services/test";
 import { useSearchParams } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../../stores/rootState";
 import Navigator from "./components/Navigator";
 import { CREATE_TEST_STEPS } from "../../config/constants/tests";
 import { QUERY_KEYS } from "../../config/constants/queryMutationKeys";
@@ -17,11 +15,12 @@ import { createTestActions } from "../../stores/createTest";
 import { useDispatch } from "react-redux";
 import Loading from "../../components/loadings/Loading";
 import StatusPanel from "./components/StatusPanel";
+import { useAppSelector } from "../../hooks/hooks";
 
 const CreateTestPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const stepParam = searchParams.get("step");
-    const { currentStep } = useSelector((state: RootState) => state.createTest);
+    const { currentStep } = useAppSelector((state) => state.createTest);
     const { setTestFromAPI, setStep, reset } = createTestActions;
     const dispatch = useDispatch();
 

@@ -4,13 +4,12 @@ import { useQuery } from "react-query";
 import { getTests } from "../../../services/test";
 import { TestItf } from "../../../types/types";
 import Button from "../../../components/elements/Button";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../stores/rootState";
 import { ROLES } from "../../../config/constants/tests";
+import { useAppSelector } from "../../../hooks/hooks";
 
 const RecentTests = () => {
     const navigate = useNavigate();
-    const { user } = useSelector((state: RootState) => state.auth);
+    const { user } = useAppSelector((state) => state.auth);
 
     const { data: tests, isLoading: isLoadingTests } = useQuery<TestItf[]>({
         queryKey: ["tests"],

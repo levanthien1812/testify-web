@@ -1,7 +1,5 @@
-import { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
+import { forwardRef, useCallback, useMemo, useState } from "react";
 import { ChatItf, MessageBody, MessageItf } from "../../../../types/chat";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../stores/rootState";
 import { useChatSocket } from "../ChatSocketContext";
 import { format } from "date-fns";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -26,6 +24,7 @@ import {
     MESSAGE_BACKGROUND_COLORS,
     MESSAGE_FONT_SIZES,
 } from "../../../../config/constants/chat";
+import { useAppSelector } from "../../../../hooks/hooks";
 
 type MessageProps = {
     message: MessageItf;
@@ -39,7 +38,7 @@ type MessageProps = {
 
 const Message = forwardRef<HTMLDivElement, MessageProps>(
     ({ message, index, onClickReply, scrollToMessage }: MessageProps, ref) => {
-        const user = useSelector((state: RootState) => state.auth.user);
+        const user = useAppSelector((state) => state.auth.user);
         const {
             currentChat,
             setCurrentChat,

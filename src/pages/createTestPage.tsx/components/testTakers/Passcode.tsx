@@ -1,7 +1,5 @@
-import React, { ChangeEvent, useEffect } from "react";
+import { ChangeEvent, useEffect } from "react";
 import Select from "../../../../components/elements/Select";
-import { RootState } from "../../../../stores/rootState";
-import { useSelector } from "react-redux";
 import {
     PASSCODE_FORMAT,
     PASSCODE_METHOD,
@@ -19,12 +17,11 @@ import {
 import { generatePasscode, getPasscode } from "../../../../services/test";
 import { SHARE_OPTIONS } from "../../../../config/constants/tests";
 import Loading from "../../../../components/loadings/Loading";
+import { useAppSelector } from "../../../../hooks/hooks";
 
 const Passcode = () => {
-    const { passcode } = useSelector((state: RootState) => state.createTest);
-    const { testId, shareOption } = useSelector(
-        (state: RootState) => state.createTest
-    );
+    const { passcode } = useAppSelector((state) => state.createTest);
+    const { testId, shareOption } = useAppSelector((state) => state.createTest);
     const { validate, setPasscode } = createTestActions;
     const dispatch = useDispatch();
 

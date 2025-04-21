@@ -9,8 +9,7 @@ import { ROLES, TEST_STATUS } from "../../../config/constants/tests";
 import _ from "lodash";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faFilter } from "@fortawesome/free-solid-svg-icons";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../stores/rootState";
+import { useAppSelector } from "../../../hooks/hooks";
 
 type FilterProps = {
     filter: FilterState;
@@ -20,7 +19,7 @@ type FilterProps = {
 const Filter = ({ filter, setFilter }: FilterProps) => {
     const [search, setSearch] = useState(filter.search || "");
     const [showFilter, setShowFilter] = useState(false);
-    const { user } = useSelector((state: RootState) => state.auth);
+    const { user } = useAppSelector((state) => state.auth);
 
     return (
         <>

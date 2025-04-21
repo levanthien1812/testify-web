@@ -7,16 +7,13 @@ import {
 import Question from "./Question";
 import Answer from "../testAnswers/Answer";
 import Accordion from "../../../../components/accordions/Accordion";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../stores/rootState";
+import { useAppSelector } from "../../../../hooks/hooks";
 
 const Questions: React.FC<{
     part?: TestPartItf;
     withAnswer?: boolean;
 }> = ({ part, withAnswer = false }) => {
-    const { testQuestions } = useSelector(
-        (state: RootState) => state.createTest
-    );
+    const { testQuestions } = useAppSelector((state) => state.createTest);
     const questions = useMemo(() => {
         if (part) {
             return part.questions;

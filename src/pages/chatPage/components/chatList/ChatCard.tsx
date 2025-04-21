@@ -1,13 +1,12 @@
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../stores/rootState";
 import { useChatSocket } from "../ChatSocketContext";
 import { format } from "date-fns";
 import { ChatItf } from "../../../../types/chat";
-import { useCallback, useEffect, useMemo } from "react";
+import { useCallback, useMemo } from "react";
 import ChatImage from "./ChatImage";
+import { useAppSelector } from "../../../../hooks/hooks";
 
 const ChatCard = ({ chat }: { chat: ChatItf }) => {
-    const user = useSelector((state: RootState) => state.auth.user);
+    const user = useAppSelector((state) => state.auth.user);
     const { onlineUsers, setCurrentChat, currentChat } = useChatSocket();
 
     const handleClickCard = () => {

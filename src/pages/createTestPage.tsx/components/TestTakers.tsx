@@ -6,17 +6,15 @@ import { useMutation } from "react-query";
 import { assignTakers, updateTest } from "../../../services/test";
 import { useNavigate } from "react-router";
 import Select from "../../../components/elements/Select";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../stores/rootState";
 import Wrapper from "../../../components/wrappers/Wrapper";
 import { createTestActions } from "../../../stores/createTest";
 import { useDispatch } from "react-redux";
-import CopyLink from "./testTakers/CopyLink";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
 import { SHARE_OPTIONS } from "../../../config/constants/tests";
 import Passcode from "./testTakers/Passcode";
 import { TestBodyItf } from "../../../types/types";
 import Anyone from "./testTakers/Anyone";
+import { useAppSelector } from "../../../hooks/hooks";
 
 const TestTakers = () => {
     const {
@@ -27,7 +25,7 @@ const TestTakers = () => {
         passcode,
         isValidShareOption,
         editibility,
-    } = useSelector((state: RootState) => state.createTest);
+    } = useAppSelector((state) => state.createTest);
     const navigate = useNavigate();
     const { moveNextStep, movePrevStep, validate } = createTestActions;
     const dispatch = useDispatch();

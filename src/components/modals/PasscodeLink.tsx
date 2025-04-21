@@ -1,9 +1,7 @@
-import React, { useCallback, useMemo, useState } from "react";
+import { useState } from "react";
 import Modal, { ModalBody, ModalFooter, ModalHeader } from "./Modal";
 import Button from "../elements/Button";
 import Input from "../elements/Input";
-import { useSelector } from "react-redux";
-import { RootState } from "../../stores/rootState";
 import { useMutation } from "react-query";
 import { MUTATION_KEYS } from "../../config/constants/queryMutationKeys";
 import { checkPasscode } from "../../services/test";
@@ -11,6 +9,7 @@ import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../stores/takeTest";
 import { useNavigate } from "react-router";
 import { PasscodeItf } from "../../types/types";
+import { useAppSelector } from "../../hooks/hooks";
 
 type PasscodeLinkProps = {
     onClose: () => void;
@@ -24,9 +23,7 @@ const PasscodeLink = ({ onClose, passCodeOnly = false }: PasscodeLinkProps) => {
     const [error, setError] = useState<string | null>(null);
     const dispatch = useDispatch();
     const navigate = useNavigate();
-    const { passcode, testLink } = useSelector(
-        (state: RootState) => state.takeTest
-    );
+    const { passcode, testLink } = useAppSelector((state) => state.takeTest);
 
     const { mutate: checkPasscodeMutate, isLoading: isCheckingPasscode } =
         useMutation({

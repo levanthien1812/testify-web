@@ -1,11 +1,9 @@
-import React from "react";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../stores/rootState";
 import Checkbox from "../../../components/elements/Checkbox";
 import { TEST_OPTIONS_LABELS } from "../../../config/constants/tests";
+import { useAppSelector } from "../../../hooks/hooks";
 
 const Options = () => {
-    const { test } = useSelector((state: RootState) => state.takeTest);
+    const { test } = useAppSelector((state) => state.takeTest);
     return (
         <div className="mt-3 space-y-2">
             {test?.options.allow_close_time.let_taker_know && (

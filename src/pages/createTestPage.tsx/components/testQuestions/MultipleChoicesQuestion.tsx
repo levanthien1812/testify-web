@@ -14,8 +14,7 @@ import {
     useFieldArray,
     UseFormRegister,
 } from "react-hook-form";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../stores/rootState";
+import { useAppSelector } from "../../../../hooks/hooks";
 
 const MulitpleChoiceQuestion: React.FC<{
     content: MultipleChoiceQuestionBodyItf;
@@ -32,7 +31,7 @@ const MulitpleChoiceQuestion: React.FC<{
         name: "content.options",
     });
 
-    const { editibility } = useSelector((state: RootState) => state.createTest);
+    const { editibility } = useAppSelector((state) => state.createTest);
 
     return (
         <>

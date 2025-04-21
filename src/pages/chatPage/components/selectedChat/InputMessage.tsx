@@ -10,13 +10,12 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useMutation } from "react-query";
 import { sendMessage } from "../../../../services/chat";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../stores/rootState";
 import EmojiPicker from "emoji-picker-react";
 import { useChatSocket } from "../ChatSocketContext";
 import { ChatItf } from "../../../../types/chat";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
 import { CLEAR_TYPING_INDICATOR_TIMEOUT } from "../../../../config/constants/chat";
+import { useAppSelector } from "../../../../hooks/hooks";
 
 const InputMessage = () => {
     const {
@@ -29,7 +28,7 @@ const InputMessage = () => {
     const [openEmoji, setOpenEmoji] = useState(false);
     const inputMessageRef = useRef<HTMLInputElement>(null);
     const [currentMessageText, setCurrentMessageText] = useState("");
-    const user = useSelector((state: RootState) => state.auth.user);
+    const user = useAppSelector((state) => state.auth.user);
     const [isTyping, setIsTyping] = useState(false);
     const typeingTimeout = useRef<NodeJS.Timeout | null>(null);
 

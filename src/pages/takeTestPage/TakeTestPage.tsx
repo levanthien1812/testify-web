@@ -8,8 +8,6 @@ import TestInfo from "./components/TestInfo";
 import Forbidden from "./components/Forbidden";
 import Button from "../../components/elements/Button";
 import { QUERY_KEYS } from "../../config/constants/queryMutationKeys";
-import { useSelector } from "react-redux";
-import { RootState } from "../../stores/rootState";
 import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../stores/takeTest";
 import Loading from "../../components/loadings/Loading";
@@ -17,6 +15,7 @@ import { useEffect, useState } from "react";
 import Error from "../../components/errors/Error";
 import PasscodeLink from "../../components/modals/PasscodeLink";
 import Submissions from "./components/Submissions";
+import { useAppSelector } from "../../hooks/hooks";
 
 const TakeTestPage = () => {
     const { testId } = useParams();
@@ -31,7 +30,7 @@ const TakeTestPage = () => {
         isEnteringPasscode,
         isPasscodeValidated,
         submissions,
-    } = useSelector((state: RootState) => state.takeTest);
+    } = useAppSelector((state) => state.takeTest);
     const dispatch = useDispatch();
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);

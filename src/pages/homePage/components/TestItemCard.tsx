@@ -1,15 +1,14 @@
 import { faArrowRight, faStar } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import React, { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { TestItf } from "../../../types/types";
 import { format } from "date-fns";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../stores/rootState";
 import { ROLES, TEST_STATUS } from "../../../config/constants/tests";
 import Button from "../../../components/elements/Button";
 import { Circle } from "rc-progress";
+import { useAppSelector } from "../../../hooks/hooks";
 
 type TestItemCardProps = {
     test: TestItf;
@@ -18,7 +17,7 @@ type TestItemCardProps = {
 const TestItemCard = ({ test }: TestItemCardProps) => {
     const navigate = useNavigate();
     const [hover, setHover] = useState<boolean>(false);
-    const user = useSelector((state: RootState) => state.auth.user);
+    const user = useAppSelector((state) => state.auth.user);
 
     const handleClickView = () => {
         if (user!.role === ROLES.MAKER) {

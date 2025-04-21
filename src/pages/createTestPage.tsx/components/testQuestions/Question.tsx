@@ -28,8 +28,6 @@ import Button from "../../../../components/elements/Button";
 import Input from "../../../../components/elements/Input";
 import Select from "../../../../components/elements/Select";
 import { Control, useForm, UseFormRegister } from "react-hook-form";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../stores/rootState";
 import { createTestActions } from "../../../../stores/createTest";
 import { TOAST_MESSAGES } from "../../../../config/constants/toasts";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
@@ -43,6 +41,7 @@ import {
 import { getInitialQuestionContent } from "../../../../utils/mapping";
 import ConfirmModal from "../../../../components/modals/ConfirmModal";
 import QuestionDraggable from "./QuestionDraggable";
+import { useAppSelector } from "../../../../hooks/hooks";
 
 type QuestionProps = {
     question: QuestionItf<QuestionContentItf>;
@@ -51,8 +50,8 @@ type QuestionProps = {
 
 const Question = ({ question, part }: QuestionProps) => {
     const [open, setOpen] = useState<boolean>(false);
-    const { testId, numQuestions, editibility } = useSelector(
-        (state: RootState) => state.createTest
+    const { testId, numQuestions, editibility } = useAppSelector(
+        (state) => state.createTest
     );
     const { saveTestQuestions, validate, deleteQuestion } = createTestActions;
     const dispatch = useDispatch();

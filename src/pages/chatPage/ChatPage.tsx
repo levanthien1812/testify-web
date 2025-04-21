@@ -1,15 +1,9 @@
-import React, { useEffect } from "react";
+import { useEffect } from "react";
 import { useQuery } from "react-query";
 import { getChats } from "../../services/chat";
-import Button from "../../components/elements/Button";
-import AddChat from "./components/chatList/AddChat";
 import { ChatItf } from "../../types/chat";
-import Chats from "./components/chatList/Chats";
 import SelectedChat from "./components/selectedChat/SelectedChat";
 import { useChatSocket } from "./components/ChatSocketContext";
-import { useSelector } from "react-redux";
-import { RootState } from "../../stores/rootState";
-import Loading from "../../components/loadings/Loading";
 import { SOCKET_EVENTS } from "../../config/constants/socket";
 import { useNavigate, useParams } from "react-router";
 import { getChatName } from "../../utils/chat";
@@ -19,12 +13,11 @@ import { userItf } from "../../types/types";
 import { getBlockedInfo } from "../../services/user";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../stores/auth";
-import AIChats from "./components/AIChatList/AIChats";
 import ChatList from "./components/chatList/ChatList";
 import SelectedAIChat from "./components/selectedAIChat.tsx/SelectedAIChat";
+import { useAppSelector } from "../../hooks/hooks";
 
 const ChatPage = () => {
-    const [isAddingChat, setIsAddingChat] = React.useState(false);
     const {
         socket,
         currentChat,
@@ -35,7 +28,7 @@ const ChatPage = () => {
         setChattingWithAI,
         isChattingWithAI,
     } = useChatSocket();
-    const user = useSelector((state: RootState) => state.auth.user);
+    const user = useAppSelector((state) => state.auth.user);
     const params = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
