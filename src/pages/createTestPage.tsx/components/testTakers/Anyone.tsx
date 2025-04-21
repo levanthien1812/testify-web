@@ -1,10 +1,8 @@
-import React from "react";
 import CopyLink from "./CopyLink";
-import { RootState } from "../../../../stores/rootState";
-import { useSelector } from "react-redux";
+import { useAppSelector } from "../../../../hooks/hooks";
 
 const Anyone = () => {
-    const { testLink } = useSelector((state: RootState) => state.createTest);
+    const { testLink } = useAppSelector((state) => state.createTest);
 
     return (
         <div className="p-2 bg-orange-100">

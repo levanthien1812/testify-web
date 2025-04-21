@@ -1,26 +1,24 @@
 import { useEffect, useRef, useState } from "react";
 import { useMutation } from "react-query";
 import { submitAnswers } from "../../services/test";
-import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import RemainingTime from "./components/RemainingTime";
 import Swal from "sweetalert2";
 import Question from "./components/Question";
 import Button from "../../components/elements/Button";
-import { useSelector } from "react-redux";
-import { RootState } from "../../stores/rootState";
 import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../stores/takeTest";
 import { TOAST_MESSAGES } from "../../config/constants/toasts";
 import { MUTATION_KEYS } from "../../config/constants/queryMutationKeys";
+import { useAppSelector } from "../../hooks/hooks";
 
 type DoingTestProps = {
     onAfterSubmit: () => void;
 };
 
 const DoingTest = ({ onAfterSubmit }: DoingTestProps) => {
-    const { answers, startTime, test, submittable } = useSelector(
-        (state: RootState) => state.takeTest
+    const { answers, startTime, test, submittable } = useAppSelector(
+        (state) => state.takeTest
     );
     const dispatch = useDispatch();
     const remainingIntervalRef = useRef<NodeJS.Timer | null>(null);

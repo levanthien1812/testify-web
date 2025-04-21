@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import {
     FillGapsAnswerItf,
     FillGapsQuestionItf,
@@ -27,12 +27,11 @@ import { useMutation } from "react-query";
 import { updateTakerAnswer } from "../../../services/test";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../stores/rootState";
 import Button from "../../../components/elements/Button";
 import Input from "../../../components/elements/Input";
 import { QUESTION_TYPE } from "../../../config/constants/tests";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
+import { useAppSelector } from "../../../hooks/hooks";
 
 type QuestionProps = {
     question: QuestionItf<QuestionContentItf>;
@@ -45,7 +44,7 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
         userAnswer ? userAnswer.score || 0 : 0
     );
     const [isUpdatingScore, setIsUpdatingScore] = useState<boolean>(false);
-    const user = useSelector((state: RootState) => state.auth.user);
+    const user = useAppSelector((state) => state.auth.user);
 
     const needManualScore = useMemo(() => {
         return MANUAL_SCORE_TYPES.includes(question.type);

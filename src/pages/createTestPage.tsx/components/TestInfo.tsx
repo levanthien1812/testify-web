@@ -11,13 +11,12 @@ import Select from "../../../components/elements/Select";
 import { FormProvider, useForm } from "react-hook-form";
 import Wrapper from "../../../components/wrappers/Wrapper";
 import { createTestActions } from "../../../stores/createTest";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../stores/rootState";
 import { useMutation } from "react-query";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
 import { createTest, updateTest } from "../../../services/test";
 import { useDispatch } from "react-redux";
 import TestOptions from "./testInfo/TestOptions";
+import { useAppSelector } from "../../../hooks/hooks";
 
 const TestInfo = () => {
     const {
@@ -40,7 +39,7 @@ const TestInfo = () => {
         isValidTestInfo,
         options,
         editibility,
-    } = useSelector((state: RootState) => state.createTest);
+    } = useAppSelector((state) => state.createTest);
 
     const dispatch = useDispatch();
 

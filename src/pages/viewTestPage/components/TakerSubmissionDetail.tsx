@@ -1,32 +1,18 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "react-query";
-import {
-    AnswerBodyContentItf,
-    SubmissionItf,
-    TestItf,
-    UserAnswerItf,
-    userItf,
-} from "../../../types/types";
-import {
-    getSubmissionAnswers,
-    getTestWithTakerAnswers,
-} from "../../../services/test";
-import { AxiosError } from "axios";
-import { toast } from "react-toastify";
+import { userItf } from "../../../types/types";
+import { getSubmissionAnswers } from "../../../services/test";
 import Modal, {
     ModalBody,
     ModalFooter,
     ModalHeader,
 } from "../../../components/modals/Modal";
 import TestQuestionsAndAnswers from "../../takeTestPage/components/TestQuestionsAndAnswers";
-import { useParams } from "react-router";
 import { format } from "date-fns";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../stores/rootState";
-import { takeTestActions } from "../../../stores/takeTest";
 import { useDispatch } from "react-redux";
 import { QUERY_KEYS } from "../../../config/constants/queryMutationKeys";
 import { viewTestActions } from "../../../stores/viewTest";
+import { useAppSelector } from "../../../hooks/hooks";
 
 const TakerInfoItem = ({
     label,
@@ -50,8 +36,8 @@ const TakerInfoItem = ({
 };
 
 const TakerSubmissionDetail = () => {
-    const { test, currentSubmissionBeingViewed: submission } = useSelector(
-        (state: RootState) => state.viewTest
+    const { test, currentSubmissionBeingViewed: submission } = useAppSelector(
+        (state) => state.viewTest
     );
     const sentinelRef = useRef<HTMLDivElement>(null);
     const [isSticky, setIsSticky] = useState(false);

@@ -7,13 +7,12 @@ import {
     MessageItf,
 } from "../../../types/chat";
 import { SOCKET_EVENTS } from "../../../config/constants/socket";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../stores/rootState";
 import { getNum } from "../../../utils/primitives";
 import { getChatName } from "../../../utils/chat";
 import { TakerItf } from "../../../types/types";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../../stores/auth";
+import { useAppSelector } from "../../../hooks/hooks";
 
 const ChatSocketContext = React.createContext<ChatContext | undefined>(
     undefined
@@ -36,7 +35,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
     const [currentAIChat, setCurrentAIChat] = React.useState<AIChatItf | null>(
         null
     );
-    const { user } = useSelector((state: RootState) => state.auth);
+    const { user } = useAppSelector((state) => state.auth);
     const dispatch = useDispatch();
 
     useEffect(() => {

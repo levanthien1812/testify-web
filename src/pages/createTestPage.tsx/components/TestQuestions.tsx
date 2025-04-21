@@ -1,18 +1,17 @@
 import Questions from "./testQuestions/Questions";
 import { validateQuestions } from "../../../services/test";
 import { useMutation } from "react-query";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../stores/rootState";
 import Wrapper from "../../../components/wrappers/Wrapper";
 import { createTestActions } from "../../../stores/createTest";
 import { useDispatch } from "react-redux";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
-import ErrorInfo from "../../../components/errors/ErrorInfo";
+import InfoMessage from "../../../components/elements/InfoMessage";
 import { useEffect } from "react";
+import { useAppSelector } from "../../../hooks/hooks";
 
 const TestQuestions = () => {
-    const { testId, testParts, isValidQuestions } = useSelector(
-        (state: RootState) => state.createTest
+    const { testId, testParts, isValidQuestions } = useAppSelector(
+        (state) => state.createTest
     );
     const { moveNextStep, movePrevStep, validate } = createTestActions;
     const dispatch = useDispatch();
@@ -58,8 +57,12 @@ const TestQuestions = () => {
             }}
         >
             {!isValidQuestions && (
-                <ErrorInfo message="Make sure all questions info are provided and total questions scores is equal to test/part score" />
+                <InfoMessage
+                    message="Make sure all questions info are provided and total questions scores is equal to test/part score"
+                    type="warning"
+                />
             )}
+            <InfoMessage message="Drag to reorder questions" type="info" />
             <div className="space-y-3 mt-4">
                 {testParts.length > 0 &&
                     testParts.map(

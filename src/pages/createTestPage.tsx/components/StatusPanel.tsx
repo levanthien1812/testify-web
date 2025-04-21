@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "../../../components/elements/Button";
 import { useMutation } from "react-query";
 import { publishTest } from "../../../services/test";
@@ -7,16 +7,13 @@ import { TEST_STATUS } from "../../../config/constants/tests";
 import { TOAST_MESSAGES } from "../../../config/constants/toasts";
 import { toast } from "react-toastify";
 import { useNavigate } from "react-router";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../stores/rootState";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfo } from "@fortawesome/free-solid-svg-icons";
+import { useAppSelector } from "../../../hooks/hooks";
 
 const StatusPanel = () => {
     const navigate = useNavigate();
-    const { testId, status } = useSelector(
-        (state: RootState) => state.createTest
-    );
+    const { testId, status } = useAppSelector((state) => state.createTest);
     const [open, setOpen] = useState(false);
     const [dismissed, setDissmissed] = useState(true);
 

@@ -12,18 +12,17 @@ import HomePage from "./pages/homePage/HomePage";
 import CreateTestPage from "./pages/createTestPage.tsx/CreateTestPage";
 import TakeTestPage from "./pages/takeTestPage/TakeTestPage";
 import NotFound from "./pages/others/NotFound";
-import { useSelector } from "react-redux";
-import { RootState } from "./stores/rootState";
 import ViewTestPage from "./pages/viewTestPage/ViewTestPage";
 import TestsPage from "./pages/testsPage/TestsPage";
 import ChatPage from "./pages/chatPage/ChatPage";
 import ChatSocketProvider from "./pages/chatPage/components/ChatSocketContext";
 import queryClientConfig from "./config/queryClient";
+import { useAppSelector } from "./hooks/hooks";
 
 const queryClient = new QueryClient(queryClientConfig);
 
 function App() {
-    const user = useSelector((state: RootState) => state.auth.user);
+    const user = useAppSelector((state) => state.auth.user);
 
     const router = createBrowserRouter([
         {

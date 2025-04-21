@@ -4,9 +4,8 @@ import {
     faChevronRight,
     faCircle,
 } from "@fortawesome/free-solid-svg-icons";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../stores/rootState";
 import { useChatSocket } from "../ChatSocketContext";
+import { useAppSelector } from "../../../../hooks/hooks";
 
 const ChatHeader = () => {
     const {
@@ -15,7 +14,7 @@ const ChatHeader = () => {
         setIsOpeningChatInfo,
         isOpeningChatInfo,
     } = useChatSocket();
-    const user = useSelector((state: RootState) => state.auth.user);
+    const user = useAppSelector((state) => state.auth.user);
 
     return (
         <div className="flex justify-between items-center p-2 border-b border-dashed border-gray-300 bg-white bg-opacity-40">

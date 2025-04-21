@@ -1,18 +1,16 @@
-import React, { useEffect } from "react";
-import { useQuery } from "react-query";
+import React from "react";
 import Button from "../../../../components/elements/Button";
 import Loading from "../../../../components/loadings/Loading";
 import { useChatSocket } from "../ChatSocketContext";
 import AddChat from "./AddChat";
 import Chats from "./Chats";
 import AIChats from "../AIChatList/AIChats";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../stores/rootState";
+import { useAppSelector } from "../../../../hooks/hooks";
 
 const ChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
     const [isAddingChat, setIsAddingChat] = React.useState(false);
     const [isAddingAIChat, setIsAddingAIChat] = React.useState(false);
-    const user = useSelector((state: RootState) => state.auth.user);
+    const user = useAppSelector((state) => state.auth.user);
 
     const {
         chats,

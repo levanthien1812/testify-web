@@ -6,9 +6,8 @@ import { toast } from "react-toastify";
 import { TOAST_MESSAGES } from "../../../../config/constants/toasts";
 import { useMutation } from "react-query";
 import { reorderQuestions } from "../../../../services/test";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../stores/rootState";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
+import { useAppSelector } from "../../../../hooks/hooks";
 
 type QuestionDraggableProps = {
     question: QuestionItf<QuestionContentItf>;
@@ -16,7 +15,7 @@ type QuestionDraggableProps = {
 };
 
 const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
-    const { testId } = useSelector((state: RootState) => state.createTest);
+    const { testId } = useAppSelector((state) => state.createTest);
     const [isDraggedOver, setIsDraggedOver] = useState<boolean>(false);
 
     const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {

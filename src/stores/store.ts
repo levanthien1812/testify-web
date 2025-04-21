@@ -18,3 +18,6 @@ const store = configureStore({
 });
 
 export default store;
+
+export type AppStore = typeof store;
+export type AppDispatch = AppStore["dispatch"];

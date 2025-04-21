@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import logoTestify from "./../../assets/images/logo-testify.png";
 import { Link } from "react-router-dom";
-import { useSelector } from "react-redux";
-import { RootState } from "../../stores/rootState";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useMutation } from "react-query";
 import Cookies from "js-cookie";
@@ -16,9 +14,10 @@ import defaultUserPhoto from "./../../assets/images/default-user-photo.png";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
 import { ROLES } from "../../config/constants/tests";
 import PasscodeLink from "../modals/PasscodeLink";
+import { useAppSelector } from "../../hooks/hooks";
 
 const Header = () => {
-    const { user, isAuthened } = useSelector((state: RootState) => state.auth);
+    const { user, isAuthened } = useAppSelector((state) => state.auth);
     const [showActions, setShowActions] = useState(false);
     const dispatch = useDispatch();
     const [isEnteringPasscodeLink, setIsEnteringPasscodeLink] = useState(false);

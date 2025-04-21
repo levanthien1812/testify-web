@@ -11,11 +11,10 @@ import { toast } from "react-toastify";
 import Button from "../../../../components/elements/Button";
 import Input from "../../../../components/elements/Input";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../stores/rootState";
 import { TOAST_MESSAGES } from "../../../../config/constants/toasts";
 import { createTestActions } from "../../../../stores/createTest";
 import { useDispatch } from "react-redux";
+import { useAppSelector } from "../../../../hooks/hooks";
 
 type CreateTakersProps = {
     onClose: () => void;
@@ -25,7 +24,7 @@ const CreateTakers = ({ onClose }: CreateTakersProps) => {
     const [takers, setTakers] = useState<TakerBodyItf[]>([
         { name: "", email: "" },
     ]);
-    const { testId } = useSelector((state: RootState) => state.createTest);
+    const { testId } = useAppSelector((state) => state.createTest);
     const { addSelectedTestTakers } = createTestActions;
     const dispatch = useDispatch();
 

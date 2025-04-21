@@ -3,12 +3,11 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import AddTakers from "./AddTakers";
 import Button from "../../../../components/elements/Button";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../stores/rootState";
+import { useAppSelector } from "../../../../hooks/hooks";
 
 const Takers = () => {
     const [isAddingTakers, setIsAddingTakers] = useState<boolean>(false);
-    const { testTakers } = useSelector((state: RootState) => state.createTest);
+    const { testTakers } = useAppSelector((state) => state.createTest);
 
     return (
         <div className="mt-4">

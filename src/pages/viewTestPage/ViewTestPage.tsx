@@ -14,20 +14,17 @@ import TestQuestionsAndAnswers from "../takeTestPage/components/TestQuestionsAnd
 import TestAnswers from "../createTestPage.tsx/components/TestAnswers";
 import Button from "../../components/elements/Button";
 import { viewTestActions } from "../../stores/viewTest";
-import { useSelector } from "react-redux";
-import { RootState } from "../../stores/rootState";
 import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { QUERY_KEYS } from "../../config/constants/queryMutationKeys";
+import { useAppSelector } from "../../hooks/hooks";
 
 const ViewTestPage = () => {
     const { testId } = useParams();
     const [viewQuestionsAndAnswers, setViewQuestionsAndAnswers] =
         useState(false);
     const [viewProvideAnswers, setViewProvideAnswers] = useState(false);
-    const { test, submissions } = useSelector(
-        (state: RootState) => state.viewTest
-    );
+    const { test, submissions } = useAppSelector((state) => state.viewTest);
     const { setTest } = viewTestActions;
     const dispatch = useDispatch();
 

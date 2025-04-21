@@ -3,14 +3,11 @@ import { validateParts } from "../../../services/test";
 import Part from "./testParts/Part";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
 import Wrapper from "../../../components/wrappers/Wrapper";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../stores/rootState";
 import { createTestActions } from "../../../stores/createTest";
 import { useDispatch } from "react-redux";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
 import { useEffect } from "react";
-import ErrorInfo from "../../../components/errors/ErrorInfo";
+import InfoMessage from "../../../components/elements/InfoMessage";
+import { useAppSelector } from "../../../hooks/hooks";
 
 const TestParts = () => {
     const {
@@ -20,7 +17,7 @@ const TestParts = () => {
         testId,
         testParts,
         isValidParts,
-    } = useSelector((state: RootState) => state.createTest);
+    } = useAppSelector((state) => state.createTest);
     const { moveNextStep, movePrevStep, validate } = createTestActions;
     const dispatch = useDispatch();
 
@@ -72,10 +69,11 @@ const TestParts = () => {
                     </p>
                 </div>
                 {!isValidParts && (
-                    <ErrorInfo
+                    <InfoMessage
                         message="
                         Total parts scores and questions must be equal to test score
                         and questions"
+                        type="warning"
                     />
                 )}
                 {numParts > 1 &&

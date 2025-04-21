@@ -1,16 +1,14 @@
-import React, { useMemo } from "react";
 import Button from "../../../../components/elements/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronLeft } from "@fortawesome/free-solid-svg-icons";
 import { useChatSocket } from "../ChatSocketContext";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../../stores/rootState";
 import { blockUser } from "../../../../services/user";
 import { useMutation } from "react-query";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
 import { SOCKET_EVENTS } from "../../../../config/constants/socket";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../../../stores/auth";
+import { useAppSelector } from "../../../../hooks/hooks";
 
 type BlockChatProps = {
     onClose: () => void;
@@ -18,7 +16,7 @@ type BlockChatProps = {
 
 const BlockChat = ({ onClose }: BlockChatProps) => {
     const { currentChat, socket } = useChatSocket();
-    const { user } = useSelector((state: RootState) => state.auth);
+    const { user } = useAppSelector((state) => state.auth);
     const dispatch = useDispatch();
 
     const { mutate: blockUserMutate, isLoading: isBlockingUser } = useMutation({
