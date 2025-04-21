@@ -4,6 +4,11 @@ import { useDispatch } from "react-redux";
 import { createTestActions } from "../../../../stores/createTest";
 import { toast } from "react-toastify";
 import { TOAST_MESSAGES } from "../../../../config/constants/toasts";
+import { useMutation } from "react-query";
+import { reorderQuestions } from "../../../../services/test";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../../stores/rootState";
+import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
 
 type QuestionDraggableProps = {
     question: QuestionItf<QuestionContentItf>;
@@ -11,6 +16,7 @@ type QuestionDraggableProps = {
 };
 
 const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
+    const { testId } = useSelector((state: RootState) => state.createTest);
     const [isDraggedOver, setIsDraggedOver] = useState<boolean>(false);
 
     const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
@@ -32,8 +38,33 @@ const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
         setIsDraggedOver(false);
     };
 
+    const handleDragEnd = (e: React.DragEvent<HTMLDivElement>) => {
+        setIsDraggedOver(false);
+    };
+
+    const { mutate: reorderQuestionsMutate } = useMutation({
+        mutationFn: async ({
+            startOrder,
+            endOrder,
+        }: {
+            startOrder: number;
+            endOrder: number;
+        }) => {
+            const responseData = await reorderQuestions(
+                testId!,
+                startOrder,
+                endOrder,
+                question.part_id!
+            );
+            return responseData;
+        },
+        mutationKey: MUTATION_KEYS.REORDER_QUESTIONS,
+    });
+
     const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
+        setIsDraggedOver(false);
+
         if (
             question.part_id !== JSON.parse(e.dataTransfer.getData("part_id"))
         ) {
@@ -43,6 +74,7 @@ const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
         const startIndex = JSON.parse(e.dataTransfer.getData("start_index"));
         const endIndex = question.order - 1;
         if (startIndex === endIndex) return;
+
         dispatch(
             createTestActions.handleReorderQuestion({
                 startIndex,
@@ -50,6 +82,10 @@ const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
                 partId: question.part_id,
             })
         );
+        reorderQuestionsMutate({
+            startOrder: startIndex + 1,
+            endOrder: endIndex + 1,
+        });
     };
 
     return (
@@ -61,6 +97,7 @@ const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
             draggable
             onClick={onClick}
             onDragStart={handleDragStart}
+            onDragEnd={handleDragEnd}
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}

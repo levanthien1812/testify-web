@@ -1,5 +1,3 @@
-import { QuestionContentItf, QuestionItf } from "../types/types";
-
 export function generateArray(n: number) {
     const result = [];
     for (let i = 1; i <= n; i++) {
@@ -8,15 +6,14 @@ export function generateArray(n: number) {
     return result;
 }
 
-export const sortQuestionFn = (
-    a: QuestionItf<QuestionContentItf>,
-    b: QuestionItf<QuestionContentItf>
-) => {
-    if (a.order < b.order) {
-        return -1;
+export function findSmallestMissingPositive(nums: number[]): number {
+    const numSet = new Set(nums);
+    let i = 1;
+
+    while (true) {
+        if (!numSet.has(i)) {
+            return i;
+        }
+        i++;
     }
-    if (a.order > b.order) {
-        return 1;
-    }
-    return 0;
-};
+}

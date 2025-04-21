@@ -19,7 +19,8 @@ import {
 } from "../types/types";
 import { SHARE_OPTIONS } from "../config/constants/tests";
 import { PASSCODE_FORMAT, PASSCODE_METHOD } from "../config/constants/passcode";
-import { sortQuestionFn } from "../utils/array";
+import { reorderQuestions, sortQuestionFn } from "../utils/test";
+import { findSmallestMissingPositive } from "../utils/array";
 
 const createTestSlice = createSlice({
     initialState: INITIAL_CREATE_TEST_CONTEXT,
@@ -146,7 +147,11 @@ const createTestSlice = createSlice({
                                 ...INITIAL_QUESTION,
                                 test_id: state.testId!,
                                 part_id: state.testParts[partIndex].id,
-                                order: partQuestions?.length + index + 1,
+                                order: findSmallestMissingPositive(
+                                    partQuestions.map(
+                                        (question) => question.order
+                                    )
+                                ),
                             })
                         ),
                     ];
@@ -156,6 +161,7 @@ const createTestSlice = createSlice({
                         numQuestions
                     );
                 }
+                state.testParts[partIndex].questions!.sort(sortQuestionFn);
             }
 
             if (
@@ -417,42 +423,41 @@ const createTestSlice = createSlice({
                 partId?: string;
             }>
         ) {
-            if (action.payload.partId) {
+            const { startIndex, endIndex, partId } = action.payload;
+
+            if (partId) {
                 const partIndex = state.testParts.findIndex(
-                    (part) => part.id === action.payload.partId
+                    (part) => part.id === partId
                 );
                 const partQuestions = state.testParts[partIndex].questions;
                 if (!partQuestions) return;
-                partQuestions[action.payload.startIndex].order =
-                    action.payload.endIndex + 1;
-                partQuestions[action.payload.endIndex].order =
-                    action.payload.startIndex + 1;
-                partQuestions.sort(sortQuestionFn);
 
-                state.testParts[partIndex].questions = partQuestions;
-
-                // TODO: HANDLE WHEN DRAG QUESTION FROM ONE PART TO ANOTHER
-            } else {
-                state.testQuestions[action.payload.startIndex].order =
-                    action.payload.endIndex + 1;
-                state.testQuestions[action.payload.endIndex].order =
-                    action.payload.startIndex + 1;
-                state.testQuestions.sort(sortQuestionFn);
-            }
-        },
-        handleReorderQuestions(state, action) {
-            if (action.payload.part_id) {
-                const partIndex = state.testParts.findIndex(
-                    (part) => part.id === action.payload.question.part_id
+                state.testParts[partIndex].questions = reorderQuestions(
+                    partQuestions,
+                    startIndex,
+                    endIndex
                 );
-                const partQuestions = state.testParts[partIndex].questions;
-                if (!partQuestions) return;
-                partQuestions.sort(sortQuestionFn);
-                state.testParts[partIndex].questions = partQuestions;
             } else {
-                state.testQuestions.sort(sortQuestionFn);
+                state.testQuestions = reorderQuestions(
+                    state.testQuestions,
+                    startIndex,
+                    endIndex
+                );
             }
         },
+        // handleReorderQuestions(state, action) {
+        //     if (action.payload.part_id) {
+        //         const partIndex = state.testParts.findIndex(
+        //             (part) => part.id === action.payload.question.part_id
+        //         );
+        //         const partQuestions = state.testParts[partIndex].questions;
+        //         if (!partQuestions) return;
+        //         partQuestions.sort(sortQuestionFn);
+        //         state.testParts[partIndex].questions = partQuestions;
+        //     } else {
+        //         state.testQuestions.sort(sortQuestionFn);
+        //     }
+        // },
         setTestFromAPI(state, action) {
             state.testTitle = action.payload?.title;
             state.testDatetime = action.payload?.datetime;
@@ -506,11 +511,14 @@ const createTestSlice = createSlice({
                             } as QuestionContentItf,
                         };
                     });
+                    part.questions.sort(sortQuestionFn);
                 }
                 return part;
             });
 
-            state.testQuestions = action.payload?.questions;
+            state.testQuestions = action.payload?.questions
+                ? action.payload?.questions.sort(sortQuestionFn)
+                : [];
             state.testTakers = action.payload?.taker_ids;
 
             switch (state.status) {
