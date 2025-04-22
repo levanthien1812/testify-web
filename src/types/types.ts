@@ -71,9 +71,10 @@ export interface TestItf extends TestBodyItf {
     id: string;
     parts: TestPartItf[];
     maker_id: string;
-    taker_ids: string[];
+    taker_ids: TakerItf[];
     joined_taker_ids: string[];
     are_answers_provided: boolean;
+    includes_manually_scored_questions?: boolean;
     questions?: QuestionItf<QuestionContentItf>[];
     submissions_count?: number;
     status: TEST_STATUS;

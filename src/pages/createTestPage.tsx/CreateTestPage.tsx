@@ -33,7 +33,7 @@ const CreateTestPage = () => {
     } = useQuery({
         queryFn: async () => {
             const responseData = await getTest(testIdParam!);
-            return responseData?.test;
+            return responseData;
         },
         queryKey: [QUERY_KEYS.GET_TEST, { testId: testIdParam }],
         enabled: false,

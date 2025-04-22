@@ -9,12 +9,17 @@ import {
     INITIAL_QUESTION,
     INITIAL_OPTIONS,
 } from "../config/constants/initialValues";
-import { CREATE_TEST_STEPS, TEST_STATUS } from "../config/constants/tests";
+import {
+    CREATE_TEST_STEPS,
+    MANUAL_SCORE_TYPES,
+    TEST_STATUS,
+} from "../config/constants/tests";
 import {
     PasscodeItf,
     QuestionContentItf,
     QuestionItf,
     TakerItf,
+    TestItf,
     TestPartItf,
 } from "../types/types";
 import { SHARE_OPTIONS } from "../config/constants/tests";
@@ -340,6 +345,13 @@ const createTestSlice = createSlice({
                                 );
                             }
                         );
+
+                        state.includesManuallyScoredQuestions =
+                            state.testParts.some((part) => {
+                                return part.questions?.some((question) =>
+                                    MANUAL_SCORE_TYPES.includes(question.type)
+                                );
+                            });
                     } else {
                         let isEqualTotalScores = false;
                         let isEqualNumberQuestions = false;
@@ -358,6 +370,11 @@ const createTestSlice = createSlice({
                         }
                         state.isValidQuestions =
                             isEqualTotalScores && isEqualNumberQuestions;
+
+                        state.includesManuallyScoredQuestions =
+                            state.testQuestions.some((question) =>
+                                MANUAL_SCORE_TYPES.includes(question.type)
+                            );
                     }
                     break;
                 }
@@ -458,20 +475,27 @@ const createTestSlice = createSlice({
         //         state.testQuestions.sort(sortQuestionFn);
         //     }
         // },
-        setTestFromAPI(state, action) {
-            state.testTitle = action.payload?.title;
-            state.testDatetime = action.payload?.datetime;
-            state.testDescription = action.payload?.description;
-            state.testDuration = action.payload?.duration;
-            state.maxScore = action.payload?.max_score;
-            state.numQuestions = action.payload?.num_questions;
-            state.numParts = action.payload?.num_parts;
-            state.level = action.payload?.level;
+        setTestFromAPI(
+            state,
+            action: PayloadAction<{
+                test: TestItf;
+                parts: TestPartItf[];
+                questions: QuestionItf<QuestionContentItf>[];
+            }>
+        ) {
+            state.testTitle = action.payload.test.title;
+            state.testDatetime = action.payload.test.datetime;
+            state.testDescription = action.payload.test.description;
+            state.testDuration = action.payload.test.duration;
+            state.maxScore = action.payload.test.max_score;
+            state.numQuestions = action.payload.test.num_questions;
+            state.numParts = action.payload.test.num_parts;
+            state.level = action.payload.test.level;
             state.shareOption =
-                action.payload?.share_option || SHARE_OPTIONS.RESTRICTED;
-            state.testId = action.payload?.id;
-            state.options = action.payload?.options || INITIAL_OPTIONS;
-            state.status = action.payload?.status;
+                action.payload.test.share_option || SHARE_OPTIONS.RESTRICTED;
+            state.testId = action.payload.test.id;
+            state.options = action.payload.test.options || INITIAL_OPTIONS;
+            state.status = action.payload.test.status;
 
             state.testParts = action.payload?.parts;
             state.testParts = state.testParts.map((part) => ({
@@ -519,7 +543,7 @@ const createTestSlice = createSlice({
             state.testQuestions = action.payload?.questions
                 ? action.payload?.questions.sort(sortQuestionFn)
                 : [];
-            state.testTakers = action.payload?.taker_ids;
+            state.testTakers = action.payload.test.taker_ids;
 
             switch (state.status) {
                 case TEST_STATUS.DRAFT: {
@@ -539,6 +563,9 @@ const createTestSlice = createSlice({
                     break;
                 }
             }
+
+            state.includesManuallyScoredQuestions =
+                action.payload.test.includes_manually_scored_questions || false;
         },
         reset(state) {
             return INITIAL_CREATE_TEST_CONTEXT;
