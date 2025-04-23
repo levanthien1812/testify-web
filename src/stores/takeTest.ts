@@ -17,7 +17,7 @@ const TakeTestSlice = createSlice({
         setTest(state, action: PayloadAction<TestItf>) {
             state.test = action.payload;
 
-            state.test.parts = state.test.parts?.map((part) => {
+            state.test.parts = action.payload.parts?.map((part) => {
                 if (part.questions && part.questions.length > 0) {
                     part.questions = part.questions.map((question) => {
                         let answer = null;

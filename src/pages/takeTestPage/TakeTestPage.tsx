@@ -16,6 +16,7 @@ import Error from "../../components/errors/Error";
 import PasscodeLink from "../../components/modals/PasscodeLink";
 import Submissions from "./components/Submissions";
 import { useAppSelector } from "../../hooks/hooks";
+import { ERROR_CODE } from "../../config/constants/errorCode";
 
 const TakeTestPage = () => {
     const { testId } = useParams();
@@ -35,24 +36,6 @@ const TakeTestPage = () => {
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
-    const { isLoading: isLoadingSubmissions, refetch: refetchSubmissions } =
-        useQuery<SubmissionItf[]>({
-            queryFn: async () => {
-                const responseData = await getSubmissions(testId!);
-                return responseData.submissions;
-            },
-            queryKey: [QUERY_KEYS.GET_TEST_SUBMISSION, { test_id: testId }],
-            enabled:
-                !!test &&
-                test.options.allow_view_submission_after_test.enable &&
-                (test.share_option === SHARE_OPTIONS.PASSCODE
-                    ? isPasscodeValidated
-                    : true),
-            onSuccess: (data) => {
-                dispatch(takeTestActions.setSubmissions(data));
-            },
-        });
-
     const { isLoading: isLoadingTest, refetch: refetchTest } = useQuery({
         queryKey: [
             QUERY_KEYS.GET_TEST,
@@ -63,23 +46,39 @@ const TakeTestPage = () => {
             const responseData = await getTest(testId!, {
                 with_user_answers: includeTakerAnswers,
             });
-            if (
-                responseData.test.share_option === SHARE_OPTIONS.PASSCODE &&
-                !isPasscodeValidated
-            ) {
-                dispatch(takeTestActions.setIsEnteringPasscode(true));
-            } else {
-                dispatch(takeTestActions.setTest(responseData.test));
-            }
+
+            return responseData;
         },
         onError: (error: any) => {
-            if (error.response?.data?.errorCode) {
-                setErrorMessage(error.response?.data?.message);
-                // dispatch(takeTestActions.setForbidden(true));
+            if (
+                error.response?.data?.errorCode === ERROR_CODE.PASSCODE_REQUIRED
+            ) {
+                dispatch(takeTestActions.setIsEnteringPasscode(true));
             }
+        },
+        onSuccess: (data: any) => {
+            dispatch(takeTestActions.setTest(data));
         },
         retry: false,
     });
+
+    const { isLoading: isLoadingSubmissions, refetch: refetchSubmissions } =
+        useQuery<SubmissionItf[]>({
+            queryFn: async () => {
+                const responseData = await getSubmissions(testId!);
+                return responseData.submissions;
+            },
+            queryKey: [QUERY_KEYS.GET_TEST_SUBMISSION, { test_id: testId }],
+            enabled:
+                test?.options.allow_view_submission_after_test.enable &&
+                (test?.share_option === SHARE_OPTIONS.PASSCODE
+                    ? isPasscodeValidated
+                    : true),
+            onSuccess: (data) => {
+                dispatch(takeTestActions.setSubmissions(data));
+            },
+            onError: () => {},
+        });
 
     const handleStartTest = async () => {
         dispatch(takeTestActions.setIsStarted(true));
@@ -171,10 +170,15 @@ const TakeTestPage = () => {
                     onAfterSubmit={async () => {
                         await refetchTest();
                         await refetchSubmissions();
+                        dispatch(takeTestActions.setIsStarted(false));
                     }}
                 />
             )}
-            {submissions.length > 0 && !isStarted && <Submissions />}
+            {submissions.length > 0 &&
+                !isStarted &&
+                test?.options.allow_view_submission_after_test.enable && (
+                    <Submissions />
+                )}
         </div>
     );
 };

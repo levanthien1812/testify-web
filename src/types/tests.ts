@@ -109,6 +109,7 @@ export interface CreateTestContext {
     options: TestOptions;
     status: TEST_STATUS;
     editibility: EditabilityConfig;
+    includesManuallyScoredQuestions: boolean;
 }
 
 export interface TakeTestContext {
