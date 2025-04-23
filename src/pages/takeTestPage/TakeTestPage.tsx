@@ -1,7 +1,7 @@
 import { useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router";
 import { getSubmissions, getTest } from "../../services/test";
-import { SubmissionItf } from "../../types/types";
+import { PasscodeItf, SubmissionItf } from "../../types/types";
 import DoingTest from "./DoingTest";
 import { SHARE_OPTIONS, TEST_STATUS } from "../../config/constants/tests";
 import TestInfo from "./components/TestInfo";
@@ -13,7 +13,7 @@ import { takeTestActions } from "../../stores/takeTest";
 import Loading from "../../components/loadings/Loading";
 import { useEffect, useState } from "react";
 import Error from "../../components/errors/Error";
-import PasscodeLink from "../../components/modals/PasscodeLink";
+import PasscodeLink from "../createTestPage.tsx/components/testTakers/PasscodeLink";
 import Submissions from "./components/Submissions";
 import { useAppSelector } from "../../hooks/hooks";
 import { ERROR_CODE } from "../../config/constants/errorCode";
@@ -31,6 +31,7 @@ const TakeTestPage = () => {
         isEnteringPasscode,
         isPasscodeValidated,
         submissions,
+        enteredPasscode,
     } = useAppSelector((state) => state.takeTest);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -40,11 +41,12 @@ const TakeTestPage = () => {
         queryKey: [
             QUERY_KEYS.GET_TEST,
             testId,
-            { with_user_answers: includeTakerAnswers, isPasscodeValidated },
+            { with_user_answers: includeTakerAnswers },
         ],
         queryFn: async () => {
             const responseData = await getTest(testId!, {
                 with_user_answers: includeTakerAnswers,
+                ...(enteredPasscode ? { passcode: enteredPasscode } : {}),
             });
 
             return responseData;
@@ -58,6 +60,9 @@ const TakeTestPage = () => {
         },
         onSuccess: (data: any) => {
             dispatch(takeTestActions.setTest(data));
+            if (data?.test.options.allow_view_submission_after_test.enable) {
+                refetchSubmissions();
+            }
         },
         retry: false,
     });
@@ -69,11 +74,7 @@ const TakeTestPage = () => {
                 return responseData.submissions;
             },
             queryKey: [QUERY_KEYS.GET_TEST_SUBMISSION, { test_id: testId }],
-            enabled:
-                test?.options.allow_view_submission_after_test.enable &&
-                (test?.share_option === SHARE_OPTIONS.PASSCODE
-                    ? isPasscodeValidated
-                    : true),
+            enabled: false,
             onSuccess: (data) => {
                 dispatch(takeTestActions.setSubmissions(data));
             },
@@ -101,19 +102,27 @@ const TakeTestPage = () => {
     }, [test, dispatch]);
 
     useEffect(() => {
-        if (
-            test?.share_option === SHARE_OPTIONS.PASSCODE &&
-            isPasscodeValidated
-        ) {
-            refetchSubmissions();
+        if (isPasscodeValidated && enteredPasscode.length > 0) {
             refetchTest();
         }
-    }, [test, isPasscodeValidated, refetchSubmissions, refetchTest]);
+    }, [enteredPasscode, isPasscodeValidated, refetchSubmissions, refetchTest]);
+
+    const handleEnterCorrectPasscode = (data: PasscodeItf) => {
+        dispatch(takeTestActions.setIsPasscodeValidated(true));
+        dispatch(takeTestActions.setIsEnteringPasscode(false));
+        dispatch(takeTestActions.setEnteredPasscode(data.code));
+    };
 
     return (
         <div className="w-[840px] mx-auto mt-6 bg-white shadow-lg">
             {isEnteringPasscode && (
-                <PasscodeLink onClose={() => {}} passCodeOnly={true} />
+                <PasscodeLink
+                    passCodeOnly={true}
+                    onClose={() =>
+                        dispatch(takeTestActions.setIsEnteringPasscode(false))
+                    }
+                    onSuccess={handleEnterCorrectPasscode}
+                />
             )}
             {errorMessage && (
                 <Error
@@ -169,7 +178,6 @@ const TakeTestPage = () => {
                 <DoingTest
                     onAfterSubmit={async () => {
                         await refetchTest();
-                        await refetchSubmissions();
                         dispatch(takeTestActions.setIsStarted(false));
                     }}
                 />

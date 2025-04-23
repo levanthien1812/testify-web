@@ -13,14 +13,17 @@ import Button from "../elements/Button";
 import defaultUserPhoto from "./../../assets/images/default-user-photo.png";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
 import { ROLES } from "../../config/constants/tests";
-import PasscodeLink from "../modals/PasscodeLink";
 import { useAppSelector } from "../../hooks/hooks";
+import PasscodeLink from "../../pages/createTestPage.tsx/components/testTakers/PasscodeLink";
+import { takeTestActions } from "../../stores/takeTest";
+import { PasscodeItf } from "../../types/types";
 
 const Header = () => {
     const { user, isAuthened } = useAppSelector((state) => state.auth);
     const [showActions, setShowActions] = useState(false);
     const dispatch = useDispatch();
     const [isEnteringPasscodeLink, setIsEnteringPasscodeLink] = useState(false);
+    const { isPasscodeValidated } = useAppSelector((state) => state.takeTest);
 
     const { mutate, isLoading } = useMutation({
         mutationFn: async () => {
@@ -70,7 +73,7 @@ const Header = () => {
             )}
             {isAuthened && user && (
                 <div className="flex gap-4 items-center">
-                    {user.role === ROLES.TAKER && (
+                    {user.role === ROLES.TAKER && !isPasscodeValidated && (
                         <div>
                             <Button
                                 onClick={() => setIsEnteringPasscodeLink(true)}
@@ -123,6 +126,14 @@ const Header = () => {
                         {isEnteringPasscodeLink && (
                             <PasscodeLink
                                 onClose={() => setIsEnteringPasscodeLink(false)}
+                                onSuccess={(data: PasscodeItf) => {
+                                    dispatch(
+                                        takeTestActions.setEnteredPasscode(
+                                            data.code
+                                        )
+                                    );
+                                    setIsEnteringPasscodeLink(false);
+                                }}
                             />
                         )}
                     </div>

@@ -129,6 +129,7 @@ export interface TakeTestContext {
     testLink: string;
     isEnteringPasscode: boolean;
     isPasscodeValidated: boolean;
+    enteredPasscode: string;
 }
 
 export interface ViewTestContext {

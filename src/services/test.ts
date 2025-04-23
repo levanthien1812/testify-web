@@ -36,16 +36,14 @@ export const getTests = async (filter?: TestRequestFilter | null) => {
 
 export const getTest = async (
     testId: string,
-    options?: { with_user_answers?: boolean }
+    options?: { with_user_answers?: boolean; passcode?: string }
 ) => {
     try {
-        const response = await instance.get(
-            `/tests/${testId}${
-                options && options.with_user_answers
-                    ? "?with_user_answers=true"
-                    : ""
-            }`
-        );
+        const queryString = Object.entries(options || {})
+            .map(([key, value]) => `${key}=${value}`)
+            .join("&");
+        const response = await instance.get(`/tests/${testId}?${queryString}`);
+
         return response.data;
     } catch (error) {
         throw error;
