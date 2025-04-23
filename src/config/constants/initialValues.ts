@@ -391,6 +391,7 @@ export const INITIAL_TAKE_TEST_CONTEXT: TakeTestContext = {
         valid_in: 0,
         method: "",
     },
+    enteredPasscode: "",
     testLink: "",
     isEnteringPasscode: false,
     isPasscodeValidated: false,

@@ -1,29 +1,41 @@
 import { useState } from "react";
-import Modal, { ModalBody, ModalFooter, ModalHeader } from "./Modal";
-import Button from "../elements/Button";
-import Input from "../elements/Input";
+import Modal, {
+    ModalBody,
+    ModalFooter,
+    ModalHeader,
+} from "../../../../components/modals/Modal";
+import Button from "../../../../components/elements/Button";
+import Input from "../../../../components/elements/Input";
 import { useMutation } from "react-query";
-import { MUTATION_KEYS } from "../../config/constants/queryMutationKeys";
-import { checkPasscode } from "../../services/test";
+import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
+import { checkPasscode } from "../../../../services/test";
 import { useDispatch } from "react-redux";
-import { takeTestActions } from "../../stores/takeTest";
-import { useNavigate } from "react-router";
-import { PasscodeItf } from "../../types/types";
-import { useAppSelector } from "../../hooks/hooks";
+import { takeTestActions } from "../../../../stores/takeTest";
+import { PasscodeItf } from "../../../../types/types";
+import { useAppSelector } from "../../../../hooks/hooks";
+import useLocalStorage from "../../../../hooks/useLocalStorage";
 
 type PasscodeLinkProps = {
     onClose: () => void;
+    onSuccess: (data: PasscodeItf) => void;
     passCodeOnly?: boolean;
 };
 
-const PasscodeLink = ({ onClose, passCodeOnly = false }: PasscodeLinkProps) => {
+const PasscodeLink = ({
+    onClose,
+    onSuccess,
+    passCodeOnly = false,
+}: PasscodeLinkProps) => {
     const [currentOption, setCurrentOption] = useState<"PASSCODE" | "LINK">(
         "PASSCODE"
     );
     const [error, setError] = useState<string | null>(null);
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const { passcode, testLink } = useAppSelector((state) => state.takeTest);
+    const [storedPasscodes, setStoredPasscodes] = useLocalStorage(
+        "passcodes",
+        []
+    );
 
     const { mutate: checkPasscodeMutate, isLoading: isCheckingPasscode } =
         useMutation({
@@ -38,10 +50,10 @@ const PasscodeLink = ({ onClose, passCodeOnly = false }: PasscodeLinkProps) => {
                 }
             },
             onSuccess: (data: PasscodeItf) => {
-                navigate(`/tests/${data.test_id}`);
-                dispatch(takeTestActions.setIsPasscodeValidated(true));
-                dispatch(takeTestActions.setIsEnteringPasscode(false));
-                onClose();
+                if (!storedPasscodes.includes(passcode.code)) {
+                    setStoredPasscodes([...storedPasscodes, passcode.code]);
+                }
+                onSuccess(data);
             },
         });
 
@@ -51,6 +63,14 @@ const PasscodeLink = ({ onClose, passCodeOnly = false }: PasscodeLinkProps) => {
         }
         if (currentOption === "LINK") {
         }
+    };
+
+    const handleClickSuggestedPasscode = (code: string) => {
+        dispatch(
+            takeTestActions.setPasscode({
+                code,
+            })
+        );
     };
 
     return (
@@ -89,6 +109,7 @@ const PasscodeLink = ({ onClose, passCodeOnly = false }: PasscodeLinkProps) => {
                                     })
                                 );
                             }}
+                            value={passcode.code}
                             {...(error ? { error } : {})}
                         />
                     )}
@@ -99,6 +120,23 @@ const PasscodeLink = ({ onClose, passCodeOnly = false }: PasscodeLinkProps) => {
                         />
                     )}
                 </div>
+                {storedPasscodes.length > 0 && (
+                    <div className="flex gap-1 mt-2">
+                        {storedPasscodes.map((code: string) => (
+                            <button
+                                key={code}
+                                className="bg-gray-400 text-white rounded-sm px-2 py-1 text-center text-sm hover:bg-gray-500 transition-all duration-150 disabled:cursor-not-allowed"
+                                onClick={() =>
+                                    handleClickSuggestedPasscode(code)
+                                }
+                                type="button"
+                                disabled={passcode.code === code}
+                            >
+                                {code}
+                            </button>
+                        ))}
+                    </div>
+                )}
             </ModalBody>
             <ModalFooter>
                 <Button onClick={handleClickNext} disabled={isCheckingPasscode}>

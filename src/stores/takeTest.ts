@@ -6,6 +6,7 @@ import {
     QuestionContentItf,
     QuestionItf,
     TestItf,
+    TestPartItf,
     UserAnswerItf,
 } from "../types/types";
 import { TEST_STATUS } from "../config/constants/tests";
@@ -14,8 +15,15 @@ const TakeTestSlice = createSlice({
     initialState: INITIAL_TAKE_TEST_CONTEXT,
     name: "take-test",
     reducers: {
-        setTest(state, action: PayloadAction<TestItf>) {
-            state.test = action.payload;
+        setTest(
+            state,
+            action: PayloadAction<{
+                test: TestItf;
+                parts: TestPartItf[];
+                questions: QuestionItf<QuestionContentItf>[];
+            }>
+        ) {
+            state.test = action.payload.test;
 
             state.test.parts = action.payload.parts?.map((part) => {
                 if (part.questions && part.questions.length > 0) {
@@ -127,6 +135,9 @@ const TakeTestSlice = createSlice({
         },
         setSubmissions(state, action) {
             state.submissions = action.payload;
+        },
+        setEnteredPasscode(state, action) {
+            state.enteredPasscode = action.payload;
         },
     },
 });
