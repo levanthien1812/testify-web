@@ -3,7 +3,9 @@ import { TEST_OPTIONS_LABELS } from "../../../config/constants/tests";
 import { useAppSelector } from "../../../hooks/hooks";
 
 const Options = () => {
-    const { test } = useAppSelector((state) => state.takeTest);
+    const { test, submissionsCount } = useAppSelector(
+        (state) => state.takeTest
+    );
     return (
         <div className="mt-3 space-y-2">
             {test?.options.allow_close_time.let_taker_know && (
@@ -23,6 +25,11 @@ const Options = () => {
                         checked={test.options.allow_multiple_submissions.enable}
                         disabled
                     />
+                    {submissionsCount && (
+                        <div className="text-sm text-gray-500">
+                            Your submissions: {submissionsCount}
+                        </div>
+                    )}
                     {test.options.allow_multiple_submissions
                         .maximum_submissions && (
                         <div className="text-sm text-gray-500">

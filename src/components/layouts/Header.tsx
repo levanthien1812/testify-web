@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import logoTestify from "./../../assets/images/logo-testify.png";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useMutation } from "react-query";
 import Cookies from "js-cookie";
@@ -24,6 +24,7 @@ const Header = () => {
     const dispatch = useDispatch();
     const [isEnteringPasscodeLink, setIsEnteringPasscodeLink] = useState(false);
     const { isPasscodeValidated } = useAppSelector((state) => state.takeTest);
+    const navigate = useNavigate();
 
     const { mutate, isLoading } = useMutation({
         mutationFn: async () => {
@@ -133,6 +134,7 @@ const Header = () => {
                                         )
                                     );
                                     setIsEnteringPasscodeLink(false);
+                                    navigate(`/tests/${data.test_id}`);
                                 }}
                             />
                         )}

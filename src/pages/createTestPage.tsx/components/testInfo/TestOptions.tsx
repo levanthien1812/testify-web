@@ -5,6 +5,8 @@ import TestOption from "./TestOption";
 import Checkbox from "../../../../components/elements/Checkbox";
 import {
     ALLOWED_MAXIMUM_SUBMISSIONS,
+    PAGINATION_MODE,
+    PAGINATION_MODE_LABEL,
     PUBLIC_ANSWERS_OPTIONS,
     PUBLIC_ANSWERS_OPTIONS_LABEL,
     TEST_OPTIONS_LABELS,
@@ -16,7 +18,7 @@ import { useAppSelector } from "../../../../hooks/hooks";
 const TestOptions = () => {
     const [isViewingOptions, setIsViewOptions] = useState(false);
     const { register } = useFormContext();
-    const { options, editibility } = useAppSelector(
+    const { options, editibility, numParts } = useAppSelector(
         (state) => state.createTest
     );
 
@@ -400,6 +402,81 @@ const TestOptions = () => {
                             className="ms-8"
                         />,
                     ]}
+                />
+                <TestOption
+                    mainOption={
+                        <Checkbox
+                            label={{
+                                text: TEST_OPTIONS_LABELS.PAGINATION_MODE.MAKER,
+                            }}
+                            {...register("options.pagination_mode.enable")}
+                            disabled={
+                                !editibility.TEST_INFORMATION.options
+                                    .pagination_mode
+                            }
+                        />
+                    }
+                    subOptions={[
+                        <Checkbox
+                            label={{ text: "Let taker know" }}
+                            sizing="sm"
+                            {...register(
+                                "options.pagination_mode.let_taker_know"
+                            )}
+                            className="ms-8"
+                        />,
+                    ]}
+                    additionalInfo={
+                        options.pagination_mode.enable && (
+                            <div className="px-4 py-2 bg-orange-50 space-y-2">
+                                <Select
+                                    className="w-0 grow capitalize"
+                                    {...register(
+                                        "options.pagination_mode.mode",
+                                        {
+                                            required:
+                                                "Pagination mode is required",
+                                        }
+                                    )}
+                                    options={Object.values(PAGINATION_MODE)
+                                        .filter(
+                                            (mode) =>
+                                                !(
+                                                    mode ===
+                                                        PAGINATION_MODE.ONE_PARTS &&
+                                                    numParts <= 1
+                                                )
+                                        )
+                                        .map((mode) => ({
+                                            label: PAGINATION_MODE_LABEL[mode],
+                                            value: mode,
+                                        }))}
+                                    disabled={
+                                        !editibility.TEST_INFORMATION.options
+                                            .pagination_mode
+                                    }
+                                />
+                                <Checkbox
+                                    label={{
+                                        text: "Lock move backward to previous question/part",
+                                    }}
+                                    {...register(
+                                        "options.pagination_mode.allow_back_navigation"
+                                    )}
+                                    sizing="sm"
+                                />
+                                <Checkbox
+                                    label={{
+                                        text: "Require answer(s) before moving next question/part",
+                                    }}
+                                    {...register(
+                                        "options.pagination_mode.require_completion_before_next"
+                                    )}
+                                    sizing="sm"
+                                />
+                            </div>
+                        )
+                    }
                 />
             </div>
         </Accordion>

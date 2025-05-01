@@ -99,19 +99,40 @@ const PasscodeLink = ({
                 )}
                 <div className="mt-2">
                     {currentOption === "PASSCODE" && (
-                        <Input
-                            placeholder="Enter passcode"
-                            className="px-4 py-2 text-2xl text-center"
-                            onChange={(e) => {
-                                dispatch(
-                                    takeTestActions.setPasscode({
-                                        code: e.target.value.trim(),
-                                    })
-                                );
-                            }}
-                            value={passcode.code}
-                            {...(error ? { error } : {})}
-                        />
+                        <>
+                            <Input
+                                placeholder="Enter passcode"
+                                className="px-4 py-2 text-2xl text-center"
+                                onChange={(e) => {
+                                    dispatch(
+                                        takeTestActions.setPasscode({
+                                            code: e.target.value.trim(),
+                                        })
+                                    );
+                                }}
+                                value={passcode.code}
+                                {...(error ? { error } : {})}
+                            />
+                            {storedPasscodes.length > 0 && (
+                                <div className="flex gap-1 mt-2">
+                                    {storedPasscodes.map((code: string) => (
+                                        <button
+                                            key={code}
+                                            className="bg-gray-400 text-white rounded-sm px-2 py-1 text-center text-sm hover:bg-gray-500 transition-all duration-150 disabled:cursor-not-allowed"
+                                            onClick={() =>
+                                                handleClickSuggestedPasscode(
+                                                    code
+                                                )
+                                            }
+                                            type="button"
+                                            disabled={passcode.code === code}
+                                        >
+                                            {code}
+                                        </button>
+                                    ))}
+                                </div>
+                            )}
+                        </>
                     )}
                     {currentOption === "LINK" && (
                         <Input
@@ -120,23 +141,6 @@ const PasscodeLink = ({
                         />
                     )}
                 </div>
-                {storedPasscodes.length > 0 && (
-                    <div className="flex gap-1 mt-2">
-                        {storedPasscodes.map((code: string) => (
-                            <button
-                                key={code}
-                                className="bg-gray-400 text-white rounded-sm px-2 py-1 text-center text-sm hover:bg-gray-500 transition-all duration-150 disabled:cursor-not-allowed"
-                                onClick={() =>
-                                    handleClickSuggestedPasscode(code)
-                                }
-                                type="button"
-                                disabled={passcode.code === code}
-                            >
-                                {code}
-                            </button>
-                        ))}
-                    </div>
-                )}
             </ModalBody>
             <ModalFooter>
                 <Button onClick={handleClickNext} disabled={isCheckingPasscode}>
