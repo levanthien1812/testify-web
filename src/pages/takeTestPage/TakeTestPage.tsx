@@ -47,6 +47,7 @@ const TakeTestPage = () => {
             const responseData = await getTest(testId!, {
                 with_user_answers: includeTakerAnswers,
                 ...(enteredPasscode ? { passcode: enteredPasscode } : {}),
+                ...(isStarted ? { started: true } : {}),
             });
 
             return responseData;
@@ -81,9 +82,11 @@ const TakeTestPage = () => {
             onError: () => {},
         });
 
-    const handleStartTest = async () => {
+    const handleStartTest = () => {
         dispatch(takeTestActions.setIsStarted(true));
-        await refetchTest();
+        setTimeout(() => {
+            refetchTest();
+        }, 0);
     };
 
     useEffect(() => {
@@ -98,7 +101,10 @@ const TakeTestPage = () => {
             }
         }, 1000);
 
-        return () => clearInterval(timer);
+        return () => {
+            clearInterval(timer);
+            // dispatch(takeTestActions.reset());
+        };
     }, [test, dispatch]);
 
     useEffect(() => {
@@ -174,11 +180,13 @@ const TakeTestPage = () => {
                 />
             )}
             {!isLoadingTest && isForbidden && <Forbidden />}
-            {isStarted && !isEnded && test && (
+            {isStarted && !isEnded && test && test.parts.length > 0 && (
                 <DoingTest
                     onAfterSubmit={async () => {
-                        await refetchTest();
                         dispatch(takeTestActions.setIsStarted(false));
+                        setTimeout(() => {
+                            refetchTest();
+                        }, 0);
                     }}
                 />
             )}

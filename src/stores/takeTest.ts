@@ -21,6 +21,7 @@ const TakeTestSlice = createSlice({
                 test: TestItf;
                 parts: TestPartItf[];
                 questions: QuestionItf<QuestionContentItf>[];
+                submissionsCount?: number;
             }>
         ) {
             state.test = action.payload.test;
@@ -46,6 +47,8 @@ const TakeTestSlice = createSlice({
                 }
                 return part;
             });
+
+            state.submissionsCount = action.payload.submissionsCount || 0;
         },
         setTestStatus(state, action: PayloadAction<TEST_STATUS>) {
             state.testStatus = action.payload;
@@ -138,6 +141,9 @@ const TakeTestSlice = createSlice({
         },
         setEnteredPasscode(state, action) {
             state.enteredPasscode = action.payload;
+        },
+        reset(state) {
+            return INITIAL_TAKE_TEST_CONTEXT;
         },
     },
 });

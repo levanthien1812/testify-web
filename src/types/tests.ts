@@ -65,6 +65,12 @@ export interface AllowReviewBeforeSubmission extends BaseOption {}
 export interface DisallowTimeLimit extends BaseOption {
     duration?: number;
 }
+
+export interface PaginationMode extends BaseOption {
+    mode: string;
+    require_completion_before_next?: boolean;
+    allow_back_navigation?: boolean;
+}
 export interface TestOptions {
     allow_close_time: AllowCloseTimeOption;
     allow_view_submission_after_test: AllowViewSubmission;
@@ -76,6 +82,7 @@ export interface TestOptions {
     allow_shuffle_answers: AllowShuffleAnswers;
     allow_review_before_submission: AllowReviewBeforeSubmission;
     disallow_time_limit: DisallowTimeLimit;
+    pagination_mode: PaginationMode;
 }
 
 export interface CreateTestContext {
@@ -130,6 +137,7 @@ export interface TakeTestContext {
     isEnteringPasscode: boolean;
     isPasscodeValidated: boolean;
     enteredPasscode: string;
+    submissionsCount: number;
 }
 
 export interface ViewTestContext {
@@ -159,6 +167,7 @@ export interface EditabilityConfig {
             allow_shuffle_answers: boolean;
             allow_review_before_submission: boolean;
             disallow_time_limit: boolean;
+            pagination_mode: boolean;
         };
     };
     [CREATE_TEST_STEPS.TEST_PARTS]: {

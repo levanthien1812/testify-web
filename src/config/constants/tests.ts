@@ -148,6 +148,10 @@ export const TEST_OPTIONS_LABELS: Record<
         MAKER: "Disallow time limit",
         TAKER: "No time limit",
     },
+    PAGINATION_MODE: {
+        MAKER: "Pagination mode",
+        TAKER: "Pagination mode",
+    },
 };
 
 export const ALLOWED_MAXIMUM_SUBMISSIONS = 10;
@@ -170,4 +174,16 @@ export const USER_ANSWER_STATUS_LABEL: Record<USER_ANSWER_STATUS, string> = {
     [USER_ANSWER_STATUS.NOT_EVALUATED]: "Not evaluated",
     [USER_ANSWER_STATUS.MANUALLY_SCORED]: "Manually scored",
     [USER_ANSWER_STATUS.NOTHING]: "",
+};
+
+export enum PAGINATION_MODE {
+    ONE_QUESTION = "ONE_QUESTION_PER_PAGE",
+    ONE_PARTS = "ONE_PART_PER_PAGE",
+    ALL = "ALL_QUESTIONS_PER_PAGE",
+}
+
+export const PAGINATION_MODE_LABEL: Record<PAGINATION_MODE, string> = {
+    [PAGINATION_MODE.ONE_QUESTION]: "One question per page",
+    [PAGINATION_MODE.ONE_PARTS]: "One part per page",
+    [PAGINATION_MODE.ALL]: "All questions on one page",
 };

@@ -26,6 +26,7 @@ import { SHARE_OPTIONS } from "../config/constants/tests";
 import { PASSCODE_FORMAT, PASSCODE_METHOD } from "../config/constants/passcode";
 import { reorderQuestions, sortQuestionFn } from "../utils/test";
 import { findSmallestMissingPositive } from "../utils/array";
+import { TestOptions } from "../types/tests";
 
 const createTestSlice = createSlice({
     initialState: INITIAL_CREATE_TEST_CONTEXT,
@@ -494,7 +495,6 @@ const createTestSlice = createSlice({
             state.shareOption =
                 action.payload.test.share_option || SHARE_OPTIONS.RESTRICTED;
             state.testId = action.payload.test.id;
-            state.options = action.payload.test.options || INITIAL_OPTIONS;
             state.status = action.payload.test.status;
 
             state.testParts = action.payload?.parts;
@@ -566,6 +566,12 @@ const createTestSlice = createSlice({
 
             state.includesManuallyScoredQuestions =
                 action.payload.test.includes_manually_scored_questions || false;
+
+            // state.options = action.payload.test.options || INITIAL_OPTIONS;
+            state.options = {
+                ...INITIAL_OPTIONS,
+                ...action.payload.test.options,
+            };
         },
         reset(state) {
             return INITIAL_CREATE_TEST_CONTEXT;

@@ -17,6 +17,7 @@ import {
 } from "../../types/types";
 import { formatTimezone } from "../../utils/time";
 import {
+    PAGINATION_MODE,
     PUBLIC_ANSWERS_OPTIONS,
     QUESTION_LEVEL,
     SHARE_OPTIONS,
@@ -68,6 +69,13 @@ export const INITIAL_OPTIONS: TestOptions = {
         enable: false,
         let_taker_know: true,
     },
+    pagination_mode: {
+        enable: false,
+        let_taker_know: false,
+        mode: PAGINATION_MODE.ALL,
+        allow_back_navigation: false,
+        require_completion_before_next: false,
+    },
 };
 
 export const INITIAL_TEST_INFO: TestBodyItf = {
@@ -103,6 +111,7 @@ export const DRAFT_EDITIBILITY_CONFIG: EditabilityConfig = {
             allow_shuffle_answers: true,
             allow_review_before_submission: true,
             disallow_time_limit: true,
+            pagination_mode: true,
         },
     },
     [CREATE_TEST_STEPS.TEST_PARTS]: {
@@ -146,6 +155,7 @@ export const PUBLISHED_EDITABILITY_CONFIG: EditabilityConfig = {
             allow_shuffle_answers: false,
             allow_review_before_submission: true,
             disallow_time_limit: false,
+            pagination_mode: true,
         },
     },
     [CREATE_TEST_STEPS.TEST_PARTS]: {
@@ -189,6 +199,7 @@ export const OPENED_EDITABILITY_CONFIG: EditabilityConfig = {
             allow_shuffle_answers: false,
             allow_review_before_submission: false,
             disallow_time_limit: false,
+            pagination_mode: true,
         },
     },
     [CREATE_TEST_STEPS.TEST_PARTS]: {
@@ -232,6 +243,7 @@ export const CLOSED_EDITABILITY_CONFIG: EditabilityConfig = {
             allow_shuffle_answers: false,
             allow_review_before_submission: false,
             disallow_time_limit: false,
+            pagination_mode: false,
         },
     },
     [CREATE_TEST_STEPS.TEST_PARTS]: {
@@ -395,6 +407,7 @@ export const INITIAL_TAKE_TEST_CONTEXT: TakeTestContext = {
     testLink: "",
     isEnteringPasscode: false,
     isPasscodeValidated: false,
+    submissionsCount: 0,
 };
 
 export const INITIAL_VIEW_TEST_CONTEXT: ViewTestContext = {

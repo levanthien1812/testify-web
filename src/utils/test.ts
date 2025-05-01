@@ -36,3 +36,13 @@ export const reorderQuestions = (
     questionsToModified.sort(sortQuestionFn);
     return questionsToModified;
 };
+
+export const sortQuestionsByOrder = (
+    questions: QuestionItf<QuestionContentItf>[]
+) => {
+    const questionsToSort = JSON.parse(
+        JSON.stringify(questions)
+    ) as QuestionItf<QuestionContentItf>[];
+    questionsToSort.sort(sortQuestionFn);
+    return questionsToSort;
+};
