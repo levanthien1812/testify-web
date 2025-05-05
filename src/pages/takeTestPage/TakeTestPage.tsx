@@ -41,7 +41,7 @@ const TakeTestPage = () => {
         queryKey: [
             QUERY_KEYS.GET_TEST,
             testId,
-            { with_user_answers: includeTakerAnswers },
+            { with_user_answers: includeTakerAnswers, started: isStarted },
         ],
         queryFn: async () => {
             const responseData = await getTest(testId!, {

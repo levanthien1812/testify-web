@@ -12,6 +12,7 @@ import { TOAST_MESSAGES } from "../../config/constants/toasts";
 import { MUTATION_KEYS } from "../../config/constants/queryMutationKeys";
 import { useAppSelector } from "../../hooks/hooks";
 import { sortQuestionsByOrder } from "../../utils/test";
+import QuestionsPagination from "./components/Pagination";
 
 type DoingTestProps = {
     onAfterSubmit: () => void;
@@ -109,45 +110,8 @@ const DoingTest = ({ onAfterSubmit }: DoingTestProps) => {
                         totalTime={test!.duration * 60 * 1000}
                     />
                     <div className="py-8 px-8">
+                        <QuestionsPagination />
                         <div className="space-y-1">
-                            {test.num_parts > 1 &&
-                                test.parts.map((part) => {
-                                    return (
-                                        <div key={part.id} className="">
-                                            <div className="text-lg bg-gray-200 px-4 py-1">
-                                                <span className="underline">
-                                                    Part {part.order}:
-                                                </span>{" "}
-                                                <span className="uppercase">
-                                                    {" "}
-                                                    {part.name}
-                                                </span>
-                                            </div>
-
-                                            <div>
-                                                {part.questions &&
-                                                    sortQuestionsByOrder(
-                                                        part.questions
-                                                    ).map((question) => (
-                                                        <Question
-                                                            question={question}
-                                                            key={question.id}
-                                                        />
-                                                    ))}
-                                            </div>
-                                        </div>
-                                    );
-                                })}
-                            {test.num_parts <= 1 &&
-                                sortQuestionsByOrder(test.questions!).map(
-                                    (question) => (
-                                        <Question
-                                            question={question}
-                                            key={question.id}
-                                        />
-                                    )
-                                )}
-
                             <div className="flex flex-col items-center justify-center">
                                 <Button
                                     size="lg"
