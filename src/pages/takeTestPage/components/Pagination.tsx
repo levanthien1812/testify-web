@@ -29,6 +29,11 @@ const QuestionsPagination = () => {
                 return test.num_questions;
             case PAGINATION_MODE.ONE_PARTS:
                 return test.num_parts;
+            case PAGINATION_MODE.FIXED_PER_PAGE:
+                return Math.ceil(
+                    test.num_questions /
+                        (test.options.pagination_mode.questions_per_page || 1)
+                );
         }
         return 1;
     }, [test]);
@@ -72,6 +77,26 @@ const QuestionsPagination = () => {
                     };
                 } else {
                     return { questions: [test.questions![currentPage - 1]] };
+                }
+            }
+            case PAGINATION_MODE.FIXED_PER_PAGE: {
+                if (
+                    !test.questions ||
+                    test.questions.length === 0 ||
+                    !test.options.pagination_mode.questions_per_page
+                )
+                    return null;
+                if (test.num_parts <= 1) {
+                    return {
+                        questions: test.questions.slice(
+                            (currentPage - 1) *
+                                test.options.pagination_mode
+                                    .questions_per_page +
+                                1,
+                            currentPage *
+                                test.options.pagination_mode.questions_per_page
+                        ),
+                    };
                 }
             }
         }

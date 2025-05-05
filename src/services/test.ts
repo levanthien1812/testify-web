@@ -190,7 +190,8 @@ export const reorderQuestions = async (
     testId: string,
     startOrder: number,
     endOrder: number,
-    partId: string
+    partFromId?: string,
+    partToId?: string
 ) => {
     try {
         const response = await instance.patch(
@@ -198,7 +199,8 @@ export const reorderQuestions = async (
             {
                 startOrder,
                 endOrder,
-                partId,
+                partFromId,
+                partToId,
             }
         );
 

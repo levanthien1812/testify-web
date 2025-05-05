@@ -24,7 +24,12 @@ import {
 } from "../types/types";
 import { SHARE_OPTIONS } from "../config/constants/tests";
 import { PASSCODE_FORMAT, PASSCODE_METHOD } from "../config/constants/passcode";
-import { reorderQuestions, sortQuestionFn } from "../utils/test";
+import {
+    addQuestion,
+    removeQuestion,
+    reorderQuestions,
+    sortQuestionFn,
+} from "../utils/test";
 import { findSmallestMissingPositive } from "../utils/array";
 import { TestOptions } from "../types/tests";
 
@@ -76,9 +81,9 @@ const createTestSlice = createSlice({
             if (action.payload?.description)
                 state.testDescription = action.payload.description;
             if (action.payload?.duration)
-                state.testDuration = action.payload.duration;
+                state.testDuration = parseInt(action.payload.duration);
             if (action.payload?.max_score)
-                state.maxScore = action.payload.max_score;
+                state.maxScore = parseFloat(action.payload.max_score);
             if (action.payload?.num_questions)
                 state.numQuestions = action.payload.num_questions;
             if (action.payload?.num_parts)
@@ -95,10 +100,10 @@ const createTestSlice = createSlice({
                 );
         },
         initializeTestParts(state) {
-            console.log(state);
             const countProvidedParts = state?.testParts?.filter(
                 (part) => part?.id
             )?.length;
+
             if (state.numParts > 1 && countProvidedParts === 0) {
                 state.testParts = [...Array(state?.numParts)].map(
                     (item, index) => ({ ...INITIAL_PART, order: index + 1 })
@@ -146,19 +151,24 @@ const createTestSlice = createSlice({
                         order: index + 1,
                     }));
                 } else if (partQuestions?.length < numQuestions) {
+                    let orderArray = partQuestions.map(
+                        (question) => question.order
+                    );
+
                     state.testParts[partIndex].questions = [
                         ...partQuestions,
                         ...[...Array(numQuestions - partQuestions?.length)].map(
-                            (item, index) => ({
-                                ...INITIAL_QUESTION,
-                                test_id: state.testId!,
-                                part_id: state.testParts[partIndex].id,
-                                order: findSmallestMissingPositive(
-                                    partQuestions.map(
-                                        (question) => question.order
-                                    )
-                                ),
-                            })
+                            (item, index) => {
+                                const missingOrder =
+                                    findSmallestMissingPositive(orderArray);
+                                orderArray.push(missingOrder);
+                                return {
+                                    ...INITIAL_QUESTION,
+                                    test_id: state.testId!,
+                                    part_id: state.testParts[partIndex].id,
+                                    order: missingOrder,
+                                };
+                            }
                         ),
                     ];
                 } else {
@@ -438,23 +448,53 @@ const createTestSlice = createSlice({
             action: PayloadAction<{
                 startIndex: number;
                 endIndex: number;
-                partId?: string;
+                partFromId?: string;
+                partToId?: string;
             }>
         ) {
-            const { startIndex, endIndex, partId } = action.payload;
+            const { startIndex, endIndex, partFromId, partToId } =
+                action.payload;
 
-            if (partId) {
-                const partIndex = state.testParts.findIndex(
-                    (part) => part.id === partId
+            if (partFromId && partToId) {
+                const partFromIndex = state.testParts.findIndex(
+                    (part) => part.id === partFromId
                 );
-                const partQuestions = state.testParts[partIndex].questions;
-                if (!partQuestions) return;
+                const partFromQuestions =
+                    state.testParts[partFromIndex].questions;
+                if (!partFromQuestions) return;
 
-                state.testParts[partIndex].questions = reorderQuestions(
-                    partQuestions,
-                    startIndex,
-                    endIndex
-                );
+                if (partFromId === partToId) {
+                    state.testParts[partFromIndex].questions = reorderQuestions(
+                        partFromQuestions,
+                        startIndex,
+                        endIndex
+                    );
+                } else {
+                    const partToIndex = state.testParts.findIndex(
+                        (part) => part.id === partToId
+                    );
+                    const partToQuestions =
+                        state.testParts[partToIndex].questions;
+                    if (!partToQuestions) return;
+
+                    const questionToAdd = partFromQuestions[startIndex];
+                    questionToAdd.part_id = partToId;
+                    questionToAdd.order = endIndex + 1;
+
+                    state.testParts[partToIndex].questions = addQuestion(
+                        partToQuestions,
+                        questionToAdd,
+                        endIndex
+                    );
+
+                    state.testParts[partFromIndex].questions = removeQuestion(
+                        partFromQuestions,
+                        startIndex
+                    );
+
+                    state.testParts[partFromIndex].num_questions -= 1;
+                    state.testParts[partToIndex].num_questions += 1;
+                }
             } else {
                 state.testQuestions = reorderQuestions(
                     state.testQuestions,
@@ -513,6 +553,8 @@ const createTestSlice = createSlice({
                         (question, index) => {
                             return {
                                 ...INITIAL_QUESTION,
+                                test_id: state.testId!,
+                                part_id: part.id,
                                 order: index + 1,
                             };
                         }

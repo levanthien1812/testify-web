@@ -439,14 +439,21 @@ const TestOptions = () => {
                                         }
                                     )}
                                     options={Object.values(PAGINATION_MODE)
-                                        .filter(
-                                            (mode) =>
-                                                !(
-                                                    mode ===
-                                                        PAGINATION_MODE.ONE_PARTS &&
-                                                    numParts <= 1
-                                                )
-                                        )
+                                        .filter((mode) => {
+                                            if (
+                                                mode ===
+                                                    PAGINATION_MODE.ONE_PARTS &&
+                                                numParts <= 1
+                                            )
+                                                return false;
+                                            if (
+                                                mode ===
+                                                    PAGINATION_MODE.FIXED_PER_PAGE &&
+                                                numParts > 1
+                                            )
+                                                return false;
+                                            return true;
+                                        })
                                         .map((mode) => ({
                                             label: PAGINATION_MODE_LABEL[mode],
                                             value: mode,
@@ -456,24 +463,45 @@ const TestOptions = () => {
                                             .pagination_mode
                                     }
                                 />
-                                <Checkbox
-                                    label={{
-                                        text: "Lock move backward to previous question/part",
-                                    }}
-                                    {...register(
-                                        "options.pagination_mode.allow_back_navigation"
-                                    )}
-                                    sizing="sm"
-                                />
-                                <Checkbox
-                                    label={{
-                                        text: "Require answer(s) before moving next question/part",
-                                    }}
-                                    {...register(
-                                        "options.pagination_mode.require_completion_before_next"
-                                    )}
-                                    sizing="sm"
-                                />
+                                {options.pagination_mode.mode ===
+                                    PAGINATION_MODE.FIXED_PER_PAGE && (
+                                    <div>
+                                        <Input
+                                            type="number"
+                                            step={1}
+                                            {...register(
+                                                "options.pagination_mode.questions_per_page"
+                                            )}
+                                            required
+                                            label={{
+                                                text: "Number of questions per page",
+                                            }}
+                                        />
+                                    </div>
+                                )}
+                                {options.pagination_mode.mode !==
+                                    PAGINATION_MODE.ALL && (
+                                    <>
+                                        <Checkbox
+                                            label={{
+                                                text: "Lock move backward to previous question/part",
+                                            }}
+                                            {...register(
+                                                "options.pagination_mode.allow_back_navigation"
+                                            )}
+                                            sizing="sm"
+                                        />
+                                        <Checkbox
+                                            label={{
+                                                text: "Require answer(s) before moving next question/part",
+                                            }}
+                                            {...register(
+                                                "options.pagination_mode.require_completion_before_next"
+                                            )}
+                                            sizing="sm"
+                                        />
+                                    </>
+                                )}
                             </div>
                         )
                     }
