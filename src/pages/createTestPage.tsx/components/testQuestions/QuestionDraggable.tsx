@@ -45,15 +45,20 @@ const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
         mutationFn: async ({
             startOrder,
             endOrder,
+            partFromId,
+            partToId,
         }: {
             startOrder: number;
             endOrder: number;
+            partFromId?: string;
+            partToId?: string;
         }) => {
             const responseData = await reorderQuestions(
                 testId!,
                 startOrder,
                 endOrder,
-                question.part_id!
+                partFromId,
+                partToId
             );
             return responseData;
         },
@@ -64,26 +69,26 @@ const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
         e.preventDefault();
         setIsDraggedOver(false);
 
-        if (
-            question.part_id !== JSON.parse(e.dataTransfer.getData("part_id"))
-        ) {
-            toast.warning(TOAST_MESSAGES.CANNOT_MOVE_QUESTION_TO_ANOTHER_PART);
-            return;
-        }
         const startIndex = JSON.parse(e.dataTransfer.getData("start_index"));
         const endIndex = question.order - 1;
-        if (startIndex === endIndex) return;
+        const partFromId = JSON.parse(e.dataTransfer.getData("part_id"));
+        const partToId = question.part_id;
+
+        if (startIndex === endIndex && partFromId === partToId) return;
 
         dispatch(
             createTestActions.handleReorderQuestion({
                 startIndex,
                 endIndex,
-                partId: question.part_id,
+                partFromId,
+                partToId,
             })
         );
         reorderQuestionsMutate({
             startOrder: startIndex + 1,
             endOrder: endIndex + 1,
+            partFromId,
+            partToId,
         });
     };
 

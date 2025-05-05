@@ -70,6 +70,7 @@ export interface PaginationMode extends BaseOption {
     mode: string;
     require_completion_before_next?: boolean;
     allow_back_navigation?: boolean;
+    questions_per_page?: number;
 }
 export interface TestOptions {
     allow_close_time: AllowCloseTimeOption;

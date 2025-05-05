@@ -180,10 +180,12 @@ export enum PAGINATION_MODE {
     ONE_QUESTION = "ONE_QUESTION_PER_PAGE",
     ONE_PARTS = "ONE_PART_PER_PAGE",
     ALL = "ALL_QUESTIONS_PER_PAGE",
+    FIXED_PER_PAGE = "FIXED_PER_PAGE",
 }
 
 export const PAGINATION_MODE_LABEL: Record<PAGINATION_MODE, string> = {
     [PAGINATION_MODE.ONE_QUESTION]: "One question per page",
     [PAGINATION_MODE.ONE_PARTS]: "One part per page",
     [PAGINATION_MODE.ALL]: "All questions on one page",
+    [PAGINATION_MODE.FIXED_PER_PAGE]: "Fixed questions quantity per page",
 };

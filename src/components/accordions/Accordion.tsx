@@ -19,8 +19,8 @@ const Accordion = ({
     children,
     viewData,
 }: {
-    children: React.ReactNode;
     viewData: viewData;
+    children: React.ReactNode;
 }) => {
     const [open, setOpen] = useState<boolean>(viewData.open || false);
 

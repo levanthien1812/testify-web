@@ -37,6 +37,43 @@ export const reorderQuestions = (
     return questionsToModified;
 };
 
+export const removeQuestion = (
+    questions: QuestionItf<QuestionContentItf>[],
+    index: number
+) => {
+    const questionsToModified = JSON.parse(
+        JSON.stringify(questions)
+    ) as QuestionItf<QuestionContentItf>[];
+
+    if (index < questions.length) {
+        for (let i = index + 1; i < questions.length; i++) {
+            questionsToModified[i].order -= 1;
+        }
+    }
+    questionsToModified.splice(index, 1);
+    return questionsToModified;
+};
+
+export const addQuestion = (
+    questions: QuestionItf<QuestionContentItf>[],
+    questionToAdd: QuestionItf<QuestionContentItf>,
+    index: number
+) => {
+    console.log(questions.length, questionToAdd, index);
+    const questionsToModified = JSON.parse(
+        JSON.stringify(questions)
+    ) as QuestionItf<QuestionContentItf>[];
+
+    if (index < questions.length) {
+        for (let i = index; i < questions.length; i++) {
+            questionsToModified[i].order += 1;
+        }
+    }
+    questionsToModified.splice(index, 0, questionToAdd);
+    questionsToModified.sort(sortQuestionFn);
+    return questionsToModified;
+};
+
 export const sortQuestionsByOrder = (
     questions: QuestionItf<QuestionContentItf>[]
 ) => {
