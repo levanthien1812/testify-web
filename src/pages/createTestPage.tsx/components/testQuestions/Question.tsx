@@ -123,7 +123,7 @@ const Question = ({ question, part }: QuestionProps) => {
             ) =>
                 await saveQuestion(testId!, {
                     ...questionBody,
-                    part_id: part?.id,
+                    ...(part ? { part_id: part?.id } : {}),
                 }),
             mutationKey: [MUTATION_KEYS.CREATE_QUESTION],
             onSuccess: (data) => {

@@ -476,6 +476,7 @@ const TestOptions = () => {
                                             label={{
                                                 text: "Number of questions per page",
                                             }}
+                                            defaultValue={1}
                                         />
                                     </div>
                                 )}

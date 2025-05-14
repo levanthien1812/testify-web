@@ -136,66 +136,112 @@ const createTestSlice = createSlice({
                 ...action.payload.partInfo,
             };
 
-            // Initialize part questions
-            const numQuestions = action.payload.partInfo?.num_questions;
-            const partQuestions = state.testParts[partIndex].questions;
-            if (
-                numQuestions &&
-                (!state.testQuestions || state?.testQuestions?.length === 0)
-            ) {
-                if (partQuestions?.length === 0 || !partQuestions) {
-                    state.testParts[partIndex].questions = [
-                        ...Array(numQuestions),
-                    ].map((item, index) => ({
-                        ...INITIAL_QUESTION,
-                        order: index + 1,
-                    }));
-                } else if (partQuestions?.length < numQuestions) {
-                    let orderArray = partQuestions.map(
-                        (question) => question.order
-                    );
-
-                    state.testParts[partIndex].questions = [
-                        ...partQuestions,
-                        ...[...Array(numQuestions - partQuestions?.length)].map(
-                            (item, index) => {
-                                const missingOrder =
-                                    findSmallestMissingPositive(orderArray);
-                                orderArray.push(missingOrder);
-                                return {
-                                    ...INITIAL_QUESTION,
-                                    test_id: state.testId!,
-                                    part_id: state.testParts[partIndex].id,
-                                    order: missingOrder,
-                                };
-                            }
-                        ),
-                    ];
-                } else {
-                    state.testParts[partIndex].questions = partQuestions?.slice(
-                        0,
-                        numQuestions
-                    );
-                }
-                state.testParts[partIndex].questions!.sort(sortQuestionFn);
-            }
-
-            if (
-                action.payload.partInfo?.id &&
-                state.testParts[partIndex]?.questions
-            ) {
-                state.testParts[partIndex].questions?.map((question) => ({
-                    ...question,
-                    part_id: action.payload.partInfo.id,
-                }));
-            }
-
             if (action.payload.partInfo?.is_saved) {
                 state.testParts[partIndex].is_saved = true;
             } else {
                 state.testParts[partIndex].is_saved = false;
             }
         },
+        initializeTestQuestions(state) {
+            if (state.numParts > 1) {
+                state.testParts = state.testParts?.map((part) => {
+                    if (!part.questions || part.questions.length === 0) {
+                        part.questions = [...Array(part.num_questions)].map(
+                            (question, index) => {
+                                return {
+                                    ...INITIAL_QUESTION,
+                                    test_id: state.testId!,
+                                    part_id: part.id,
+                                    order: index + 1,
+                                };
+                            }
+                        );
+                    } else {
+                        if (part.questions.length < part.num_questions) {
+                            let orderArray = part.questions.map(
+                                (question) => question.order
+                            );
+
+                            part.questions = [
+                                ...part.questions,
+                                ...[
+                                    ...Array(
+                                        part.num_questions -
+                                            part.questions.length
+                                    ),
+                                ].map((item, index) => {
+                                    const missingOrder =
+                                        findSmallestMissingPositive(orderArray);
+                                    orderArray.push(missingOrder);
+                                    return {
+                                        ...INITIAL_QUESTION,
+                                        test_id: state.testId!,
+                                        part_id: part.id,
+                                        order: missingOrder,
+                                    };
+                                }),
+                            ];
+                        }
+
+                        part.questions = part.questions.map((question) => {
+                            let answer = {};
+                            if (question?.content?.answer) {
+                                answer = {
+                                    ...question?.content?.answer,
+                                    is_saved: true,
+                                };
+                            }
+                            return {
+                                ...question,
+                                content: {
+                                    ...question.content,
+                                    answer: answer,
+                                } as QuestionContentItf,
+                            };
+                        });
+
+                        part.questions.sort(sortQuestionFn);
+                    }
+                    return part;
+                });
+            } else {
+                if (state.testQuestions?.length === 0) {
+                    state.testQuestions = [...Array(state.numQuestions)].map(
+                        (question, index) => {
+                            return {
+                                ...INITIAL_QUESTION,
+                                test_id: state.testId!,
+                                order: index + 1,
+                            };
+                        }
+                    );
+                } else {
+                    let orderArray = state.testQuestions.map(
+                        (question) => question.order
+                    );
+
+                    state.testQuestions = [
+                        ...state.testQuestions,
+                        ...[
+                            ...Array(
+                                state.numQuestions - state.testQuestions?.length
+                            ),
+                        ].map((item, index) => {
+                            const missingOrder =
+                                findSmallestMissingPositive(orderArray);
+                            orderArray.push(missingOrder);
+                            return {
+                                ...INITIAL_QUESTION,
+                                test_id: state.testId!,
+                                order: missingOrder,
+                            };
+                        }),
+                    ];
+                }
+                state.testQuestions.sort(sortQuestionFn);
+            }
+        },
+
         saveTestQuestions(
             state,
             action: PayloadAction<{
@@ -239,7 +285,7 @@ const createTestSlice = createSlice({
                 const question = state.testQuestions[questionIndex];
                 if (!question) return;
 
-                state.testQuestions![questionIndex] = {
+                state.testQuestions[questionIndex] = {
                     ...question,
                     ...action.payload.questionInfo,
                 };
@@ -296,7 +342,8 @@ const createTestSlice = createSlice({
                     break;
                 }
                 case CREATE_TEST_STEPS.TEST_PARTS: {
-                    if (state?.testParts?.length > 0) {
+                    if (state.numParts <= 1) state.isValidParts = true;
+                    else {
                         let isEqualTotalScores = false;
                         let isEqualNumberQuestions = false;
                         const totalPartsScores = state?.testParts?.reduce(
@@ -331,7 +378,7 @@ const createTestSlice = createSlice({
                     break;
                 }
                 case CREATE_TEST_STEPS.TEST_QUESTIONS: {
-                    if (state?.testParts?.length > 0) {
+                    if (state?.numParts > 1) {
                         state.isValidQuestions = state?.testParts?.every(
                             (part) => {
                                 let isEqualTotalScores = false;
@@ -375,7 +422,10 @@ const createTestSlice = createSlice({
                             isEqualTotalScores = true;
                         }
                         const totalQuestionsNumber =
-                            state?.testQuestions?.length;
+                            state?.testQuestions?.filter(
+                                (question) => question.is_content_provided
+                            ).length;
+
                         if (totalQuestionsNumber === state?.numQuestions) {
                             isEqualNumberQuestions = true;
                         }
@@ -503,19 +553,6 @@ const createTestSlice = createSlice({
                 );
             }
         },
-        // handleReorderQuestions(state, action) {
-        //     if (action.payload.part_id) {
-        //         const partIndex = state.testParts.findIndex(
-        //             (part) => part.id === action.payload.question.part_id
-        //         );
-        //         const partQuestions = state.testParts[partIndex].questions;
-        //         if (!partQuestions) return;
-        //         partQuestions.sort(sortQuestionFn);
-        //         state.testParts[partIndex].questions = partQuestions;
-        //     } else {
-        //         state.testQuestions.sort(sortQuestionFn);
-        //     }
-        // },
         setTestFromAPI(
             state,
             action: PayloadAction<{
@@ -543,48 +580,6 @@ const createTestSlice = createSlice({
                 is_saved: part?.id ? true : false,
             }));
 
-            // Initialize part questions
-            state.testParts = state.testParts?.map((part) => {
-                if (
-                    part?.num_questions > 0 &&
-                    (part?.questions?.length === 0 || !part?.questions)
-                ) {
-                    part.questions = [...Array(part?.num_questions)].map(
-                        (question, index) => {
-                            return {
-                                ...INITIAL_QUESTION,
-                                test_id: state.testId!,
-                                part_id: part.id,
-                                order: index + 1,
-                            };
-                        }
-                    );
-                }
-                if (part.questions && part.questions.length > 0) {
-                    part.questions = part.questions.map((question) => {
-                        let answer = {};
-                        if (question?.content?.answer) {
-                            answer = {
-                                ...question?.content?.answer,
-                                is_saved: true,
-                            };
-                        }
-                        return {
-                            ...question,
-                            content: {
-                                ...question.content,
-                                answer: answer,
-                            } as QuestionContentItf,
-                        };
-                    });
-                    part.questions.sort(sortQuestionFn);
-                }
-                return part;
-            });
-
-            state.testQuestions = action.payload?.questions
-                ? action.payload?.questions.sort(sortQuestionFn)
-                : [];
             state.testTakers = action.payload.test.taker_ids;
 
             switch (state.status) {
@@ -604,6 +599,10 @@ const createTestSlice = createSlice({
                     state.editibility = CLOSED_EDITABILITY_CONFIG;
                     break;
                 }
+            }
+
+            if (action.payload.questions) {
+                state.testQuestions = action.payload.questions;
             }
 
             state.includesManuallyScoredQuestions =

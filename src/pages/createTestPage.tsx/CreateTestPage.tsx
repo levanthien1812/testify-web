@@ -45,8 +45,10 @@ const CreateTestPage = () => {
     useEffect(() => {
         if (testIdParam) {
             refetch();
+        } else {
+            dispatch(createTestActions.reset());
         }
-    }, [testIdParam, refetch]);
+    }, [testIdParam, refetch, dispatch]);
 
     useEffect(() => {
         setSearchParams({ step: currentStep });
@@ -79,7 +81,7 @@ const CreateTestPage = () => {
                             <TestQuestions />
                         )}
                         {currentStep === CREATE_TEST_STEPS.TEST_ANSWERS &&
-                            test && <TestAnswers test={test} />}
+                            test && <TestAnswers />}
                         {currentStep === CREATE_TEST_STEPS.TEST_TAKERS &&
                             test && <TestTakers />}
                     </div>
