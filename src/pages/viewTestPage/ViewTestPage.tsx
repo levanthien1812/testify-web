@@ -138,7 +138,8 @@ const ViewTestPage = () => {
                 >
                     <ModalHeader title="Provide Answers" />
                     <ModalBody>
-                        <TestAnswers test={test} />
+                        {/* PLEASE UPDATE THE LOGIC WHEN UPDATE ANSWERS - ENTER CREATE TEST SLICE */}
+                        <TestAnswers />
                     </ModalBody>
                     <ModalFooter></ModalFooter>
                 </Modal>

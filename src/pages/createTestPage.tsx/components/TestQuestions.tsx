@@ -13,7 +13,8 @@ const TestQuestions = () => {
     const { testId, testParts, isValidQuestions } = useAppSelector(
         (state) => state.createTest
     );
-    const { moveNextStep, movePrevStep, validate } = createTestActions;
+    const { moveNextStep, movePrevStep, validate, initializeTestQuestions } =
+        createTestActions;
     const dispatch = useDispatch();
 
     const {
@@ -30,8 +31,9 @@ const TestQuestions = () => {
     });
 
     useEffect(() => {
+        dispatch(initializeTestQuestions());
         dispatch(validate());
-    }, [validate, dispatch]);
+    }, [validate, dispatch, initializeTestQuestions]);
 
     return (
         <Wrapper
@@ -64,14 +66,14 @@ const TestQuestions = () => {
             )}
             <InfoMessage message="Drag to reorder questions" type="info" />
             <div className="space-y-3 mt-4">
-                {testParts.length > 0 &&
+                {testParts.length > 1 &&
                     testParts.map(
                         (part) =>
                             part.questions!.length > 0 && (
                                 <Questions part={part} key={part.name} />
                             )
                     )}
-                {testParts.length === 0 && <Questions />}
+                {testParts.length <= 1 && <Questions />}
             </div>
         </Wrapper>
     );

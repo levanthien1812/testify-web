@@ -4,9 +4,13 @@ import Wrapper from "../../../components/wrappers/Wrapper";
 import { createTestActions } from "../../../stores/createTest";
 import { useDispatch } from "react-redux";
 import { TestItf } from "../../../types/types";
+import { useAppSelector } from "../../../hooks/hooks";
 
-const TestAnswers = ({ test }: { test: TestItf }) => {
+const TestAnswers = () => {
     const { moveNextStep, movePrevStep } = createTestActions;
+    const { numParts, testParts, testQuestions } = useAppSelector(
+        (state) => state.createTest
+    );
     const dispatch = useDispatch();
 
     return (
@@ -35,14 +39,13 @@ const TestAnswers = ({ test }: { test: TestItf }) => {
             }}
         >
             <div className={`space-y-3 mt-4`}>
-                {test &&
-                    test.parts.length > 0 &&
-                    test.parts.map((part) => (
+                {numParts > 1 &&
+                    testParts.map((part) => (
                         <Questions part={part} withAnswer={true} />
                     ))}
-                {test && test.parts.length === 0 && (
+                {numParts <= 1 && (
                     <div className={`px-4 py-4 space-y-2`}>
-                        {test.questions!.map((question) => (
+                        {testQuestions.map((question) => (
                             <Answer question={question} key={question.id} />
                         ))}
                     </div>

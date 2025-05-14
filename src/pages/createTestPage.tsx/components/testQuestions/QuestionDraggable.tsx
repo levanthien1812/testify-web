@@ -23,7 +23,9 @@ const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
             "start_index",
             JSON.stringify(question.order - 1)
         );
-        e.dataTransfer.setData("part_id", JSON.stringify(question.part_id));
+        if (question.part_id) {
+            e.dataTransfer.setData("part_id", JSON.stringify(question.part_id));
+        }
     };
     const dispatch = useDispatch();
 
@@ -71,7 +73,9 @@ const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
 
         const startIndex = JSON.parse(e.dataTransfer.getData("start_index"));
         const endIndex = question.order - 1;
-        const partFromId = JSON.parse(e.dataTransfer.getData("part_id"));
+        const partFromId = e.dataTransfer.getData("part_id")
+            ? JSON.parse(e.dataTransfer.getData("part_id"))
+            : undefined;
         const partToId = question.part_id;
 
         if (startIndex === endIndex && partFromId === partToId) return;
