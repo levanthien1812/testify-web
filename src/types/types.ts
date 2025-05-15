@@ -1,4 +1,5 @@
 import {
+    PASSCODE_VALID_UNIT,
     QUESTION_LEVEL,
     ROLES,
     SHARE_OPTIONS,
@@ -236,6 +237,7 @@ export interface PasscodeItf {
     code: string;
     valid_till?: string;
     valid_in?: number;
+    valid_unit?: PASSCODE_VALID_UNIT;
     method: string;
     format?: string;
     test_id?: string;

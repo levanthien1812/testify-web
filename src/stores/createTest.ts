@@ -12,6 +12,7 @@ import {
 import {
     CREATE_TEST_STEPS,
     MANUAL_SCORE_TYPES,
+    MILISECONDS_BY_UNIT,
     TEST_STATUS,
 } from "../config/constants/tests";
 import {
@@ -31,7 +32,6 @@ import {
     sortQuestionFn,
 } from "../utils/test";
 import { findSmallestMissingPositive } from "../utils/array";
-import { TestOptions } from "../types/tests";
 
 const createTestSlice = createSlice({
     initialState: INITIAL_CREATE_TEST_CONTEXT,
@@ -295,6 +295,30 @@ const createTestSlice = createSlice({
                         content: action.payload?.questionInfo?.content,
                     };
                 }
+            }
+        },
+        initializeTestAnswers(state) {
+            if (state.numParts > 1) {
+                state.testParts.map((part) => {
+                    if (part.questions) {
+                        part.questions.map((question) => {
+                            if (question.content && question.content.answer) {
+                                question.content.answer.is_saved =
+                                    !!question.content.answer;
+                            }
+                            return question;
+                        });
+                    }
+                    return part;
+                });
+            } else {
+                state.testQuestions.map((question) => {
+                    if (question.content && question.content.answer) {
+                        question.content.answer.is_saved =
+                            !!question.content.answer;
+                    }
+                    return question;
+                });
             }
         },
         saveTestAnswers(state, action) {},
@@ -621,21 +645,39 @@ const createTestSlice = createSlice({
         generateTestLink(state) {
             state.testLink = `${window.location.origin}/tests/${state.testId}`;
         },
-        setPasscode(state, action: PayloadAction<PasscodeItf>) {
-            state.passcode = action.payload;
-            if (action.payload.valid_in) {
-                action.payload.valid_till = new Date(
-                    Date.now() + action.payload.valid_in * 1000 * 60
+        setPasscode(state, action: PayloadAction<Partial<PasscodeItf>>) {
+            state.passcode = { ...state.passcode, ...action.payload };
+
+            if (action.payload.valid_in && state.passcode.valid_unit) {
+                state.passcode.valid_till = new Date(
+                    Date.now() +
+                        action.payload.valid_in *
+                            MILISECONDS_BY_UNIT[state.passcode.valid_unit]
                 ).toISOString();
             }
-            if (action.payload.valid_till) {
-                action.payload.valid_in = Math.round(
+            if (state.passcode.valid_in && action.payload.valid_unit) {
+                state.passcode.valid_till = new Date(
+                    Date.now() +
+                        state.passcode.valid_in *
+                            MILISECONDS_BY_UNIT[action.payload.valid_unit]
+                ).toISOString();
+            }
+
+            if (action.payload.valid_till && state.passcode.valid_unit) {
+                state.passcode.valid_in = Math.round(
                     (new Date(action.payload.valid_till).getTime() -
                         Date.now()) /
-                        1000 /
-                        60
+                        MILISECONDS_BY_UNIT[state.passcode.valid_unit]
                 );
             }
+            if (state.passcode.valid_till && action.payload.valid_unit) {
+                state.passcode.valid_in = Math.round(
+                    (new Date(state.passcode.valid_till).getTime() -
+                        Date.now()) /
+                        MILISECONDS_BY_UNIT[action.payload.valid_unit]
+                );
+            }
+
             if (
                 action.payload.method === PASSCODE_METHOD.AUTO_GENERATED &&
                 !state.passcode.format
