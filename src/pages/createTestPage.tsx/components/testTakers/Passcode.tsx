@@ -15,9 +15,13 @@ import {
     QUERY_KEYS,
 } from "../../../../config/constants/queryMutationKeys";
 import { generatePasscode, getPasscode } from "../../../../services/test";
-import { SHARE_OPTIONS } from "../../../../config/constants/tests";
+import {
+    PASSCODE_VALID_UNIT,
+    SHARE_OPTIONS,
+} from "../../../../config/constants/tests";
 import Loading from "../../../../components/loadings/Loading";
 import { useAppSelector } from "../../../../hooks/hooks";
+import { format } from "date-fns";
 
 const Passcode = () => {
     const { passcode } = useAppSelector((state) => state.createTest);
@@ -30,7 +34,6 @@ const Passcode = () => {
     ) => {
         dispatch(
             setPasscode({
-                ...passcode,
                 [e.target.name]: e.target.value,
             })
         );
@@ -48,7 +51,9 @@ const Passcode = () => {
             if (!data) return;
             dispatch(setPasscode(data));
         },
+        onError: () => {},
         enabled: shareOption === SHARE_OPTIONS.PASSCODE,
+        retry: false,
     });
 
     const { mutate, isLoading: isGeneratingPasscode } = useMutation({
@@ -156,28 +161,45 @@ const Passcode = () => {
                 </div>
             )}
 
-            <div className="flex gap-4 items-end mt-4">
-                <label htmlFor="valid-in" className="w-1/5 shrink-0">
-                    Valid in:{" "}
-                </label>
-                <Input
-                    type="number"
-                    name="valid_in"
-                    step={10}
-                    min={10}
-                    value={passcode?.valid_in}
-                    onChange={handlePasscodeChange}
-                />
-                <label htmlFor="valid-till" className="w-1/5 shrink-0">
-                    Valid till:{" "}
-                </label>
-                <Input
-                    type="datetime-local"
-                    name="valid_till"
-                    value={passcode?.valid_till}
-                    onChange={handlePasscodeChange}
-                />
-            </div>
+            {passcode.method && (
+                <div className="flex gap-4 items-end mt-4">
+                    <Input
+                        type="number"
+                        name="valid_in"
+                        step={1}
+                        min={1}
+                        value={passcode?.valid_in}
+                        onChange={handlePasscodeChange}
+                        label={{ text: "Valid in" }}
+                    />
+                    <Select
+                        options={[
+                            {
+                                label: "minutes",
+                                value: PASSCODE_VALID_UNIT.MINUTES,
+                            },
+                            {
+                                label: "hours",
+                                value: PASSCODE_VALID_UNIT.HOURS,
+                            },
+                            { label: "days", value: PASSCODE_VALID_UNIT.DAYS },
+                        ]}
+                        name="valid_unit"
+                        value={passcode?.valid_unit}
+                        onChange={handlePasscodeChange}
+                    />
+                    <Input
+                        type="datetime-local"
+                        name="valid_till"
+                        value={format(
+                            new Date(passcode?.valid_till || ""),
+                            "yyyy-MM-dd'T'HH:mm"
+                        )}
+                        onChange={handlePasscodeChange}
+                        label={{ text: "Valid till" }}
+                    />
+                </div>
+            )}
         </div>
     );
 };

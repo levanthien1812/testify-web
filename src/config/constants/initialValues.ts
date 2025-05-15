@@ -18,6 +18,7 @@ import {
 import { formatTimezone } from "../../utils/time";
 import {
     PAGINATION_MODE,
+    PASSCODE_VALID_UNIT,
     PUBLIC_ANSWERS_OPTIONS,
     QUESTION_LEVEL,
     SHARE_OPTIONS,
@@ -337,7 +338,8 @@ export const INITIAL_CREATE_TEST_CONTEXT: CreateTestContext = {
     passcode: {
         code: "",
         valid_till: new Date().toISOString(),
-        valid_in: 0,
+        valid_in: 1,
+        valid_unit: PASSCODE_VALID_UNIT.MINUTES,
         method: "",
     },
     options: INITIAL_OPTIONS,

@@ -189,3 +189,15 @@ export const PAGINATION_MODE_LABEL: Record<PAGINATION_MODE, string> = {
     [PAGINATION_MODE.ALL]: "All questions on one page",
     [PAGINATION_MODE.FIXED_PER_PAGE]: "Fixed questions quantity per page",
 };
+
+export enum PASSCODE_VALID_UNIT {
+    MINUTES = "MINUTES",
+    HOURS = "HOURS",
+    DAYS = "DAYS",
+}
+
+export const MILISECONDS_BY_UNIT = {
+    [PASSCODE_VALID_UNIT.MINUTES]: 60 * 1000,
+    [PASSCODE_VALID_UNIT.HOURS]: 3600 * 1000,
+    [PASSCODE_VALID_UNIT.DAYS]: 86400 * 1000,
+};

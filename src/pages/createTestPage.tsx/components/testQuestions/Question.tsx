@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
     FillGapsQuestionBodyItf,
     MatchingQuestionBodyItf,
@@ -57,6 +57,7 @@ const Question = ({ question, part }: QuestionProps) => {
     const dispatch = useDispatch();
     const [isDeletingQuestion, setIsDeletingQuestion] =
         useState<boolean>(false);
+    const audioElement = useRef<HTMLAudioElement>(null);
 
     const {
         handleSubmit,
@@ -193,11 +194,23 @@ const Question = ({ question, part }: QuestionProps) => {
         );
     };
 
+    const handleClickQuestion = () => {
+        if (audioElement.current) {
+            audioElement.current.play();
+        }
+        setOpen(true);
+    };
+
     return (
         <>
             <QuestionDraggable
                 question={question}
-                onClick={() => setOpen(true)}
+                onClick={handleClickQuestion}
+            />
+            <audio
+                ref={audioElement}
+                src="/sounds/button_click_fast_wooden_organic.mp3"
+                preload="auto"
             />
             {open && (
                 <Modal onClose={() => setOpen(false)}>

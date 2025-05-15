@@ -3,15 +3,20 @@ import Questions from "./testQuestions/Questions";
 import Wrapper from "../../../components/wrappers/Wrapper";
 import { createTestActions } from "../../../stores/createTest";
 import { useDispatch } from "react-redux";
-import { TestItf } from "../../../types/types";
 import { useAppSelector } from "../../../hooks/hooks";
+import { useEffect } from "react";
 
 const TestAnswers = () => {
-    const { moveNextStep, movePrevStep } = createTestActions;
+    const { moveNextStep, movePrevStep, initializeTestAnswers } =
+        createTestActions;
     const { numParts, testParts, testQuestions } = useAppSelector(
         (state) => state.createTest
     );
     const dispatch = useDispatch();
+
+    useEffect(() => {
+        dispatch(initializeTestAnswers());
+    }, [dispatch, initializeTestAnswers]);
 
     return (
         <Wrapper
