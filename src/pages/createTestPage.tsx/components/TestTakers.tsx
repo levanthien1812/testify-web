@@ -3,7 +3,12 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import Takers from "./testTakers/Takers";
 import { useMutation } from "react-query";
-import { assignTakers, updateTest } from "../../../services/test";
+import {
+    assignTakers,
+    createPasscode,
+    generatePasscode,
+    updateTest,
+} from "../../../services/test";
 import { useNavigate } from "react-router";
 import Select from "../../../components/elements/Select";
 import Wrapper from "../../../components/wrappers/Wrapper";
@@ -46,6 +51,19 @@ const TestTakers = () => {
         }
     );
 
+    const { mutate: createPasscodeMutate, isLoading: isCreatingPasscode } =
+        useMutation({
+            mutationFn: async () => {
+                const responseData = await createPasscode(testId!, passcode);
+
+                return responseData.passcode;
+            },
+            mutationKey: MUTATION_KEYS.CREATE_PASSCODE,
+            onSuccess: (res) => {
+                dispatch(createTestActions.setPasscode(res));
+            },
+        });
+
     const { mutate: assignTakersMutate, isLoading: isAssigningTakers } =
         useMutation({
             mutationFn: async () => {
@@ -77,6 +95,7 @@ const TestTakers = () => {
                 break;
             case SHARE_OPTIONS.PASSCODE:
                 updateTestMutate({ passcode: passcode.id });
+                createPasscodeMutate();
                 break;
             default:
                 break;
@@ -107,8 +126,12 @@ const TestTakers = () => {
                         disabled:
                             isUpdatingTest ||
                             isAssigningTakers ||
+                            isCreatingPasscode ||
                             !isValidShareOption,
-                        isLoading: isUpdatingTest || isAssigningTakers,
+                        isLoading:
+                            isUpdatingTest ||
+                            isAssigningTakers ||
+                            isCreatingPasscode,
                     },
                     outlinedButton: {
                         onClick: () => {

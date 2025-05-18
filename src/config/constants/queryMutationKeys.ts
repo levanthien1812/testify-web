@@ -28,6 +28,7 @@ const MUTATION_KEYS = {
     VALIDATE_QUESTIONS: "validate-questions",
     ADD_ANSWER: "add-answer",
     GENERATE_PASSCODE: "generate-passcode",
+    CREATE_PASSCODE: "create-passcode",
     CHECK_PASSCODE: "check-passcode",
     SEND_MESSAGE: "send-message",
     UPDATE_MESSAGE: "update-message",

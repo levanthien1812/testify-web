@@ -243,7 +243,7 @@ export interface PasscodeItf {
     test_id?: string;
 }
 
-export type GeneratePasscodeBodyItf = Pick<PasscodeItf, "format" | "test_id">;
+export type GeneratePasscodeBodyItf = Pick<PasscodeItf, "format">;
 
 export type UserAnswerItf<T extends AnswerBodyContentItf> = {
     id?: string;
