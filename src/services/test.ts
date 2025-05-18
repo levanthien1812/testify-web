@@ -319,6 +319,18 @@ export const generatePasscode = async (
     }
 };
 
+export const createPasscode = async (testId: string, passcode: PasscodeItf) => {
+    try {
+        const response = await instance.post(`/tests/${testId}/passcode`, {
+            passcode,
+        });
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 export const checkPasscode = async (passcode: string) => {
     try {
         const response = await instance.post(`/tests/passcode/check`, {

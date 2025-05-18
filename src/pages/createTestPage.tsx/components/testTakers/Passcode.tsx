@@ -60,14 +60,13 @@ const Passcode = () => {
         mutationFn: async () => {
             const responseData = await generatePasscode(testId!, {
                 format: passcode.format,
-                test_id: testId!,
             });
 
             return responseData.passcode;
         },
         mutationKey: MUTATION_KEYS.GENERATE_PASSCODE,
         onSuccess: (res) => {
-            dispatch(createTestActions.setPasscode(res));
+            dispatch(createTestActions.setPasscode({ code: res }));
         },
     });
 
