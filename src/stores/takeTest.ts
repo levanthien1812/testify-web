@@ -10,6 +10,7 @@ import {
     UserAnswerItf,
 } from "../types/types";
 import { TEST_STATUS } from "../config/constants/tests";
+import { sortQuestionsByOrder } from "../utils/test";
 
 const TakeTestSlice = createSlice({
     initialState: INITIAL_TAKE_TEST_CONTEXT,
@@ -26,27 +27,34 @@ const TakeTestSlice = createSlice({
         ) {
             state.test = action.payload.test;
 
-            state.test.parts = action.payload.parts?.map((part) => {
-                if (part.questions && part.questions.length > 0) {
-                    part.questions = part.questions.map((question) => {
-                        let answer = null;
-                        if (question?.content?.answer) {
-                            answer = {
-                                ...question?.content?.answer,
-                                is_saved: true,
+            if (state.test.num_parts <= 1) {
+                state.test.parts = [];
+                state.test.questions = sortQuestionsByOrder(
+                    action.payload.questions
+                );
+            } else {
+                state.test.parts = action.payload.parts?.map((part) => {
+                    if (part.questions && part.questions.length > 0) {
+                        part.questions = part.questions.map((question) => {
+                            let answer = null;
+                            if (question?.content?.answer) {
+                                answer = {
+                                    ...question?.content?.answer,
+                                    is_saved: true,
+                                };
+                            }
+                            return {
+                                ...question,
+                                content: {
+                                    ...question.content,
+                                    answer: answer,
+                                } as QuestionContentItf,
                             };
-                        }
-                        return {
-                            ...question,
-                            content: {
-                                ...question.content,
-                                answer: answer,
-                            } as QuestionContentItf,
-                        };
-                    });
-                }
-                return part;
-            });
+                        });
+                    }
+                    return part;
+                });
+            }
 
             state.submissionsCount = action.payload.submissionsCount || 0;
         },

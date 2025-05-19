@@ -1,6 +1,6 @@
 import { BrowserRouter } from "react-router-dom";
 import RegistePage from "./RegistePage";
-import { screen } from "@testing-library/react";
+import { fireEvent, screen } from "@testing-library/react";
 import { useMutation } from "react-query";
 
 const mockNavigate = jest.fn();
@@ -53,5 +53,24 @@ describe("RegistePage", () => {
     it("should render without crashing", () => {
         renderComponent();
         expect(screen.getByText("Register")).toBeInTheDocument();
+    });
+
+    it("shound renders all input fields and the submit button", () => {
+        renderComponent();
+        expect(screen.getByLabelText("Name")).toBeInTheDocument();
+        expect(screen.getByLabelText("Email")).toBeInTheDocument();
+        expect(screen.getByLabelText("Username")).toBeInTheDocument();
+        expect(screen.getByLabelText("Password")).toBeInTheDocument();
+        expect(screen.getByLabelText("Confirm Password")).toBeInTheDocument();
+        expect(
+            screen.getByRole("button", { name: "Register" })
+        ).toBeInTheDocument();
+    });
+
+    it("should navigate to login page when 'login' link is clicked", () => {
+        renderComponent();
+        const loginLink = screen.getByText("Login");
+        fireEvent.click(loginLink);
+        expect(mockNavigate).toHaveBeenCalledWith("/login");
     });
 });

@@ -3,12 +3,13 @@ import { TestItf } from "../../../types/types";
 import { format } from "date-fns";
 import Checkbox from "../../../components/elements/Checkbox";
 import Options from "./Options";
+import { TEST_LEVEL } from "../../../config/constants/tests";
+import { useAppSelector } from "../../../hooks/hooks";
 
-type TestInfoProps = {
-    test: TestItf;
-};
+const TestInfo = () => {
+    const { test } = useAppSelector((state) => state.takeTest);
+    if (!test) return null;
 
-const TestInfo = ({ test }: TestInfoProps) => {
     return (
         <div>
             <p className="text-center text-[44px]">{test.title}</p>
@@ -36,7 +37,7 @@ const TestInfo = ({ test }: TestInfoProps) => {
                 Max score: {test.max_score}
             </p>
 
-            {test.level && (
+            {test.level !== TEST_LEVEL.NONE && (
                 <p className="text-xl text-center mt-2">
                     Level: <span className="capitalize">{test.level}</span>
                 </p>
