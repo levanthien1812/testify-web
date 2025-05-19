@@ -11,7 +11,7 @@ import { QUERY_KEYS } from "../../config/constants/queryMutationKeys";
 import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../stores/takeTest";
 import Loading from "../../components/loadings/Loading";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Error from "../../components/errors/Error";
 import PasscodeLink from "../createTestPage.tsx/components/testTakers/PasscodeLink";
 import Submissions from "./components/Submissions";
@@ -119,6 +119,19 @@ const TakeTestPage = () => {
         dispatch(takeTestActions.setEnteredPasscode(data.code));
     };
 
+    const canEnterDoingTest = useMemo(() => {
+        if (!test) return false;
+
+        const isValidParts =
+            test && test.num_parts > 1 && test.parts.length > 1;
+        const isValidQuestions =
+            test &&
+            test.num_parts <= 1 &&
+            test.questions &&
+            test.questions.length > 0;
+        return isStarted && !isEnded && (isValidParts || isValidQuestions);
+    }, [test, isStarted, isEnded]);
+
     return (
         <div className="w-[840px] mx-auto mt-6 bg-white shadow-lg">
             {isEnteringPasscode && (
@@ -143,7 +156,7 @@ const TakeTestPage = () => {
             )}
             {!isStarted && test && (
                 <div className="py-8 px-8">
-                    <TestInfo test={test} />
+                    <TestInfo />
                     {(test.status === TEST_STATUS.PUBLISHED ||
                         test.status === TEST_STATUS.OPENED) &&
                         (test.options.allow_multiple_submissions.enable
@@ -180,7 +193,7 @@ const TakeTestPage = () => {
                 />
             )}
             {!isLoadingTest && isForbidden && <Forbidden />}
-            {isStarted && !isEnded && test && test.parts.length > 0 && (
+            {canEnterDoingTest && (
                 <DoingTest
                     onAfterSubmit={async () => {
                         dispatch(takeTestActions.setIsStarted(false));

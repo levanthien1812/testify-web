@@ -26,7 +26,12 @@ const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>((props, ref) => {
                     </button>
                 )}
             </div>
-            <Input {...rest} type={show ? "text" : props.type} ref={ref} />
+            <Input
+                {...rest}
+                error={error}
+                type={show ? "text" : props.type}
+                ref={ref}
+            />
         </div>
     );
 });

@@ -4,14 +4,12 @@ import { submitAnswers } from "../../services/test";
 import { toast } from "react-toastify";
 import RemainingTime from "./components/RemainingTime";
 import Swal from "sweetalert2";
-import Question from "./components/Question";
 import Button from "../../components/elements/Button";
 import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../stores/takeTest";
 import { TOAST_MESSAGES } from "../../config/constants/toasts";
 import { MUTATION_KEYS } from "../../config/constants/queryMutationKeys";
 import { useAppSelector } from "../../hooks/hooks";
-import { sortQuestionsByOrder } from "../../utils/test";
 import QuestionsPagination from "./components/Pagination";
 
 type DoingTestProps = {

@@ -2,7 +2,6 @@ import { TestItf, SubmissionItf } from "../../types/types";
 import { useQuery } from "react-query";
 import { getSubmissions, getTest } from "../../services/test";
 import { useParams } from "react-router";
-import TestInfo from "../takeTestPage/components/TestInfo";
 import SubmissionsTable from "./components/SubmissionsTable";
 import { useState } from "react";
 import Modal, {
@@ -18,6 +17,7 @@ import { useDispatch } from "react-redux";
 import { Link } from "react-router-dom";
 import { QUERY_KEYS } from "../../config/constants/queryMutationKeys";
 import { useAppSelector } from "../../hooks/hooks";
+import TestInfo from "./components/TestInfo";
 
 const ViewTestPage = () => {
     const { testId } = useParams();
@@ -54,7 +54,7 @@ const ViewTestPage = () => {
 
     return (
         <div className="xl:w-2/3 md:w-5/6 mx-auto py-10 shadow-lg px-8">
-            {test && <TestInfo test={test} />}
+            {test && <TestInfo />}
             {isLoadingTest && <p className="text-center">Loading test ...</p>}
             <div className="flex justify-end mt-2">
                 <button

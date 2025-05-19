@@ -15,7 +15,7 @@ const StatusPanel = () => {
     const navigate = useNavigate();
     const { testId, status } = useAppSelector((state) => state.createTest);
     const [open, setOpen] = useState(false);
-    const [dismissed, setDissmissed] = useState(true);
+    const [dismissed, setDissmissed] = useState(false);
 
     const { mutate: publishTestMutate, isLoading: publishTestLoading } =
         useMutation({
@@ -38,23 +38,24 @@ const StatusPanel = () => {
         if (status === TEST_STATUS.DRAFT) {
             setOpen(false);
         }
+        if (status === TEST_STATUS.PUBLISHABLE) {
+            setOpen(true);
+        }
     }, [status]);
 
     return (
         <>
             {open && (
-                <>
+                <div className="relative 2xl:w-3/5 w-4/5 mx-auto my-6">
                     {!dismissed && (
-                        <div className="relative 2xl:w-3/5 w-4/5 mx-auto my-6">
+                        <div className="">
                             <div className=" bg-white p-4 shadow-lg border border-orange-500">
                                 {status === TEST_STATUS.PUBLISHABLE && (
                                     <div className="flex items-center gap-4">
-                                        <p className="text-xl grow">
+                                        <p className="text-md grow">
                                             This test is now publishable!
                                         </p>
                                         <Button
-                                            className=" uppercase"
-                                            size="lg"
                                             onClick={() => publishTestMutate()}
                                             disabled={publishTestLoading}
                                         >
@@ -78,7 +79,7 @@ const StatusPanel = () => {
                                     <Button
                                         primary={false}
                                         size="sm"
-                                        onClick={() => setOpen(false)}
+                                        onClick={() => setDissmissed(true)}
                                     >
                                         Dismiss
                                     </Button>
@@ -86,16 +87,16 @@ const StatusPanel = () => {
                             </div>
                         </div>
                     )}
-                    {!dismissed && (
+                    {dismissed && (
                         <Button
-                            onClick={() => setDissmissed(true)}
+                            onClick={() => setDissmissed(false)}
                             className="absolute top-0 right-0 z-10"
                             primary={false}
                         >
                             <FontAwesomeIcon icon={faInfo} />
                         </Button>
                     )}
-                </>
+                </div>
             )}
         </>
     );

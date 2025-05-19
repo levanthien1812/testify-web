@@ -20,7 +20,7 @@ const QuestionsPagination = () => {
             case PAGINATION_MODE.ALL:
                 return 1;
             case PAGINATION_MODE.ONE_QUESTION:
-                if (test.num_parts >= 1)
+                if (test.num_parts > 1)
                     return test.parts.reduce(
                         (totalQuestions, part) =>
                             totalQuestions + part.num_questions,
