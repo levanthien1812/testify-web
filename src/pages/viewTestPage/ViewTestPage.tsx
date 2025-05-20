@@ -25,7 +25,7 @@ const ViewTestPage = () => {
         useState(false);
     const [viewProvideAnswers, setViewProvideAnswers] = useState(false);
     const { test, submissions } = useAppSelector((state) => state.viewTest);
-    const { setTest } = viewTestActions;
+    const { setTest, setSubmissions } = viewTestActions;
     const dispatch = useDispatch();
 
     const { isLoading: isLoadingTest, refetch: refetchTest } =
@@ -33,8 +33,10 @@ const ViewTestPage = () => {
             queryKey: ["test", testId],
             queryFn: async () => {
                 const responseData = await getTest(testId!);
-                dispatch(setTest(responseData.test));
-                return responseData.test;
+                return responseData;
+            },
+            onSuccess: (data: any) => {
+                dispatch(setTest(data));
             },
             retry: false,
         });
@@ -47,7 +49,7 @@ const ViewTestPage = () => {
                 return responseData.submissions;
             },
             onSuccess: (data) => {
-                dispatch(viewTestActions.setSubmissions(data));
+                dispatch(setSubmissions(data));
             },
             retry: false,
         });

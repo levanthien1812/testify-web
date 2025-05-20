@@ -26,7 +26,7 @@ const TestQuestionsAndAnswers = ({
     );
     return (
         <div className="mt-4">
-            {test.num_parts > 1 && (
+            {test.num_parts > 1 && test.parts && (
                 <div className="space-y-4">
                     {test.parts.map((part) => {
                         return (
@@ -59,7 +59,8 @@ const TestQuestionsAndAnswers = ({
                 </div>
             )}
             {test.num_parts <= 1 &&
-                test.questions!.map((question) => (
+                test.questions &&
+                test.questions.map((question) => (
                     <Answer
                         question={question}
                         key={question.id}

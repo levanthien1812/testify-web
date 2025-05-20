@@ -265,6 +265,19 @@ const SubmissionsTable = ({ submissions, refetch }: SubmissionsTableProps) => {
                 >
                     {"<"}
                 </button>
+
+                <Select
+                    value={table.getState().pagination.pageSize}
+                    onChange={(e) => {
+                        table.setPageSize(Number(e.target.value));
+                    }}
+                    sizing="sm"
+                    options={[10, 20, 30, 40, 50].map((pageSize) => ({
+                        value: pageSize,
+                        label: pageSize,
+                    }))}
+                    label={{ text: "Rows per page" }}
+                />
                 <button
                     onClick={() => table.nextPage()}
                     disabled={!table.getCanNextPage()}
@@ -279,17 +292,6 @@ const SubmissionsTable = ({ submissions, refetch }: SubmissionsTableProps) => {
                 >
                     {">>"}
                 </button>
-                <Select
-                    value={table.getState().pagination.pageSize}
-                    onChange={(e) => {
-                        table.setPageSize(Number(e.target.value));
-                    }}
-                    sizing="sm"
-                    options={[10, 20, 30, 40, 50].map((pageSize) => ({
-                        value: pageSize,
-                        label: pageSize,
-                    }))}
-                />
             </div>
             {currentSubmissionBeingViewed && <TakerSubmissionDetail />}
         </div>

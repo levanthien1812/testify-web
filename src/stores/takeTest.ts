@@ -33,27 +33,7 @@ const TakeTestSlice = createSlice({
                     action.payload.questions
                 );
             } else {
-                state.test.parts = action.payload.parts?.map((part) => {
-                    if (part.questions && part.questions.length > 0) {
-                        part.questions = part.questions.map((question) => {
-                            let answer = null;
-                            if (question?.content?.answer) {
-                                answer = {
-                                    ...question?.content?.answer,
-                                    is_saved: true,
-                                };
-                            }
-                            return {
-                                ...question,
-                                content: {
-                                    ...question.content,
-                                    answer: answer,
-                                } as QuestionContentItf,
-                            };
-                        });
-                    }
-                    return part;
-                });
+                state.test.parts = action.payload.parts;
             }
 
             state.submissionsCount = action.payload.submissionsCount || 0;
