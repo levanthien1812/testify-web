@@ -25,7 +25,8 @@ const MultipleChoicesAnswer = ({
             if (answerStatus === USER_ANSWER_STATUS.NOT_ANSWERED) return false;
 
             if (optionId === makerAnswer) return true;
-            if (!makerAnswer && optionId === userAnswer) return true;
+            if (optionId === userAnswer) return true;
+
             return false;
         },
         [answerStatus, makerAnswer, userAnswer]
@@ -39,7 +40,11 @@ const MultipleChoicesAnswer = ({
                 return `accent-blue-600`;
 
             if (optionId === makerAnswer) return `accent-green-600`;
-            if (makerAnswer && makerAnswer !== userAnswer)
+            if (
+                makerAnswer &&
+                makerAnswer !== userAnswer &&
+                optionId === userAnswer
+            )
                 return `accent-red-600`;
             return "";
         },
@@ -53,7 +58,11 @@ const MultipleChoicesAnswer = ({
             if (!makerAnswer && optionId === userAnswer) return `text-blue-600`;
 
             if (optionId === makerAnswer) return `text-green-600`;
-            if (makerAnswer && makerAnswer !== userAnswer)
+            if (
+                makerAnswer &&
+                makerAnswer !== userAnswer &&
+                optionId === userAnswer
+            )
                 return `text-red-600`;
             return "";
         },
