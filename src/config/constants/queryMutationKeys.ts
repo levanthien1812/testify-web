@@ -39,6 +39,7 @@ const MUTATION_KEYS = {
     UPDATE_TAKER_ANSWER: "update-taker-answer",
     SUBMIT_ANSWERS: "submit-answers",
     REORDER_QUESTIONS: "reorder-questions",
+    CREATE_CHAT: "create-chat",
 };
 
 export { QUERY_KEYS, MUTATION_KEYS };

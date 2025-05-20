@@ -6,6 +6,7 @@ import AddChat from "./AddChat";
 import Chats from "./Chats";
 import AIChats from "../AIChatList/AIChats";
 import { useAppSelector } from "../../../../hooks/hooks";
+import { AIChatItf } from "../../../../types/chat";
 
 const ChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
     const [isAddingChat, setIsAddingChat] = React.useState(false);
@@ -22,7 +23,7 @@ const ChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
     } = useChatSocket();
 
     const handleClickChatWithAI = () => {
-        setChattingWithAI(true);
+        setChattingWithAI(!isChattingWithAI);
     };
 
     const handleClickAddChat = () => {
@@ -30,12 +31,12 @@ const ChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
             setIsAddingChat(true);
         } else {
             setIsAddingAIChat(true);
-            const newAIChat = {
+            const newAIChat: AIChatItf = {
                 chat_name: "New chat",
                 conversation: [],
                 created_at: new Date().toISOString(),
-                id: "dummy_id",
                 user_id: user!.id,
+                messages: [],
             };
             setAIChats([newAIChat]);
             setCurrentAIChat(newAIChat);
@@ -84,7 +85,7 @@ const ChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
                         }}
                         onClick={handleClickChatWithAI}
                     >
-                        Chat with AI
+                        {!isChattingWithAI ? "Chat with AI" : "Back to chats"}
                     </Button>
                 </div>
             </div>
