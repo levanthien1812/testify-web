@@ -57,11 +57,16 @@ export interface AIChatMessageItf {
 
 export interface AIChatItf {
     user_id: string;
-    id: string;
+    id?: string;
     conversation: AIChatMessageItf[];
     chat_name: string;
     created_at: string;
     updated_at?: string;
+    messages: AIChatMessageItf[];
+}
+
+export interface AIChatBodyItf {
+    chat_name: string;
 }
 
 export interface MessageBody {
@@ -137,4 +142,8 @@ export interface ReactionEmoji {
     emoji: string;
     user_id: string;
     created_at: string;
+}
+
+export interface MessageAIBody {
+    text: string;
 }

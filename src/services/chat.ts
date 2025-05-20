@@ -1,6 +1,11 @@
 import { instance } from "../config/axios";
 import { CHAT_OPTIONS } from "../config/constants/chat";
-import { ChatBodyItf, MessageBody } from "../types/chat";
+import {
+    AIChatBodyItf,
+    ChatBodyItf,
+    MessageAIBody,
+    MessageBody,
+} from "../types/chat";
 
 export const getChats = async () => {
     try {
@@ -134,6 +139,30 @@ export const updaetNickname = async (
         const response = await instance.patch(
             `chats/${chatId}/update-nickname`,
             { memberId, nickname }
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const createChatAI = async (chatBody: AIChatBodyItf) => {
+    try {
+        const response = await instance.post("/chats/ai", chatBody);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const createMessageAI = async (
+    chatId: string,
+    messageBody: MessageAIBody
+) => {
+    try {
+        const response = await instance.post(
+            `/chats/ai/${chatId}/messages`,
+            messageBody
         );
         return response.data;
     } catch (error) {
