@@ -155,6 +155,15 @@ export const createChatAI = async (chatBody: AIChatBodyItf) => {
     }
 };
 
+export const getChatsAI = async () => {
+    try {
+        const response = await instance.get("/chats/ai");
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 export const createMessageAI = async (
     chatId: string,
     messageBody: MessageAIBody
@@ -164,6 +173,15 @@ export const createMessageAI = async (
             `/chats/ai/${chatId}/messages`,
             messageBody
         );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getMessagesAI = async (chatId: string) => {
+    try {
+        const response = await instance.get(`/chats/ai/${chatId}/messages`);
         return response.data;
     } catch (error) {
         throw error;

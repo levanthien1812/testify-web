@@ -7,7 +7,14 @@ type AIChatCardProps = {
 };
 
 const AIChatCard = ({ aiChat }: AIChatCardProps) => {
-    const { currentAIChat } = useChatSocket();
+    const { currentAIChat, setCurrentAIChat } = useChatSocket();
+
+    const handleClickCard = () => {
+        if (currentAIChat?.id === aiChat.id) return;
+        setCurrentAIChat({
+            ...aiChat,
+        });
+    };
 
     return (
         <div
@@ -16,8 +23,11 @@ const AIChatCard = ({ aiChat }: AIChatCardProps) => {
                     ? "bg-orange-100"
                     : "bg-slate-100"
             } shadow-md gap-2 hover:bg-slate-200 cursor-pointer max-w-full`}
+            onClick={handleClickCard}
         >
-            AIChatCard
+            <p className="whitespace-nowrap overflow-hidden text-ellipsis">
+                {aiChat.chat_name}
+            </p>
         </div>
     );
 };

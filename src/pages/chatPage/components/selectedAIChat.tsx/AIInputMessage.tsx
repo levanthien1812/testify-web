@@ -25,15 +25,14 @@ const AIInputMessage = () => {
             mutationKey: [MUTATION_KEYS.CREATE_CHAT],
             onSuccess: (data: any) => {
                 setCurrentAIChat({ ...currentAIChat, ...data });
+                sendMessageMutate(data.id);
             },
         });
 
     const { mutate: sendMessageMutate, isLoading: isSendingMessage } =
         useMutation({
-            mutationFn: async () => {
-                if (!currentAIChat || !currentAIChat.id) return;
-
-                const responseData = await createMessageAI(currentAIChat.id, {
+            mutationFn: async (chatId: string) => {
+                const responseData = await createMessageAI(chatId, {
                     text: currentMessageText,
                 });
 
@@ -44,7 +43,11 @@ const AIInputMessage = () => {
                 setCurrentMessageText("");
                 setCurrentAIChat({
                     ...currentAIChat!,
-                    messages: [...currentAIChat!.messages, data],
+                    messages: [
+                        ...currentAIChat!.messages,
+                        data.messages.userMessage,
+                        data.messages.assistantMessage,
+                    ],
                 });
                 inputMessageRef.current?.focus();
             },
@@ -59,10 +62,9 @@ const AIInputMessage = () => {
     const handleClickSendBtn = async () => {
         if (!currentAIChat || !currentAIChat.id) {
             createChatAIMutate();
+        } else {
+            sendMessageMutate(currentAIChat.id);
         }
-        setTimeout(() => {
-            sendMessageMutate();
-        }, 0);
     };
 
     const handlePressEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
