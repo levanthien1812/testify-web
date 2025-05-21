@@ -137,3 +137,9 @@ export const DEFAULT_APPEARANCES: ChatAppearancesItf = {
     messages_color: "blueGray",
     messages_font_size: "medium",
 };
+
+export enum MESSAGE_AI_ROLE {
+    USER = "user",
+    ASSISTANT = "assistant",
+    SYSTEM = "system",
+}

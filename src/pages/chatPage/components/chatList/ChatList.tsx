@@ -33,7 +33,6 @@ const ChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
             setIsAddingAIChat(true);
             const newAIChat: AIChatItf = {
                 chat_name: "New chat",
-                conversation: [],
                 created_at: new Date().toISOString(),
                 user_id: user!.id,
                 messages: [],

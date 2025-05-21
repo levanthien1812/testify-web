@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useQuery } from "react-query";
-import { getChats } from "../../services/chat";
-import { ChatItf } from "../../types/chat";
+import { getChats, getChatsAI } from "../../services/chat";
+import { AIChatItf, ChatItf } from "../../types/chat";
 import SelectedChat from "./components/selectedChat/SelectedChat";
 import { useChatSocket } from "./components/ChatSocketContext";
 import { SOCKET_EVENTS } from "../../config/constants/socket";
@@ -27,6 +27,7 @@ const ChatPage = () => {
         isOpeningChatInfo,
         setChattingWithAI,
         isChattingWithAI,
+        setAIChats,
     } = useChatSocket();
     const user = useAppSelector((state) => state.auth.user);
     const params = useParams();
@@ -53,6 +54,21 @@ const ChatPage = () => {
                 })
             );
         },
+        enabled: !isChattingWithAI,
+    });
+
+    const { data: aiChats, isLoading: isLoadingAiChats } = useQuery<
+        AIChatItf[]
+    >({
+        queryFn: async () => {
+            const responseData = await getChatsAI();
+            return responseData.chats;
+        },
+        queryKey: [QUERY_KEYS.GET_AI_CHATS],
+        onSuccess: (data: AIChatItf[]) => {
+            setAIChats(data);
+        },
+        enabled: isChattingWithAI,
     });
 
     const { data: blockedInfo, isLoading: isLoadingBlockedInfo } = useQuery({
@@ -76,10 +92,6 @@ const ChatPage = () => {
             );
         },
     });
-
-    const handleClickChatWithAI = () => {
-        setChattingWithAI(true);
-    };
 
     useEffect(() => {
         if (!socket) return;
@@ -112,7 +124,7 @@ const ChatPage = () => {
         <div
             className={`mt-6 shadow-md w-5/6 h-[80vh] xl:w-3/4 2xl:w-2/3 mx-auto flex p-2 bg-slate-50 gap-2`}
         >
-            <ChatList isLoadingChats={isLoadingChats} />
+            <ChatList isLoadingChats={isLoadingChats || isLoadingAiChats} />
             {!currentChat && !currentAIChat && (
                 <p className="text-center mt-8 text-gray-500 text-xl grow">
                     Select a chat to start chatting

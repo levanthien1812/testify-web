@@ -6,6 +6,7 @@ const QUERY_KEYS = {
     GET_SUBMISSION_ANSWERS: "get-test-answers",
     GET_CHAT: "get-chat",
     GET_CHATS: "get-chats",
+    GET_AI_CHATS: "get-ai-chats",
     GET_MESSAGES: "get-messages",
     GET_ONLINE_USERS: "get-online-users",
     GET_BLOCKED_USERS: "get-blocked-users",

@@ -1,6 +1,10 @@
 import { Socket } from "socket.io-client";
 import { TakerItf, userItf } from "./types";
-import { MESSAGE_TYPE, NOTIFICATION_TYPE } from "../config/constants/chat";
+import {
+    MESSAGE_AI_ROLE,
+    MESSAGE_TYPE,
+    NOTIFICATION_TYPE,
+} from "../config/constants/chat";
 
 export interface ChatAppearancesItf {
     background_color: string;
@@ -50,15 +54,15 @@ export interface ChatItf {
 }
 
 export interface AIChatMessageItf {
-    role: string;
+    role: MESSAGE_AI_ROLE;
     content: string;
     timestamp: string;
+    id: string;
 }
 
 export interface AIChatItf {
     user_id: string;
     id?: string;
-    conversation: AIChatMessageItf[];
     chat_name: string;
     created_at: string;
     updated_at?: string;
