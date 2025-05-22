@@ -15,7 +15,13 @@ const AIMessage = ({ message }: AIMessageProps) => {
                     : "flex-row"
             }`}
         >
-            <div className="bg-orange-600 text-white rounded-xl text-md py-1 px-4 leading-tight focus:ring-2 focus:ring-orange-600">
+            <div
+                className={` ${
+                    message.role === MESSAGE_AI_ROLE.USER
+                        ? "bg-orange-600 text-white border-none"
+                        : "border border-orange-600 bg-white text-black"
+                } rounded-xl text-md py-1 px-4 leading-tight focus:ring-2 focus:ring-orange-600 whitespace-pre-wrap max-w-[80%]`}
+            >
                 {message.content}
             </div>
         </div>

@@ -27,7 +27,6 @@ const Messages = () => {
         currentChat: chat,
         setCurrentChat,
         updateChatInChats,
-        incrementFetchTimes,
     } = useChatSocket();
     const messageRefs = useRef<Record<string, HTMLDivElement | null>>({});
     const messagesContainerRef = useRef<HTMLDivElement>(null);
@@ -40,7 +39,7 @@ const Messages = () => {
         queryKey: [QUERY_KEYS.GET_MESSAGES, chat!.id],
         queryFn: async () => {
             const responseData = await getMessages(chat!.id, {
-                page: chat?.fetch_times,
+                oldestMessageId: chat?.messages[0]?.id,
                 limit: MESSAGES_PER_FETCH,
             });
             return responseData.messages;
@@ -175,10 +174,13 @@ const Messages = () => {
             (entries) => {
                 if (
                     entries[0].isIntersecting &&
-                    chat!.messages.length >=
-                        chat.fetch_times! * MESSAGES_PER_FETCH
+                    chat.last_oldest_message_id !== chat.messages[0].id
                 ) {
-                    incrementFetchTimes();
+                    setCurrentChat({
+                        ...chat,
+                        last_oldest_message_id: chat.messages[0].id,
+                    } as ChatItf);
+                    refetchMessages();
                 }
             },
             {
@@ -223,11 +225,9 @@ const Messages = () => {
     }, [chat?.messages]);
 
     useEffect(() => {
-        refetchMessages();
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [chat?.fetch_times]);
-
-    useEffect(() => {
+        if (chat && chat.messages.length === 0) {
+            refetchMessages();
+        }
         if (chat && chat.messages?.length > 0) {
             updateReadMessageMutate();
         }
