@@ -102,12 +102,15 @@ export const updateMessage = async (
 
 export const getMessages = async (
     chatId: string,
-    query?: { limit?: number; page?: number }
+    query?: { limit: number; oldestMessageId?: string }
 ) => {
     try {
         let queryString = "";
-        if (query?.limit && query?.page) {
-            queryString = `?limit=${query.limit}&page=${query.page}`;
+        if (query?.limit) {
+            queryString = `?limit=${query.limit}`;
+        }
+        if (query?.oldestMessageId) {
+            queryString += `&oldestMessageId=${query.oldestMessageId}`;
         }
 
         const response = await instance.get(
@@ -166,12 +169,19 @@ export const getChatsAI = async () => {
 
 export const createMessageAI = async (
     chatId: string,
-    messageBody: MessageAIBody
+    AIModel: string,
+    content: MessageAIBody
 ) => {
     try {
         const response = await instance.post(
             `/chats/ai/${chatId}/messages`,
-            messageBody
+            {
+                model: AIModel,
+                content,
+            },
+            {
+                timeout: 20000,
+            }
         );
         return response.data;
     } catch (error) {
@@ -182,6 +192,15 @@ export const createMessageAI = async (
 export const getMessagesAI = async (chatId: string) => {
     try {
         const response = await instance.get(`/chats/ai/${chatId}/messages`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getModelsAI = async () => {
+    try {
+        const response = await instance.get("/chats/ai/models");
         return response.data;
     } catch (error) {
         throw error;

@@ -12,6 +12,7 @@ const QUERY_KEYS = {
     GET_BLOCKED_USERS: "get-blocked-users",
     GET_PASSCODE: "get-passcode",
     GET_TEST_SUBMISSIONS: "get-test-submissions",
+    GET_AI_MODELS: "get-ai-models",
 };
 
 const MUTATION_KEYS = {

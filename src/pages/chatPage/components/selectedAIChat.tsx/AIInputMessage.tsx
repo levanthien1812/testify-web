@@ -7,11 +7,17 @@ import { useMutation } from "react-query";
 import { createChatAI, createMessageAI } from "../../../../services/chat";
 import { useChatSocket } from "../ChatSocketContext";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
+import { MESSAGE_AI_ROLE } from "../../../../config/constants/chat";
 
 const AIInputMessage = () => {
     const [currentMessageText, setCurrentMessageText] = useState("");
     const inputMessageRef = useRef<HTMLInputElement>(null);
-    const { currentAIChat, setCurrentAIChat } = useChatSocket();
+    const {
+        currentAIChat,
+        setCurrentAIChat,
+        selectedAIModel,
+        setIsGeneratingResponse,
+    } = useChatSocket();
 
     const { mutate: createChatAIMutate, isLoading: isCreatingChat } =
         useMutation({
@@ -32,22 +38,29 @@ const AIInputMessage = () => {
     const { mutate: sendMessageMutate, isLoading: isSendingMessage } =
         useMutation({
             mutationFn: async (chatId: string) => {
-                const responseData = await createMessageAI(chatId, {
-                    text: currentMessageText,
-                });
+                const responseData = await createMessageAI(
+                    chatId,
+                    selectedAIModel!,
+                    {
+                        text: currentMessageText,
+                    }
+                );
 
-                return responseData.message;
+                return responseData.messages;
+            },
+            onMutate: () => {
+                setIsGeneratingResponse(true);
             },
             mutationKey: [MUTATION_KEYS.SEND_MESSAGE, currentAIChat!.id],
             onSuccess: (data) => {
-                setCurrentMessageText("");
+                setIsGeneratingResponse(false);
+                const updatedMessages = currentAIChat!.messages;
+                updatedMessages[updatedMessages.length - 1] = data.userMessage;
+                updatedMessages?.push(data.assistantMessage);
+
                 setCurrentAIChat({
                     ...currentAIChat!,
-                    messages: [
-                        ...currentAIChat!.messages,
-                        data.messages.userMessage,
-                        data.messages.assistantMessage,
-                    ],
+                    messages: updatedMessages,
                 });
                 inputMessageRef.current?.focus();
             },
@@ -60,6 +73,19 @@ const AIInputMessage = () => {
     };
 
     const handleClickSendBtn = async () => {
+        setCurrentAIChat({
+            ...currentAIChat!,
+            messages: [
+                ...currentAIChat!.messages,
+                {
+                    role: MESSAGE_AI_ROLE.USER,
+                    content: currentMessageText,
+                    id: "user-message",
+                    created_at: new Date().toISOString(),
+                },
+            ],
+        });
+        setCurrentMessageText("");
         if (!currentAIChat || !currentAIChat.id) {
             createChatAIMutate();
         } else {

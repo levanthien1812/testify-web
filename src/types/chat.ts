@@ -39,7 +39,6 @@ export interface ChatItf {
         sender_id: string;
         is_typing: boolean;
     };
-    fetch_times?: number;
     scroll_position?: number;
     is_accessed?: boolean;
     search_string?: string;
@@ -51,13 +50,15 @@ export interface ChatItf {
     is_chat_blocked?: boolean;
     member_to_block?: MemberItf;
     member_to_be_blocked?: MemberItf;
+    last_oldest_message_id?: string;
 }
 
 export interface AIChatMessageItf {
     role: MESSAGE_AI_ROLE;
     content: string;
-    timestamp: string;
     id: string;
+    created_at: string;
+    updated_at?: string;
 }
 
 export interface AIChatItf {
@@ -103,6 +104,13 @@ export interface MessageItf {
     links?: string[];
 }
 
+export interface AIModelsItf {
+    id: string;
+    object: string;
+    created: number;
+    owned_by: string;
+}
+
 export interface ChatContext {
     socket: Socket | null;
     onlineUsers: {
@@ -116,6 +124,10 @@ export interface ChatContext {
     isOpeningChatInfo: boolean;
     availableTakers: TakerItf[];
     isChattingWithAI: boolean;
+    aiModels: AIModelsItf[];
+    selectedAIModel: string | null;
+    isGeneratingResponse: boolean;
+
     setChattingWithAI: (isChattingWithAI: boolean) => void;
     setIsOpeningChatInfo: (isOpeningChatInfo: boolean) => void;
     setCurrentChat: (chat: ChatItf | null) => void;
@@ -127,7 +139,6 @@ export interface ChatContext {
     removeMessage: (messageId: string) => void;
     emitTyping: (isTyping: boolean, chatId: string) => void;
     findSearchResult: () => void;
-    incrementFetchTimes: () => void;
     cancelSearching: () => void;
     updateNickname: (
         chatId: string,
@@ -135,6 +146,9 @@ export interface ChatContext {
         nickname: string
     ) => void;
     setAvailableTakers: (availabelTakers: TakerItf[]) => void;
+    setAIModels: (aiModels: AIModelsItf[]) => void;
+    setSelectedAIModel: (aiModel: string | null) => void;
+    setIsGeneratingResponse: (isGeneratingResponse: boolean) => void;
 }
 
 export interface Emoji {

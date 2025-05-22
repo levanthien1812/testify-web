@@ -16,6 +16,7 @@ import { authActions } from "../../stores/auth";
 import ChatList from "./components/chatList/ChatList";
 import SelectedAIChat from "./components/selectedAIChat.tsx/SelectedAIChat";
 import { useAppSelector } from "../../hooks/hooks";
+import AIChatList from "./components/AIChatList/AIChatList";
 
 const ChatPage = () => {
     const {
@@ -41,6 +42,7 @@ const ChatPage = () => {
         },
         queryKey: [QUERY_KEYS.GET_CHATS],
         onSuccess: (data: ChatItf[]) => {
+            if (chats) return;
             setChats(
                 data.map((chat) => {
                     return {
@@ -48,7 +50,6 @@ const ChatPage = () => {
                         scroll_position: 0,
                         unread_messages: [],
                         is_accessed: false,
-                        fetch_times: 1,
                         chat_name: getChatName(chat.members, user!),
                     };
                 })
@@ -124,14 +125,18 @@ const ChatPage = () => {
         <div
             className={`mt-6 shadow-md w-5/6 h-[80vh] xl:w-3/4 2xl:w-2/3 mx-auto flex p-2 bg-slate-50 gap-2`}
         >
-            <ChatList isLoadingChats={isLoadingChats || isLoadingAiChats} />
-            {!currentChat && !currentAIChat && (
+            {!isChattingWithAI && <ChatList isLoadingChats={isLoadingChats} />}
+            {isChattingWithAI && (
+                <AIChatList isLoadingChats={isLoadingAiChats} />
+            )}
+            {((!currentChat && !isChattingWithAI) ||
+                (!currentAIChat && isChattingWithAI)) && (
                 <p className="text-center mt-8 text-gray-500 text-xl grow">
                     Select a chat to start chatting
                 </p>
             )}
-            {!!currentChat && <SelectedChat />}
-            {!!currentAIChat && <SelectedAIChat />}
+            {currentChat && !isChattingWithAI && <SelectedChat />}
+            {currentAIChat && isChattingWithAI && <SelectedAIChat />}
 
             {isOpeningChatInfo && <ChatInfo />}
         </div>

@@ -1,4 +1,3 @@
-import React from "react";
 import { useChatSocket } from "../ChatSocketContext";
 import AIChatHeader from "./AIChatHeader";
 import AIMessages from "./AIMessages";
@@ -7,13 +6,12 @@ import { AIChatItf, AIChatMessageItf } from "../../../../types/chat";
 import { QUERY_KEYS } from "../../../../config/constants/queryMutationKeys";
 import { getMessagesAI } from "../../../../services/chat";
 import { useQuery } from "react-query";
+import Loading from "../../../../components/loadings/Loading";
 
 const SelectedAIChat = () => {
     const { currentAIChat: chat, setCurrentAIChat } = useChatSocket();
 
-    const { isLoading: messagesLoading, refetch: refetchMessages } = useQuery<
-        AIChatMessageItf[]
-    >({
+    const { isLoading: messagesLoading } = useQuery<AIChatMessageItf[]>({
         queryKey: [QUERY_KEYS.GET_MESSAGES, chat!.id],
         queryFn: async () => {
             if (!chat || !chat.id) return [];
@@ -32,7 +30,13 @@ const SelectedAIChat = () => {
         <div className="flex shadow-md flex-[2] bg-white">
             <div className="flex flex-col grow">
                 <AIChatHeader />
-                <AIMessages />
+                {messagesLoading && (
+                    <Loading
+                        isLoading={messagesLoading}
+                        loadingText={{ text: "Loading messages..." }}
+                    />
+                )}
+                {chat?.messages && <AIMessages />}
                 <AIInputMessage />
             </div>
         </div>

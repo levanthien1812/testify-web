@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import {
     AIChatItf,
+    AIModelsItf,
     ChatContext,
     ChatItf,
     MessageItf,
@@ -35,6 +36,10 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
     const [currentAIChat, setCurrentAIChat] = React.useState<AIChatItf | null>(
         null
     );
+    const [AIModels, setAIModels] = useState<AIModelsItf[]>([]);
+    const [selectedAIModel, setSelectedAIModel] = useState<string | null>(null);
+    const [isGeneratingResponse, setIsGeneratingResponse] = useState(false);
+
     const { user } = useAppSelector((state) => state.auth);
     const dispatch = useDispatch();
 
@@ -269,6 +274,9 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                 availableTakers,
                 isChattingWithAI,
                 currentAIChat,
+                aiModels: AIModels,
+                selectedAIModel,
+                isGeneratingResponse,
 
                 setAvailableTakers: (data) => {
                     setAvailableTakers(data);
@@ -371,22 +379,6 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                                 break;
                             }
                         }
-                        if (!isResultFound) {
-                            setCurrentChat({
-                                ...currentChat,
-                                fetch_times:
-                                    getNum(currentChat.fetch_times) + 1,
-                            });
-                        }
-                    }
-                },
-                incrementFetchTimes() {
-                    if (currentChat && currentChat.fetch_times) {
-                        setCurrentChat({
-                            ...currentChat,
-                            is_accessed: true,
-                            fetch_times: currentChat.fetch_times + 1,
-                        });
                     }
                 },
                 cancelSearching() {
@@ -437,6 +429,16 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                 setCurrentAIChat(AIChat) {
                     setCurrentAIChat(AIChat);
                 },
+                setAIModels(AIModels) {
+                    setAIModels(AIModels);
+                    if (AIModels.length > 0) {
+                        setSelectedAIModel(AIModels[0].id);
+                    }
+                },
+                setSelectedAIModel(AIModel) {
+                    setSelectedAIModel(AIModel);
+                },
+                setIsGeneratingResponse,
             }}
         >
             {children}
