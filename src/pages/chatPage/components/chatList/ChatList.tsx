@@ -33,7 +33,7 @@ const ChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
                         loadingText={{ text: "Loading chats" }}
                     />
                 )}
-                {chats && chats.length === 0 && (
+                {chats && chats.length === 0 && !isLoadingChats && (
                     <p className="text-center text-gray-500 text-xl">
                         No chats yet
                     </p>

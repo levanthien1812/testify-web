@@ -6,7 +6,7 @@ const AIChats = () => {
     const { aiChats } = useChatSocket();
 
     return (
-        <div>
+        <div className="space-y-2">
             {aiChats &&
                 aiChats.length > 0 &&
                 aiChats.map((chat) => (

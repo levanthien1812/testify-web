@@ -14,6 +14,7 @@ import { TakerItf } from "../../../types/types";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../../stores/auth";
 import { useAppSelector } from "../../../hooks/hooks";
+import { MESSAGE_AI_ROLE } from "../../../config/constants/chat";
 
 const ChatSocketContext = React.createContext<ChatContext | undefined>(
     undefined
@@ -92,6 +93,32 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
 
         setChats(updatedChats);
     }, [chats?.length, user]);
+
+    useEffect(() => {
+        if (!currentAIChat || currentAIChat.messages.length === 0) return;
+        let lastUserMessageId, lastAssistantMessageId;
+
+        const lastMessage =
+            currentAIChat.messages[currentAIChat.messages.length - 1];
+        const penultimateMessage =
+            currentAIChat.messages.length > 1
+                ? currentAIChat.messages[currentAIChat.messages.length - 2]
+                : null;
+
+        if (lastMessage.role === MESSAGE_AI_ROLE.USER) {
+            lastUserMessageId = lastMessage.id;
+            lastAssistantMessageId = penultimateMessage?.id;
+        } else {
+            lastUserMessageId = penultimateMessage?.id;
+            lastAssistantMessageId = lastMessage.id;
+        }
+
+        setCurrentAIChat({
+            ...currentAIChat,
+            last_user_message_id: lastUserMessageId,
+            last_assistant_message_id: lastAssistantMessageId,
+        });
+    }, [currentAIChat?.messages]);
 
     useEffect(() => {
         if (!socket) return;

@@ -68,10 +68,13 @@ export interface AIChatItf {
     created_at: string;
     updated_at?: string;
     messages: AIChatMessageItf[];
+    last_user_message_id: string | undefined;
+    last_assistant_message_id: string | undefined;
 }
 
 export interface AIChatBodyItf {
-    chat_name: string;
+    first_message: string;
+    model: string;
 }
 
 export interface MessageBody {

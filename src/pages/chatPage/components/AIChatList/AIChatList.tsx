@@ -15,6 +15,7 @@ const AIChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
 
     const {
         aiChats,
+        currentAIChat,
         setChattingWithAI,
         setAIChats,
         setCurrentAIChat,
@@ -29,11 +30,15 @@ const AIChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
     };
 
     const handleClickAddChat = () => {
+        if (currentAIChat && !currentAIChat.id) return;
+
         const newAIChat: AIChatItf = {
             chat_name: "New chat",
             created_at: new Date().toISOString(),
             user_id: user!.id,
             messages: [],
+            last_user_message_id: undefined,
+            last_assistant_message_id: undefined,
         };
         setAIChats([...(aiChats || []), newAIChat]);
         setCurrentAIChat(newAIChat);
@@ -83,7 +88,7 @@ const AIChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
                         loadingText={{ text: "Loading chats" }}
                     />
                 )}
-                {aiChats && aiChats.length === 0 && (
+                {aiChats && aiChats.length === 0 && !isLoadingChats && (
                     <p className="text-center text-gray-500 text-xl">
                         No conversation created yet
                     </p>
