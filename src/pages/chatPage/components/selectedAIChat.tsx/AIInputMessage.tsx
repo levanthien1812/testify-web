@@ -23,10 +23,14 @@ const AIInputMessage = () => {
         useMutation({
             mutationFn: async () => {
                 const responseData = await createChatAI({
-                    chat_name: currentAIChat!.chat_name,
+                    first_message: currentMessageText,
+                    model: selectedAIModel!,
                 });
 
                 return responseData;
+            },
+            onMutate: () => {
+                setIsGeneratingResponse(true);
             },
             mutationKey: [MUTATION_KEYS.CREATE_CHAT],
             onSuccess: (data: any) => {
@@ -85,12 +89,12 @@ const AIInputMessage = () => {
                 },
             ],
         });
-        setCurrentMessageText("");
         if (!currentAIChat || !currentAIChat.id) {
             createChatAIMutate();
         } else {
             sendMessageMutate(currentAIChat.id);
         }
+        setCurrentMessageText("");
     };
 
     const handlePressEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {

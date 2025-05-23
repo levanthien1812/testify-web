@@ -25,6 +25,7 @@ import {
     MESSAGE_FONT_SIZES,
 } from "../../../../config/constants/chat";
 import { useAppSelector } from "../../../../hooks/hooks";
+import IconButton from "../../../../components/elements/IconButton";
 
 type MessageProps = {
     message: MessageItf;
@@ -419,42 +420,22 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                     </div>
                     {isHover && !currentChat?.is_chat_blocked && (
                         <div className="flex items-center gap-1">
-                            <button
-                                className="border-none bg-gray-100 rounded-xl w-6 h-6 flex justify-center items-center hover:bg-gray-200"
+                            <IconButton
+                                icon={faTrash}
                                 onClick={handleClickDeleteMessage}
-                            >
-                                <FontAwesomeIcon
-                                    icon={faTrash}
-                                    className="text-sm text-gray-400 hover:text-orange-600"
-                                />
-                            </button>
-                            <button
-                                className="border-none bg-gray-100 rounded-xl w-6 h-6 flex justify-center items-center hover:bg-gray-200"
+                            />
+                            <IconButton
+                                icon={faInfoCircle}
                                 onClick={() => setIsViewingDetail(true)}
-                            >
-                                <FontAwesomeIcon
-                                    icon={faInfoCircle}
-                                    className="text-sm text-gray-400 hover:text-orange-600"
-                                />
-                            </button>
+                            />
                             {!message.deleted && (
-                                <button className="border-none bg-gray-100 rounded-xl w-6 h-6 flex justify-center items-center hover:bg-gray-200">
-                                    <FontAwesomeIcon
-                                        icon={faPen}
-                                        className="text-sm text-gray-400 hover:text-orange-600"
-                                    />
-                                </button>
+                                <IconButton icon={faPen} onClick={() => {}} />
                             )}
                             {!message.deleted && (
-                                <button
-                                    className="border-none bg-gray-100 rounded-xl w-6 h-6 flex justify-center items-center hover:bg-gray-200"
+                                <IconButton
+                                    icon={faReply}
                                     onClick={handleClickReply}
-                                >
-                                    <FontAwesomeIcon
-                                        icon={faReply}
-                                        className="text-sm text-gray-400 hover:text-orange-600"
-                                    />
-                                </button>
+                                />
                             )}
                         </div>
                     )}

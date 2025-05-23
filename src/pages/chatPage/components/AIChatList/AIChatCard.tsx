@@ -13,6 +13,7 @@ const AIChatCard = ({ aiChat }: AIChatCardProps) => {
         if (currentAIChat?.id === aiChat.id) return;
         setCurrentAIChat({
             ...aiChat,
+            messages: aiChat.messages || [],
         });
     };
 
