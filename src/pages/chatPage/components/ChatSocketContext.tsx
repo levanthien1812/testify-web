@@ -453,9 +453,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                 setAIChats(AIChats) {
                     setAIChats(AIChats || []);
                 },
-                setCurrentAIChat(AIChat) {
-                    setCurrentAIChat(AIChat);
-                },
+                setCurrentAIChat,
                 setAIModels(AIModels) {
                     setAIModels(AIModels);
                     if (AIModels.length > 0) {

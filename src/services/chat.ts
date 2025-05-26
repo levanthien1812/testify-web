@@ -1,3 +1,4 @@
+import { CancelToken } from "axios";
 import { instance } from "../config/axios";
 import { CHAT_OPTIONS } from "../config/constants/chat";
 import {
@@ -170,7 +171,8 @@ export const getChatsAI = async () => {
 export const createMessageAI = async (
     chatId: string,
     AIModel: string,
-    content: MessageAIBody
+    content: MessageAIBody,
+    cancelToken: CancelToken
 ) => {
     try {
         const response = await instance.post(
@@ -181,6 +183,56 @@ export const createMessageAI = async (
             },
             {
                 timeout: 20000,
+                cancelToken: cancelToken,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updateMessageAI = async (
+    chatId: string,
+    messageId: string,
+    AIModel: string,
+    content: MessageAIBody,
+    cancelToken: CancelToken
+) => {
+    try {
+        const response = await instance.patch(
+            `/chats/ai/${chatId}/messages/${messageId}`,
+            {
+                model: AIModel,
+                content,
+            },
+            {
+                timeout: 20000,
+                cancelToken: cancelToken,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const createMockMessageAI = async (
+    chatId: string,
+    content: MessageAIBody,
+    delay: number,
+    cancelToken: CancelToken
+) => {
+    try {
+        const response = await instance.post(
+            `/chats/ai/${chatId}/messages/mock`,
+            {
+                content,
+                delay,
+            },
+            {
+                timeout: 20000,
+                cancelToken: cancelToken,
             }
         );
         return response.data;
