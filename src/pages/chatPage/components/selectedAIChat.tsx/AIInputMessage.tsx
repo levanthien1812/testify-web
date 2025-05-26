@@ -1,13 +1,18 @@
-import { faPaperPlane } from "@fortawesome/free-solid-svg-icons";
+import { faCircleStop, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useRef, useState } from "react";
 import Button from "../../../../components/elements/Button";
 import Input from "../../../../components/elements/Input";
 import { useMutation } from "react-query";
-import { createChatAI, createMessageAI } from "../../../../services/chat";
+import {
+    createChatAI,
+    createMessageAI,
+    createMockMessageAI,
+} from "../../../../services/chat";
 import { useChatSocket } from "../ChatSocketContext";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
 import { MESSAGE_AI_ROLE } from "../../../../config/constants/chat";
+import axios from "axios";
 
 const AIInputMessage = () => {
     const [currentMessageText, setCurrentMessageText] = useState("");
@@ -18,6 +23,7 @@ const AIInputMessage = () => {
         selectedAIModel,
         setIsGeneratingResponse,
     } = useChatSocket();
+    const cancelTokenSourceRef = useRef<any>(null);
 
     const { mutate: createChatAIMutate, isLoading: isCreatingChat } =
         useMutation({
@@ -42,13 +48,23 @@ const AIInputMessage = () => {
     const { mutate: sendMessageMutate, isLoading: isSendingMessage } =
         useMutation({
             mutationFn: async (chatId: string) => {
+                cancelTokenSourceRef.current = axios.CancelToken.source();
                 const responseData = await createMessageAI(
                     chatId,
                     selectedAIModel!,
                     {
                         text: currentMessageText,
-                    }
+                    },
+                    cancelTokenSourceRef.current.token
                 );
+                // const responseData = await createMockMessageAI(
+                //     chatId,
+                //     {
+                //         text: currentMessageText,
+                //     },
+                //     5000,
+                //     cancelTokenSourceRef.current.token
+                // );
 
                 return responseData.messages;
             },
@@ -58,13 +74,17 @@ const AIInputMessage = () => {
             mutationKey: [MUTATION_KEYS.SEND_MESSAGE, currentAIChat!.id],
             onSuccess: (data) => {
                 setIsGeneratingResponse(false);
-                const updatedMessages = currentAIChat!.messages;
-                updatedMessages[updatedMessages.length - 1] = data.userMessage;
-                updatedMessages?.push(data.assistantMessage);
 
-                setCurrentAIChat({
-                    ...currentAIChat!,
-                    messages: updatedMessages,
+                setCurrentAIChat((prev) => {
+                    const updatedMessages = [...prev!.messages];
+                    updatedMessages[updatedMessages.length - 1] =
+                        data.userMessage;
+                    updatedMessages?.push(data.assistantMessage);
+
+                    return {
+                        ...prev!,
+                        messages: updatedMessages,
+                    };
                 });
                 inputMessageRef.current?.focus();
             },
@@ -77,10 +97,10 @@ const AIInputMessage = () => {
     };
 
     const handleClickSendBtn = async () => {
-        setCurrentAIChat({
-            ...currentAIChat!,
+        setCurrentAIChat((prev) => ({
+            ...prev!,
             messages: [
-                ...currentAIChat!.messages,
+                ...prev!.messages,
                 {
                     role: MESSAGE_AI_ROLE.USER,
                     content: currentMessageText,
@@ -88,7 +108,7 @@ const AIInputMessage = () => {
                     created_at: new Date().toISOString(),
                 },
             ],
-        });
+        }));
         if (!currentAIChat || !currentAIChat.id) {
             createChatAIMutate();
         } else {
@@ -103,6 +123,14 @@ const AIInputMessage = () => {
         }
     };
 
+    const handleClickStopBtn = () => {
+        setIsGeneratingResponse(false);
+        if (cancelTokenSourceRef.current) {
+            cancelTokenSourceRef.current.cancel();
+        }
+        setCurrentMessageText("");
+    };
+
     return (
         <div className="border-t border-dashed border-gray-300 p-2 bg-opacity-40 bg-white">
             <div className="flex gap-2 items-center">
@@ -115,13 +143,16 @@ const AIInputMessage = () => {
                     ref={inputMessageRef}
                 />
 
-                <Button
-                    onClick={handleClickSendBtn}
-                    disabled={isSendingMessage || isCreatingChat}
-                    className="px-2"
-                >
-                    <FontAwesomeIcon icon={faPaperPlane} />
-                </Button>
+                {!(isCreatingChat || isSendingMessage) && (
+                    <Button onClick={handleClickSendBtn} className="px-2">
+                        <FontAwesomeIcon icon={faPaperPlane} />
+                    </Button>
+                )}
+                {isSendingMessage && (
+                    <Button onClick={handleClickStopBtn} className="px-2">
+                        <FontAwesomeIcon icon={faCircleStop} />
+                    </Button>
+                )}
             </div>
         </div>
     );

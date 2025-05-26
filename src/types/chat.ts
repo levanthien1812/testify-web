@@ -59,6 +59,7 @@ export interface AIChatMessageItf {
     id: string;
     created_at: string;
     updated_at?: string;
+    reply_to?: string;
 }
 
 export interface AIChatItf {
@@ -134,7 +135,7 @@ export interface ChatContext {
     setChattingWithAI: (isChattingWithAI: boolean) => void;
     setIsOpeningChatInfo: (isOpeningChatInfo: boolean) => void;
     setCurrentChat: (chat: ChatItf | null) => void;
-    setCurrentAIChat: (chat: AIChatItf | null) => void;
+    setCurrentAIChat: React.Dispatch<React.SetStateAction<AIChatItf | null>>;
     setChats: (chats: ChatItf[] | null) => void;
     setAIChats: (chats: AIChatItf[] | null) => void;
     updateChatInChats: (chatId: string, chatBody: Partial<ChatItf>) => void;
