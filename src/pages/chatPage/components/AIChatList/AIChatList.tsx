@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import Button from "../../../../components/elements/Button";
 import Loading from "../../../../components/loadings/Loading";
 import { useChatSocket } from "../ChatSocketContext";
@@ -39,6 +39,8 @@ const AIChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
             messages: [],
             last_user_message_id: undefined,
             last_assistant_message_id: undefined,
+            is_pinned: false,
+            is_archived: false,
         };
         setAIChats([...(aiChats || []), newAIChat]);
         setCurrentAIChat(newAIChat);

@@ -38,7 +38,7 @@ const AIInputMessage = () => {
             onMutate: () => {
                 setIsGeneratingResponse(true);
             },
-            mutationKey: [MUTATION_KEYS.CREATE_CHAT],
+            mutationKey: [MUTATION_KEYS.CREATE_AI_CHAT],
             onSuccess: (data: any) => {
                 setCurrentAIChat({ ...currentAIChat, ...data });
                 sendMessageMutate(data.id);

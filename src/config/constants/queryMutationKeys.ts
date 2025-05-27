@@ -42,6 +42,8 @@ const MUTATION_KEYS = {
     SUBMIT_ANSWERS: "submit-answers",
     REORDER_QUESTIONS: "reorder-questions",
     CREATE_CHAT: "create-chat",
+    UPDATE_CHAT_AI: "update-chat-ai",
+    CREATE_AI_CHAT: "create-ai-chat",
 };
 
 export { QUERY_KEYS, MUTATION_KEYS };

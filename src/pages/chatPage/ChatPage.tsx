@@ -29,6 +29,7 @@ const ChatPage = () => {
         setChattingWithAI,
         isChattingWithAI,
         setAIChats,
+        sortAIChats,
     } = useChatSocket();
     const user = useAppSelector((state) => state.auth.user);
     const params = useParams();
@@ -58,9 +59,7 @@ const ChatPage = () => {
         enabled: !isChattingWithAI,
     });
 
-    const { data: aiChats, isLoading: isLoadingAiChats } = useQuery<
-        AIChatItf[]
-    >({
+    const { isLoading: isLoadingAiChats } = useQuery<AIChatItf[]>({
         queryFn: async () => {
             const responseData = await getChatsAI();
             return responseData.chats;
@@ -68,11 +67,12 @@ const ChatPage = () => {
         queryKey: [QUERY_KEYS.GET_AI_CHATS],
         onSuccess: (data: AIChatItf[]) => {
             setAIChats(data);
+            sortAIChats();
         },
         enabled: isChattingWithAI,
     });
 
-    const { data: blockedInfo, isLoading: isLoadingBlockedInfo } = useQuery({
+    useQuery({
         queryFn: async () => {
             const responseData = await getBlockedInfo();
             return responseData;
