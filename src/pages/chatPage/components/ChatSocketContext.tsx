@@ -464,6 +464,29 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                     setSelectedAIModel(AIModel);
                 },
                 setIsGeneratingResponse,
+                updateAIChat(chatId, chatBody) {
+                    if (!AIChats) return;
+                    const newAIChats = AIChats.map((chat) => {
+                        if (chat.id === chatId) {
+                            return {
+                                ...chat,
+                                ...chatBody,
+                            };
+                        }
+                        return chat;
+                    });
+                    setAIChats(newAIChats);
+                },
+                sortAIChats() {
+                    if (!AIChats) return;
+                    if (!AIChats.some((chat) => chat.is_pinned)) return;
+                    const sortedAIChats = AIChats.sort((a, b) => {
+                        if (a.is_pinned && !b.is_pinned) return -1;
+                        if (!a.is_pinned && b.is_pinned) return 1;
+                        return 0;
+                    });
+                    setAIChats(sortedAIChats);
+                },
             }}
         >
             {children}

@@ -71,12 +71,18 @@ export interface AIChatItf {
     messages: AIChatMessageItf[];
     last_user_message_id: string | undefined;
     last_assistant_message_id: string | undefined;
+    is_pinned: boolean;
+    is_archived: boolean;
 }
 
 export interface AIChatBodyItf {
     first_message: string;
     model: string;
 }
+
+export type UpdateAIChat = Partial<
+    Pick<AIChatItf, "is_pinned" | "is_archived" | "chat_name">
+>;
 
 export interface MessageBody {
     chat_id: string;
@@ -153,6 +159,8 @@ export interface ChatContext {
     setAIModels: (aiModels: AIModelsItf[]) => void;
     setSelectedAIModel: (aiModel: string | null) => void;
     setIsGeneratingResponse: (isGeneratingResponse: boolean) => void;
+    updateAIChat: (chatId: string, chatBody: Partial<AIChatItf>) => void;
+    sortAIChats: () => void;
 }
 
 export interface Emoji {

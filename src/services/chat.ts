@@ -6,6 +6,7 @@ import {
     ChatBodyItf,
     MessageAIBody,
     MessageBody,
+    UpdateAIChat,
 } from "../types/chat";
 
 export const getChats = async () => {
@@ -159,6 +160,15 @@ export const createChatAI = async (chatBody: AIChatBodyItf) => {
     }
 };
 
+export const updateChatAI = async (chatId: string, chatBody: UpdateAIChat) => {
+    try {
+        const response = await instance.patch(`/chats/ai/${chatId}`, chatBody);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 export const getChatsAI = async () => {
     try {
         const response = await instance.get("/chats/ai");
@@ -180,6 +190,29 @@ export const createMessageAI = async (
             {
                 model: AIModel,
                 content,
+            },
+            {
+                timeout: 20000,
+                cancelToken: cancelToken,
+            }
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const regenerateMessageAI = async (
+    chatId: string,
+    AIModel: string,
+    messageId: string,
+    cancelToken: CancelToken
+) => {
+    try {
+        const response = await instance.patch(
+            `/chats/ai/${chatId}/messages/${messageId}/regenerate`,
+            {
+                model: AIModel,
             },
             {
                 timeout: 20000,

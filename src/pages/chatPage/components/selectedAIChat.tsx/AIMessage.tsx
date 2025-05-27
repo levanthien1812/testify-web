@@ -11,7 +11,10 @@ import { useChatSocket } from "../ChatSocketContext";
 import Input from "../../../../components/elements/Input";
 import Button from "../../../../components/elements/Button";
 import { useMutation } from "react-query";
-import { updateMessageAI } from "../../../../services/chat";
+import {
+    regenerateMessageAI,
+    updateMessageAI,
+} from "../../../../services/chat";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
 import axios from "axios";
 
@@ -33,8 +36,6 @@ const AIMessage = ({ message }: AIMessageProps) => {
     );
     const cancelTokenSourceRef = useRef<any>(null);
 
-    const handleCLickRegenerateButton = () => {};
-
     const handleCLickCopyButton = () => {
         navigator.clipboard.writeText(message.content);
     };
@@ -43,41 +44,69 @@ const AIMessage = ({ message }: AIMessageProps) => {
         setIsEditing(true);
     };
 
-    const { mutate: sendMessageMutate, isLoading: isSendingMessage } =
-        useMutation({
-            mutationFn: async () => {
-                cancelTokenSourceRef.current = axios.CancelToken.source();
-                const responseData = await updateMessageAI(
-                    currentAIChat!.id!,
-                    message.id,
-                    selectedAIModel!,
-                    {
-                        text: updatedMessageText,
-                    },
-                    cancelTokenSourceRef.current.token
-                );
-                return responseData.messages;
-            },
-            onMutate: () => {
-                setIsGeneratingResponse(true);
-            },
-            mutationKey: [MUTATION_KEYS.SEND_MESSAGE, currentAIChat!.id],
-            onSuccess: (data) => {
-                setIsGeneratingResponse(false);
+    const { mutate: updateMessageMutate } = useMutation({
+        mutationFn: async () => {
+            cancelTokenSourceRef.current = axios.CancelToken.source();
+            const responseData = await updateMessageAI(
+                currentAIChat!.id!,
+                message.id,
+                selectedAIModel!,
+                {
+                    text: updatedMessageText,
+                },
+                cancelTokenSourceRef.current.token
+            );
+            return responseData.messages;
+        },
+        onMutate: () => {
+            setIsGeneratingResponse(true);
+        },
+        mutationKey: [MUTATION_KEYS.SEND_MESSAGE, currentAIChat!.id],
+        onSuccess: (data) => {
+            setIsGeneratingResponse(false);
 
-                setCurrentAIChat((prev) => {
-                    const updatedMessages = [...prev!.messages];
-                    updatedMessages[updatedMessages.length - 1] =
-                        data.userMessage;
-                    updatedMessages?.push(data.assistantMessage);
+            setCurrentAIChat((prev) => {
+                const updatedMessages = [...prev!.messages];
+                updatedMessages[updatedMessages.length - 1] = data.userMessage;
+                updatedMessages?.push(data.assistantMessage);
 
-                    return {
-                        ...prev!,
-                        messages: updatedMessages,
-                    };
-                });
-            },
-        });
+                return {
+                    ...prev!,
+                    messages: updatedMessages,
+                };
+            });
+        },
+    });
+
+    const { mutate: regenerateResponseMutate } = useMutation({
+        mutationFn: async () => {
+            cancelTokenSourceRef.current = axios.CancelToken.source();
+            const responseData = await regenerateMessageAI(
+                currentAIChat!.id!,
+                selectedAIModel!,
+                message.reply_to!,
+                cancelTokenSourceRef.current.token
+            );
+            return responseData.messages;
+        },
+        onMutate: () => {
+            setIsGeneratingResponse(true);
+        },
+        mutationKey: [MUTATION_KEYS.SEND_MESSAGE, currentAIChat!.id],
+        onSuccess: (data) => {
+            setIsGeneratingResponse(false);
+
+            setCurrentAIChat((prev) => {
+                const updatedMessages = [...prev!.messages];
+                updatedMessages?.push(data.assistantMessage);
+
+                return {
+                    ...prev!,
+                    messages: updatedMessages,
+                };
+            });
+        },
+    });
 
     const handleUpdateMessage = () => {
         setCurrentAIChat((prev) => ({
@@ -86,9 +115,17 @@ const AIMessage = ({ message }: AIMessageProps) => {
                 (msg) => msg.reply_to !== message.id
             ),
         }));
-        setIsGeneratingResponse(true);
         setIsEditing(false);
-        sendMessageMutate();
+        updateMessageMutate();
+    };
+
+    const handleRegenerateResponse = () => {
+        setCurrentAIChat((prev) => ({
+            ...prev!,
+            messages: prev!.messages.filter((msg) => msg.id !== message.id),
+        }));
+        setIsGeneratingResponse(true);
+        regenerateResponseMutate();
     };
 
     return (
@@ -107,7 +144,7 @@ const AIMessage = ({ message }: AIMessageProps) => {
                         message.id && (
                         <IconButton
                             icon={faRotateRight}
-                            onClick={handleCLickRegenerateButton}
+                            onClick={handleRegenerateResponse}
                         />
                     )}
                     {(isHover ||
