@@ -44,6 +44,7 @@ const MUTATION_KEYS = {
     CREATE_CHAT: "create-chat",
     UPDATE_CHAT_AI: "update-chat-ai",
     CREATE_AI_CHAT: "create-ai-chat",
+    DELETE_CHAT_AI: "delete-ai-chat",
 };
 
 export { QUERY_KEYS, MUTATION_KEYS };

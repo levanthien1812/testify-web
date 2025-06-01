@@ -291,3 +291,12 @@ export const getModelsAI = async () => {
         throw error;
     }
 };
+
+export const deleteChatAI = async (chatId: string) => {
+    try {
+        const response = await instance.delete(`/chats/ai/${chatId}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};

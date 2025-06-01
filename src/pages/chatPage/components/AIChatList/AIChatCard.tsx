@@ -1,5 +1,5 @@
 import React from "react";
-import { AIChatItf, UpdateAIChat } from "../../../../types/chat";
+import { AIChatItf, ChatItf, UpdateAIChat } from "../../../../types/chat";
 import { useChatSocket } from "../ChatSocketContext";
 import IconButton from "../../../../components/elements/IconButton";
 import {
@@ -10,7 +10,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { useMutation } from "react-query";
-import { updateChatAI } from "../../../../services/chat";
+import { deleteChatAI, updateChatAI } from "../../../../services/chat";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
 import Modal, {
     ModalBody,
@@ -43,7 +43,13 @@ const ActionButton = ({ icon, text, onClick }: ActionButtonProps) => {
 };
 
 const AIChatCard = ({ aiChat }: AIChatCardProps) => {
-    const { currentAIChat, setCurrentAIChat, updateAIChat } = useChatSocket();
+    const {
+        currentAIChat,
+        setCurrentAIChat,
+        updateAIChat,
+        setAIChats,
+        setPinnedAIChat,
+    } = useChatSocket();
     const [isActionsOpen, setIsActionsOpen] = React.useState(false);
     const [isUpdatingChatName, setIsUpdatingChatName] = React.useState(false);
     const [updatedChatname, setUpdatedChatname] = React.useState(
@@ -64,16 +70,23 @@ const AIChatCard = ({ aiChat }: AIChatCardProps) => {
             return responseData;
         },
         mutationKey: MUTATION_KEYS.UPDATE_CHAT_AI,
-        onSuccess: (data: any) => {
-            updateAIChat(aiChat.id!, { ...data });
+    });
+
+    const { mutate: deleteChatMutate } = useMutation({
+        mutationFn: async () => {
+            await deleteChatAI(aiChat.id!);
         },
+        mutationKey: MUTATION_KEYS.DELETE_CHAT_AI,
     });
 
     const handleClickPin = () => {
         setIsActionsOpen(false);
+        const updatedPinned = !aiChat.is_pinned;
         updateChatMutate({
-            is_pinned: !aiChat.is_pinned,
+            is_pinned: updatedPinned,
         });
+
+        setPinnedAIChat(aiChat.id!, updatedPinned);
     };
 
     const handleClickRename = () => {
@@ -81,7 +94,24 @@ const AIChatCard = ({ aiChat }: AIChatCardProps) => {
         setIsUpdatingChatName(true);
     };
 
-    const handleClickDelete = () => {};
+    const handleSaveRename = () => {
+        updateChatMutate({
+            chat_name: updatedChatname,
+        });
+        setIsUpdatingChatName(false);
+        setCurrentAIChat(
+            (prev) => ({ ...prev, chat_name: updatedChatname } as AIChatItf)
+        );
+        updateAIChat(currentAIChat!.id!, { chat_name: updatedChatname });
+    };
+
+    const handleClickDelete = () => {
+        deleteChatMutate();
+        setAIChats((prev) => prev.filter((chat) => chat.id !== aiChat.id));
+        if (currentAIChat && currentAIChat.id === aiChat.id) {
+            setCurrentAIChat(null);
+        }
+    };
 
     return (
         <div
@@ -107,7 +137,7 @@ const AIChatCard = ({ aiChat }: AIChatCardProps) => {
                     setIsActionsOpen(!isActionsOpen);
                 }}
             />
-            {isActionsOpen && (
+            {aiChat.id && isActionsOpen && (
                 <div
                     className="absolute flex flex-col  top-10 bg-white shadow-md z-10 right-0"
                     onClick={(e) => e.stopPropagation()}
@@ -146,16 +176,7 @@ const AIChatCard = ({ aiChat }: AIChatCardProps) => {
                         />
                     </ModalBody>
                     <ModalFooter includeCancelBtn={true}>
-                        <Button
-                            onClick={() => {
-                                updateChatMutate({
-                                    chat_name: updatedChatname,
-                                });
-                                setIsUpdatingChatName(false);
-                            }}
-                        >
-                            Save
-                        </Button>
+                        <Button onClick={handleSaveRename}>Save</Button>
                     </ModalFooter>
                 </Modal>
             )}
