@@ -48,6 +48,7 @@ const AIInputMessage = () => {
     const { mutate: sendMessageMutate, isLoading: isSendingMessage } =
         useMutation({
             mutationFn: async (chatId: string) => {
+                setCurrentMessageText("");
                 cancelTokenSourceRef.current = axios.CancelToken.source();
                 const responseData = await createMessageAI(
                     chatId,
@@ -114,7 +115,6 @@ const AIInputMessage = () => {
         } else {
             sendMessageMutate(currentAIChat.id);
         }
-        setCurrentMessageText("");
     };
 
     const handlePressEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {

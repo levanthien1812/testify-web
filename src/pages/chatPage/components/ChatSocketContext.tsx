@@ -15,6 +15,7 @@ import { useDispatch } from "react-redux";
 import { authActions } from "../../../stores/auth";
 import { useAppSelector } from "../../../hooks/hooks";
 import { MESSAGE_AI_ROLE } from "../../../config/constants/chat";
+import _ from "lodash";
 
 const ChatSocketContext = React.createContext<ChatContext | undefined>(
     undefined
@@ -463,7 +464,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                 setSelectedAIModel(AIModel) {
                     setSelectedAIModel(AIModel);
                 },
-                setIsGeneratingResponse,
+                setIsGeneratingResponse: setIsGeneratingResponse,
                 updateAIChat(chatId, chatBody) {
                     if (!AIChats) return;
                     const newAIChats = AIChats.map((chat) => {
@@ -477,15 +478,50 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                     });
                     setAIChats(newAIChats);
                 },
-                sortAIChats() {
-                    if (!AIChats) return;
-                    if (!AIChats.some((chat) => chat.is_pinned)) return;
-                    const sortedAIChats = AIChats.sort((a, b) => {
-                        if (a.is_pinned && !b.is_pinned) return -1;
-                        if (!a.is_pinned && b.is_pinned) return 1;
-                        return 0;
-                    });
-                    setAIChats(sortedAIChats);
+                setPinnedAIChat(chatId, isPinned) {
+                    if (!chats) return;
+                    const currentChat = AIChats.find(
+                        (chat) => chat.id === chatId
+                    );
+                    if (!currentChat) return;
+
+                    if (isPinned) {
+                        const otherChats = AIChats.filter(
+                            (chat) => chat.id !== chatId
+                        );
+                        currentChat.is_pinned = isPinned;
+                        setAIChats([currentChat, ...otherChats]);
+                    } else {
+                        let pinnedChats = AIChats.filter(
+                            (chat) => chat.is_pinned
+                        );
+
+                        let unpinnedChats = AIChats.filter(
+                            (chat) => !chat.is_pinned
+                        );
+
+                        pinnedChats = pinnedChats.filter(
+                            (chat) => chat.id !== chatId
+                        );
+
+                        const chatAfterIndex = unpinnedChats.findIndex(
+                            (chat) => chat.updated_at! > currentChat.updated_at!
+                        );
+
+                        if (chatAfterIndex >= 0) {
+                            if (chatAfterIndex < 0) return;
+                            unpinnedChats.splice(
+                                chatAfterIndex,
+                                0,
+                                currentChat
+                            );
+                        } else {
+                            unpinnedChats.push(currentChat);
+                        }
+
+                        currentChat.is_pinned = isPinned;
+                        setAIChats([...pinnedChats, ...unpinnedChats]);
+                    }
                 },
             }}
         >

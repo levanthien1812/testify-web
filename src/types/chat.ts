@@ -143,7 +143,7 @@ export interface ChatContext {
     setCurrentChat: (chat: ChatItf | null) => void;
     setCurrentAIChat: React.Dispatch<React.SetStateAction<AIChatItf | null>>;
     setChats: (chats: ChatItf[] | null) => void;
-    setAIChats: (chats: AIChatItf[] | null) => void;
+    setAIChats: React.Dispatch<React.SetStateAction<AIChatItf[]>>;
     updateChatInChats: (chatId: string, chatBody: Partial<ChatItf>) => void;
     sendMessage: (message: MessageItf) => void;
     removeMessage: (messageId: string) => void;
@@ -160,7 +160,7 @@ export interface ChatContext {
     setSelectedAIModel: (aiModel: string | null) => void;
     setIsGeneratingResponse: (isGeneratingResponse: boolean) => void;
     updateAIChat: (chatId: string, chatBody: Partial<AIChatItf>) => void;
-    sortAIChats: () => void;
+    setPinnedAIChat: (chatId: string, isPinned: boolean) => void;
 }
 
 export interface Emoji {

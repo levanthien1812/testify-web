@@ -29,7 +29,6 @@ const ChatPage = () => {
         setChattingWithAI,
         isChattingWithAI,
         setAIChats,
-        sortAIChats,
     } = useChatSocket();
     const user = useAppSelector((state) => state.auth.user);
     const params = useParams();
@@ -67,7 +66,6 @@ const ChatPage = () => {
         queryKey: [QUERY_KEYS.GET_AI_CHATS],
         onSuccess: (data: AIChatItf[]) => {
             setAIChats(data);
-            sortAIChats();
         },
         enabled: isChattingWithAI,
     });
