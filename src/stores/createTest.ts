@@ -27,6 +27,7 @@ import { SHARE_OPTIONS } from "../config/constants/tests";
 import { PASSCODE_FORMAT, PASSCODE_METHOD } from "../config/constants/passcode";
 import {
     addQuestion,
+    checkQuestionAnswerIsSaved,
     removeQuestion,
     reorderQuestions,
     sortQuestionFn,
@@ -188,7 +189,8 @@ const createTestSlice = createSlice({
                             if (question?.content?.answer) {
                                 answer = {
                                     ...question?.content?.answer,
-                                    is_saved: true,
+                                    is_saved:
+                                        checkQuestionAnswerIsSaved(question),
                                 };
                             }
                             return {
@@ -304,7 +306,7 @@ const createTestSlice = createSlice({
                         part.questions.map((question) => {
                             if (question.content && question.content.answer) {
                                 question.content.answer.is_saved =
-                                    !!question.content.answer;
+                                    checkQuestionAnswerIsSaved(question);
                             }
                             return question;
                         });
@@ -315,7 +317,7 @@ const createTestSlice = createSlice({
                 state.testQuestions.map((question) => {
                     if (question.content && question.content.answer) {
                         question.content.answer.is_saved =
-                            !!question.content.answer;
+                            checkQuestionAnswerIsSaved(question);
                     }
                     return question;
                 });

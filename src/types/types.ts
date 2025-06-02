@@ -168,6 +168,17 @@ export interface ResponseQuestionItf
     explaination?: string;
 }
 
+export interface TrueFalseQuestionBodyItf {
+    text: string;
+}
+
+export interface TrueFalseQuestionItf
+    extends TrueFalseQuestionBodyItf,
+        BaseQuestionContentItf<TrueFalseAnswerItf> {
+    id?: string;
+    explaination?: string;
+}
+
 export interface BaseQuestionContentItf<T extends AnswerBodyContentItf> {
     answer?: T;
 }
@@ -176,7 +187,8 @@ export type QuestionContentItf =
     | MultipleChoiceQuestionItf
     | FillGapsQuestionItf
     | MatchingQuestionItf
-    | ResponseQuestionItf;
+    | ResponseQuestionItf
+    | TrueFalseQuestionItf;
 
 export interface QuestionItf<T extends QuestionContentItf> {
     id?: string;
@@ -214,7 +226,8 @@ export type AnswerBodyContentItf =
     | MultipleChoiceAnswerItf
     | FillGapsAnswerItf
     | MatchingAnswerItf
-    | ResponseAnswerItf;
+    | ResponseAnswerItf
+    | TrueFalseAnswerItf;
 
 export interface MultipleChoiceAnswerItf extends BaseAnswerItf {
     options: string[];
@@ -230,6 +243,10 @@ export interface MatchingAnswerItf extends BaseAnswerItf {
 }
 export interface ResponseAnswerItf extends BaseAnswerItf {
     response: string;
+}
+
+export interface TrueFalseAnswerItf extends BaseAnswerItf {
+    is_true: boolean;
 }
 
 export interface PasscodeItf {

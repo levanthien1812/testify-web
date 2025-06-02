@@ -10,7 +10,7 @@ import Modal, {
     ModalHeader,
 } from "../../components/modals/Modal";
 import TestQuestionsAndAnswers from "../takeTestPage/components/TestQuestionsAndAnswers";
-import TestAnswers from "../createTestPage.tsx/components/TestAnswers";
+import TestAnswers from "../createTestPage/components/TestAnswers";
 import Button from "../../components/elements/Button";
 import { viewTestActions } from "../../stores/viewTest";
 import { useDispatch } from "react-redux";

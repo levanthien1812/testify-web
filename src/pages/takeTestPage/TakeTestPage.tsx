@@ -13,7 +13,7 @@ import { takeTestActions } from "../../stores/takeTest";
 import Loading from "../../components/loadings/Loading";
 import { useEffect, useMemo, useState } from "react";
 import Error from "../../components/errors/Error";
-import PasscodeLink from "../createTestPage.tsx/components/testTakers/PasscodeLink";
+import PasscodeLink from "../createTestPage/components/testTakers/PasscodeLink";
 import Submissions from "./components/Submissions";
 import { useAppSelector } from "../../hooks/hooks";
 import { ERROR_CODE } from "../../config/constants/errorCode";

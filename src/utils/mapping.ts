@@ -5,10 +5,10 @@ import {
     INITIAL_RESPONSE_QUESTION,
 } from "../config/constants/initialValues";
 import { QUESTION_TYPE } from "../config/constants/tests";
-import FillGapsQuestion from "../pages/createTestPage.tsx/components/testQuestions/FillGapsQuestion";
-import MatchingQuestion from "../pages/createTestPage.tsx/components/testQuestions/MatchingQuestion";
-import MulitpleChoiceQuestion from "../pages/createTestPage.tsx/components/testQuestions/MultipleChoicesQuestion";
-import ResponseQuestion from "../pages/createTestPage.tsx/components/testQuestions/ResponseQuestion";
+import FillGapsQuestion from "../pages/createTestPage/components/testQuestions/FillGapsQuestion";
+import MatchingQuestion from "../pages/createTestPage/components/testQuestions/MatchingQuestion";
+import MulitpleChoiceQuestion from "../pages/createTestPage/components/testQuestions/MultipleChoicesQuestion";
+import ResponseQuestion from "../pages/createTestPage/components/testQuestions/ResponseQuestion";
 import {
     FillGapsQuestionItf,
     MatchingQuestionItf,

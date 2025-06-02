@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { MatchingQuestionItf, QuestionItf } from "../../../types/types";
-import DraggableItem from "../../createTestPage.tsx/components/testAnswers/DraggableItem";
+import DraggableItem from "../../createTestPage/components/testAnswers/DraggableItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch } from "react-redux";

@@ -14,7 +14,7 @@ import { getBlockedInfo } from "../../services/user";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../stores/auth";
 import ChatList from "./components/chatList/ChatList";
-import SelectedAIChat from "./components/selectedAIChat.tsx/SelectedAIChat";
+import SelectedAIChat from "./components/selectedAIChat/SelectedAIChat";
 import { useAppSelector } from "../../hooks/hooks";
 import AIChatList from "./components/AIChatList/AIChatList";
 
