@@ -14,7 +14,7 @@ import defaultUserPhoto from "./../../assets/images/default-user-photo.png";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
 import { ROLES } from "../../config/constants/tests";
 import { useAppSelector } from "../../hooks/hooks";
-import PasscodeLink from "../../pages/createTestPage.tsx/components/testTakers/PasscodeLink";
+import PasscodeLink from "../../pages/createTestPage/components/testTakers/PasscodeLink";
 import { takeTestActions } from "../../stores/takeTest";
 import { PasscodeItf } from "../../types/types";
 

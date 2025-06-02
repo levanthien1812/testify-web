@@ -14,6 +14,7 @@ import {
     ResponseQuestionItf,
     TestBodyItf,
     TestPartItf,
+    TrueFalseQuestionItf,
 } from "../../types/types";
 import { formatTimezone } from "../../utils/time";
 import {
@@ -374,6 +375,10 @@ export const INITIAL_MATCHING_QUESTION: MatchingQuestionItf = {
 };
 
 export const INITIAL_RESPONSE_QUESTION: ResponseQuestionItf = {
+    text: "",
+};
+
+export const INITIAL_TRUE_FALSE_QUESTION: TrueFalseQuestionItf = {
     text: "",
 };
 

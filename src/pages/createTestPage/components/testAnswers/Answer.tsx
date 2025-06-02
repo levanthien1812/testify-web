@@ -7,6 +7,7 @@ import {
     QuestionContentItf,
     QuestionItf,
     ResponseQuestionItf,
+    TrueFalseQuestionItf,
 } from "../../../../types/types";
 import MultipleChoicesAnswer from "./MultipleChoicesAnswer";
 import FillGapsAnswer from "./FillGapsAnswer";
@@ -21,6 +22,7 @@ import { useDispatch } from "react-redux";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
 import { toast } from "react-toastify";
 import { TOAST_MESSAGES } from "../../../../config/constants/toasts";
+import TrueFalseAnswer from "./TrueFalseAnswer";
 
 const Answer: React.FC<{
     question: QuestionItf<QuestionContentItf>;
@@ -83,9 +85,9 @@ const Answer: React.FC<{
             <div className="flex justify-start">
                 <p
                     className={`px-2 text-white ${
-                        !question.content?.answer?.is_saved
-                            ? "bg-gray-600"
-                            : "bg-orange-600"
+                        question.content?.answer?.is_saved
+                            ? "bg-orange-600"
+                            : "bg-gray-600"
                     } w-fit`}
                 >
                     Question {question.order}{" "}
@@ -127,6 +129,13 @@ const Answer: React.FC<{
                 {question.type === QUESTION_TYPE.RESPONSE && (
                     <ResponseAnswer
                         content={question.content as ResponseQuestionItf}
+                    />
+                )}
+                {question.type === QUESTION_TYPE.TRUE_FALSE && (
+                    <TrueFalseAnswer
+                        reset={reset}
+                        content={question.content as TrueFalseQuestionItf}
+                        onProvideAnswer={handleProvideAnswer}
                     />
                 )}
             </div>

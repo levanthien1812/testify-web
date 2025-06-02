@@ -9,7 +9,7 @@ import "react-toastify/dist/ReactToastify.css";
 import ProtectedRoute from "./components/routes/ProtectedRoute";
 import { ROLES } from "./config/constants/tests";
 import HomePage from "./pages/homePage/HomePage";
-import CreateTestPage from "./pages/createTestPage.tsx/CreateTestPage";
+import CreateTestPage from "./pages/createTestPage/CreateTestPage";
 import TakeTestPage from "./pages/takeTestPage/TakeTestPage";
 import NotFound from "./pages/others/NotFound";
 import ViewTestPage from "./pages/viewTestPage/ViewTestPage";

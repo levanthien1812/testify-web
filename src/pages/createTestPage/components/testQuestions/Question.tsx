@@ -9,6 +9,7 @@ import {
     QuestionItf,
     ResponseQuestionBodyItf,
     TestPartItf,
+    TrueFalseQuestionBodyItf,
 } from "../../../../types/types";
 import Modal, {
     ModalBody,
@@ -42,6 +43,7 @@ import { getInitialQuestionContent } from "../../../../utils/mapping";
 import ConfirmModal from "../../../../components/modals/ConfirmModal";
 import QuestionDraggable from "./QuestionDraggable";
 import { useAppSelector } from "../../../../hooks/hooks";
+import TrueFalseQuestion from "./TrueFalseQuestion";
 
 type QuestionProps = {
     question: QuestionItf<QuestionContentItf>;
@@ -385,6 +387,26 @@ const Question = ({ question, part }: QuestionProps) => {
                                                 register={
                                                     register as UseFormRegister<
                                                         QuestionBodyItf<ResponseQuestionBodyItf>
+                                                    >
+                                                }
+                                            />
+                                        )}
+                                    {question?.content &&
+                                        question?.type ===
+                                            QUESTION_TYPE.TRUE_FALSE && (
+                                            <TrueFalseQuestion
+                                                content={
+                                                    question?.content as TrueFalseQuestionBodyItf
+                                                }
+                                                control={
+                                                    control as Control<
+                                                        QuestionBodyItf<TrueFalseQuestionBodyItf>
+                                                    >
+                                                }
+                                                errors={errors}
+                                                register={
+                                                    register as UseFormRegister<
+                                                        QuestionBodyItf<TrueFalseQuestionBodyItf>
                                                     >
                                                 }
                                             />
