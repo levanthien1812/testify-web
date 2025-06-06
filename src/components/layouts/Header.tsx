@@ -115,7 +115,7 @@ const Header = () => {
                         {showActions && (
                             <div className="absolute mt-2 bg-white shadow-md px-2 py-2 w-full">
                                 <Button
-                                    primary={false}
+                                    secondary
                                     className="w-full"
                                     onClick={handleLogout}
                                 >

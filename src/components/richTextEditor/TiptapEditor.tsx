@@ -218,7 +218,7 @@ const HelperButtons = ({
     );
 };
 
-const editorClasses = `max-w-none border border-black outline-none px-4 py-1 focus:border-orange-600 bg-white overflow-y-scroll custom-scrollbar-y resize-none max-h-[400px]`;
+const editorClasses = `max-w-none border border-black outline-none px-4 py-1 focus:border-orange-600 bg-white overflow-y-scroll custom-scrollbar-y resize-none max-h-[400px] h-[60px]`;
 const TextEditor = ({
     content,
     setContent,

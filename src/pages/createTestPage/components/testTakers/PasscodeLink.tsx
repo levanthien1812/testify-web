@@ -32,7 +32,7 @@ const PasscodeLink = ({
     const [error, setError] = useState<string | null>(null);
     const dispatch = useDispatch();
     const { passcode, testLink } = useAppSelector((state) => state.takeTest);
-    const [storedPasscodes, setStoredPasscodes] = useLocalStorage(
+    const [storedPasscodes, setPasscodes] = useLocalStorage<string[]>(
         "passcodes",
         []
     );
@@ -51,7 +51,7 @@ const PasscodeLink = ({
             },
             onSuccess: (data: PasscodeItf) => {
                 if (!storedPasscodes.includes(passcode.code)) {
-                    setStoredPasscodes([...storedPasscodes, passcode.code]);
+                    setPasscodes((prev) => [...prev, passcode.code]);
                 }
                 onSuccess(data);
             },
@@ -74,7 +74,7 @@ const PasscodeLink = ({
     };
 
     return (
-        <Modal onClose={onClose}>
+        <Modal onClose={onClose} allowClickBackdropToClose={false}>
             <ModalHeader title="Test passcode or link" />
             <ModalBody>
                 {!passCodeOnly && (

@@ -32,6 +32,7 @@ const TakeTestPage = () => {
         isPasscodeValidated,
         submissions,
         enteredPasscode,
+        submissionsCount,
     } = useAppSelector((state) => state.takeTest);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -163,7 +164,7 @@ const TakeTestPage = () => {
                             ? submissions.length <
                               test.options.allow_multiple_submissions
                                   .maximum_submissions!
-                            : submissions.length === 0) && (
+                            : submissionsCount === 0) && (
                             <div className="flex justify-center mt-4">
                                 <Button
                                     size="lg"

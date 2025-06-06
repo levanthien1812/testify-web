@@ -62,7 +62,7 @@ const TestsPage = () => {
                             Page {filter.page} of {testsFetchResult.totalPages}
                         </p>
                         <Button
-                            primary={false}
+                            secondary
                             size="sm"
                             onClick={() =>
                                 setFilter({
@@ -75,7 +75,7 @@ const TestsPage = () => {
                             <FontAwesomeIcon icon={faChevronLeft} size="sm" />
                         </Button>
                         <Button
-                            primary={false}
+                            secondary
                             size="sm"
                             onClick={() =>
                                 setFilter({ ...filter, page: filter.page + 1 })

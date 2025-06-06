@@ -25,7 +25,7 @@ const MultipleChoicesAnswer = ({
     const handleChangeRadio = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.value) {
             setOptionChosen(e.target.value);
-            onProvideAnswer({ options: [e.target.value] });
+            onProvideAnswer({ ...content.answer, options: [e.target.value] });
         }
     };
 

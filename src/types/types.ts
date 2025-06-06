@@ -114,7 +114,6 @@ export interface MultipleChoiceQuestionItf
         text: string;
         id?: string;
     }[];
-    explaination?: string;
 }
 
 export interface FillGapsQuestionBodyItf {
@@ -126,7 +125,6 @@ export interface FillGapsQuestionItf
     extends FillGapsQuestionBodyItf,
         BaseQuestionContentItf<FillGapsAnswerItf> {
     id?: string;
-    explaination?: string;
 }
 
 export interface MatchingQuestionBodyItf {
@@ -151,7 +149,6 @@ export interface MatchingQuestionItf
         id?: string;
         text: string;
     }[];
-    explaination?: string;
 }
 
 export interface ResponseQuestionBodyItf {
@@ -165,7 +162,6 @@ export interface ResponseQuestionItf
     extends ResponseQuestionBodyItf,
         BaseQuestionContentItf<ResponseAnswerItf> {
     id?: string;
-    explaination?: string;
 }
 
 export interface TrueFalseQuestionBodyItf {
@@ -176,7 +172,6 @@ export interface TrueFalseQuestionItf
     extends TrueFalseQuestionBodyItf,
         BaseQuestionContentItf<TrueFalseAnswerItf> {
     id?: string;
-    explaination?: string;
 }
 
 export interface BaseQuestionContentItf<T extends AnswerBodyContentItf> {
@@ -220,6 +215,7 @@ export interface QuestionBodyItf<T extends QuestionBodyContentItf> {
 
 export interface BaseAnswerItf {
     is_saved?: boolean;
+    explaination?: string;
 }
 
 export type AnswerBodyContentItf =

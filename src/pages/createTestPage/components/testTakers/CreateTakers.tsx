@@ -95,7 +95,7 @@ const CreateTakers = ({ onClose }: CreateTakersProps) => {
                     </div>
 
                     <Button
-                        primary={false}
+                        secondary
                         size="sm"
                         className="mt-2 w-full"
                         onClick={handleAdd}

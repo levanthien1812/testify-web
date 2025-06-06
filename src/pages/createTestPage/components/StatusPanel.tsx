@@ -77,7 +77,7 @@ const StatusPanel = () => {
                                     ))}
                                 <div className="flex justify-end mt-2">
                                     <Button
-                                        primary={false}
+                                        secondary
                                         size="sm"
                                         onClick={() => setDissmissed(true)}
                                     >
@@ -91,7 +91,7 @@ const StatusPanel = () => {
                         <Button
                             onClick={() => setDissmissed(false)}
                             className="absolute top-0 right-0 z-10"
-                            primary={false}
+                            secondary
                         >
                             <FontAwesomeIcon icon={faInfo} />
                         </Button>

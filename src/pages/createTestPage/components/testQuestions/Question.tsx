@@ -297,7 +297,7 @@ const Question = ({ question, part }: QuestionProps) => {
                                         editibility.TEST_QUESTIONS.content && (
                                             <div className="grow flex flex-col justify-end">
                                                 <Button
-                                                    primary={false}
+                                                    secondary
                                                     type="button"
                                                     onClick={() =>
                                                         handleClearContent()
@@ -417,7 +417,7 @@ const Question = ({ question, part }: QuestionProps) => {
                             <div className="flex justify-between mt-4 gap-2 border-t border-gray-300 pt-4">
                                 <div className="flex gap-2">
                                     <Button
-                                        primary={false}
+                                        secondary
                                         type="button"
                                         onClick={() =>
                                             setIsDeletingQuestion(true)
@@ -434,7 +434,7 @@ const Question = ({ question, part }: QuestionProps) => {
                                 </div>
                                 <div className="flex gap-2">
                                     <Button
-                                        primary={false}
+                                        secondary
                                         type="button"
                                         onClick={() => setOpen(false)}
                                     >

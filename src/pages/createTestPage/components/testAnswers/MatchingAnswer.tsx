@@ -47,7 +47,7 @@ const MatchingAnswer = ({
             matchings.length > 0 &&
             matchings.length !== content.answer?.matchings?.length
         ) {
-            onProvideAnswer({ matchings });
+            onProvideAnswer({ ...content.answer, matchings });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [matchings]);
@@ -139,7 +139,7 @@ const MatchingAnswer = ({
                                         handleDeleteMatching(matching.left)
                                     }
                                     size="sm"
-                                    primary={false}
+                                    secondary
                                     className="shrink-0"
                                 >
                                     Clear
