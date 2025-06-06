@@ -9,6 +9,7 @@ type ModalProps = {
     children: ReactNode;
     className?: string;
     onClose: () => void;
+    allowClickBackdropToClose?: boolean;
 };
 
 type HeaderProps = {
@@ -28,10 +29,17 @@ const ModalContext = React.createContext<Pick<ModalProps, "onClose"> | null>(
     null
 );
 
-const Modal = ({ children, onClose, className }: ModalProps) => {
+const Modal = ({
+    children,
+    onClose,
+    className,
+    allowClickBackdropToClose = true,
+}: ModalProps) => {
     return createPortal(
         <ModalContext.Provider value={{ onClose }}>
-            <Backdrop onClose={onClose} />
+            <Backdrop
+                onClick={allowClickBackdropToClose ? onClose : () => {}}
+            />
             <div
                 className={`fixed top-0 left-0 right-0 bottom-0 m-auto bg-white shadow-md w-fit h-fit min-w-40 md:min-w-80 2xl:min-w-[500px] lg:max-w-[800px] 2xl:max-w-[700px] z-50 ${className}`}
             >
@@ -74,7 +82,7 @@ export const ModalFooter = ({
     return (
         <div className="px-4 py-3 gap-3 border-t flex items-center justify-end">
             {includeCancelBtn && (
-                <Button primary={false} type="button" onClick={props?.onClose}>
+                <Button secondary type="button" onClick={props?.onClose}>
                     Cancel
                 </Button>
             )}

@@ -30,16 +30,17 @@ const Options = () => {
                             Your submissions: {submissionsCount}
                         </div>
                     )}
-                    {test.options.allow_multiple_submissions
-                        .maximum_submissions && (
-                        <div className="text-sm text-gray-500">
-                            Maximum submissions:{" "}
-                            {
-                                test.options.allow_multiple_submissions
-                                    .maximum_submissions
-                            }
-                        </div>
-                    )}
+                    {test.options.allow_multiple_submissions.enable &&
+                        test.options.allow_multiple_submissions
+                            .maximum_submissions && (
+                            <div className="text-sm text-gray-500">
+                                Maximum submissions:{" "}
+                                {
+                                    test.options.allow_multiple_submissions
+                                        .maximum_submissions
+                                }
+                            </div>
+                        )}
                 </div>
             )}
             {test?.options.allow_review_before_submission.let_taker_know && (

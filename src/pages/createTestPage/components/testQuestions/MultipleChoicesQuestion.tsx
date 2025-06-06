@@ -74,7 +74,7 @@ const MulitpleChoiceQuestion: React.FC<{
                     ))}
 
                     <Button
-                        primary={false}
+                        secondary
                         type="button"
                         className="w-full"
                         onClick={() => appendOption({ text: "" })}

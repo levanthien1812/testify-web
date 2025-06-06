@@ -186,7 +186,7 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
 
                             {isUpdatingScore && (
                                 <Button
-                                    primary={false}
+                                    secondary
                                     size="sm"
                                     onClick={() => {
                                         setManualScore(

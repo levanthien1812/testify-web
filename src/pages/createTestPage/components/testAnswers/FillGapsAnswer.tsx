@@ -26,7 +26,7 @@ const FillGapsAnswer = ({
             let index = parseInt(e.target.name.split("-")[1]) - 1;
             updatedGaps[index] = e.target.value;
             setGaps(updatedGaps);
-            onProvideAnswer({ gaps: updatedGaps });
+            onProvideAnswer({ ...content.answer, gaps: updatedGaps });
         }
     };
 

@@ -34,6 +34,7 @@ const TrueFalseAnswer = ({
                 selectedValue={String(content.answer?.is_true) || null}
                 onChange={(is_true) => {
                     onProvideAnswer({
+                        ...content.answer,
                         is_true: is_true === "true",
                         is_saved: false,
                     });

@@ -46,7 +46,7 @@ const Takers = () => {
                 ))}
                 <Button
                     size="lg"
-                    primary={false}
+                    secondary
                     className="w-full"
                     onClick={() => {
                         setIsAddingTakers(true);

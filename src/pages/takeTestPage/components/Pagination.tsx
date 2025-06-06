@@ -178,7 +178,7 @@ const QuestionsPagination = () => {
                     <Button
                         className=""
                         size="sm"
-                        primary={true}
+                        primary
                         onClick={handleClickPrevious}
                         disabled={
                             !test?.options.pagination_mode
@@ -193,7 +193,7 @@ const QuestionsPagination = () => {
                     <Button
                         className=""
                         size="sm"
-                        primary={true}
+                        primary
                         onClick={handleClickNext}
                         disabled={currentPage === totolPages}
                     >

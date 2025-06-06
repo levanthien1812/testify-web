@@ -190,14 +190,14 @@ const AIMessage = ({ message }: AIMessageProps) => {
                     <div className="flex gap-2 mt-2 justify-end">
                         <Button
                             type="button"
-                            primary={false}
+                            secondary
                             onClick={() => setIsEditing(false)}
                         >
                             Cancel
                         </Button>
                         <Button
                             type="submit"
-                            primary={true}
+                            primary
                             onClick={handleUpdateMessage}
                         >
                             Update

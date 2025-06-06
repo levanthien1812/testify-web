@@ -9,6 +9,8 @@ import { ROLES, TEST_STATUS } from "../../../config/constants/tests";
 import Button from "../../../components/elements/Button";
 import { Circle } from "rc-progress";
 import { useAppSelector } from "../../../hooks/hooks";
+import CheckImg from "../../../assets/images/checked.png";
+import StopWatchImg from "../../../assets/images/stopwatch.png";
 
 type TestItemCardProps = {
     test: TestItf;
@@ -98,7 +100,7 @@ const TestItemCard = ({ test }: TestItemCardProps) => {
                         {format(new Date(test.datetime), "dd/MM/yyyy HH:mm")}
                     </p>
                 </div>
-                {!!test.submissions_count && (
+                {user?.role === ROLES.MAKER && !!test.submissions_count && (
                     <div className="flex flex-col items-center justify-center grow bg-gray-50 px-2 py-2 rounded-md shadow-md">
                         <div className="w-1/2">
                             <Circle
@@ -119,6 +121,34 @@ const TestItemCard = ({ test }: TestItemCardProps) => {
                         <p className="font-bold text-orange-600 leading-none text-sm">
                             Submissions
                         </p>
+                    </div>
+                )}
+                {user?.role === ROLES.TAKER && test.submissions_count && (
+                    <div className="flex flex-col items-center justify-center grow bg-gray-50 px-2 py-2 rounded-md shadow-md">
+                        {test.submissions_count > 0 && (
+                            <>
+                                <img
+                                    src={CheckImg}
+                                    alt="check"
+                                    className="w-12 h-12"
+                                />
+                                <p className="font-bold text-green-600 leading-none text-sm mt-2">
+                                    Completed
+                                </p>
+                            </>
+                        )}
+                        {test.submissions_count === 0 && (
+                            <>
+                                <img
+                                    src={StopWatchImg}
+                                    alt="check"
+                                    className="w-12 h-12"
+                                />
+                                <p className="font-bold text-yellow-600 leading-none text-sm mt-2">
+                                    Need submission
+                                </p>
+                            </>
+                        )}
                     </div>
                 )}
             </div>

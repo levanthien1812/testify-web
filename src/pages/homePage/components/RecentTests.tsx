@@ -6,6 +6,7 @@ import { TestItf } from "../../../types/types";
 import Button from "../../../components/elements/Button";
 import { ROLES } from "../../../config/constants/tests";
 import { useAppSelector } from "../../../hooks/hooks";
+import noData from "../../../assets/images/no-data.png";
 
 const RecentTests = () => {
     const navigate = useNavigate();
@@ -40,9 +41,14 @@ const RecentTests = () => {
                     )}
                 </div>
 
-                <Link to="/tests" className="text-orange-600 hover:underline">
-                    View all
-                </Link>
+                {!isLoadingTests && tests && tests.length > 0 && (
+                    <Link
+                        to="/tests"
+                        className="text-orange-600 hover:underline"
+                    >
+                        View all
+                    </Link>
+                )}
             </div>
 
             {isLoadingTests && (
@@ -62,9 +68,16 @@ const RecentTests = () => {
                     })}
 
                     {tests.length === 0 && (
-                        <p className="text-center text-gray-600 text-xl">
-                            No tests available
-                        </p>
+                        <div className="flex flex-col items-center justify-center w-full py-8">
+                            <img
+                                src={noData}
+                                alt="no-data"
+                                className="w-36 h-36"
+                            />
+                            <p className="text-gray-600 text-xl mt-2">
+                                No tests available!
+                            </p>
+                        </div>
                     )}
                 </div>
             )}

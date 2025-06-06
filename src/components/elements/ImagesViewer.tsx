@@ -23,7 +23,7 @@ const ImagesViewer = ({ images, onClose }: ImagesViewerProps) => {
 
     return createPortal(
         <>
-            <Backdrop onClose={onClose} />
+            <Backdrop onClick={onClose} />
             <div className="absolute top-0 left-0 bottom-0 right-0 m-auto w-fit h-1/2 flex justify-center items-center">
                 {isStringArray(images) && (
                     <img

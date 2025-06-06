@@ -5,27 +5,33 @@ interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
     secondary?: boolean;
     size?: "sm" | "md" | "lg";
     className?: string;
+    outlined?: boolean;
 }
 
 const Button = ({
     children,
-    primary = true,
-    secondary = true,
+    primary,
+    secondary,
     size = "md",
     className,
     type = "button",
+    outlined,
     ...props
 }: ButtonProps) => {
     return (
         <button
             type={type}
             className={`shadow-sm ${
-                primary
+                primary || (!secondary && !outlined)
                     ? "bg-orange-600 shadow-orange-200 text-white hover:bg-orange-700 active:bg-orange-500"
                     : ""
             } ${
                 secondary
                     ? "bg-gray-200 shadow-gray-200 text-gray-500 hover:bg-gray-300 active:bg-gray-300"
+                    : ""
+            } ${
+                outlined
+                    ? "border border-orange-600 bg-white text-orange-600 hover:bg-orange-100 active:bg-orange-200"
                     : ""
             } ${size === "sm" ? "px-4 py-0 text-sm" : ""}${
                 size === "md" ? "px-8 py-1" : ""
