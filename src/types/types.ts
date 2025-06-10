@@ -103,7 +103,6 @@ export interface MultipleChoiceQuestionBodyItf {
     options: {
         text: string;
     }[];
-    images?: FileList | string[] | null;
 }
 
 export interface MultipleChoiceQuestionItf
@@ -155,7 +154,6 @@ export interface ResponseQuestionBodyItf {
     text: string;
     min_length?: number;
     max_length?: number;
-    images?: string[];
 }
 
 export interface ResponseQuestionItf

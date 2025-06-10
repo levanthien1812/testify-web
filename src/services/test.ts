@@ -147,17 +147,6 @@ export const saveQuestion = async (
             }
         }
 
-        if (questionBody.type === QUESTION_TYPE.MULTIPLE_CHOICES) {
-            const content =
-                questionBody.content as MultipleChoiceQuestionBodyItf;
-
-            if (content.images && content.images.length > 0) {
-                for (let i = 0; i < content.images.length; i++) {
-                    formData.append(`files[]`, content.images[i]);
-                }
-            }
-        }
-
         let response;
         if (!questionId) {
             response = await instance.post(
