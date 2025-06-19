@@ -1,7 +1,7 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { PartBodyItf, TestPartItf } from "../../../../types/types";
 import { useMutation } from "react-query";
-import { addPart, updatePart } from "../../../../services/test";
+import { addPart, movePart, updatePart } from "../../../../services/test";
 import { toast } from "react-toastify";
 import Button from "../../../../components/elements/Button";
 import Input from "../../../../components/elements/Input";
@@ -18,10 +18,16 @@ import { useAppSelector } from "../../../../hooks/hooks";
 const Part: React.FC<{
     part: TestPartItf;
 }> = ({ part }) => {
-    const { testId, maxScore, editibility } = useAppSelector(
+    const { testId, maxScore, editibility, numParts } = useAppSelector(
         (state) => state.createTest
     );
-    const { saveTestParts, validate: validateParts } = createTestActions;
+    const [isEditting, setIsEditing] = useState(!part.id ? true : false);
+    const [isDeleting, setIsDeleting] = useState(false);
+    const {
+        saveTestParts,
+        validate: validateParts,
+        movePart: movePartAction,
+    } = createTestActions;
     const dispatch = useDispatch();
 
     const { mutate: createPartMutate, isLoading: createPartLoading } =
@@ -37,18 +43,15 @@ const Part: React.FC<{
                     })
                 );
                 dispatch(validateParts());
+                setIsEditing(false);
                 toast.success(TOAST_MESSAGES.PART_ADDED_SUCCESSFULLY);
             },
         });
 
     const { mutate: updatePartMutate, isLoading: updatePartLoading } =
         useMutation({
-            mutationFn: async (partBody: PartBodyItf) =>
-                await updatePart(
-                    testId!,
-                    part.id!,
-                    pickFieldsFromObject(partBody, INITIAL_PART)
-                ),
+            mutationFn: async (partBody: Partial<PartBodyItf>) =>
+                await updatePart(testId!, part.id!, partBody),
             mutationKey: [
                 MUTATION_KEYS.UPDATE_PART,
                 { partId: part && part.id, body: part },
@@ -61,9 +64,20 @@ const Part: React.FC<{
                         partInfo: { is_saved: true },
                     })
                 );
+                setIsEditing(false);
                 toast.success(TOAST_MESSAGES.PART_UPDATED_SUCCESSFULLY);
             },
         });
+
+    const { mutate: movePartMutate } = useMutation({
+        mutationFn: async ({ direction }: { direction: "up" | "down" }) => {
+            await movePart(testId!, part.id!, direction);
+        },
+        mutationKey: [MUTATION_KEYS.MOVE_PART, { partId: part && part.id }],
+        onSuccess: (data) => {
+            toast.success(TOAST_MESSAGES.PART_MOVED_SUCCESSFULLY);
+        },
+    });
 
     const {
         handleSubmit,
@@ -90,10 +104,55 @@ const Part: React.FC<{
             })
         );
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [JSON.stringify(allValues), saveTestParts, dispatch, part?.order]);
+    }, [JSON.stringify(allValues), saveTestParts, dispatch]);
+
+    const handleClickMoveUp = () => {
+        dispatch(movePartAction({ partId: part.id!, direction: "up" }));
+        movePartMutate({ direction: "up" });
+    };
+
+    const handleClickMoveDown = () => {
+        dispatch(movePartAction({ partId: part.id!, direction: "down" }));
+        movePartMutate({ direction: "down" });
+    };
 
     return (
-        <Accordion viewData={{ title: { text: `Part ${part.order}` } }}>
+        <Accordion
+            viewData={{
+                title: { text: `Part ${part.order}` },
+                actions: [
+                    {
+                        text: "Edit",
+                        onClick: () => {
+                            setIsEditing(true);
+                        },
+                        disabled: isEditting || isDeleting,
+                        display: !!part.id,
+                    },
+                    {
+                        text: "Delete",
+                        onClick: () => {
+                            setIsDeleting(true);
+                        },
+                        disabled: isDeleting,
+                        className: "text-red-500",
+                        display: !!part.id,
+                    },
+                    {
+                        text: "Move up",
+                        onClick: handleClickMoveUp,
+                        disabled: part.order === 1,
+                        display: !!part.id,
+                    },
+                    {
+                        text: "Move down",
+                        onClick: handleClickMoveDown,
+                        disabled: part.order === numParts,
+                        display: !!part.id,
+                    },
+                ],
+            }}
+        >
             <form
                 onSubmit={handleSubmit(onSubmit)}
                 className="border border-gray-300 px-4 py-4 space-y-3"
@@ -106,7 +165,7 @@ const Part: React.FC<{
                         error={errors?.name && errors?.name.message}
                         label={{ text: "Name" }}
                         required
-                        disabled={!editibility.TEST_PARTS.name}
+                        disabled={!editibility.TEST_PARTS.name || !isEditting}
                     />
 
                     <Input
@@ -115,7 +174,9 @@ const Part: React.FC<{
                             errors?.description && errors?.description.message
                         }
                         label={{ text: "Description" }}
-                        disabled={!editibility.TEST_PARTS.description}
+                        disabled={
+                            !editibility.TEST_PARTS.description || !isEditting
+                        }
                     />
                     <Input
                         type="number"
@@ -136,7 +197,7 @@ const Part: React.FC<{
                         error={errors?.score && errors?.score.message}
                         label={{ text: "Score" }}
                         required
-                        disabled={!editibility.TEST_PARTS.score}
+                        disabled={!editibility.TEST_PARTS.score || !isEditting}
                     />
                     <Input
                         type="number"
@@ -156,26 +217,44 @@ const Part: React.FC<{
                         }
                         label={{ text: "Number of questions" }}
                         required
-                        disabled={!editibility.TEST_PARTS.num_questions}
+                        disabled={
+                            !editibility.TEST_PARTS.num_questions || !isEditting
+                        }
                     />
                 </div>
 
-                <div className="flex justify-end gap-6 items-end">
-                    {part?.is_saved && (
-                        <p className="text-orange-600 italic">Part is saved</p>
-                    )}
-                    {!part?.is_saved && (
-                        <Button
-                            className="w-1/5"
-                            type="submit"
-                            disabled={createPartLoading || updatePartLoading}
-                        >
-                            {createPartLoading || updatePartLoading
-                                ? "Saving..."
-                                : "Save"}
-                        </Button>
-                    )}
-                </div>
+                {isEditting && (
+                    <div className="flex justify-end gap-6 items-end">
+                        {part?.is_saved && (
+                            <p className="text-orange-600 italic">
+                                Part is saved
+                            </p>
+                        )}
+                        {!part?.is_saved && (
+                            <Button
+                                className="w-1/5"
+                                type="button"
+                                onClick={() => setIsEditing(false)}
+                                secondary
+                            >
+                                Cancel
+                            </Button>
+                        )}
+                        {!part?.is_saved && (
+                            <Button
+                                className="w-1/5"
+                                type="submit"
+                                disabled={
+                                    createPartLoading || updatePartLoading
+                                }
+                            >
+                                {createPartLoading || updatePartLoading
+                                    ? "Saving..."
+                                    : "Save"}
+                            </Button>
+                        )}
+                    </div>
+                )}
             </form>
         </Accordion>
     );

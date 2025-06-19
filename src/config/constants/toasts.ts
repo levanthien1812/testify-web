@@ -3,6 +3,7 @@ const TOAST_MESSAGES = {
     SOMETHING_WENT_WRONG: "Something went wrong",
     PART_ADDED_SUCCESSFULLY: "Part added successfully",
     PART_UPDATED_SUCCESSFULLY: "Part updated successfully",
+    PART_MOVED_SUCCESSFULLY: "Part moved successfully",
     CREATE_QUESTION_SUCCESSFULLY: "Create question successfuly",
     UPDATE_QUESTION_SUCCESSFULLY: "Update question successfuly",
     DELETE_QUESTION_SUCCESSFULLY: "Delete question successfuly",

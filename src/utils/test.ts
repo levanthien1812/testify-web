@@ -8,10 +8,7 @@ import {
     TrueFalseAnswerItf,
 } from "../types/types";
 
-export const sortQuestionFn = (
-    a: QuestionItf<QuestionContentItf>,
-    b: QuestionItf<QuestionContentItf>
-) => {
+export const sortByOrderFn = <T extends { order: number }>(a: T, b: T) => {
     if (a.order < b.order) {
         return -1;
     }
@@ -41,7 +38,7 @@ export const reorderQuestions = (
     }
     questionsToModified[startIndex].order = originalQuestions[endIndex].order;
 
-    questionsToModified.sort(sortQuestionFn);
+    questionsToModified.sort(sortByOrderFn);
     return questionsToModified;
 };
 
@@ -78,7 +75,7 @@ export const addQuestion = (
         }
     }
     questionsToModified.splice(index, 0, questionToAdd);
-    questionsToModified.sort(sortQuestionFn);
+    questionsToModified.sort(sortByOrderFn);
     return questionsToModified;
 };
 
@@ -88,7 +85,7 @@ export const sortQuestionsByOrder = (
     const questionsToSort = JSON.parse(
         JSON.stringify(questions)
     ) as QuestionItf<QuestionContentItf>[];
-    questionsToSort.sort(sortQuestionFn);
+    questionsToSort.sort(sortByOrderFn);
     return questionsToSort;
 };
 

@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faChevronRight } from "@fortawesome/free-solid-svg-icons";
+import { faChevronRight, faEllipsis } from "@fortawesome/free-solid-svg-icons";
+import IconButton from "../elements/IconButton";
 
 type viewData = {
     title: {
@@ -12,6 +13,13 @@ type viewData = {
     };
     open?: boolean;
     onToggle?: () => void;
+    actions?: {
+        text: string;
+        onClick: () => void;
+        disabled?: boolean;
+        className?: string;
+        display?: boolean;
+    }[];
     extraClass?: string;
 };
 
@@ -23,17 +31,18 @@ const Accordion = ({
     children: React.ReactNode;
 }) => {
     const [open, setOpen] = useState<boolean>(viewData.open || false);
+    const [showActions, setShowActions] = useState<boolean>(false);
 
     return (
         <div className={`border border-gray-300 ${viewData.extraClass}`}>
             <div
-                className="flex justify-between items-center px-4 py-2 bg-gray-300 cursor-pointer"
+                className="flex items-center px-4 py-2 bg-gray-300 cursor-pointer gap-2"
                 onClick={() => {
                     setOpen((prev) => !prev);
                     if (viewData.onToggle) viewData.onToggle();
                 }}
             >
-                <p className="text-lg space-x-2">
+                <p className="text-lg space-x-2 mr-auto">
                     <span className={`uppercase ${viewData.title.extraClass}`}>
                         {viewData?.title?.text}
                     </span>
@@ -41,6 +50,42 @@ const Accordion = ({
                         {viewData?.title?.description?.text}
                     </span>
                 </p>
+
+                {viewData.actions && (
+                    <div className="relative flex justify-center">
+                        <IconButton
+                            icon={faEllipsis}
+                            onClick={(
+                                e: React.MouseEvent<HTMLButtonElement>
+                            ) => {
+                                e.stopPropagation();
+                                setShowActions(!showActions);
+                            }}
+                        />
+                        {showActions && (
+                            <div className="absolute top-6 bg-gray-100 z-10 shadow-md shadow-gray-300 px-1">
+                                {viewData.actions
+                                    .filter((action) => action.display)
+                                    .map((action, index) => (
+                                        <button
+                                            onClick={(e) => {
+                                                e.stopPropagation();
+                                                action.onClick();
+                                                setShowActions(false);
+                                            }}
+                                            className={`bg-white text-center px-6 text-nowrap border-none min-w-[30px] w-full text-sm text-gray-700 hover:bg-orange-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-gray-50 ${action.className}`}
+                                            type="button"
+                                            key={index}
+                                            disabled={action.disabled}
+                                        >
+                                            {action.text}
+                                        </button>
+                                    ))}
+                            </div>
+                        )}
+                    </div>
+                )}
+
                 <FontAwesomeIcon
                     icon={faChevronRight}
                     className={`text-sm transition-all ${

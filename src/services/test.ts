@@ -109,12 +109,30 @@ export const addPart = async (testId: string, partBody: PartBodyItf) => {
 export const updatePart = async (
     testId: string,
     partId: string,
-    partBody: PartBodyItf
+    partBody: Partial<PartBodyItf>
 ) => {
     try {
         const response = await instance.patch(
             `/tests/${testId}/parts/${partId}`,
             partBody
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const movePart = async (
+    testId: string,
+    partId: string,
+    direction: "up" | "down"
+) => {
+    try {
+        const response = await instance.patch(
+            `/tests/${testId}/parts/${partId}/move`,
+            {
+                direction,
+            }
         );
         return response.data;
     } catch (error) {
@@ -144,17 +162,6 @@ export const saveQuestion = async (
                 formData.append("content", JSON.stringify(value));
             } else {
                 formData.append(key, value);
-            }
-        }
-
-        if (questionBody.type === QUESTION_TYPE.MULTIPLE_CHOICES) {
-            const content =
-                questionBody.content as MultipleChoiceQuestionBodyItf;
-
-            if (content.images && content.images.length > 0) {
-                for (let i = 0; i < content.images.length; i++) {
-                    formData.append(`files[]`, content.images[i]);
-                }
             }
         }
 

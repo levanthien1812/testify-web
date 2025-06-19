@@ -86,15 +86,6 @@ const MulitpleChoiceQuestion: React.FC<{
                         Add option
                     </Button>
                 </div>
-
-                <div className="mt-4">
-                    <label htmlFor="images">Images</label>
-                    <ImagesChoser
-                        images={content.images || null}
-                        {...register("content.images", {})}
-                        disabled={!editibility.TEST_QUESTIONS.content}
-                    />
-                </div>
             </div>
         </>
     );

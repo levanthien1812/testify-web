@@ -76,20 +76,6 @@ const MultipleChoicesAnswer = ({
                 dangerouslySetInnerHTML={{ __html: questionContent.text }}
             ></div>
 
-            {questionContent.images && (
-                <div className="grid grid-cols-2 gap-2 px-[10%] mt-2 justify-items-center">
-                    {(questionContent.images as string[]).map((image) => (
-                        <div key={image} className="relative">
-                            <img
-                                src={formatImageUrl(image)}
-                                alt={image}
-                                className="h-[250px] border-2 hover:relative hover:scale-[2] hover:z-10 transition-transform duration-300 bg-white"
-                            />
-                        </div>
-                    ))}
-                </div>
-            )}
-
             <div className="space-y-1 mt-2">
                 {questionContent.options.map((option) => (
                     <div

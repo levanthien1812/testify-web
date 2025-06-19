@@ -45,7 +45,7 @@ const MultipleChoicesAnswer = ({
                 dangerouslySetInnerHTML={{ __html: content.text }}
             ></div>
 
-            {content.images && (
+            {/* {content.images && (
                 <div
                     className={`grid ${
                         content.images.length >= 2
@@ -63,7 +63,7 @@ const MultipleChoicesAnswer = ({
                         </div>
                     ))}
                 </div>
-            )}
+            )} */}
 
             <div className="space-y-1 mt-2">
                 {content.options.map((option) => (
