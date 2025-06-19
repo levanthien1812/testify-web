@@ -109,12 +109,30 @@ export const addPart = async (testId: string, partBody: PartBodyItf) => {
 export const updatePart = async (
     testId: string,
     partId: string,
-    partBody: PartBodyItf
+    partBody: Partial<PartBodyItf>
 ) => {
     try {
         const response = await instance.patch(
             `/tests/${testId}/parts/${partId}`,
             partBody
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const movePart = async (
+    testId: string,
+    partId: string,
+    direction: "up" | "down"
+) => {
+    try {
+        const response = await instance.patch(
+            `/tests/${testId}/parts/${partId}/move`,
+            {
+                direction,
+            }
         );
         return response.data;
     } catch (error) {

@@ -22,6 +22,7 @@ const MUTATION_KEYS = {
     CREATE_PARTS: "create-parts",
     ADD_PART: "add-part",
     UPDATE_PART: "update-part",
+    MOVE_PART: "move-part",
     CREATE_QUESTION: "create-question",
     UPDATE_QUESTION: "update-question",
     DELETE_QUESTION: "delete-question",

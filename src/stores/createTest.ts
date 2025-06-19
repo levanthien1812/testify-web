@@ -30,7 +30,7 @@ import {
     checkQuestionAnswerIsSaved,
     removeQuestion,
     reorderQuestions,
-    sortQuestionFn,
+    sortByOrderFn,
 } from "../utils/test";
 import { findSmallestMissingPositive } from "../utils/array";
 
@@ -110,6 +110,10 @@ const createTestSlice = createSlice({
                     (item, index) => ({ ...INITIAL_PART, order: index + 1 })
                 );
             }
+            if (countProvidedParts > 0 && state.testParts) {
+                state.testParts.sort(sortByOrderFn);
+            }
+
             if (state.numParts > state.testParts.length) {
                 state.testParts = [
                     ...state.testParts,
@@ -142,6 +146,41 @@ const createTestSlice = createSlice({
             } else {
                 state.testParts[partIndex].is_saved = false;
             }
+        },
+        movePart(
+            state,
+            action: PayloadAction<{ partId: string; direction: "up" | "down" }>
+        ) {
+            let updatedParts = [...state.testParts];
+            const partToMoveIndex = state.testParts.findIndex(
+                (part) => part.id === action.payload.partId
+            );
+            if (partToMoveIndex === -1) return;
+
+            if (action.payload.direction === "up") {
+                const partAboveIndex = state.testParts.findIndex(
+                    (part) =>
+                        part.order === updatedParts[partToMoveIndex].order - 1
+                );
+                if (partAboveIndex === -1) return;
+                updatedParts[partToMoveIndex].order =
+                    updatedParts[partAboveIndex].order;
+                updatedParts[partAboveIndex].order =
+                    updatedParts[partToMoveIndex].order + 1;
+            } else {
+                const partBelowIndex = state.testParts.findIndex(
+                    (part) =>
+                        part.order === updatedParts[partToMoveIndex].order + 1
+                );
+                if (partBelowIndex === -1) return;
+                updatedParts[partToMoveIndex].order =
+                    updatedParts[partBelowIndex].order;
+                updatedParts[partBelowIndex].order =
+                    updatedParts[partToMoveIndex].order - 1;
+            }
+
+            updatedParts.sort(sortByOrderFn);
+            state.testParts = updatedParts;
         },
         initializeTestQuestions(state) {
             if (state.numParts > 1) {
@@ -202,7 +241,7 @@ const createTestSlice = createSlice({
                             };
                         });
 
-                        part.questions.sort(sortQuestionFn);
+                        part.questions.sort(sortByOrderFn);
                     }
                     return part;
                 });
@@ -240,7 +279,7 @@ const createTestSlice = createSlice({
                         }),
                     ];
                 }
-                state.testQuestions.sort(sortQuestionFn);
+                state.testQuestions.sort(sortByOrderFn);
             }
         },
 

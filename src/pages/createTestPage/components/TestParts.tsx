@@ -78,7 +78,7 @@ const TestParts = () => {
                 )}
                 {numParts > 1 &&
                     testParts.map((part, index) => (
-                        <Part key={index} part={part} />
+                        <Part key={part.id || index} part={part} />
                     ))}
                 {numParts === 1 && (
                     <div>
