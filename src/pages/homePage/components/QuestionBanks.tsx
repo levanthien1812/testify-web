@@ -1,0 +1,102 @@
+import SectionWrapper from "./SectionWrapper";
+import { useAppSelector } from "../../../hooks/hooks";
+import { ROLES } from "../../../config/constants/tests";
+import { useQuery } from "react-query";
+import { getQuestionBanks } from "../../../services/questionBank";
+import Loading from "../../../components/loadings/Loading";
+import QuestionBankCard from "./QuestionBankCard";
+import noData from "../../../assets/images/no-data.png";
+import { QuestionBankItf } from "../../../types/questionBank";
+import { useState } from "react";
+import CreateBank from "../../questionBanksPage/components/CreateBank";
+
+const QuestionBanks = () => {
+    const { user } = useAppSelector((state) => state.auth);
+    const [isCreatingQuestionBank, setIsCreatingQuestionBank] = useState(false);
+
+    const {
+        data: questionBanks,
+        isLoading: isLoadingQuestionBanks,
+        refetch: refetchQuestionBanks,
+    } = useQuery<QuestionBankItf[]>({
+        queryKey: ["questionBanks"],
+        queryFn: async () => {
+            const data = await getQuestionBanks();
+            return data.questionBanks;
+        },
+    });
+
+    const handleClickCreateBtn = () => {
+        setIsCreatingQuestionBank(true);
+    };
+
+    return (
+        <SectionWrapper
+            title={{ text: "Question Banks" }}
+            buttons={[
+                {
+                    text: "Create a question bank",
+                    onClick: handleClickCreateBtn,
+                    display: user!.role === ROLES.MAKER,
+                },
+            ]}
+            links={[
+                {
+                    text: "View all",
+                    to: "/question-banks",
+                    display:
+                        !isLoadingQuestionBanks &&
+                        questionBanks &&
+                        questionBanks.length > 0,
+                },
+            ]}
+        >
+            {isLoadingQuestionBanks && (
+                <Loading
+                    isLoading={isLoadingQuestionBanks}
+                    loadingText={{ text: "Loading question banks..." }}
+                />
+            )}
+            {questionBanks && (
+                <div className="flex gap-4 mt-3 pb-1 custom-scrollbar-x">
+                    {questionBanks.map((bank) => {
+                        return (
+                            <div key={bank.id}>
+                                <QuestionBankCard
+                                    questionBank={bank}
+                                    onAfterUpdate={() => {
+                                        refetchQuestionBanks();
+                                    }}
+                                />
+                            </div>
+                        );
+                    })}
+
+                    {questionBanks.length === 0 && (
+                        <div className="flex flex-col items-center justify-center w-full py-8">
+                            <img
+                                src={noData}
+                                alt="no-data"
+                                className="w-36 h-36"
+                            />
+                            <p className="text-gray-600 text-xl mt-2">
+                                No question banks found!
+                            </p>
+                        </div>
+                    )}
+                </div>
+            )}
+
+            {isCreatingQuestionBank && (
+                <CreateBank
+                    onClose={() => setIsCreatingQuestionBank(false)}
+                    onAfterCreate={() => {
+                        refetchQuestionBanks();
+                    }}
+                />
+            )}
+        </SectionWrapper>
+    );
+};
+
+export default QuestionBanks;

@@ -18,6 +18,7 @@ import ChatPage from "./pages/chatPage/ChatPage";
 import ChatSocketProvider from "./pages/chatPage/components/ChatSocketContext";
 import queryClientConfig from "./config/queryClient";
 import { useAppSelector } from "./hooks/hooks";
+import QuestionBanksPage from "./pages/questionBanksPage/QuestionBanksPage";
 
 const queryClient = new QueryClient(queryClientConfig);
 
@@ -51,6 +52,10 @@ function App() {
                         {
                             path: "/tests/:testId/edit",
                             element: <CreateTestPage />,
+                        },
+                        {
+                            path: "/question-banks",
+                            element: <QuestionBanksPage />,
                         },
                     ],
                 },
