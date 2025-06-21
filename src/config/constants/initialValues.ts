@@ -1,4 +1,8 @@
 import {
+    QuestionBankBodyItf,
+    QuestionBankBodyTempItf,
+} from "../../types/questionBank";
+import {
     CreateTestContext,
     EditabilityConfig,
     TakeTestContext,
@@ -421,4 +425,11 @@ export const INITIAL_VIEW_TEST_CONTEXT: ViewTestContext = {
     test: null,
     submissions: [],
     currentSubmissionBeingViewed: null,
+};
+
+export const INITIAL_QUESTION_BANK: QuestionBankBodyTempItf = {
+    name: "",
+    description: "",
+    tags: [],
+    is_bookmarked: false,
 };

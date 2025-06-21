@@ -1,9 +1,7 @@
 import { instance } from "../config/axios";
-import { QUESTION_TYPE } from "../config/constants/tests";
 import {
     AnswerBodyContentItf,
     GeneratePasscodeBodyItf,
-    MultipleChoiceQuestionBodyItf,
     PartBodyItf,
     PasscodeItf,
     QuestionBodyContentItf,

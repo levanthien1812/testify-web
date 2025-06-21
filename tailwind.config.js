@@ -3,10 +3,8 @@ module.exports = {
     content: ["./src/**/*.{js,jsx,ts,tsx}"],
     theme: {
         fontFamily: {
-            sans: ['"Abhaya Libre"', "sans-serif"],
+            sans: ['"EB Garamond"', "serif"],
         },
     },
-    plugins: [
-        require('tailwind-scrollbar')
-    ],
+    plugins: [require("tailwind-scrollbar")],
 };

@@ -13,6 +13,8 @@ import _ from "lodash";
 import Button from "../../../components/elements/Button";
 import { Link } from "react-router-dom";
 import defaultUserPhoto from "../../../assets/images/default-user-photo.png";
+import SectionWrapper from "./SectionWrapper";
+import Loading from "../../../components/loadings/Loading";
 
 const TopTakers = () => {
     const { data: topTakers, isLoading: isLoadingTopTakers } = useQuery({
@@ -96,15 +98,12 @@ const TopTakers = () => {
     });
 
     return (
-        <div className="mt-4">
-            <div className="border-b border-dashed border-gray-300 pb-0.5">
-                <h2 className="text-2xl">Top Takers</h2>
-            </div>
-
+        <SectionWrapper title={{ text: "Top takers" }}>
             {isLoadingTopTakers && (
-                <p className="mt-2 text-gray-600 text-xl text-center">
-                    Loading top takers...
-                </p>
+                <Loading
+                    isLoading={isLoadingTopTakers}
+                    loadingText={{ text: "Loading top takers..." }}
+                />
             )}
 
             {topTakers && topTakers.length > 0 && (
@@ -168,7 +167,7 @@ const TopTakers = () => {
                     </tbody>
                 </table>
             )}
-        </div>
+        </SectionWrapper>
     );
 };
 
