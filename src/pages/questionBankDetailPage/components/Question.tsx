@@ -1,62 +1,56 @@
 import { useEffect, useRef, useState } from "react";
 import {
+    QuestionBankItf,
+    QuestionInBankItf,
+} from "../../../types/questionBank";
+import {
     FillGapsQuestionBodyItf,
     MatchingQuestionBodyItf,
     MultipleChoiceQuestionBodyItf,
     QuestionBodyContentItf,
     QuestionBodyItf,
     QuestionContentItf,
-    QuestionItf,
     ResponseQuestionBodyItf,
-    TestPartItf,
     TrueFalseQuestionBodyItf,
-} from "../../../../types/types";
+} from "../../../types/types";
+import { Control, useForm } from "react-hook-form";
+import { getInitialQuestionContent } from "../../../utils/mapping";
+import { useMutation } from "react-query";
+import {
+    createQuestion,
+    deleteQuestion,
+    updateQuestion,
+} from "../../../services/questionBank";
+import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
+import { toast } from "react-toastify";
+import { TOAST_MESSAGES } from "../../../config/constants/toasts";
 import Modal, {
     ModalBody,
     ModalHeader,
-} from "../../../../components/modals/Modal";
-import MulitpleChoiceQuestion from "./MultipleChoicesQuestion";
-import FillGapsQuestion from "./FillGapsQuestion";
-import MatchingQuestion from "./MatchingQuestion";
-import { useMutation } from "react-query";
-import {
-    deleteQuestion as deleteQuestionApi,
-    saveQuestion,
-} from "../../../../services/test";
-import { toast } from "react-toastify";
-import ResponseQuestion from "./ResponseQuestion";
-import Button from "../../../../components/elements/Button";
-import Input from "../../../../components/elements/Input";
-import Select from "../../../../components/elements/Select";
-import { Control, useForm } from "react-hook-form";
-import { createTestActions } from "../../../../stores/createTest";
-import { TOAST_MESSAGES } from "../../../../config/constants/toasts";
-import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
-import { useDispatch } from "react-redux";
+} from "../../../components/modals/Modal";
+import Input from "../../../components/elements/Input";
 import {
     QUESTION_TYPE,
     QUESTION_TYPE_LABEL,
     TEST_LEVEL,
     TEST_LEVEL_LABEL,
-} from "../../../../config/constants/tests";
-import { getInitialQuestionContent } from "../../../../utils/mapping";
-import ConfirmModal from "../../../../components/modals/ConfirmModal";
-import QuestionDraggable from "./QuestionDraggable";
-import { useAppSelector } from "../../../../hooks/hooks";
-import TrueFalseQuestion from "./TrueFalseQuestion";
+} from "../../../config/constants/tests";
+import Select from "../../../components/elements/Select";
+import Button from "../../../components/elements/Button";
+import MulitpleChoiceQuestion from "../../createTestPage/components/testQuestions/MultipleChoicesQuestion";
+import ConfirmModal from "../../../components/modals/ConfirmModal";
+import TrueFalseQuestion from "../../createTestPage/components/testQuestions/TrueFalseQuestion";
+import ResponseQuestion from "../../createTestPage/components/testQuestions/ResponseQuestion";
+import MatchingQuestion from "../../createTestPage/components/testQuestions/MatchingQuestion";
+import FillGapsQuestion from "../../createTestPage/components/testQuestions/FillGapsQuestion";
 
 type QuestionProps = {
-    question: QuestionItf<QuestionContentItf>;
-    part?: TestPartItf;
+    question: QuestionInBankItf<QuestionContentItf>;
+    questionBank: QuestionBankItf;
 };
 
-const Question = ({ question, part }: QuestionProps) => {
+const Question = ({ question, questionBank }: QuestionProps) => {
     const [open, setOpen] = useState<boolean>(false);
-    const { testId, numQuestions, editibility } = useAppSelector(
-        (state) => state.createTest
-    );
-    const { saveTestQuestions, validate, deleteQuestion } = createTestActions;
-    const dispatch = useDispatch();
     const [isDeletingQuestion, setIsDeletingQuestion] =
         useState<boolean>(false);
     const audioElement = useRef<HTMLAudioElement>(null);
@@ -78,69 +72,17 @@ const Question = ({ question, part }: QuestionProps) => {
         if (!question?.id && allValues?.type !== question.type) {
             setValue("content", getInitialQuestionContent(allValues?.type));
         }
-        dispatch(
-            saveTestQuestions({
-                partId: part?.id,
-                questionOrder: question.order,
-                questionInfo: {
-                    type: allValues?.type,
-                    level: allValues?.level,
-                    score: Number(allValues?.score),
-                },
-            })
-        );
-        dispatch(validate());
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [
-        allValues?.type,
-        allValues?.level,
-        allValues?.score,
-        part?.id,
-        question?.order,
-        dispatch,
-    ]);
-
-    useEffect(() => {
-        dispatch(
-            saveTestQuestions({
-                partId: part?.id,
-                questionOrder: question.order,
-                questionInfo: {
-                    content: JSON.parse(JSON.stringify(allValues?.content)),
-                },
-            })
-        );
-        dispatch(validate());
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [
-        JSON.stringify(allValues?.content),
-        part?.id,
-        question?.order,
-        dispatch,
-    ]);
+    }, [allValues?.type]);
 
     const { mutate: createQuestionMutate, isLoading: createQuestionLoading } =
         useMutation({
             mutationFn: async (
                 questionBody: QuestionBodyItf<QuestionBodyContentItf>
-            ) =>
-                await saveQuestion(testId!, {
-                    ...questionBody,
-                    ...(part ? { part_id: part?.id } : {}),
-                }),
-            mutationKey: [MUTATION_KEYS.CREATE_QUESTION],
+            ) => await createQuestion(questionBank.id, questionBody),
+            mutationKey: [MUTATION_KEYS.CREATE_QUESTION_IN_BANK],
             onSuccess: (data) => {
                 toast.success(TOAST_MESSAGES.CREATE_QUESTION_SUCCESSFULLY);
-                dispatch(
-                    saveTestQuestions({
-                        partId: part?.id,
-                        questionOrder: question.order,
-                        questionInfo: {
-                            ...data.question,
-                            content: data?.content,
-                        },
-                    })
-                );
                 setOpen(false);
             },
         });
@@ -148,14 +90,10 @@ const Question = ({ question, part }: QuestionProps) => {
     const { mutate: deleteQuestionMutate, isLoading: deleteQuestionLoading } =
         useMutation({
             mutationFn: async () =>
-                await deleteQuestionApi(testId!, question.id!, {
-                    order: question.order,
-                    part_id: part?.id,
-                }),
+                await deleteQuestion(questionBank.id, question.id!),
             mutationKey: [MUTATION_KEYS.DELETE_QUESTION],
             onSuccess: (data) => {
                 toast.success(TOAST_MESSAGES.DELETE_QUESTION_SUCCESSFULLY);
-                dispatch(deleteQuestion(question));
                 setIsDeletingQuestion(false);
             },
         });
@@ -164,9 +102,14 @@ const Question = ({ question, part }: QuestionProps) => {
         useMutation({
             mutationFn: async (
                 questionBody: QuestionBodyItf<QuestionBodyContentItf>
-            ) => await saveQuestion(testId!, questionBody, question!.id),
+            ) =>
+                await updateQuestion(
+                    questionBank.id,
+                    question.id!,
+                    questionBody
+                ),
             mutationKey: [
-                MUTATION_KEYS.UPDATE_QUESTION,
+                MUTATION_KEYS.UPDATE_QUESTION_IN_BANK,
                 { questionId: question?.id },
             ],
             onSuccess: (data) => {
@@ -185,15 +128,6 @@ const Question = ({ question, part }: QuestionProps) => {
 
     const handleClearContent = () => {
         setValue("content", getInitialQuestionContent(question?.type));
-        dispatch(
-            saveTestQuestions({
-                partId: part?.id,
-                questionOrder: question.order,
-                questionInfo: {
-                    content: getInitialQuestionContent(question?.type),
-                },
-            })
-        );
     };
 
     const handleClickQuestion = () => {
@@ -205,10 +139,10 @@ const Question = ({ question, part }: QuestionProps) => {
 
     return (
         <>
-            <QuestionDraggable
+            {/* <QuestionDraggable
                 question={question}
                 onClick={handleClickQuestion}
-            />
+            /> */}
             <audio
                 ref={audioElement}
                 src="/sounds/button_click_fast_wooden_organic.mp3"
@@ -216,7 +150,7 @@ const Question = ({ question, part }: QuestionProps) => {
             />
             {open && (
                 <Modal onClose={() => setOpen(false)}>
-                    <ModalHeader title={`Question ${question?.order}`} />
+                    <ModalHeader title={`Question ${question?.id}`} />
                     <ModalBody>
                         <form
                             onSubmit={handleSubmit(onSubmit)}
@@ -242,10 +176,6 @@ const Question = ({ question, part }: QuestionProps) => {
                                             }
                                             label={{ text: "Score" }}
                                             required
-                                            disabled={
-                                                !editibility.TEST_QUESTIONS
-                                                    .score
-                                            }
                                         />
                                     </div>
 
@@ -271,9 +201,6 @@ const Question = ({ question, part }: QuestionProps) => {
                                             }))}
                                             label={{ text: "Type" }}
                                             required
-                                            disabled={
-                                                !editibility.TEST_QUESTIONS.type
-                                            }
                                         />
                                     </div>
                                     <div>
@@ -286,28 +213,23 @@ const Question = ({ question, part }: QuestionProps) => {
                                                 label: TEST_LEVEL_LABEL[level],
                                                 value: level,
                                             }))}
-                                            disabled={
-                                                !editibility.TEST_QUESTIONS
-                                                    .level
-                                            }
                                             label={{ text: "Level" }}
                                         />
                                     </div>
-                                    {question?.content &&
-                                        editibility.TEST_QUESTIONS.content && (
-                                            <div className="grow flex flex-col justify-end">
-                                                <Button
-                                                    secondary
-                                                    type="button"
-                                                    onClick={() =>
-                                                        handleClearContent()
-                                                    }
-                                                    size="sm"
-                                                >
-                                                    Clear content
-                                                </Button>
-                                            </div>
-                                        )}
+                                    {question?.content && (
+                                        <div className="grow flex flex-col justify-end">
+                                            <Button
+                                                secondary
+                                                type="button"
+                                                onClick={() =>
+                                                    handleClearContent()
+                                                }
+                                                size="sm"
+                                            >
+                                                Clear content
+                                            </Button>
+                                        </div>
+                                    )}
                                 </div>
                                 <div className="border-l border-gray-300 border-dashed"></div>
                                 <div className="grow overflow-hidden">
@@ -398,11 +320,6 @@ const Question = ({ question, part }: QuestionProps) => {
                                             setIsDeletingQuestion(true)
                                         }
                                         className="bg-red-500 text-white hover:bg-red-600"
-                                        disabled={
-                                            part
-                                                ? part?.num_questions <= 1
-                                                : numQuestions <= 1
-                                        }
                                     >
                                         Delete
                                     </Button>
@@ -434,7 +351,7 @@ const Question = ({ question, part }: QuestionProps) => {
                         </form>
                         {isDeletingQuestion && (
                             <ConfirmModal
-                                message="Are you sure you want to delete this question? After doing this, you will have to set the part's score again (if any) and the order of other questions might be changed. You can try clear content and create new question as an alternative! Are you still want to delete?"
+                                message="Are you sure you want to delete this question? This action cannot be undone!"
                                 onConfirm={() => {
                                     deleteQuestionMutate();
                                 }}

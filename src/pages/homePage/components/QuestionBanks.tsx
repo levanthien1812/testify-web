@@ -5,10 +5,10 @@ import { useQuery } from "react-query";
 import { getQuestionBanks } from "../../../services/questionBank";
 import Loading from "../../../components/loadings/Loading";
 import QuestionBankCard from "./QuestionBankCard";
-import noData from "../../../assets/images/no-data.png";
 import { QuestionBankItf } from "../../../types/questionBank";
 import { useState } from "react";
 import CreateBank from "../../questionBanksPage/components/CreateBank";
+import NoResult from "../../../components/notFound/NoResult";
 
 const QuestionBanks = () => {
     const { user } = useAppSelector((state) => state.auth);
@@ -73,16 +73,9 @@ const QuestionBanks = () => {
                     })}
 
                     {questionBanks.length === 0 && (
-                        <div className="flex flex-col items-center justify-center w-full py-8">
-                            <img
-                                src={noData}
-                                alt="no-data"
-                                className="w-36 h-36"
-                            />
-                            <p className="text-gray-600 text-xl mt-2">
-                                No question banks found!
-                            </p>
-                        </div>
+                        <NoResult
+                            message={{ text: "No question banks found." }}
+                        />
                     )}
                 </div>
             )}

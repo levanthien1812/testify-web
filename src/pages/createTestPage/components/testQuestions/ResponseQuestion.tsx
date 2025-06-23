@@ -5,19 +5,14 @@ import {
 } from "../../../../types/types";
 import TextEditor from "../../../../components/richTextEditor/TiptapEditor";
 import Input from "../../../../components/elements/Input";
-import {
-    Control,
-    Controller,
-    FieldErrors,
-    UseFormRegister,
-} from "react-hook-form";
+import { Control, Controller, FieldErrors } from "react-hook-form";
 
 const ResponseQuestion: React.FC<{
     content: ResponseQuestionBodyItf;
     control: Control<QuestionBodyItf<ResponseQuestionBodyItf>>;
     errors: FieldErrors<QuestionBodyItf<ResponseQuestionBodyItf>>;
-    register: UseFormRegister<QuestionBodyItf<ResponseQuestionBodyItf>>;
-}> = ({ content, control, register, errors }) => {
+}> = ({ content, control, errors }) => {
+    const { register } = control;
     return (
         <>
             <div className="flex flex-col mt-2">

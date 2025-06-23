@@ -153,36 +153,16 @@ export const saveQuestion = async (
     questionId?: string
 ) => {
     try {
-        const formData = new FormData();
-
-        for (const [key, value] of Object.entries(questionBody)) {
-            if (key === "content") {
-                formData.append("content", JSON.stringify(value));
-            } else {
-                formData.append(key, value);
-            }
-        }
-
         let response;
         if (!questionId) {
             response = await instance.post(
                 `/tests/${testId}/questions`,
-                formData,
-                {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                }
+                questionBody
             );
         } else {
             response = await instance.patch(
                 `/tests/${testId}/questions/${questionId}`,
-                formData,
-                {
-                    headers: {
-                        "Content-Type": "multipart/form-data",
-                    },
-                }
+                questionBody
             );
         }
         return response.data;
