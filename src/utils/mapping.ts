@@ -1,4 +1,11 @@
 import {
+    faCheck,
+    faFill,
+    faList,
+    faPen,
+    faUpDownLeftRight,
+} from "@fortawesome/free-solid-svg-icons";
+import {
     INITIAL_FILL_GAPS_QUESTION,
     INITIAL_MATCHING_QUESTION,
     INITIAL_MULTIPLE_CHOICES_QUESTION,
@@ -59,4 +66,12 @@ export const getInitialQuestionContent = (
         default:
             return INITIAL_MULTIPLE_CHOICES_QUESTION;
     }
+};
+
+export const questionTypeToIcon = {
+    [QUESTION_TYPE.MULTIPLE_CHOICES]: faList,
+    [QUESTION_TYPE.FILL_IN_THE_GAPS]: faFill,
+    [QUESTION_TYPE.MATCHING]: faUpDownLeftRight,
+    [QUESTION_TYPE.RESPONSE]: faPen,
+    [QUESTION_TYPE.TRUE_FALSE]: faCheck,
 };

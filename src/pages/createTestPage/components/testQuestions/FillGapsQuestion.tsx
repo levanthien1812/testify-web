@@ -5,19 +5,14 @@ import {
 } from "../../../../types/types";
 import TextEditor from "../../../../components/richTextEditor/TiptapEditor";
 import Input from "../../../../components/elements/Input";
-import {
-    Control,
-    Controller,
-    FieldErrors,
-    UseFormRegister,
-} from "react-hook-form";
+import { Control, Controller, FieldErrors } from "react-hook-form";
 
 const FillGapsQuestion: React.FC<{
     content: FillGapsQuestionBodyItf;
     control: Control<QuestionBodyItf<FillGapsQuestionBodyItf>>;
     errors: FieldErrors<QuestionBodyItf<FillGapsQuestionBodyItf>>;
-    register: UseFormRegister<QuestionBodyItf<FillGapsQuestionBodyItf>>;
-}> = ({ content, control, register, errors }) => {
+}> = ({ content, control, errors }) => {
+    const { register } = control;
     return (
         <>
             <div className="flex flex-col items-start">

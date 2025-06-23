@@ -11,15 +11,14 @@ import {
     Controller,
     FieldErrors,
     useFieldArray,
-    UseFormRegister,
 } from "react-hook-form";
 
 const MatchingQuestion: React.FC<{
     content: MatchingQuestionBodyItf;
     control: Control<QuestionBodyItf<MatchingQuestionBodyItf>>;
     errors: FieldErrors<QuestionBodyItf<MatchingQuestionBodyItf>>;
-    register: UseFormRegister<QuestionBodyItf<MatchingQuestionBodyItf>>;
-}> = ({ content, control, register, errors }) => {
+}> = ({ content, control, errors }) => {
+    const { register } = control;
     const {
         fields: leftItems,
         append: appendLeftItem,

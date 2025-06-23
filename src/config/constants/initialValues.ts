@@ -1,6 +1,7 @@
 import {
     QuestionBankBodyItf,
     QuestionBankBodyTempItf,
+    QuestionInBankItf,
 } from "../../types/questionBank";
 import {
     CreateTestContext,
@@ -387,10 +388,17 @@ export const INITIAL_TRUE_FALSE_QUESTION: TrueFalseQuestionItf = {
 };
 
 export const INITIAL_QUESTION: QuestionItf<QuestionContentItf> = {
-    level: QUESTION_LEVEL.EASY,
+    level: QUESTION_LEVEL.NONE,
     order: 0,
     score: 1,
     test_id: "",
+    type: QUESTION_TYPE.MULTIPLE_CHOICES,
+    content: INITIAL_MULTIPLE_CHOICES_QUESTION,
+};
+
+export const INITIAL_QUESTION_IN_BANK: QuestionInBankItf<QuestionContentItf> = {
+    level: QUESTION_LEVEL.NONE,
+    score: 1,
     type: QUESTION_TYPE.MULTIPLE_CHOICES,
     content: INITIAL_MULTIPLE_CHOICES_QUESTION,
 };

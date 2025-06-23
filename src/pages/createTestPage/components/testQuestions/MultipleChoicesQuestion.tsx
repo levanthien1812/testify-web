@@ -20,8 +20,7 @@ const MulitpleChoiceQuestion: React.FC<{
     content: MultipleChoiceQuestionBodyItf;
     control: Control<QuestionBodyItf<MultipleChoiceQuestionBodyItf>>;
     errors: FieldErrors<QuestionBodyItf<MultipleChoiceQuestionBodyItf>>;
-    register: UseFormRegister<QuestionBodyItf<MultipleChoiceQuestionBodyItf>>;
-}> = ({ content, control, register, errors }) => {
+}> = ({ content, control, errors }) => {
     const {
         fields: options,
         append: appendOption,
@@ -30,6 +29,8 @@ const MulitpleChoiceQuestion: React.FC<{
         control,
         name: "content.options",
     });
+
+    const { register } = control;
 
     const { editibility } = useAppSelector((state) => state.createTest);
 

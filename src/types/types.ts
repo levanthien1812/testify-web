@@ -203,10 +203,10 @@ export type QuestionBodyContentItf =
     | ResponseQuestionBodyItf;
 
 export interface QuestionBodyItf<T extends QuestionBodyContentItf> {
-    score: number;
-    level: QUESTION_LEVEL;
+    score?: number;
+    level?: QUESTION_LEVEL;
     type: QUESTION_TYPE;
-    order: number;
+    order?: number;
     part_id?: string;
     content: T;
 }

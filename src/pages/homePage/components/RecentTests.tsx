@@ -5,9 +5,9 @@ import { getTests } from "../../../services/test";
 import { TestItf } from "../../../types/types";
 import { ROLES } from "../../../config/constants/tests";
 import { useAppSelector } from "../../../hooks/hooks";
-import noData from "../../../assets/images/no-data.png";
 import SectionWrapper from "./SectionWrapper";
 import Loading from "../../../components/loadings/Loading";
+import NoResult from "../../../components/notFound/NoResult";
 
 const RecentTests = () => {
     const navigate = useNavigate();
@@ -61,16 +61,7 @@ const RecentTests = () => {
                     })}
 
                     {tests.length === 0 && (
-                        <div className="flex flex-col items-center justify-center w-full py-8">
-                            <img
-                                src={noData}
-                                alt="no-data"
-                                className="w-36 h-36"
-                            />
-                            <p className="text-gray-600 text-xl mt-2">
-                                No tests available!
-                            </p>
-                        </div>
+                        <NoResult message={{ text: "No recent tests found" }} />
                     )}
                 </div>
             )}
