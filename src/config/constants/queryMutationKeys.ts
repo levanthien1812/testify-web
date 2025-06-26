@@ -49,6 +49,8 @@ const MUTATION_KEYS = {
     CREATE_QUESTION_IN_BANK: "create-question-in-bank",
     UPDATE_QUESTION_IN_BANK: "update-question-in-bank",
     DELETE_QUESTION_IN_BANK: "delete-question-in-bank",
+    IMPORT_QUESTIONS_TO_BANK: "import-questions-to-bank",
+    IMPORT_QUESTIONS_SUCCESSFULLY: "import-questions-successfully",
 };
 
 export { QUERY_KEYS, MUTATION_KEYS };
