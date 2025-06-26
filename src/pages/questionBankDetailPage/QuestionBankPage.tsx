@@ -7,6 +7,7 @@ import { useQuery } from "react-query";
 import Loading from "../../components/loadings/Loading";
 import Questions from "./components/Questions";
 import CreateQuestion from "./components/CreateQuestion";
+import ImportQuestionFromAnotherBank from "./components/ImportQuestionFromAnotherBank";
 
 const QuestionBankPage = () => {
     const params = useParams();
@@ -78,6 +79,13 @@ const QuestionBankPage = () => {
                     onClose={() => setIsCreatingQuestion(false)}
                     onAfterCreate={() => refetchQuestionBank()}
                     questionBank={questionBank}
+                />
+            )}
+            {questionBank && isImportingFromAnotherBank && (
+                <ImportQuestionFromAnotherBank
+                    currentBank={questionBank}
+                    onClose={() => setIsImportingFromAnotherBank(false)}
+                    onAfterImport={() => refetchQuestionBank()}
                 />
             )}
         </div>

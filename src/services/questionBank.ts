@@ -56,6 +56,21 @@ export const createQuestion = async (
     }
 };
 
+export const importQuestionToBank = async (
+    bankId: string,
+    questionBody: { questions: string[] }
+) => {
+    try {
+        const response = await instance.patch(
+            `/question-banks/${bankId}/questions/import`,
+            questionBody
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 export const updateQuestion = async (
     bankId: string,
     questionId: string,

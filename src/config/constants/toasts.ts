@@ -14,6 +14,7 @@ const TOAST_MESSAGES = {
     TEST_SUBMITTED_SUCCESSFULLY: "Test is submitted successfully",
     CANNOT_MOVE_QUESTION_TO_ANOTHER_PART:
         "Cannot move question to another part",
+    IMPORT_QUESTIONS_SUCCESSFULLY: "Import questions successfully",
 };
 
 export { TOAST_MESSAGES };
