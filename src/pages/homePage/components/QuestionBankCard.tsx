@@ -70,7 +70,11 @@ const QuestionBankCard = ({
     };
 
     const handleClickImport = () => {
-        navigate(`/question-banks/${questionBank.id}/import`);
+        navigate(`/question-banks/${questionBank.id}`, {
+            state: {
+                isImporting: true,
+            },
+        });
     };
 
     return (

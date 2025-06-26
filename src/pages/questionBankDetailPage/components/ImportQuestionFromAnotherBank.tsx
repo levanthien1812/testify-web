@@ -1,10 +1,12 @@
-import React, { useState } from "react";
-import { QuestionBankItf } from "../../../types/questionBank";
-import { useMutation, useQuery } from "react-query";
+import { useState } from "react";
+import {
+    QuestionBankItf,
+    QuestionInBankItf,
+} from "../../../types/questionBank";
+import { useQuery } from "react-query";
 import {
     getQuestionBank,
     getQuestionBanks,
-    importQuestionToBank,
 } from "../../../services/questionBank";
 import Modal, {
     ModalBody,
@@ -14,9 +16,7 @@ import Button from "../../../components/elements/Button";
 import PickBank from "./PickBank";
 import PickQuestions from "./PickQuestions";
 import Loading from "../../../components/loadings/Loading";
-import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
-import { TOAST_MESSAGES } from "../../../config/constants/toasts";
-import { toast } from "react-toastify";
+import { QuestionContentItf, QuestionItf } from "../../../types/types";
 
 enum IMPORT_STEP {
     SELECT_BANK = "SELECT_BANK",
@@ -24,20 +24,26 @@ enum IMPORT_STEP {
 }
 
 type ImportQuestionFromAnotherBankProps = {
-    currentBank: QuestionBankItf;
+    currentBank?: QuestionBankItf;
+    currentQuestion?: QuestionItf<QuestionContentItf>;
     onClose: () => void;
-    onAfterImport: () => void;
+    onConfirmQuestions: (
+        questions: QuestionInBankItf<QuestionContentItf>[]
+    ) => void;
 };
 
 const ImportQuestionFromAnotherBank = ({
     currentBank,
+    currentQuestion,
     onClose,
-    onAfterImport,
+    onConfirmQuestions,
 }: ImportQuestionFromAnotherBankProps) => {
     const [selectedBank, setSelectedBank] = useState<QuestionBankItf | null>(
         null
     );
-    const [selectedQuestions, setSelectedQuestions] = useState<string[]>([]);
+    const [selectedQuestions, setSelectedQuestions] = useState<
+        QuestionInBankItf<QuestionContentItf>[]
+    >([]);
     const [currentStep, setCurrentStep] = useState<IMPORT_STEP>(
         IMPORT_STEP.SELECT_BANK
     );
@@ -49,8 +55,8 @@ const ImportQuestionFromAnotherBank = ({
         queryFn: async () => {
             const data: { questionBanks: QuestionBankItf[] } =
                 await getQuestionBanks();
-            return data.questionBanks.filter(
-                (bank) => bank.id !== currentBank.id
+            return data.questionBanks.filter((bank) =>
+                currentBank ? bank.id !== currentBank.id : true
             );
         },
     });
@@ -77,20 +83,6 @@ const ImportQuestionFromAnotherBank = ({
         enabled: false,
     });
 
-    const { mutate: importQuestionsMutate, isLoading: importQuestionsLoading } =
-        useMutation({
-            mutationFn: async () =>
-                await importQuestionToBank(currentBank.id, {
-                    questions: selectedQuestions,
-                }),
-            mutationKey: [MUTATION_KEYS.IMPORT_QUESTIONS_TO_BANK],
-            onSuccess: (data) => {
-                toast.success(TOAST_MESSAGES.IMPORT_QUESTIONS_SUCCESSFULLY);
-                onAfterImport();
-                onClose();
-            },
-        });
-
     const handleSelectBank = (bank: QuestionBankItf) => {
         setSelectedBank(bank);
     };
@@ -100,17 +92,24 @@ const ImportQuestionFromAnotherBank = ({
             setCurrentStep(IMPORT_STEP.SELECT_QUESTIONS);
             refetchSelectedBankDetail();
         } else if (currentStep === IMPORT_STEP.SELECT_QUESTIONS) {
-            importQuestionsMutate();
+            onConfirmQuestions(selectedQuestions);
         }
     };
 
-    const handleSelectQuestion = (questionId: string) => {
-        if (selectedQuestions.includes(questionId)) {
-            setSelectedQuestions(
-                selectedQuestions.filter((id) => id !== questionId)
-            );
-        } else {
-            setSelectedQuestions([...selectedQuestions, questionId]);
+    const handleSelectQuestion = (
+        question: QuestionInBankItf<QuestionContentItf>
+    ) => {
+        if (currentBank) {
+            if (selectedQuestions.find((q) => q.id === question.id)) {
+                setSelectedQuestions(
+                    selectedQuestions.filter((q) => q.id !== question.id)
+                );
+            } else {
+                setSelectedQuestions([...selectedQuestions, question]);
+            }
+        }
+        if (currentQuestion) {
+            setSelectedQuestions([question]);
         }
     };
 
@@ -152,6 +151,7 @@ const ImportQuestionFromAnotherBank = ({
                             <PickQuestions
                                 selectedBank={selectedBankDetail}
                                 currentBank={currentBank}
+                                currentQuestion={currentQuestion}
                                 onSelectQuestion={handleSelectQuestion}
                                 selectedQuestions={selectedQuestions}
                             />
