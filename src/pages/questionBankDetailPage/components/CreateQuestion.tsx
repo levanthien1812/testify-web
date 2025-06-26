@@ -290,12 +290,13 @@ const CreateQuestion = ({
                                 }
                                 type="submit"
                             >
-                                {!(
-                                    createQuestionLoading ||
-                                    updateQuestionLoading
-                                )
-                                    ? "Create"
-                                    : "Creating..."}
+                                {!question
+                                    ? createQuestionLoading
+                                        ? "Creating..."
+                                        : "Create"
+                                    : updateQuestionLoading
+                                    ? "Updating..."
+                                    : "Update"}
                             </Button>
                         </div>
                     </div>

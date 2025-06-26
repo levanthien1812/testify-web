@@ -44,6 +44,8 @@ import ConfirmModal from "../../../../components/modals/ConfirmModal";
 import QuestionDraggable from "./QuestionDraggable";
 import { useAppSelector } from "../../../../hooks/hooks";
 import TrueFalseQuestion from "./TrueFalseQuestion";
+import ImportQuestionFromAnotherBank from "../../../questionBankDetailPage/components/ImportQuestionFromAnotherBank";
+import { QuestionInBankItf } from "../../../../types/questionBank";
 
 type QuestionProps = {
     question: QuestionItf<QuestionContentItf>;
@@ -60,6 +62,8 @@ const Question = ({ question, part }: QuestionProps) => {
     const [isDeletingQuestion, setIsDeletingQuestion] =
         useState<boolean>(false);
     const audioElement = useRef<HTMLAudioElement>(null);
+    const [isImportingFromBank, setIsImportingFromBank] =
+        useState<boolean>(false);
 
     const {
         handleSubmit,
@@ -196,11 +200,41 @@ const Question = ({ question, part }: QuestionProps) => {
         );
     };
 
+    const handleImportFromBank = () => {
+        setIsImportingFromBank(true);
+    };
+
     const handleClickQuestion = () => {
         if (audioElement.current) {
             audioElement.current.play();
         }
         setOpen(true);
+    };
+
+    const handleConfirmQuestions = (
+        selectedQuestions: QuestionInBankItf<QuestionContentItf>[]
+    ) => {
+        if (selectedQuestions.length === 0) return;
+        const selectedQuestion = selectedQuestions[0];
+        if (selectedQuestion.content) {
+            setValue("content", selectedQuestion.content);
+        }
+        setValue("type", selectedQuestion.type);
+        setValue("level", selectedQuestion.level);
+        setValue("score", selectedQuestion.score);
+        dispatch(
+            saveTestQuestions({
+                partId: part?.id,
+                questionOrder: question.order,
+                questionInfo: {
+                    type: selectedQuestion.type,
+                    level: selectedQuestion.level,
+                    score: selectedQuestion.score,
+                    content: selectedQuestion.content,
+                },
+            })
+        );
+        setIsImportingFromBank(false);
     };
 
     return (
@@ -295,7 +329,17 @@ const Question = ({ question, part }: QuestionProps) => {
                                     </div>
                                     {question?.content &&
                                         editibility.TEST_QUESTIONS.content && (
-                                            <div className="grow flex flex-col justify-end">
+                                            <div className="grow flex flex-col justify-end gap-1">
+                                                <Button
+                                                    outlined
+                                                    type="button"
+                                                    onClick={
+                                                        handleImportFromBank
+                                                    }
+                                                    size="sm"
+                                                >
+                                                    Import from question bank
+                                                </Button>
                                                 <Button
                                                     secondary
                                                     type="button"
@@ -441,6 +485,14 @@ const Question = ({ question, part }: QuestionProps) => {
                                 onClose={() => setIsDeletingQuestion(false)}
                                 title="Delete Question"
                                 isConfirming={deleteQuestionLoading}
+                            />
+                        )}
+
+                        {isImportingFromBank && (
+                            <ImportQuestionFromAnotherBank
+                                currentQuestion={question}
+                                onConfirmQuestions={handleConfirmQuestions}
+                                onClose={() => setIsImportingFromBank(false)}
                             />
                         )}
                     </ModalBody>

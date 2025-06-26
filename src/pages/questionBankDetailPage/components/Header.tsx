@@ -38,7 +38,7 @@ const Header = ({ questionBank }: HeaderProps) => {
                 {questionBank.created_at && (
                     <div>
                         Created at:{" "}
-                        <span className="bg-orange-50 border border-orange-500 rounded-md px-4 leading-none text-orange-500">
+                        <span className="text-orange-500">
                             {format(
                                 new Date(questionBank.created_at),
                                 "dd/MM/yyyy hh:mm a"
@@ -49,7 +49,7 @@ const Header = ({ questionBank }: HeaderProps) => {
                 {questionBank.updated_at && (
                     <div className="">
                         Updated at:{" "}
-                        <span className="bg-orange-50 border border-orange-500 rounded-md px-4 leading-none text-orange-500">
+                        <span className="text-orange-500">
                             {format(
                                 new Date(questionBank.updated_at),
                                 "dd/MM/yyyy hh:mm a"

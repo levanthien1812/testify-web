@@ -1,20 +1,29 @@
 import React, { useState } from "react";
 import Header from "./components/Header";
-import { getQuestionBank } from "../../services/questionBank";
-import { useParams } from "react-router";
-import { QuestionBankItf } from "../../types/questionBank";
-import { useQuery } from "react-query";
+import {
+    getQuestionBank,
+    importQuestionToBank,
+} from "../../services/questionBank";
+import { useLocation, useParams } from "react-router";
+import { QuestionBankItf, QuestionInBankItf } from "../../types/questionBank";
+import { useMutation, useQuery } from "react-query";
 import Loading from "../../components/loadings/Loading";
 import Questions from "./components/Questions";
 import CreateQuestion from "./components/CreateQuestion";
 import ImportQuestionFromAnotherBank from "./components/ImportQuestionFromAnotherBank";
+import { MUTATION_KEYS } from "../../config/constants/queryMutationKeys";
+import { toast } from "react-toastify";
+import { TOAST_MESSAGES } from "../../config/constants/toasts";
+import { QuestionContentItf } from "../../types/types";
 
 const QuestionBankPage = () => {
     const params = useParams();
+    const location = useLocation();
+    const isImporting = location.state?.isImporting;
     const [isCreatingQuestion, setIsCreatingQuestion] =
         useState<boolean>(false);
     const [isImportingFromAnotherBank, setIsImportingFromAnotherBank] =
-        useState<boolean>(false);
+        useState<boolean>(isImporting);
 
     const {
         data: questionBank,
@@ -37,12 +46,38 @@ const QuestionBankPage = () => {
         },
     });
 
+    const { mutate: importQuestionsMutate, isLoading: importQuestionsLoading } =
+        useMutation({
+            mutationFn: async (
+                selectedQuestions: QuestionInBankItf<QuestionContentItf>[]
+            ) => {
+                if (!questionBank) return;
+                await importQuestionToBank(questionBank.id, {
+                    questions: selectedQuestions.map(
+                        (question) => question.id!
+                    ),
+                });
+            },
+            mutationKey: [MUTATION_KEYS.IMPORT_QUESTIONS_TO_BANK],
+            onSuccess: (data) => {
+                toast.success(TOAST_MESSAGES.IMPORT_QUESTIONS_SUCCESSFULLY);
+                refetchQuestionBank();
+                setIsImportingFromAnotherBank(false);
+            },
+        });
+
     const handleCreateQuestion = () => {
         setIsCreatingQuestion(true);
     };
 
     const handleImportFromAnotherBank = () => {
         setIsImportingFromAnotherBank(true);
+    };
+
+    const handleConfirmQuestions = (
+        selectedQuestions: QuestionInBankItf<QuestionContentItf>[]
+    ) => {
+        importQuestionsMutate(selectedQuestions);
     };
 
     return (
@@ -56,7 +91,11 @@ const QuestionBankPage = () => {
             {!isLoadingQuestionBank && questionBank && (
                 <div>
                     <Header questionBank={questionBank} />
-                    <Questions questions={questionBank.questions_detail} />
+                    <Questions
+                        questions={questionBank.questions_detail}
+                        questionBank={questionBank}
+                        onAfterUpdate={() => refetchQuestionBank()}
+                    />
                     <div className="flex justify-center gap-2 mt-4">
                         <button
                             onClick={handleCreateQuestion}
@@ -85,7 +124,7 @@ const QuestionBankPage = () => {
                 <ImportQuestionFromAnotherBank
                     currentBank={questionBank}
                     onClose={() => setIsImportingFromAnotherBank(false)}
-                    onAfterImport={() => refetchQuestionBank()}
+                    onConfirmQuestions={handleConfirmQuestions}
                 />
             )}
         </div>
