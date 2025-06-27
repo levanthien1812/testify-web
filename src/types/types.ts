@@ -194,7 +194,6 @@ export interface QuestionItf<T extends QuestionContentItf> {
     content?: T;
     is_saved?: boolean;
     is_content_provided?: boolean;
-    imported_from?: string;
 }
 
 export type QuestionBodyContentItf =
