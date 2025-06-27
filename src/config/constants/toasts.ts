@@ -15,6 +15,8 @@ const TOAST_MESSAGES = {
     CANNOT_MOVE_QUESTION_TO_ANOTHER_PART:
         "Cannot move question to another part",
     IMPORT_QUESTIONS_SUCCESSFULLY: "Import questions successfully",
+    DELETE_QUESTION_BANK_SUCCESSFULLY: "Delete question bank successfully",
+    CREATE_QUESTION_BANK_SUCCESSFULLY: "Create question bank successfully",
 };
 
 export { TOAST_MESSAGES };

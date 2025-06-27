@@ -132,7 +132,7 @@ const CreateBank = ({
 
     return (
         <Modal onClose={onClose} allowClickBackdropToClose={true}>
-            <ModalHeader title="Create Bank" />
+            <ModalHeader title={questionBank ? "Edit Bank" : "Create Bank"} />
             <ModalBody>
                 <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
                     <div>

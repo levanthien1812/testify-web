@@ -32,6 +32,15 @@ export const updateQuestionBank = async (
     }
 };
 
+export const deleteQuestionBank = async (id: string) => {
+    try {
+        const response = await instance.delete(`/question-banks/${id}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 export const getQuestionBank = async (id: string) => {
     try {
         const response = await instance.get(`/question-banks/${id}`);
