@@ -15,7 +15,7 @@ const ProtectedRoute: React.FC<{
         if (!allowedRoles.includes(user?.role)) {
             toast.error("You are now allowed to access this page!");
 
-            return <Navigate to={"/home"} />;
+            return <Navigate to={"/"} />;
         }
     }
 

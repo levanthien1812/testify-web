@@ -2,6 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
+@import 'react-big-calendar/lib/css/react-big-calendar.css';
+
 * {
   margin: 0;
   padding: 0;
@@ -40,4 +42,44 @@
 
 .custom-scrollbar-y::-webkit-scrollbar {
   width: 6px;
+}
+
+/* Test Calendar */
+.rbc-toolbar .rbc-btn-group button {
+  background-color: oklch(95.4% 0.038 75.164);
+}
+
+.rbc-toolbar .rbc-btn-group button:hover {
+  background-color: oklch(90.752% 0.07743 75.407);
+}
+
+.rbc-toolbar .rbc-btn-group button.rbc-active {
+  background-color: oklch(70.5% 0.213 47.604);
+  color: white;
+}
+
+.rbc-toolbar .rbc-btn-group button.rbc-active:hover {
+  background-color: oklch(64.6% 0.222 41.116);
+  color: white
+}
+
+.rbc-toolbar-label {
+  color: oklch(64.6% 0.222 41.116);
+  font-size: 30px;
+  font-weight: bold;
+}
+
+.rbc-header {
+  background-color: oklch(95.4% 0.038 75.164);
+}
+
+.rbc-month-row .rbc-row-content .rbc-date-cell button {
+  font-size: 24px;
+  color: oklch(70.7% 0.022 261.325)
+}
+
+.rbc-month-row .rbc-row-content .rbc-date-cell.rbc-now button {
+  font-size: 24px;
+  font-weight: bold;
+  color: oklch(64.6% 0.222 41.116)
 }

@@ -59,7 +59,7 @@ const Header = () => {
 
     return (
         <div className="bg-white px-12 py-3 flex justify-between items-center shadow-md">
-            <Link to={"/home"}>
+            <Link to={"/"}>
                 <img src={logoTestify} alt="testify-logo" className="w-44" />
             </Link>
             {!isAuthened && (

@@ -150,7 +150,7 @@ const TakeTestPage = () => {
                     actionButton={{
                         text: "Back to home",
                         onClick: () => {
-                            navigate("/home");
+                            navigate("/");
                         },
                     }}
                 />

@@ -311,3 +311,7 @@ export type TakerStatistics = {
     total_tests_assigned: number;
     total_submissions: number;
 };
+
+export interface BreadcrumbHandle {
+    crumb: string | ((data: any) => React.ReactNode); // Can be a string or a function
+}

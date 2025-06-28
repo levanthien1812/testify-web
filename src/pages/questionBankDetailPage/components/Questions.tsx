@@ -3,12 +3,12 @@ import {
     QuestionBankItf,
     QuestionInBankItf,
 } from "../../../types/questionBank";
-import NoResult from "../../../components/notFound/NoResult";
 import ToolBar from "./ToolBar";
 import { useMemo, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { questionTypeToIcon } from "../../../utils/mapping";
 import CreateQuestion from "./CreateQuestion";
+import NoResult from "../../../components/notFound/NoResult";
 
 type QuestionsProps = {
     questions: QuestionInBankItf<QuestionContentItf>[];
