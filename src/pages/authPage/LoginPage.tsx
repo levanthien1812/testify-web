@@ -39,7 +39,7 @@ const LoginPage = () => {
             const { user, tokens } = data;
             dispatch(authActions.authenticate({ user, tokens }));
 
-            navigate("/home");
+            navigate("/");
         },
         onError: (err) => {
             if (err instanceof AxiosError) {
@@ -65,7 +65,7 @@ const LoginPage = () => {
 
                 toast.success("Login successfuly. Welcome back to our app!");
 
-                navigate("/home");
+                navigate("/");
             }
         } catch (error: unknown) {
             if (error instanceof AxiosError) {

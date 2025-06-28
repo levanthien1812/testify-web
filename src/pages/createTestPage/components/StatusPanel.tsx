@@ -29,7 +29,7 @@ const StatusPanel = () => {
             ],
             onSuccess: () => {
                 toast.success(TOAST_MESSAGES.PUBLISHED_TEST_SUCCESSFULLY);
-                navigate("/home");
+                navigate("/");
                 // refetch();
             },
         });

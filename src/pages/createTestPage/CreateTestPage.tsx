@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import TestInfo from "./components/TestInfo";
 import TestParts from "./components/TestParts";
-import { useParams } from "react-router";
+import { useLocation, useParams } from "react-router";
 import { useQuery } from "react-query";
 import { getTest } from "../../services/test";
 import { useSearchParams } from "react-router-dom";
@@ -21,8 +21,9 @@ const CreateTestPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const stepParam = searchParams.get("step");
     const { currentStep } = useAppSelector((state) => state.createTest);
-    const { setTestFromAPI, setStep, reset } = createTestActions;
+    const { setTestFromAPI, setStep, saveTestInfo } = createTestActions;
     const dispatch = useDispatch();
+    const location = useLocation();
 
     const { testId: testIdParam } = useParams();
 
@@ -45,10 +46,18 @@ const CreateTestPage = () => {
     useEffect(() => {
         if (testIdParam) {
             refetch();
-        } else {
-            dispatch(createTestActions.reset());
         }
-    }, [testIdParam, refetch, dispatch]);
+    }, [testIdParam, refetch, dispatch, saveTestInfo, location.state]);
+
+    useEffect(() => {
+        if (location.state?.givenDate) {
+            dispatch(
+                saveTestInfo({
+                    datetime: new Date(location.state.givenDate).toISOString(),
+                })
+            );
+        }
+    }, [location.state, dispatch, saveTestInfo]);
 
     useEffect(() => {
         setSearchParams({ step: currentStep });

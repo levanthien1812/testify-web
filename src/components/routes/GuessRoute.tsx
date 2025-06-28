@@ -7,7 +7,7 @@ const GuessRoute: React.FC = () => {
     const user = useAppSelector((state) => state.auth.user);
 
     if (user && user.role === ROLES.MAKER) {
-        return <Navigate to={"/home"} />;
+        return <Navigate to={"/"} />;
     }
 
     return <Outlet />;

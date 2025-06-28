@@ -29,7 +29,7 @@ const Header = ({ questionBank }: HeaderProps) => {
             onSuccess: (data) => {
                 toast.success(TOAST_MESSAGES.DELETE_QUESTION_BANK_SUCCESSFULLY);
                 setIsConfirmingDeletion(false);
-                navigate("/home");
+                navigate("/");
             },
         });
 
