@@ -2,12 +2,17 @@ import React, { useState } from "react";
 import { QuestionContentItf, QuestionItf } from "../../../../types/types";
 import { useDispatch } from "react-redux";
 import { createTestActions } from "../../../../stores/createTest";
-import { toast } from "react-toastify";
-import { TOAST_MESSAGES } from "../../../../config/constants/toasts";
 import { useMutation } from "react-query";
 import { reorderQuestions } from "../../../../services/test";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
 import { useAppSelector } from "../../../../hooks/hooks";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { questionTypeToIcon } from "../../../../utils/mapping";
+import { shorten } from "../../../../utils/text";
+import {
+    faCircleCheck,
+    faCircleExclamation,
+} from "@fortawesome/free-solid-svg-icons";
 
 type QuestionDraggableProps = {
     question: QuestionItf<QuestionContentItf>;
@@ -98,10 +103,7 @@ const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
 
     return (
         <div
-            className={`bg-orange-100 p-2 cursor-pointer hover:bg-orange-200 relative ${
-                (question.is_content_provided || isDraggedOver) &&
-                "border border-orange-500"
-            }`}
+            className={`bg-white rounded-md shadow-md hover:shadow-orange-200 overflow-hidden hover:cursor-pointer grid-item`}
             draggable
             onClick={onClick}
             onDragStart={handleDragStart}
@@ -110,24 +112,33 @@ const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
         >
-            <p className="text-center">Question {question?.order}</p>
-            {question.is_content_provided && (
-                <>
-                    <div
-                        className="absolute bottom-0 right-0 w-0 h-0 z-0"
-                        style={{
-                            borderRight: "8px solid rgb(249 115 22)",
-                            borderBottom: "8px solid rgb(249 115 22)",
-                            borderTop: "8px solid transparent",
-                            borderLeft: "8px solid transparent",
-                        }}
-                    >
-                        {/* <FontAwesomeIcon
-                            icon={faCheck}
-                            className="text-white leading-none"
-                        /> */}
-                    </div>
-                </>
+            <div className="bg-orange-50 px-2 py-1 flex items-center gap-1">
+                <p>Question {question.order}</p>
+                {!question.is_content_provided ? (
+                    <FontAwesomeIcon
+                        icon={faCircleExclamation}
+                        className="text-yellow-500 text-sm"
+                    />
+                ) : (
+                    <FontAwesomeIcon
+                        icon={faCircleCheck}
+                        className="text-green-500 text-sm"
+                    />
+                )}
+                <span className="bg-orange-200 rounded-md p-1 leading-none ml-auto">
+                    <FontAwesomeIcon
+                        icon={questionTypeToIcon[question.type]}
+                        className="text-gray-700"
+                    />
+                </span>
+            </div>
+            {question.content && question.content.text && (
+                <div
+                    className="p-2"
+                    dangerouslySetInnerHTML={{
+                        __html: shorten(question.content.text, 50),
+                    }}
+                ></div>
             )}
         </div>
     );

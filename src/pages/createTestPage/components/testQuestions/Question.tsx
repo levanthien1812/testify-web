@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     FillGapsQuestionBodyItf,
     MatchingQuestionBodyItf,
@@ -50,9 +50,10 @@ import { QuestionInBankItf } from "../../../../types/questionBank";
 type QuestionProps = {
     question: QuestionItf<QuestionContentItf>;
     part?: TestPartItf;
+    playAudio?: () => void;
 };
 
-const Question = ({ question, part }: QuestionProps) => {
+const Question = ({ question, part, playAudio }: QuestionProps) => {
     const [open, setOpen] = useState<boolean>(false);
     const { testId, numQuestions, editibility } = useAppSelector(
         (state) => state.createTest
@@ -61,7 +62,7 @@ const Question = ({ question, part }: QuestionProps) => {
     const dispatch = useDispatch();
     const [isDeletingQuestion, setIsDeletingQuestion] =
         useState<boolean>(false);
-    const audioElement = useRef<HTMLAudioElement>(null);
+
     const [isImportingFromBank, setIsImportingFromBank] =
         useState<boolean>(false);
 
@@ -205,8 +206,8 @@ const Question = ({ question, part }: QuestionProps) => {
     };
 
     const handleClickQuestion = () => {
-        if (audioElement.current) {
-            audioElement.current.play();
+        if (playAudio) {
+            playAudio();
         }
         setOpen(true);
     };
@@ -243,11 +244,7 @@ const Question = ({ question, part }: QuestionProps) => {
                 question={question}
                 onClick={handleClickQuestion}
             />
-            <audio
-                ref={audioElement}
-                src="/sounds/button_click_fast_wooden_organic.mp3"
-                preload="auto"
-            />
+
             {open && (
                 <Modal onClose={() => setOpen(false)}>
                     <ModalHeader title={`Question ${question?.order}`} />

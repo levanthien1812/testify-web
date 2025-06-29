@@ -130,19 +130,8 @@ const Question = ({ question, questionBank }: QuestionProps) => {
         setValue("content", getInitialQuestionContent(question?.type));
     };
 
-    const handleClickQuestion = () => {
-        if (audioElement.current) {
-            audioElement.current.play();
-        }
-        setOpen(true);
-    };
-
     return (
         <>
-            {/* <QuestionDraggable
-                question={question}
-                onClick={handleClickQuestion}
-            /> */}
             <audio
                 ref={audioElement}
                 src="/sounds/button_click_fast_wooden_organic.mp3"

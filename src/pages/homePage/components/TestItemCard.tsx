@@ -102,21 +102,25 @@ const TestItemCard = ({ test }: TestItemCardProps) => {
                 </div>
                 {user?.role === ROLES.MAKER && !!test.submissions_count && (
                     <div className="flex flex-col items-center justify-center grow bg-gray-50 px-2 py-2 rounded-md shadow-md">
-                        <div className="w-1/2">
-                            <Circle
-                                strokeWidth={6}
-                                percent={
-                                    (test.submissions_count /
-                                        test.taker_ids.length) *
-                                    100
-                                }
-                                strokeColor={"#ea580c"}
-                                trailColor={"#eeeeee"}
-                                trailWidth={6}
-                            />
-                        </div>
+                        {test.taker_ids.length > 0 && (
+                            <div className="w-1/2">
+                                <Circle
+                                    strokeWidth={6}
+                                    percent={
+                                        (test.submissions_count /
+                                            test.taker_ids.length) *
+                                        100
+                                    }
+                                    strokeColor={"#ea580c"}
+                                    trailColor={"#eeeeee"}
+                                    trailWidth={6}
+                                />
+                            </div>
+                        )}
                         <p className="font-bold text-xl text-orange-600">
-                            {`${test.submissions_count}/${test.taker_ids.length}`}
+                            {test.taker_ids.length > 0
+                                ? `${test.submissions_count}/${test.taker_ids.length}`
+                                : `${test.submissions_count}`}
                         </p>
                         <p className="font-bold text-orange-600 leading-none text-sm">
                             Submissions

@@ -33,8 +33,8 @@ const DateCellWrapper: React.FC<DateCellWrapperProps> = ({
         <div
             className={`relative h-full w-full flex justify-center items-center cursor-pointer border ${
                 isToday
-                    ? "border-orange-500 bg-orange-50"
-                    : "border-gray-300 bg-white"
+                    ? " bg-gradient-to-bl from-orange-50 to-orange-200"
+                    : " bg-gradient-to-bl from-slate-50 to-slate-200"
             } rounded-md overflow-hidden px-2 py-2`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}

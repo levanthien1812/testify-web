@@ -9,6 +9,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { questionTypeToIcon } from "../../../utils/mapping";
 import CreateQuestion from "./CreateQuestion";
 import NoResult from "../../../components/notFound/NoResult";
+import { shorten } from "../../../utils/text";
 
 type QuestionsProps = {
     questions: QuestionInBankItf<QuestionContentItf>[];
@@ -69,7 +70,7 @@ const Questions = ({
                         <div
                             className="p-2"
                             dangerouslySetInnerHTML={{
-                                __html: question.content!.text,
+                                __html: shorten(question.content!.text, 100),
                             }}
                         ></div>
                     </div>

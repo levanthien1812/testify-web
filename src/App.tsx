@@ -73,7 +73,7 @@ function App() {
                                             children: [
                                                 {
                                                     index: true,
-                                                    element: <CreateTestPage />,
+                                                    element: <ViewTestPage />,
                                                 },
                                                 {
                                                     path: "edit",
