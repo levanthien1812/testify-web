@@ -47,6 +47,7 @@
 /* Test Calendar */
 .rbc-toolbar .rbc-btn-group button {
   background-color: oklch(95.4% 0.038 75.164);
+  padding: 0.25rem 1rem;
 }
 
 .rbc-toolbar .rbc-btn-group button:hover {
@@ -71,6 +72,24 @@
 
 .rbc-header {
   background-color: oklch(95.4% 0.038 75.164);
+  border-radius: 4px;
+}
+
+.rbc-month-header {
+  gap: 2px;
+}
+
+.rbc-month-view {
+  gap: 2px;
+  border: none
+}
+
+.rbc-month-row + .rbc-month-row{
+  border-top: none;
+}
+
+.rbc-row-bg {
+  gap: 2px
 }
 
 .rbc-month-row .rbc-row-content .rbc-date-cell button {
@@ -82,4 +101,8 @@
   font-size: 24px;
   font-weight: bold;
   color: oklch(64.6% 0.222 41.116)
+}
+
+.rbc-row {
+  gap: 2px;
 }

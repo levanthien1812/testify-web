@@ -12,7 +12,7 @@ const HomePage = () => {
         <div className="xl:w-2/3 md:w-5/6 mx-auto py-10 space-y-10">
             <TestCalendar />
             <RecentTests />
-            <QuestionBanks />
+            {user?.role === ROLES.MAKER && <QuestionBanks />}
             {user?.role === ROLES.MAKER && <TopTakers />}
         </div>
     );
