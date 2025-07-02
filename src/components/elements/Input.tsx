@@ -39,8 +39,8 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
                     id={props.name}
                     className={`border border-gray-500 ${
                         sizing === "md" && "px-2 py-1 text-md"
-                    } ${
-                        sizing === "sm" && "px-1 py-0 text-sm"
+                    } ${sizing === "sm" && "px-1 py-0 text-sm"} ${
+                        error ? "border-orange-600" : ""
                     } focus:border-orange-600 outline-none placeholder:italic disabled:bg-gray-100 disabled:cursor-not-allowed w-full file:bg-orange-600 file:border-none file:text-white file:text-sm ${className}`}
                     {...rest}
                     ref={ref}

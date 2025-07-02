@@ -76,6 +76,7 @@ const RegistePage = () => {
                         placeholder="Eg. Christopher Jenedy"
                         error={errors?.name && errors?.name.message}
                         tabIndex={1}
+                        required
                     />
                     <AuthInput
                         labelText="Email"
@@ -89,6 +90,7 @@ const RegistePage = () => {
                         placeholder="Eg. jenedy123@gmail.com"
                         error={errors?.email && errors?.email.message}
                         tabIndex={2}
+                        required
                     />
                     <AuthInput
                         labelText="Username"
@@ -103,6 +105,7 @@ const RegistePage = () => {
                         placeholder="Eg. jenedy123"
                         error={errors?.username && errors?.username.message}
                         tabIndex={3}
+                        required
                     />
                     <AuthInput
                         labelText="Password"
@@ -118,6 +121,7 @@ const RegistePage = () => {
                         placeholder="********"
                         error={errors?.password && errors?.password.message}
                         tabIndex={4}
+                        required
                     />
                     <AuthInput
                         labelText="Password confirmation"
@@ -131,6 +135,7 @@ const RegistePage = () => {
                             errors?.password_confirm.message
                         }
                         tabIndex={5}
+                        required
                     />
                 </div>
 

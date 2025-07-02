@@ -21,7 +21,15 @@ const CreateTestPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const stepParam = searchParams.get("step");
     const { currentStep } = useAppSelector((state) => state.createTest);
-    const { setTestFromAPI, setStep, saveTestInfo } = createTestActions;
+    const {
+        setTestFromAPI,
+        setStep,
+        saveTestInfo,
+        validate,
+        initializeTestParts,
+        initializeTestQuestions,
+        initializeTestAnswers,
+    } = createTestActions;
     const dispatch = useDispatch();
     const location = useLocation();
 
@@ -69,6 +77,17 @@ const CreateTestPage = () => {
         }
     }, [stepParam, dispatch, setStep]);
 
+    useEffect(() => {
+        dispatch(initializeTestParts());
+        dispatch(initializeTestQuestions());
+        dispatch(initializeTestAnswers());
+        dispatch(validate({ step: CREATE_TEST_STEPS.TEST_INFORMATION }));
+        dispatch(validate({ step: CREATE_TEST_STEPS.TEST_PARTS }));
+        dispatch(validate({ step: CREATE_TEST_STEPS.TEST_QUESTIONS }));
+        dispatch(validate({ step: CREATE_TEST_STEPS.TEST_ANSWERS }));
+        dispatch(validate({ step: CREATE_TEST_STEPS.TEST_TAKERS }));
+    }, [validate, dispatch]);
+
     return (
         <>
             <Loading
@@ -79,7 +98,7 @@ const CreateTestPage = () => {
                 <div className="xl:w-2/3 md:w-5/6 mx-auto py-10">
                     <Navigator />
                     <StatusPanel />
-                    <div className="2xl:w-3/5 w-4/5 mx-auto my-6 relative">
+                    <div className="2xl:w-2/3 xl:w-4/5 md-5/6 w-11/12 mx-auto my-6 relative">
                         {currentStep === CREATE_TEST_STEPS.TEST_INFORMATION && (
                             <TestInfo />
                         )}

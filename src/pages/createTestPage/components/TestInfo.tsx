@@ -215,6 +215,15 @@ const TestInfo = () => {
                             type="datetime-local"
                             {...register("datetime", {
                                 required: "Start time is required",
+                                validate: (value) => {
+                                    if (!editibility.TEST_INFORMATION.datetime)
+                                        return true;
+                                    const date = new Date(value);
+                                    if (date < new Date()) {
+                                        return "Start time must be in the future";
+                                    }
+                                    return true;
+                                },
                             })}
                             error={errors?.datetime && errors?.datetime.message}
                             label={{ text: "Start time" }}

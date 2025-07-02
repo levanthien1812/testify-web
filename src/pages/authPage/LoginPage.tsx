@@ -104,6 +104,7 @@ const LoginPage = () => {
                         })}
                         error={errors?.email && errors?.email.message}
                         tabIndex={1}
+                        required
                     />
                     <AuthInput
                         labelText="Password"
@@ -113,6 +114,7 @@ const LoginPage = () => {
                         })}
                         error={errors?.password && errors?.password.message}
                         tabIndex={2}
+                        required
                     />
                 </div>
 

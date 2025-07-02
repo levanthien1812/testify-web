@@ -393,9 +393,12 @@ const createTestSlice = createSlice({
         setAvailableTakers(state, action: PayloadAction<TakerItf[]>) {
             state.availableTakers = action.payload;
         },
-        validate(state) {
-            // Validation
-            switch (state.currentStep) {
+        validate(
+            state,
+            action: PayloadAction<{ step: CREATE_TEST_STEPS } | undefined>
+        ) {
+            const step = action.payload?.step || state.currentStep;
+            switch (step) {
                 case CREATE_TEST_STEPS.TEST_INFORMATION: {
                     state.isValidTestInfo =
                         state.testTitle.length > 0 &&
