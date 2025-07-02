@@ -53,7 +53,7 @@ const Wrapper = ({
                 {viewData?.headerTitle?.description?.text}
             </p>
 
-            <div>{children}</div>
+            <div className="mt-6">{children}</div>
 
             <div className="flex justify-end items-center gap-3 mt-6 pt-4 border-t border-gray-300">
                 <>

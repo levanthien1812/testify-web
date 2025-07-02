@@ -103,7 +103,11 @@ const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
 
     return (
         <div
-            className={`bg-white rounded-md shadow-md hover:shadow-orange-200 overflow-hidden hover:cursor-pointer grid-item`}
+            className={`bg-white rounded-md shadow-md ${
+                question.is_content_provided
+                    ? "hover:shadow-green-200"
+                    : "hover:shadow-orange-200"
+            } overflow-hidden hover:cursor-pointer grid-item`}
             draggable
             onClick={onClick}
             onDragStart={handleDragStart}
@@ -112,9 +116,21 @@ const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
         >
-            <div className="bg-orange-50 px-2 py-1 flex items-center gap-1">
+            <div
+                className={`${
+                    question.is_content_provided
+                        ? "bg-teal-100"
+                        : "bg-orange-500"
+                } px-2 py-1 flex items-center gap-1 rounded-md`}
+            >
+                <span className="rounded-md p-1 leading-none">
+                    <FontAwesomeIcon
+                        icon={questionTypeToIcon[question.type]}
+                        className="text-teal-600"
+                    />
+                </span>
                 <p>Question {question.order}</p>
-                {!question.is_content_provided ? (
+                {/* {!question.is_content_provided ? (
                     <FontAwesomeIcon
                         icon={faCircleExclamation}
                         className="text-yellow-500 text-sm"
@@ -124,17 +140,14 @@ const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
                         icon={faCircleCheck}
                         className="text-green-500 text-sm"
                     />
-                )}
-                <span className="bg-orange-200 rounded-md p-1 leading-none ml-auto">
-                    <FontAwesomeIcon
-                        icon={questionTypeToIcon[question.type]}
-                        className="text-gray-700"
-                    />
+                )} */}
+                <span className="bg-teal-500 py-1 w-6 px-1 text-center rounded-md text-white leading-none ml-auto">
+                    {question.score}
                 </span>
             </div>
             {question.content && question.content.text && (
                 <div
-                    className="p-2"
+                    className="p-2 text-gray-600"
                     dangerouslySetInnerHTML={{
                         __html: shorten(question.content.text, 50),
                     }}

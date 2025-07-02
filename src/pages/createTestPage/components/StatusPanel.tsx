@@ -55,35 +55,46 @@ const StatusPanel = () => {
                                         <p className="text-md grow">
                                             This test is now publishable!
                                         </p>
-                                        <Button
-                                            onClick={() => publishTestMutate()}
-                                            disabled={publishTestLoading}
-                                        >
-                                            {publishTestLoading
-                                                ? "Publishing..."
-                                                : "Publish"}
-                                        </Button>
+                                        <div className="flex gap-2">
+                                            <Button
+                                                secondary
+                                                onClick={() =>
+                                                    setDissmissed(true)
+                                                }
+                                            >
+                                                Dismiss
+                                            </Button>
+                                            <Button
+                                                onClick={() =>
+                                                    publishTestMutate()
+                                                }
+                                                disabled={publishTestLoading}
+                                            >
+                                                {publishTestLoading
+                                                    ? "Publishing..."
+                                                    : "Publish"}
+                                            </Button>
+                                        </div>
                                     </div>
                                 )}
                                 {status === TEST_STATUS.PUBLISHED ||
                                     (status === TEST_STATUS.OPENED && (
-                                        <div>
+                                        <div className="flex items-center gap-4 justify-between">
                                             <p>
                                                 This test is now
                                                 published/opened! Some fields
                                                 will not be editable.
                                             </p>
+                                            <Button
+                                                primary
+                                                onClick={() =>
+                                                    setDissmissed(true)
+                                                }
+                                            >
+                                                Got it!
+                                            </Button>
                                         </div>
                                     ))}
-                                <div className="flex justify-end mt-2">
-                                    <Button
-                                        secondary
-                                        size="sm"
-                                        onClick={() => setDissmissed(true)}
-                                    >
-                                        Dismiss
-                                    </Button>
-                                </div>
                             </div>
                         </div>
                     )}

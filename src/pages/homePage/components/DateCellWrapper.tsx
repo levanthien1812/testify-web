@@ -31,7 +31,7 @@ const DateCellWrapper: React.FC<DateCellWrapperProps> = ({
 
     return (
         <div
-            className={`relative h-full w-full flex justify-center items-center cursor-pointer border ${
+            className={`relative h-full w-full flex justify-center items-center cursor-pointer ${
                 isToday
                     ? " bg-gradient-to-bl from-orange-50 to-orange-200"
                     : " bg-gradient-to-bl from-slate-50 to-slate-200"

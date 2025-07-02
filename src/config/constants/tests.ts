@@ -204,3 +204,5 @@ export const MILISECONDS_BY_UNIT = {
     [PASSCODE_VALID_UNIT.HOURS]: 3600 * 1000,
     [PASSCODE_VALID_UNIT.DAYS]: 86400 * 1000,
 };
+
+export const FILL_GAP_SIGN = "___";

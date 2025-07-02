@@ -4,16 +4,23 @@ import Input from "../../components/elements/Input";
 interface AuthInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
     labelText: string;
     error?: string;
+    required?: boolean;
 }
 
 const AuthInput = forwardRef<HTMLInputElement, AuthInputProps>((props, ref) => {
     const [show, setShow] = useState<boolean>(false);
-    const { labelText, error, ...rest } = props;
+    const { labelText, error, required, ...rest } = props;
 
     return (
         <div className="flex flex-col">
             <div className="mb-1 flex justify-between items-center">
-                <label htmlFor={props.name}>{labelText}</label>
+                <label htmlFor={props.name}>
+                    {labelText}
+                    <span className="text-orange-600">
+                        {required ? "*" : ""}
+                    </span>
+                    :
+                </label>
                 {props.type === "password" && (
                     <button
                         type="button"

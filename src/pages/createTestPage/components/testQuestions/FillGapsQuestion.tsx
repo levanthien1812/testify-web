@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     FillGapsQuestionBodyItf,
     QuestionBodyItf,
@@ -6,6 +6,8 @@ import {
 import TextEditor from "../../../../components/richTextEditor/TiptapEditor";
 import Input from "../../../../components/elements/Input";
 import { Control, Controller, FieldErrors } from "react-hook-form";
+import { FILL_GAP_SIGN } from "../../../../config/constants/tests";
+import { getNum } from "../../../../utils/primitives";
 
 const FillGapsQuestion: React.FC<{
     content: FillGapsQuestionBodyItf;
@@ -13,6 +15,7 @@ const FillGapsQuestion: React.FC<{
     errors: FieldErrors<QuestionBodyItf<FillGapsQuestionBodyItf>>;
 }> = ({ content, control, errors }) => {
     const { register } = control;
+
     return (
         <>
             <div className="flex flex-col items-start">
@@ -40,6 +43,17 @@ const FillGapsQuestion: React.FC<{
                     control={control}
                     rules={{
                         required: "Text is required",
+                        validate: (value) => {
+                            if (!value.includes(FILL_GAP_SIGN)) {
+                                return "Text must contain at least one gap";
+                            }
+                            const noOfGaps =
+                                value.split(FILL_GAP_SIGN).length - 1;
+                            if (noOfGaps !== getNum(content.num_gaps)) {
+                                return `Text must contain ${content.num_gaps} gaps`;
+                            }
+                            return true;
+                        },
                     }}
                     render={({ field: { onChange, value } }) => (
                         <TextEditor
