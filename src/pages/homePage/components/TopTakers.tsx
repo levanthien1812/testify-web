@@ -98,7 +98,10 @@ const TopTakers = () => {
     });
 
     return (
-        <SectionWrapper title={{ text: "Top takers" }}>
+        <SectionWrapper
+            title={{ text: "Top takers" }}
+            links={[{ to: "/takers", text: "View all" }]}
+        >
             {isLoadingTopTakers && (
                 <Loading
                     isLoading={isLoadingTopTakers}

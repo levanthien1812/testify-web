@@ -13,6 +13,8 @@ const QUERY_KEYS = {
     GET_PASSCODE: "get-passcode",
     GET_TEST_SUBMISSIONS: "get-test-submissions",
     GET_AI_MODELS: "get-ai-models",
+    GET_TAKERS: "get-takers",
+    GET_QUESTIONS_IN_BANK: "get-questions-in-bank",
 };
 
 const MUTATION_KEYS = {

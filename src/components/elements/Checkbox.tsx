@@ -5,7 +5,7 @@ interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
     error?: string;
     sizing?: "sm" | "md";
     helperText?: string;
-    label: {
+    label?: {
         text: string;
         extraClass?: string;
     };
@@ -22,7 +22,7 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>((props, ref) => {
     } = props;
     return (
         <>
-            <div className="flex gap-2">
+            <div className="flex">
                 <input
                     type="checkbox"
                     id={props.name}
@@ -35,19 +35,21 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>((props, ref) => {
                     {...rest}
                     ref={ref}
                 />
-                <label
-                    className={`shrink-0 ${label.extraClass} ${
-                        sizing === "md" && "text-md"
-                    } ${sizing === "sm" && "text-sm"} `}
-                    htmlFor={props.name}
-                >
-                    {label.text}
-                    {rest.required && (
-                        <span className="text-orange-600 text-md ml-0.5">
-                            *
-                        </span>
-                    )}
-                </label>
+                {label && (
+                    <label
+                        className={`shrink-0 ms-2 ${label.extraClass} ${
+                            sizing === "md" && "text-md"
+                        } ${sizing === "sm" && "text-sm"} `}
+                        htmlFor={props.name}
+                    >
+                        {label.text}
+                        {rest.required && (
+                            <span className="text-orange-600 text-md ml-0.5">
+                                *
+                            </span>
+                        )}
+                    </label>
+                )}
             </div>
             {helperText && (
                 <p className="text-end text-gray-500 text-sm mt-1">

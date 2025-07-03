@@ -78,14 +78,14 @@ const CreateTestPage = () => {
     }, [stepParam, dispatch, setStep]);
 
     useEffect(() => {
-        dispatch(initializeTestParts());
-        dispatch(initializeTestQuestions());
-        dispatch(initializeTestAnswers());
-        dispatch(validate({ step: CREATE_TEST_STEPS.TEST_INFORMATION }));
-        dispatch(validate({ step: CREATE_TEST_STEPS.TEST_PARTS }));
-        dispatch(validate({ step: CREATE_TEST_STEPS.TEST_QUESTIONS }));
-        dispatch(validate({ step: CREATE_TEST_STEPS.TEST_ANSWERS }));
-        dispatch(validate({ step: CREATE_TEST_STEPS.TEST_TAKERS }));
+        // dispatch(initializeTestParts());
+        // dispatch(initializeTestQuestions());
+        // dispatch(initializeTestAnswers());
+        // dispatch(validate({ step: CREATE_TEST_STEPS.TEST_INFORMATION }));
+        // dispatch(validate({ step: CREATE_TEST_STEPS.TEST_PARTS }));
+        // dispatch(validate({ step: CREATE_TEST_STEPS.TEST_QUESTIONS }));
+        // dispatch(validate({ step: CREATE_TEST_STEPS.TEST_ANSWERS }));
+        // dispatch(validate({ step: CREATE_TEST_STEPS.TEST_TAKERS }));
     }, [validate, dispatch]);
 
     return (

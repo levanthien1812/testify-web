@@ -19,6 +19,9 @@ export interface userItf {
     photo?: string;
     blocked_users?: string[];
     blocked_by?: string[];
+    birthday?: Date;
+    gender?: string;
+    phone_number?: string;
 }
 
 export interface authInitialStateItf {
@@ -268,6 +271,10 @@ export type UserAnswerItf<T extends AnswerBodyContentItf> = {
 export interface TakerBodyItf {
     name: string;
     email: string;
+    gender?: string;
+    birthday?: Date;
+    phone_number?: string;
+    photo?: string;
 }
 
 export interface TakerItf extends TakerBodyItf {
