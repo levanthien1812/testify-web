@@ -33,7 +33,7 @@ const Button = ({
                 outlined
                     ? "border border-orange-600 bg-white text-orange-600 hover:bg-orange-100 active:bg-orange-200"
                     : ""
-            } ${size === "sm" ? "px-4 py-0 text-sm" : ""}${
+            } ${size === "sm" ? "px-4 py-0.5 text-sm" : ""}${
                 size === "md" ? "px-8 py-1" : ""
             }${
                 size === "lg" ? "px-12 py-1.5" : ""

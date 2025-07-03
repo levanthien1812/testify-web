@@ -18,6 +18,7 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
         error = null,
         helperText = null,
         label,
+        type = "text",
         ...rest
     } = props;
     return (
@@ -35,13 +36,15 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
             )}
             <div className={"w-full"}>
                 <input
-                    type={props.type}
+                    type={type}
                     id={props.name}
                     className={`border border-gray-500 ${
                         sizing === "md" && "px-2 py-1 text-md"
                     } ${sizing === "sm" && "px-1 py-0 text-sm"} ${
                         error ? "border-orange-600" : ""
-                    } focus:border-orange-600 outline-none placeholder:italic disabled:bg-gray-100 disabled:cursor-not-allowed w-full file:bg-orange-600 file:border-none file:text-white file:text-sm ${className}`}
+                    } focus:border-orange-600 outline-none placeholder:italic disabled:bg-gray-100 disabled:cursor-not-allowed w-full file:bg-orange-600 file:border-none file:text-white file:text-sm ${
+                        type === "file" ? "cursor-pointer" : ""
+                    } ${className}`}
                     {...rest}
                     ref={ref}
                 />

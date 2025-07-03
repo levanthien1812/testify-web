@@ -446,10 +446,6 @@ export const INITIAL_QUESTION_BANK: QuestionBankBodyTempItf = {
 export const INITIAL_TAKER: TakerBodyItf = {
     name: "",
     email: "",
-    gender: "",
-    birthday: new Date(),
-    phone_number: "",
-    photo: "",
 };
 
 export const INITIAL_TAKERS_COLUMN_FILTERS: ColumnFiltersState = [

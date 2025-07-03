@@ -274,7 +274,7 @@ export interface TakerBodyItf {
     gender?: string;
     birthday?: Date;
     phone_number?: string;
-    photo?: string;
+    photo?: FileList | string;
 }
 
 export interface TakerItf extends TakerBodyItf {

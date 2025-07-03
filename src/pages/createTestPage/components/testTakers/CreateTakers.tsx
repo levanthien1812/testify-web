@@ -6,7 +6,7 @@ import Modal, {
 } from "../../../../components/modals/Modal";
 import { TakerBodyItf } from "../../../../types/types";
 import { useMutation } from "react-query";
-import { createTakers } from "../../../../services/test";
+import { createTakersForTest } from "../../../../services/test";
 import { toast } from "react-toastify";
 import Button from "../../../../components/elements/Button";
 import Input from "../../../../components/elements/Input";
@@ -29,7 +29,9 @@ const CreateTakers = ({ onClose }: CreateTakersProps) => {
 
     const { mutate, isLoading } = useMutation({
         mutationFn: async (takersBody: TakerBodyItf[]) => {
-            const data = await createTakers(testId!, { takers: takersBody });
+            const data = await createTakersForTest(testId!, {
+                takers: takersBody,
+            });
 
             return data;
         },
