@@ -16,6 +16,7 @@ import { ChatItf } from "../../../../types/chat";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
 import { CLEAR_TYPING_INDICATOR_TIMEOUT } from "../../../../config/constants/chat";
 import { useAppSelector } from "../../../../hooks/hooks";
+import { getPreviewLink } from "../../../../utils/image";
 
 const InputMessage = () => {
     const {
@@ -72,11 +73,15 @@ const InputMessage = () => {
         }
     };
 
-    const handleChangeImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const handleChangeImage = async (
+        e: React.ChangeEvent<HTMLInputElement>
+    ) => {
         const selectedFiles = e.target.files;
         console.log(selectedFiles);
         if (!selectedFiles) return;
         setImages(selectedFiles);
+        const previews = await getPreviewLink(selectedFiles);
+        setPreviewURLs(previews);
     };
 
     const handleRemoveImage = (indexToRemove: number) => {
@@ -89,6 +94,11 @@ const InputMessage = () => {
             }
         }
         setImages(dt.files);
+        setPreviewURLs((prev) => {
+            const newURLs = [...prev];
+            newURLs.splice(indexToRemove, 1);
+            return newURLs;
+        });
     };
 
     const handleCancelReply = () => {
@@ -131,43 +141,6 @@ const InputMessage = () => {
             inputMessageRef.current.focus();
         }
     }, [inputMessageRef, chat?.message_being_replied]);
-
-    useEffect(() => {
-        if (!images) return;
-
-        const filePromises: Promise<string>[] = [];
-        for (let i = 0; i < images.length; i++) {
-            const file = images[i];
-
-            const promise = new Promise<string>((resolve, reject) => {
-                const reader = new FileReader();
-
-                reader.onload = (event) => {
-                    if (typeof event.target?.result === "string") {
-                        resolve(event.target.result);
-                    } else {
-                        reject("Failed to read file as data URL.");
-                    }
-                };
-
-                reader.onerror = (error) => {
-                    reject(error);
-                };
-
-                reader.readAsDataURL(file);
-            });
-
-            filePromises.push(promise);
-        }
-
-        Promise.all(filePromises)
-            .then((results) => {
-                setPreviewURLs(results);
-            })
-            .catch((error) => {
-                console.error("Error loading previews:", error);
-            });
-    }, [images]);
 
     const senderName = useMemo(() => {
         if (!chat || !chat.message_being_replied) return "";

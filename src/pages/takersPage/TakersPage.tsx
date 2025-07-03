@@ -30,12 +30,18 @@ import Loading from "../../components/loadings/Loading";
 import { USER_GENDER } from "../../config/constants/users";
 import TakerFilters from "./components/TakerFilters";
 import { dateRangeFilter } from "../../utils/filters";
+import AddTakers from "./components/AddTakers";
+import { format } from "date-fns";
+import { formatImageUrl } from "../../utils/formatImageUrl";
 
 const TakersPage = () => {
     const [currentIdToShowActionModal, setCurrentIdToShowActionModal] =
         useState<string | null>(null);
-
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
+    const [globalFilter, setGlobalFilter] = useState<any>("");
+    const [isAddingTakers, setIsAddingTakers] = useState(false);
+    const [currentTakerBeingViewed, setCurrentTakerBeingViewed] =
+        useState<TakerItf | null>(null);
 
     const { data: takers, isLoading: isLoadingTakers } = useQuery({
         queryFn: async () => {
@@ -71,13 +77,12 @@ const TakersPage = () => {
                 accessorKey: "name",
                 cell: ({ row }) => {
                     const photo = row.original.photo;
-                    const src =
-                        photo && photo.length > 0 ? photo : defaultUserPhoto;
+                    const src = photo || defaultUserPhoto;
                     return (
                         <div className="flex items-center justify-start gap-2 rounded-full py-1 px-2 shadow-sm border border-gray-300 bg-white w-[80%] mx-auto">
                             <img
-                                className="w-5 h-5 rounded-full"
-                                src={src}
+                                className="w-5 h-5 rounded-full object-cover"
+                                src={formatImageUrl(src)}
                                 alt=""
                             />
                             <span>{_.capitalize(row.original.name)}</span>
@@ -108,7 +113,7 @@ const TakersPage = () => {
                 header: "Gender",
                 accessorKey: "gender",
                 cell: ({ row }) => {
-                    return (
+                    return row.original.gender ? (
                         <div>
                             <FontAwesomeIcon
                                 icon={
@@ -119,6 +124,8 @@ const TakersPage = () => {
                                 className="text-gray-700"
                             />
                         </div>
+                    ) : (
+                        "N/A"
                     );
                 },
                 filterFn: "equalsString",
@@ -127,7 +134,9 @@ const TakersPage = () => {
                 header: "Birthday",
                 accessorKey: "birthday",
                 cell: ({ row }) => {
-                    return row.original.birthday;
+                    return row.original.birthday
+                        ? format(new Date(row.original.birthday), "dd/MM/yyyy")
+                        : "N/A";
                 },
                 filterFn: dateRangeFilter,
             },
@@ -135,7 +144,9 @@ const TakersPage = () => {
                 header: "Phone number",
                 accessorKey: "phone_number",
                 cell: ({ row }) => {
-                    return row.original.phone_number;
+                    return row.original.phone_number
+                        ? row.original.phone_number
+                        : "N/A";
                 },
                 filterFn: "includesString",
             },
@@ -165,7 +176,16 @@ const TakersPage = () => {
                                     <Button className="w-full" size="md">
                                         Delete
                                     </Button>
-                                    <Button className="w-full" size="md">
+                                    <Button
+                                        className="w-full"
+                                        size="md"
+                                        onClick={() => {
+                                            setCurrentTakerBeingViewed(
+                                                row.original
+                                            );
+                                            setCurrentIdToShowActionModal(null);
+                                        }}
+                                    >
                                         Edit
                                     </Button>
                                 </div>
@@ -186,6 +206,7 @@ const TakersPage = () => {
         enableMultiRowSelection: true,
         getFilteredRowModel: getFilteredRowModel(),
         onColumnFiltersChange: setColumnFilters,
+        onGlobalFilterChange: setGlobalFilter,
         initialState: {
             pagination: {
                 pageSize: 10,
@@ -194,6 +215,7 @@ const TakersPage = () => {
         },
         state: {
             columnFilters,
+            globalFilter,
         },
     });
 
@@ -201,7 +223,10 @@ const TakersPage = () => {
         <div className="xl:w-2/3 md:w-5/6 mx-auto py-10">
             <div className="flex items-center">
                 <h2 className="text-4xl">Your takers</h2>
-                <Button className="ml-auto">
+                <Button
+                    className="ml-auto"
+                    onClick={() => setIsAddingTakers(true)}
+                >
                     <FontAwesomeIcon icon={faPlus} className="text-sm mr-1" />
                     <span>Add taker</span>
                 </Button>
@@ -263,6 +288,16 @@ const TakersPage = () => {
                         ))}
                     </tbody>
                 </table>
+            )}
+
+            {isAddingTakers && (
+                <AddTakers onClose={() => setIsAddingTakers(false)} />
+            )}
+            {currentTakerBeingViewed && (
+                <AddTakers
+                    onClose={() => setCurrentTakerBeingViewed(null)}
+                    taker={currentTakerBeingViewed}
+                />
             )}
         </div>
     );

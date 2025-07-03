@@ -233,7 +233,7 @@ export const addAnswer = async (
     }
 };
 
-export const createTakers = async (
+export const createTakersForTest = async (
     testId: string,
     takersBody: {
         takers: TakerBodyItf[];
@@ -412,6 +412,30 @@ export const updateTakerAnswer = async (
             `/tests/${testId}/answers/${answerId}`,
             answerBody
         );
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const createTaker = async (body: TakerBodyItf) => {
+    try {
+        const formData = new FormData();
+        formData.append("name", body.name);
+        formData.append("email", body.email);
+        if (body.gender) formData.append("gender", body.gender);
+        if (body.birthday)
+            formData.append("birthday", new Date(body.birthday).toISOString());
+        if (body.phone_number)
+            formData.append("phone_number", body.phone_number);
+        if (body.photo) formData.append("file", (body.photo as FileList)[0]);
+
+        const response = await instance.post(`/users/takers`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
 
         return response.data;
     } catch (error) {
