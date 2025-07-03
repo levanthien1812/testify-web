@@ -21,6 +21,7 @@ import { useAppSelector } from "./hooks/hooks";
 import QuestionBanksPage from "./pages/questionBanksPage/QuestionBanksPage";
 import QuestionBankPage from "./pages/questionBankDetailPage/QuestionBankPage";
 import { BreadcrumbHandle } from "./types/types";
+import TakersPage from "./pages/takersPage/TakersPage";
 
 const queryClient = new QueryClient(queryClientConfig);
 
@@ -122,6 +123,18 @@ function App() {
                                     ],
                                     handle: {
                                         crumb: "Question Banks",
+                                    } as BreadcrumbHandle,
+                                },
+                                {
+                                    path: "takers",
+                                    children: [
+                                        {
+                                            index: true,
+                                            element: <TakersPage />,
+                                        },
+                                    ],
+                                    handle: {
+                                        crumb: "Takers",
                                     } as BreadcrumbHandle,
                                 },
                             ],

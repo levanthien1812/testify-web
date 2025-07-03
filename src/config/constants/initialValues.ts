@@ -1,5 +1,5 @@
+import { ColumnFiltersState } from "@tanstack/react-table";
 import {
-    QuestionBankBodyItf,
     QuestionBankBodyTempItf,
     QuestionInBankItf,
 } from "../../types/questionBank";
@@ -17,6 +17,7 @@ import {
     QuestionContentItf,
     QuestionItf,
     ResponseQuestionItf,
+    TakerBodyItf,
     TestBodyItf,
     TestPartItf,
     TrueFalseQuestionItf,
@@ -441,3 +442,19 @@ export const INITIAL_QUESTION_BANK: QuestionBankBodyTempItf = {
     tags: [],
     is_bookmarked: false,
 };
+
+export const INITIAL_TAKER: TakerBodyItf = {
+    name: "",
+    email: "",
+    gender: "",
+    birthday: new Date(),
+    phone_number: "",
+    photo: "",
+};
+
+export const INITIAL_TAKERS_COLUMN_FILTERS: ColumnFiltersState = [
+    {
+        id: "name",
+        value: "",
+    },
+];

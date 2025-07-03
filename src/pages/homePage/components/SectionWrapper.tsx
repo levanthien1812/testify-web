@@ -37,7 +37,9 @@ const SectionWrapper = ({
     const filteredButtons = buttons
         ? buttons.filter((button) => button.display)
         : [];
-    const filteredLinks = links ? links.filter((link) => link.display) : [];
+    const filteredLinks = links
+        ? links.filter((link) => link.display !== false)
+        : [];
 
     return (
         <div>

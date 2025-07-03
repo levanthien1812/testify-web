@@ -15,15 +15,14 @@ import { TOAST_MESSAGES } from "../../../../config/constants/toasts";
 import { createTestActions } from "../../../../stores/createTest";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "../../../../hooks/hooks";
+import { INITIAL_TAKER } from "../../../../config/constants/initialValues";
 
 type CreateTakersProps = {
     onClose: () => void;
 };
 
 const CreateTakers = ({ onClose }: CreateTakersProps) => {
-    const [takers, setTakers] = useState<TakerBodyItf[]>([
-        { name: "", email: "" },
-    ]);
+    const [takers, setTakers] = useState<TakerBodyItf[]>([INITIAL_TAKER]);
     const { testId } = useAppSelector((state) => state.createTest);
     const { addSelectedTestTakers } = createTestActions;
     const dispatch = useDispatch();
@@ -47,7 +46,7 @@ const CreateTakers = ({ onClose }: CreateTakersProps) => {
     };
 
     const handleAdd = () => {
-        setTakers((prev) => [...prev, { name: "", email: "" }]);
+        setTakers((prev) => [...prev, INITIAL_TAKER]);
     };
 
     const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {

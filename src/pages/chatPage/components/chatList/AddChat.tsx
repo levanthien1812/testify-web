@@ -20,7 +20,7 @@ const AddChat = ({ onClose }: { onClose: () => void }) => {
     const { availableTakers, setAvailableTakers, socket, setChats, chats } =
         useChatSocket();
 
-    const { data: takers, isFetching } = useQuery<userItf[]>({
+    const { data: takers, isFetching } = useQuery<TakerItf[]>({
         queryFn: async () => {
             const data = await getTakers();
             return data.takers;
