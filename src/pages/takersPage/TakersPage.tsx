@@ -11,37 +11,53 @@ import {
 import {
     ColumnDef,
     ColumnFiltersState,
-    flexRender,
     getCoreRowModel,
     getFilteredRowModel,
     getSortedRowModel,
+    RowSelectionState,
     useReactTable,
 } from "@tanstack/react-table";
-import { TakerItf } from "../../types/types";
+import { TakerGroupItf, TakerItf } from "../../types/types";
 import defaultUserPhoto from "../../assets/images/default-user-photo.png";
 import _ from "lodash";
 import Checkbox from "../../components/elements/Checkbox";
 import IconButton from "../../components/elements/IconButton";
-import { INITIAL_TAKERS_COLUMN_FILTERS } from "../../config/constants/initialValues";
 import { useQuery } from "react-query";
-import { getTakers } from "../../services/user";
+import { getTakerGroups, getTakers } from "../../services/user";
 import { QUERY_KEYS } from "../../config/constants/queryMutationKeys";
 import Loading from "../../components/loadings/Loading";
-import { USER_GENDER } from "../../config/constants/users";
+import { TAKER_FIELDS, USER_GENDER } from "../../config/constants/users";
 import TakerFilters from "./components/TakerFilters";
 import { dateRangeFilter } from "../../utils/filters";
 import AddTakers from "./components/AddTakers";
 import { format } from "date-fns";
 import { formatImageUrl } from "../../utils/formatImageUrl";
+import AddGroup from "./components/AddGroup";
+import TakersTable from "./components/TakersTable";
+import SelectPanel from "./components/SelectPanel";
+import TakerGroups from "./components/TakerGroups";
 
 const TakersPage = () => {
     const [currentIdToShowActionModal, setCurrentIdToShowActionModal] =
         useState<string | null>(null);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState<any>("");
+    const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
     const [isAddingTakers, setIsAddingTakers] = useState(false);
+    const [isAddingGroup, setIsAddingGroup] = useState(false);
+    const [isViewingGroups, setIsViewingGroups] = useState(false);
     const [currentTakerBeingViewed, setCurrentTakerBeingViewed] =
         useState<TakerItf | null>(null);
+
+    const { data: takerGroups, isLoading: isLoadingTakerGroups } = useQuery<
+        TakerGroupItf[]
+    >({
+        queryFn: async () => {
+            const data = await getTakerGroups();
+            return data.taker_groups;
+        },
+        queryKey: [QUERY_KEYS.GET_TAKER_GROUPS],
+    });
 
     const { data: takers, isLoading: isLoadingTakers } = useQuery({
         queryFn: async () => {
@@ -58,25 +74,27 @@ const TakersPage = () => {
                 header: ({ table }) => (
                     <Checkbox
                         checked={table.getIsAllRowsSelected()}
-                        onChange={() => table.toggleAllRowsSelected()}
+                        onChange={table.getToggleAllRowsSelectedHandler()}
                         className="mx-auto"
                     />
                 ),
                 cell: ({ row }) => (
                     <Checkbox
                         checked={row.getIsSelected()}
-                        onChange={() => row.getToggleExpandedHandler()}
+                        onChange={row.getToggleSelectedHandler()}
                         disabled={!row.getCanSelect()}
-                        name={row.original.id}
                         className="mx-auto"
                     />
                 ),
+                enableColumnFilter: false,
+                enableSorting: false,
             },
             {
                 header: "Name",
-                accessorKey: "name",
+                accessorKey: TAKER_FIELDS.NAME,
+                id: TAKER_FIELDS.NAME,
                 cell: ({ row }) => {
-                    const photo = row.original.photo;
+                    const photo = row.original.user.photo;
                     const src = photo || defaultUserPhoto;
                     return (
                         <div className="flex items-center justify-start gap-2 rounded-full py-1 px-2 shadow-sm border border-gray-300 bg-white w-[80%] mx-auto">
@@ -93,17 +111,21 @@ const TakersPage = () => {
             },
             {
                 header: "Email",
-                accessorKey: "email",
+                accessorKey: TAKER_FIELDS.EMAIL,
+                id: TAKER_FIELDS.EMAIL,
                 cell: ({ row }) => {
                     return (
                         <div className="flex items-center justify-center gap-1 mx-auto">
-                            <span>{row.original.email}</span>
-                            <button className="bg-transparent border-none">
+                            <span>{row.original.user.email}</span>
+                            <a
+                                className="bg-transparent border-none"
+                                href={`mailto:${row.original.user.email}`}
+                            >
                                 <FontAwesomeIcon
                                     icon={faArrowUpRightFromSquare}
                                     className="text-gray-400 hover:text-gray-500 transition-all duration-150"
                                 />
-                            </button>
+                            </a>
                         </div>
                     );
                 },
@@ -111,13 +133,15 @@ const TakersPage = () => {
             },
             {
                 header: "Gender",
-                accessorKey: "gender",
+                accessorKey: TAKER_FIELDS.GENDER,
+                id: TAKER_FIELDS.GENDER,
                 cell: ({ row }) => {
-                    return row.original.gender ? (
+                    return row.original.user.gender ? (
                         <div>
                             <FontAwesomeIcon
                                 icon={
-                                    row.original.gender === USER_GENDER.FEMALE
+                                    row.original.user.gender ===
+                                    USER_GENDER.FEMALE
                                         ? faVenus
                                         : faMars
                                 }
@@ -132,21 +156,45 @@ const TakersPage = () => {
             },
             {
                 header: "Birthday",
-                accessorKey: "birthday",
+                accessorKey: TAKER_FIELDS.BIRTHDAY,
+                id: TAKER_FIELDS.BIRTHDAY,
                 cell: ({ row }) => {
-                    return row.original.birthday
-                        ? format(new Date(row.original.birthday), "dd/MM/yyyy")
+                    return row.original.user.birthday
+                        ? format(
+                              new Date(row.original.user.birthday),
+                              "dd/MM/yyyy"
+                          )
                         : "N/A";
                 },
                 filterFn: dateRangeFilter,
             },
             {
                 header: "Phone number",
-                accessorKey: "phone_number",
+                accessorKey: TAKER_FIELDS.PHONE_NUMBER,
+                id: TAKER_FIELDS.PHONE_NUMBER,
                 cell: ({ row }) => {
-                    return row.original.phone_number
-                        ? row.original.phone_number
+                    return row.original.user.phone_number
+                        ? row.original.user.phone_number
                         : "N/A";
+                },
+                filterFn: "includesString",
+            },
+            {
+                header: "Group",
+                accessorKey: TAKER_FIELDS.GROUP,
+                id: TAKER_FIELDS.GROUP,
+                cell: ({ row }) => {
+                    const group = takerGroups?.find(
+                        (group) => group.id === row.original.group_id
+                    );
+                    if (group) {
+                        return (
+                            <div className="text-sm rounded-full border border-gray-300 px-2 py-1">
+                                {group.name}
+                            </div>
+                        );
+                    }
+                    return "";
                 },
                 filterFn: "includesString",
             },
@@ -193,9 +241,11 @@ const TakersPage = () => {
                         </div>
                     );
                 },
+                enableColumnFilter: false,
+                enableSorting: false,
             },
         ],
-        [currentIdToShowActionModal]
+        [currentIdToShowActionModal, takerGroups]
     );
 
     const table = useReactTable({
@@ -207,96 +257,88 @@ const TakersPage = () => {
         getFilteredRowModel: getFilteredRowModel(),
         onColumnFiltersChange: setColumnFilters,
         onGlobalFilterChange: setGlobalFilter,
+        onRowSelectionChange: setRowSelection,
         initialState: {
             pagination: {
                 pageSize: 10,
             },
-            columnFilters: INITIAL_TAKERS_COLUMN_FILTERS,
+            // columnFilters: INITIAL_TAKERS_COLUMN_FILTERS,
         },
         state: {
             columnFilters,
             globalFilter,
+            rowSelection,
         },
     });
 
     return (
         <div className="xl:w-2/3 md:w-5/6 mx-auto py-10">
-            <div className="flex items-center">
+            <div className="flex items-center gap-2">
                 <h2 className="text-4xl">Your takers</h2>
                 <Button
                     className="ml-auto"
-                    onClick={() => setIsAddingTakers(true)}
+                    onClick={() => setIsAddingGroup(true)}
                 >
+                    <FontAwesomeIcon icon={faPlus} className="text-sm mr-1" />
+                    <span>Add group</span>
+                </Button>
+                <Button onClick={() => setIsAddingTakers(true)}>
                     <FontAwesomeIcon icon={faPlus} className="text-sm mr-1" />
                     <span>Add taker</span>
                 </Button>
             </div>
+            {takerGroups && takerGroups.length > 0 && (
+                <div className="flex justify-end">
+                    <Button
+                        link
+                        onClick={() => setIsViewingGroups((prev) => !prev)}
+                    >
+                        {isViewingGroups ? "Hide groups" : "View groups"}
+                    </Button>
+                </div>
+            )}
+            {isViewingGroups && takerGroups && (
+                <TakerGroups groups={takerGroups} table={table} />
+            )}
             {isLoadingTakers && (
                 <Loading
                     isLoading={isLoadingTakers}
                     loadingText={{ text: "Loading top takers..." }}
                 />
             )}
-
-            {takers && takers.length > 0 && <TakerFilters table={table} />}
-
             {takers && takers.length > 0 && (
-                <table className="w-full mt-2">
-                    <thead>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <tr key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => (
-                                    <th
-                                        key={header.id}
-                                        className={`py-1 px-1 border align-middle border-slate-400 bg-orange-100 ${
-                                            header.column.getCanSort()
-                                                ? "cursor-pointer"
-                                                : ""
-                                        }`}
-                                        onClick={header.column.getToggleSortingHandler()}
-                                    >
-                                        {flexRender(
-                                            header.column.columnDef.header,
-                                            header.getContext()
-                                        )}
-                                        {header.column.getIsSorted()
-                                            ? header.column.getIsSorted() ===
-                                              "asc"
-                                                ? " 🔼"
-                                                : " 🔽"
-                                            : ""}
-                                    </th>
-                                ))}
-                            </tr>
-                        ))}
-                    </thead>
-                    <tbody>
-                        {table.getRowModel().rows.map((row) => (
-                            <tr key={row.id}>
-                                {row.getVisibleCells().map((cell) => (
-                                    <td
-                                        key={cell.id}
-                                        className={`py-1 px-1 align-middle border text-center border-slate-400`}
-                                    >
-                                        {flexRender(
-                                            cell.column.columnDef.cell,
-                                            cell.getContext()
-                                        )}
-                                    </td>
-                                ))}
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                <TakerFilters table={table} initialGroups={takerGroups || []} />
             )}
-
+            {takers && table.getRowModel().rows.length > 0 && (
+                <TakersTable table={table} />
+            )}
+            {takers &&
+                table.getRowModel().rows.length === 0 &&
+                !isLoadingTakers && (
+                    <p className="text-center text-lg text-gray-500 mt-4">
+                        No takers found
+                    </p>
+                )}
             {isAddingTakers && (
-                <AddTakers onClose={() => setIsAddingTakers(false)} />
+                <AddTakers
+                    onClose={() => setIsAddingTakers(false)}
+                    takerGroups={takerGroups}
+                />
             )}
             {currentTakerBeingViewed && (
                 <AddTakers
                     onClose={() => setCurrentTakerBeingViewed(null)}
                     taker={currentTakerBeingViewed}
+                    takerGroups={takerGroups}
+                />
+            )}
+            {takers && table.getSelectedRowModel().rows.length > 0 && (
+                <SelectPanel table={table} />
+            )}
+            {isAddingGroup && (
+                <AddGroup
+                    takers={takers}
+                    onClose={() => setIsAddingGroup(false)}
                 />
             )}
         </div>

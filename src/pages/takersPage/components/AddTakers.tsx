@@ -5,14 +5,14 @@ import Modal, {
     ModalHeader,
 } from "../../../components/modals/Modal";
 import { useForm } from "react-hook-form";
-import { TakerBodyItf, TakerItf } from "../../../types/types";
+import { TakerBodyItf, TakerGroupItf, TakerItf } from "../../../types/types";
 import { INITIAL_TAKER } from "../../../config/constants/initialValues";
 import Input from "../../../components/elements/Input";
 import Select from "../../../components/elements/Select";
 import Button from "../../../components/elements/Button";
 import { useMutation } from "react-query";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
-import { createTaker } from "../../../services/test";
+import { createTaker, updateTaker } from "../../../services/test";
 import { toast } from "react-toastify";
 import { TOAST_MESSAGES } from "../../../config/constants/toasts";
 import { formatImageUrl } from "../../../utils/formatImageUrl";
@@ -20,26 +20,45 @@ import { formatImageUrl } from "../../../utils/formatImageUrl";
 type AddTakersProps = {
     onClose: () => void;
     taker?: TakerItf;
+    takerGroups?: TakerGroupItf[];
 };
 
-const AddTakers = ({ onClose, taker }: AddTakersProps) => {
+const AddTakers = ({ onClose, taker, takerGroups }: AddTakersProps) => {
     const [previewUrl, setPreviewURL] = useState<string | null>(
-        taker && taker.photo ? formatImageUrl(taker.photo as string) : null
+        taker && taker.user.photo
+            ? formatImageUrl(taker.user.photo as string)
+            : null
     );
     const [hoverPreview, setHoverPreview] = useState<boolean>(false);
 
-    const { mutate, isLoading } = useMutation({
-        mutationFn: async (takerBody: TakerBodyItf) => {
-            const data = await createTaker(takerBody);
+    const { mutate: createTakerMutate, isLoading: createTakerLoading } =
+        useMutation({
+            mutationFn: async (takerBody: TakerBodyItf) => {
+                const data = await createTaker(takerBody);
 
-            return data;
-        },
-        mutationKey: [MUTATION_KEYS.CREATE_TAKERS],
-        onSuccess: (data) => {
-            onClose();
-            toast.success(TOAST_MESSAGES.CREATE_TAKERS_SUCCESSFULLY);
-        },
-    });
+                return data;
+            },
+            mutationKey: [MUTATION_KEYS.CREATE_TAKERS],
+            onSuccess: (data) => {
+                onClose();
+                toast.success(TOAST_MESSAGES.CREATE_TAKERS_SUCCESSFULLY);
+            },
+        });
+
+    const { mutate: updateTakerMutate, isLoading: updateTakerLoading } =
+        useMutation({
+            mutationFn: async (takerBody: Partial<TakerBodyItf>) => {
+                if (!taker) return;
+                const data = await updateTaker(taker.id, takerBody);
+
+                return data;
+            },
+            mutationKey: [MUTATION_KEYS.UPDATE_TAKER],
+            onSuccess: (data) => {
+                onClose();
+                toast.success(TOAST_MESSAGES.UPDATE_TAKER_SUCCESSFULLY);
+            },
+        });
 
     const {
         register,
@@ -48,11 +67,25 @@ const AddTakers = ({ onClose, taker }: AddTakersProps) => {
         setValue,
         watch,
     } = useForm<TakerBodyItf>({
-        defaultValues: taker ? taker : INITIAL_TAKER,
+        defaultValues: taker
+            ? {
+                  name: taker.name,
+                  email: taker.user.email,
+                  birthday: taker.user.birthday,
+                  gender: taker.user.gender,
+                  phone_number: taker.user.phone_number,
+                  group_id: taker.group_id,
+                  photo: taker.user.photo,
+              }
+            : INITIAL_TAKER,
     });
 
     const onSubmit = (data: TakerBodyItf) => {
-        mutate(data);
+        if (taker) {
+            updateTakerMutate(data);
+        } else {
+            createTakerMutate(data);
+        }
     };
 
     const photo = watch("photo");
@@ -138,6 +171,27 @@ const AddTakers = ({ onClose, taker }: AddTakersProps) => {
                                     type="date"
                                 />
                             </div>
+                            {takerGroups && (
+                                <div className="flex gap-2">
+                                    <Select
+                                        {...register("group_id", {
+                                            required: false,
+                                        })}
+                                        label={{ text: "Group" }}
+                                        error={errors.group_id?.message}
+                                        options={takerGroups.map((group) => ({
+                                            value: group.id,
+                                            label: group.name,
+                                        }))}
+                                        disabled={takerGroups.length === 0}
+                                        helperText={
+                                            takerGroups.length === 0
+                                                ? "No group available!"
+                                                : ""
+                                        }
+                                    />
+                                </div>
+                            )}
                         </div>
                         <div>
                             {previewUrl && (
@@ -188,7 +242,9 @@ const AddTakers = ({ onClose, taker }: AddTakersProps) => {
             </ModalBody>
             <ModalFooter includeCancelBtn>
                 <Button className="" primary onClick={handleSubmit(onSubmit)}>
-                    Save
+                    {createTakerLoading || updateTakerLoading
+                        ? "Saving..."
+                        : "Save"}
                 </Button>
             </ModalFooter>
         </Modal>

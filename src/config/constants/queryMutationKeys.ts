@@ -15,6 +15,7 @@ const QUERY_KEYS = {
     GET_AI_MODELS: "get-ai-models",
     GET_TAKERS: "get-takers",
     GET_QUESTIONS_IN_BANK: "get-questions-in-bank",
+    GET_TAKER_GROUPS: "get-taker-groups",
 };
 
 const MUTATION_KEYS = {
@@ -29,6 +30,7 @@ const MUTATION_KEYS = {
     UPDATE_QUESTION: "update-question",
     DELETE_QUESTION: "delete-question",
     CREATE_TAKERS: "create-takers",
+    UPDATE_TAKER: "update-taker",
     ADD_TAKER: "add-taker",
     VALIDATE_QUESTIONS: "validate-questions",
     ADD_ANSWER: "add-answer",
@@ -55,6 +57,7 @@ const MUTATION_KEYS = {
     IMPORT_QUESTIONS_SUCCESSFULLY: "import-questions-successfully",
     DELETE_QUESTION_BANK: "delete-question-bank",
     CREATE_QUESTION_BANK: "create-question-bank",
+    CREATE_TAKER_GROUP: "create-taker-group",
 };
 
 export { QUERY_KEYS, MUTATION_KEYS };

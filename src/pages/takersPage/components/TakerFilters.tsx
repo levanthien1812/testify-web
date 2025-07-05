@@ -1,55 +1,57 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Select from "../../../components/elements/Select";
 import Input from "../../../components/elements/Input";
 import Button from "../../../components/elements/Button";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { Table } from "@tanstack/react-table";
-import { TakerItf } from "../../../types/types";
-import { debounce } from "lodash";
+import { TakerGroupItf, TakerItf } from "../../../types/types";
+import { GENDER_OPTIONS, TAKER_FIELDS } from "../../../config/constants/users";
+import { getDistinctValues } from "../../../utils/filters";
 
 type TakerFiltersProps = {
     table: Table<TakerItf>;
+    initialGroups: TakerGroupItf[];
 };
 
-const TakerFilters = ({ table }: TakerFiltersProps) => {
+const TakerFilters = ({ table, initialGroups }: TakerFiltersProps) => {
     const [openFilters, setOpenFilters] = useState(false);
 
-    const fields = {
-        NAME: "name",
-        EMAIL: "email",
-        GENDER: "gender",
-        BIRTHDAY: "birthday",
-        PHONE_NUMBER: "phone_number",
-    };
-    const options = [
-        { value: "", label: "Select field" },
-        { value: fields.NAME, label: "Name" },
-        { value: fields.EMAIL, label: "Email" },
-        { value: fields.GENDER, label: "Gender" },
-        { value: fields.BIRTHDAY, label: "Birthday" },
-        { value: fields.PHONE_NUMBER, label: "Phone number" },
-    ];
+    const columnsToFilter = useMemo(() => {
+        return table.getAllColumns().filter((col) => col.getCanFilter());
+    }, [table]);
 
-    const [currentField, setCurrentField] = useState<string>(options[0].value);
+    const options = columnsToFilter.map((col) => ({
+        value: col.id,
+        label: col.columnDef.header ? col.columnDef.header.toString() : "",
+    }));
+
+    const distinctGroups = getDistinctValues(table, TAKER_FIELDS.GROUP);
+    const groupOptions = distinctGroups.map((group) => ({
+        value: group,
+        label: initialGroups.find((g) => g.id === group)?.name || group,
+    }));
+
+    const [currentField, setCurrentField] = useState<string>("");
     const [inputValue, setInputValue] = useState<string>("");
     const [selectValue, setSelectValue] = useState<string>("");
     const [dateRange, setDateRange] = useState<string[]>(["", ""]);
-    const [searchValue, setSearchValue] = useState<string>("");
 
     const handleClickApply = () => {
         if (!currentField) return;
-
         const column = table.getColumn(currentField);
+
         if (!column) return;
 
         const filterValue =
-            currentField === fields.BIRTHDAY
+            currentField === TAKER_FIELDS.BIRTHDAY
                 ? dateRange
-                : currentField === fields.GENDER
+                : currentField === TAKER_FIELDS.GENDER ||
+                  currentField === TAKER_FIELDS.GROUP
                 ? selectValue
                 : inputValue;
         if (!filterValue || filterValue.toString().trim() === "") return;
+        console.log(column, filterValue);
 
         column.setFilterValue(filterValue);
         setInputValue("");
@@ -64,9 +66,32 @@ const TakerFilters = ({ table }: TakerFiltersProps) => {
         column.setFilterValue(null);
     };
 
+    const getColumnNameByFitlerId = (id: string) => {
+        const column = table.getColumn(id);
+        if (!column) return "";
+        return column.columnDef.header
+            ? column.columnDef.header.toString()
+            : "";
+    };
+
+    const getDisplayValueByFilterValue = (id: string, value: any) => {
+        switch (id) {
+            case TAKER_FIELDS.BIRTHDAY:
+                return `${value[0]} - ${value[1]}`;
+            case TAKER_FIELDS.GENDER:
+                return (
+                    GENDER_OPTIONS.find((g) => g.value === value)?.label || ""
+                );
+            case TAKER_FIELDS.GROUP:
+                return initialGroups.find((g) => g.id === value)?.name || "";
+            default:
+                return value;
+        }
+    };
+
     return (
         <div className="mt-2">
-            <div className="flex justify-between">
+            <div className="flex gap-2">
                 <button
                     className="flex justify-between items-center gap-1 bg-gray-200 hover:bg-gray-300 px-2 py-1 w-[80px]"
                     onClick={() => setOpenFilters(!openFilters)}
@@ -79,7 +104,7 @@ const TakerFilters = ({ table }: TakerFiltersProps) => {
                         }`}
                     />
                 </button>
-                <div>
+                <div className="ml-auto">
                     <Input
                         name="search"
                         placeholder="Search for takers"
@@ -98,7 +123,7 @@ const TakerFilters = ({ table }: TakerFiltersProps) => {
                             onChange={(e) => setCurrentField(e.target.value)}
                         />
                     </div>
-                    {currentField === fields.BIRTHDAY ? (
+                    {currentField === TAKER_FIELDS.BIRTHDAY ? (
                         <div className="flex gap-2">
                             <div className="flex gap-2">
                                 <Input
@@ -110,6 +135,7 @@ const TakerFilters = ({ table }: TakerFiltersProps) => {
                                             dateRange[1],
                                         ])
                                     }
+                                    label={{ text: "From" }}
                                 />
                             </div>
                             <div className="flex gap-2">
@@ -122,18 +148,24 @@ const TakerFilters = ({ table }: TakerFiltersProps) => {
                                             e.target.value,
                                         ])
                                     }
+                                    label={{ text: "To" }}
                                 />
                             </div>
                         </div>
-                    ) : currentField === fields.GENDER ? (
+                    ) : currentField === TAKER_FIELDS.GENDER ? (
                         <div className="flex gap-2">
                             <Select
-                                options={[
-                                    { value: "", label: "Select gender" },
-                                    { value: "male", label: "Male" },
-                                    { value: "female", label: "Female" },
-                                ]}
+                                options={GENDER_OPTIONS}
                                 label={{ text: "Select gender" }}
+                                value={selectValue}
+                                onChange={(e) => setSelectValue(e.target.value)}
+                            />
+                        </div>
+                    ) : currentField === TAKER_FIELDS.GROUP ? (
+                        <div className="flex gap-2">
+                            <Select
+                                options={groupOptions}
+                                label={{ text: "Select group" }}
                                 value={selectValue}
                                 onChange={(e) => setSelectValue(e.target.value)}
                             />
@@ -142,7 +174,7 @@ const TakerFilters = ({ table }: TakerFiltersProps) => {
                         <div className="flex gap-2 items-center">
                             <Input
                                 type="text"
-                                label={{ text: "Search by name" }}
+                                label={{ text: "Value to search" }}
                                 value={inputValue}
                                 onChange={(e) => setInputValue(e.target.value)}
                             />
@@ -170,10 +202,14 @@ const TakerFilters = ({ table }: TakerFiltersProps) => {
                                     key={filter.id}
                                 >
                                     <span>
-                                        {filter.id}: {filter.value as string}
+                                        {getColumnNameByFitlerId(filter.id)}:{" "}
+                                        {getDisplayValueByFilterValue(
+                                            filter.id,
+                                            filter.value
+                                        )}
                                     </span>
                                     <button
-                                        className="bg-white p-1 w-6 h-6 flex items-center rounded-full justify-center leading-none"
+                                        className="bg-white p-1 w-6 h-6 flex items-center rounded-full justify-center leading-none shadow-sm"
                                         onClick={() =>
                                             handleClickRemove(filter.id)
                                         }

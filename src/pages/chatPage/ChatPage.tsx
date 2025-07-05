@@ -9,7 +9,7 @@ import { useNavigate, useParams } from "react-router";
 import { getChatName } from "../../utils/chat";
 import ChatInfo from "./components/chatInfo/ChatInfo";
 import { QUERY_KEYS } from "../../config/constants/queryMutationKeys";
-import { userItf } from "../../types/types";
+import { UserItf } from "../../types/types";
 import { getBlockedInfo } from "../../services/user";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../stores/auth";
@@ -80,13 +80,13 @@ const ChatPage = () => {
             dispatch(
                 authActions.setBlockedUsers(
                     data.blockedUsers.map(
-                        (blockedUser: userItf) => blockedUser.id
+                        (blockedUser: UserItf) => blockedUser.id
                     )
                 )
             );
             dispatch(
                 authActions.setBlockedBy(
-                    data.blockedBy.map((blockedBy: userItf) => blockedBy.id)
+                    data.blockedBy.map((blockedBy: UserItf) => blockedBy.id)
                 )
             );
         },

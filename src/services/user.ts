@@ -1,4 +1,5 @@
 import { instance } from "../config/axios";
+import { TakerGroupBodyItf } from "../types/types";
 
 export const getTakersStatistics = async () => {
     try {
@@ -45,6 +46,26 @@ export const unblockUser = async (userIdToUnblock: string) => {
 export const getBlockedInfo = async () => {
     try {
         const response = await instance.get(`users/block`);
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getTakerGroups = async () => {
+    try {
+        const response = await instance.get("users/takers/groups");
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const createTakerGroup = async (body: TakerGroupBodyItf) => {
+    try {
+        const response = await instance.post("users/takers/groups", body);
 
         return response.data;
     } catch (error) {

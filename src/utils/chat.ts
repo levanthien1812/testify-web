@@ -1,9 +1,9 @@
 import { ChatItf } from "../types/chat";
-import { userItf } from "../types/types";
+import { UserItf } from "../types/types";
 
 export const getChatName = (
-    members: { member: userItf; nick_name: string | null }[],
-    user: userItf
+    members: { member: UserItf; nick_name: string | null }[],
+    user: UserItf
 ) => {
     let chatName: string = "";
     if (members.length >= 2) {
