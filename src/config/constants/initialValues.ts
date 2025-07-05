@@ -18,6 +18,7 @@ import {
     QuestionItf,
     ResponseQuestionItf,
     TakerBodyItf,
+    TakerGroupBodyItf,
     TestBodyItf,
     TestPartItf,
     TrueFalseQuestionItf,
@@ -446,6 +447,10 @@ export const INITIAL_QUESTION_BANK: QuestionBankBodyTempItf = {
 export const INITIAL_TAKER: TakerBodyItf = {
     name: "",
     email: "",
+};
+
+export const INITIAL_TAKER_GROUP: TakerGroupBodyItf = {
+    name: "",
 };
 
 export const INITIAL_TAKERS_COLUMN_FILTERS: ColumnFiltersState = [

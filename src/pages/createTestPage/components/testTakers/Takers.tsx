@@ -12,38 +12,39 @@ const Takers = () => {
     return (
         <div className="mt-4">
             <div className="space-y-2">
-                {testTakers!.map((taker, index) => (
-                    <div
-                        className="px-4 py-2 bg-orange-100 flex justify-between items-center"
-                        key={Math.random()}
-                    >
-                        <div className="flex gap-2 items-center">
-                            <input
-                                type="checkbox"
-                                name={taker.email}
-                                id={taker.email}
-                                checked={true}
-                                readOnly
-                            />
-                            <label
-                                htmlFor={taker.email}
-                                className="cursor-pointer"
-                            >
-                                <span>{taker.name}</span>
-                                <span className="text-gray-600">
-                                    {" "}
-                                    - {taker.email}
-                                </span>
-                            </label>
+                {testTakers &&
+                    testTakers.map((taker, index) => (
+                        <div
+                            className="px-4 py-2 bg-orange-100 flex justify-between items-center"
+                            key={Math.random()}
+                        >
+                            <div className="flex gap-2 items-center">
+                                <input
+                                    type="checkbox"
+                                    name={taker.user.email}
+                                    id={taker.user.email}
+                                    checked={true}
+                                    readOnly
+                                />
+                                <label
+                                    htmlFor={taker.user.email}
+                                    className="cursor-pointer"
+                                >
+                                    <span>{taker.name}</span>
+                                    <span className="text-gray-600">
+                                        {" "}
+                                        - {taker.user.email}
+                                    </span>
+                                </label>
+                            </div>
+                            <button>
+                                <FontAwesomeIcon
+                                    className="text-gray-500 hover:text-gray-600"
+                                    icon={faTimes}
+                                />
+                            </button>
                         </div>
-                        <button>
-                            <FontAwesomeIcon
-                                className="text-gray-500 hover:text-gray-600"
-                                icon={faTimes}
-                            />
-                        </button>
-                    </div>
-                ))}
+                    ))}
                 <Button
                     size="lg"
                     secondary

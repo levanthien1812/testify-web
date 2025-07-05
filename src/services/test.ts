@@ -430,12 +430,49 @@ export const createTaker = async (body: TakerBodyItf) => {
         if (body.phone_number)
             formData.append("phone_number", body.phone_number);
         if (body.photo) formData.append("file", (body.photo as FileList)[0]);
+        if (body.group_id) formData.append("group_id", body.group_id);
 
         const response = await instance.post(`/users/takers`, formData, {
             headers: {
                 "Content-Type": "multipart/form-data",
             },
         });
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updateTaker = async (
+    takerId: string,
+    body: Partial<TakerBodyItf>
+) => {
+    try {
+        const formData = new FormData();
+        if (body.name) {
+            formData.append("name", body.name);
+        }
+        if (body.email) {
+            formData.append("email", body.email);
+        }
+        if (body.gender) formData.append("gender", body.gender);
+        if (body.birthday)
+            formData.append("birthday", new Date(body.birthday).toISOString());
+        if (body.phone_number)
+            formData.append("phone_number", body.phone_number);
+        if (body.photo) formData.append("file", (body.photo as FileList)[0]);
+        if (body.group_id) formData.append("group_id", body.group_id);
+
+        const response = await instance.patch(
+            `/users/takers/${takerId}`,
+            formData,
+            {
+                headers: {
+                    "Content-Type": "multipart/form-data",
+                },
+            }
+        );
 
         return response.data;
     } catch (error) {

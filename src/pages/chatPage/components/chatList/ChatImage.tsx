@@ -1,8 +1,8 @@
-import { userItf } from "../../../../types/types";
+import { UserItf } from "../../../../types/types";
 import { useAppSelector } from "../../../../hooks/hooks";
 
 type ChatImageProps = {
-    members: userItf[];
+    members: UserItf[];
 };
 
 const ChatImage = ({ members }: ChatImageProps) => {

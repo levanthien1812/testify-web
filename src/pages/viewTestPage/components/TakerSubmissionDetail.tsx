@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "react-query";
-import { userItf } from "../../../types/types";
+import { TakerItf } from "../../../types/types";
 import { getSubmissionAnswers } from "../../../services/test";
 import Modal, {
     ModalBody,
@@ -108,23 +108,21 @@ const TakerSubmissionDetail = () => {
                                 } overflow-hidden self-start rounded-full shadow-md m-3 flex justify-center items-center w-20 h-20 mx-auto`}
                             >
                                 <img
-                                    src={
-                                        (submission.taker_id as userItf)?.photo
-                                    }
+                                    src={submission.taker.user?.photo}
                                     alt=""
                                     className="rounded-full w-full h-full object-cover"
                                 />
                             </div>
                             <TakerInfoItem
                                 label="Taker's name"
-                                text={(submission.taker_id as userItf)?.name}
+                                text={submission.taker.user?.name}
                                 className={
                                     isSticky ? "col-span-4" : "col-span-3"
                                 }
                             />
                             <TakerInfoItem
                                 label="Taker's email"
-                                text={(submission.taker_id as userItf)?.email}
+                                text={submission.taker.user?.email}
                                 className={isSticky ? "hidden" : "col-span-3"}
                             />
                             <TakerInfoItem

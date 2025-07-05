@@ -1,5 +1,5 @@
 import { Socket } from "socket.io-client";
-import { TakerItf, userItf } from "./types";
+import { TakerItf, UserItf } from "./types";
 import {
     MESSAGE_AI_ROLE,
     MESSAGE_TYPE,
@@ -18,7 +18,7 @@ export interface ChatBodyItf {
 }
 
 export interface MemberItf {
-    member: userItf;
+    member: UserItf;
     nick_name: string | null;
 }
 
@@ -26,7 +26,7 @@ export interface ChatItf {
     id: string;
     members: MemberItf[];
     is_group_chat: boolean;
-    group_admin: string | userItf | null;
+    group_admin: string | UserItf | null;
     chat_name: string | null;
     appearances: ChatAppearancesItf;
     unread_messages?: MessageItf[];

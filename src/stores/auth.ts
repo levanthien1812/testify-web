@@ -1,6 +1,6 @@
 import { createSlice } from "@reduxjs/toolkit";
 import Cookies from "js-cookie";
-import { authInitialStateItf, userItf } from "../types/types";
+import { authInitialStateItf, UserItf } from "../types/types";
 
 const initialState: authInitialStateItf = {
     isAuthened: Cookies.get("access_token") !== undefined,
@@ -14,7 +14,7 @@ const authSlice = createSlice({
     initialState,
     reducers: {
         authenticate(state, action) {
-            const user: userItf = action.payload.user;
+            const user: UserItf = action.payload.user;
             const tokens = action.payload.tokens;
 
             Cookies.set("user", JSON.stringify(user), {

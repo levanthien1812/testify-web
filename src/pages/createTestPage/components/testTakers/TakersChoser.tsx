@@ -28,7 +28,7 @@ const TakersChoser = ({
                             taker.name
                                 .toLowerCase()
                                 .includes(search.toLowerCase()) ||
-                            taker.email
+                            taker.user.email
                                 .toLowerCase()
                                 .includes(search.toLowerCase())
                     )
@@ -111,7 +111,7 @@ const TakersChoser = ({
                                     <span>{taker.name}</span>
                                     <span className="text-gray-600">
                                         {" "}
-                                        - {taker.email}
+                                        - {taker.user.email}
                                     </span>
                                 </label>
                             </div>

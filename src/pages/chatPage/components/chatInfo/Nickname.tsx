@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { userItf } from "../../../../types/types";
+import { UserItf } from "../../../../types/types";
 import { faCheck, faPen, faTimes } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import Input from "../../../../components/elements/Input";
@@ -11,7 +11,7 @@ import { SOCKET_EVENTS } from "../../../../config/constants/socket";
 
 type NicknameProps = {
     member: {
-        member: userItf;
+        member: UserItf;
         nick_name: string | null;
     };
 };

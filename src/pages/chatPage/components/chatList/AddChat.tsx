@@ -6,7 +6,7 @@ import Modal, {
 } from "../../../../components/modals/Modal";
 import Button from "../../../../components/elements/Button";
 import { useMutation, useQuery } from "react-query";
-import { TakerItf, userItf } from "../../../../types/types";
+import { TakerItf, UserItf } from "../../../../types/types";
 import { getTakers } from "../../../../services/user";
 import TakersChoser from "../../../createTestPage/components/testTakers/TakersChoser";
 import { createChats } from "../../../../services/chat";

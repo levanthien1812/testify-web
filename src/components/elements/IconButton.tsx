@@ -6,18 +6,36 @@ type IconButtonProps = {
     onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
     icon: IconProp;
     type?: "button" | "submit" | "reset";
+    size?: "sm" | "md" | "lg";
 };
 
-const IconButton = ({ onClick, icon, type = "button" }: IconButtonProps) => {
+const IconButton = ({
+    onClick,
+    icon,
+    type = "button",
+    size = "md",
+}: IconButtonProps) => {
     return (
         <button
-            className="border-none bg-gray-100 rounded-xl w-6 h-6 flex justify-center items-center hover:bg-gray-200"
+            className={`border-none bg-gray-100 rounded-xl ${
+                size === "sm"
+                    ? "w-4 h-4"
+                    : size === "md"
+                    ? "w-6 h-6"
+                    : "w-8 h-8"
+            } flex justify-center items-center hover:bg-gray-200 leading-none`}
             onClick={onClick}
             type={type}
         >
             <FontAwesomeIcon
                 icon={icon}
-                className="text-sm text-gray-400 hover:text-orange-600"
+                className={`${
+                    size === "sm"
+                        ? "text-xs"
+                        : size === "md"
+                        ? "text-sm"
+                        : "text-base"
+                } text-gray-400 hover:text-orange-600`}
             />
         </button>
     );

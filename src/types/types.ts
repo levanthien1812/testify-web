@@ -9,12 +9,11 @@ import {
 import { QUESTION_TYPE } from "../config/constants/tests";
 import { TestOptions } from "./tests";
 
-export interface userItf {
+export interface UserItf {
     username?: string;
     name: string;
     email: string;
     role: ROLES;
-    maker_id?: string;
     id: string;
     photo?: string;
     blocked_users?: string[];
@@ -25,7 +24,7 @@ export interface userItf {
 }
 
 export interface authInitialStateItf {
-    user: userItf | null;
+    user: UserItf | null;
     isAuthened: boolean;
 }
 
@@ -75,7 +74,8 @@ export interface TestItf extends TestBodyItf {
     id: string;
     parts: TestPartItf[];
     maker_id: string;
-    taker_ids: TakerItf[];
+    taker_ids: string[];
+    takers: TakerItf[];
     joined_taker_ids: string[];
     are_answers_provided: boolean;
     includes_manually_scored_questions?: boolean;
@@ -275,16 +275,27 @@ export interface TakerBodyItf {
     birthday?: Date;
     phone_number?: string;
     photo?: FileList | string;
+    group_id?: string;
 }
 
-export interface TakerItf extends TakerBodyItf {
-    id?: string;
-    maker_ids?: string[];
+export interface TakerItf {
+    id: string;
+    name: string;
+    maker_id: string;
+    user_id: string;
+    group_id?: string;
+    user: UserItf;
 }
 
+export interface MakerItf {
+    id: string;
+    user_id: string;
+    user: UserItf;
+}
 export interface SubmissionItf {
     id: string;
-    taker_id: string | userItf;
+    taker_id: string;
+    taker: TakerItf;
     test_id: string;
     score?: number;
     correct_answers?: number;
@@ -313,7 +324,7 @@ export type TestRequestFilter = Pick<
 >;
 
 export type TakerStatistics = {
-    taker: userItf;
+    taker: TakerItf;
     average_score: number;
     total_tests_assigned: number;
     total_submissions: number;
@@ -321,4 +332,15 @@ export type TakerStatistics = {
 
 export interface BreadcrumbHandle {
     crumb: string | ((data: any) => React.ReactNode); // Can be a string or a function
+}
+
+export interface TakerGroupBodyItf {
+    name: string;
+    description?: string;
+    takers?: string[];
+}
+
+export interface TakerGroupItf extends TakerGroupBodyItf {
+    id: string;
+    maker_id: string;
 }

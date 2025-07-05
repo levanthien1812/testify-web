@@ -8,6 +8,7 @@ const TOAST_MESSAGES = {
     UPDATE_QUESTION_SUCCESSFULLY: "Update question successfuly",
     DELETE_QUESTION_SUCCESSFULLY: "Delete question successfuly",
     CREATE_TAKERS_SUCCESSFULLY: "Create takers successfuly",
+    UPDATE_TAKER_SUCCESSFULLY: "Update taker successfuly",
     ADD_TAKER_SUCCESSFULLY: "Add taker successfuly",
     ADD_ANSWER_SUCCESSFULLY: "Add answer successfuly",
     UNABLE_TO_COPY: "Unable to copy link! Try again later.",
@@ -17,6 +18,7 @@ const TOAST_MESSAGES = {
     IMPORT_QUESTIONS_SUCCESSFULLY: "Import questions successfully",
     DELETE_QUESTION_BANK_SUCCESSFULLY: "Delete question bank successfully",
     CREATE_QUESTION_BANK_SUCCESSFULLY: "Create question bank successfully",
+    CREATE_TAKER_GROUP_SUCCESSFULLY: "Create taker group successfully",
 };
 
 export { TOAST_MESSAGES };

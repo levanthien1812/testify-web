@@ -15,6 +15,8 @@ import { Link } from "react-router-dom";
 import defaultUserPhoto from "../../../assets/images/default-user-photo.png";
 import SectionWrapper from "./SectionWrapper";
 import Loading from "../../../components/loadings/Loading";
+import NoResult from "../../../components/notFound/NoResult";
+import { formatImageUrl } from "../../../utils/formatImageUrl";
 
 const TopTakers = () => {
     const { data: topTakers, isLoading: isLoadingTopTakers } = useQuery({
@@ -31,13 +33,11 @@ const TopTakers = () => {
                 header: "Photo",
                 accessorKey: "taker.photo",
                 cell: ({ row }) => {
-                    const photo = row.original.taker.photo;
-                    const src =
-                        photo && photo.length > 0 ? photo : defaultUserPhoto;
+                    const photo = row.original.taker.user.photo || "";
                     return (
                         <img
                             className="w-7 h-7 rounded-full mx-auto"
-                            src={src}
+                            src={formatImageUrl(photo) || defaultUserPhoto}
                             alt=""
                         />
                     );
@@ -107,6 +107,10 @@ const TopTakers = () => {
                     isLoading={isLoadingTopTakers}
                     loadingText={{ text: "Loading top takers..." }}
                 />
+            )}
+
+            {topTakers && topTakers.length === 0 && (
+                <NoResult message={{ text: "No takers found" }} />
             )}
 
             {topTakers && topTakers.length > 0 && (

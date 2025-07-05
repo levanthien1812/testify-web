@@ -69,7 +69,7 @@ const TestTakers = () => {
             mutationFn: async () => {
                 await assignTakers(
                     testId!,
-                    testTakers!.map((taker) => taker.email)
+                    testTakers!.map((taker) => taker.user.email)
                 );
             },
             onSuccess: () => {

@@ -3,7 +3,7 @@ import InfoModal from "../../../../components/modals/InfoModal";
 import { ReactionEmoji } from "../../../../types/chat";
 import { MESSAGE_EMOJIS } from "../../../../config/constants/chat";
 import { useChatSocket } from "../ChatSocketContext";
-import { userItf } from "../../../../types/types";
+import { UserItf } from "../../../../types/types";
 
 type DetailReactionsProps = {
     onClose: () => void;
@@ -19,7 +19,7 @@ const DetailReactions = ({
     const [selectedEmoji, setSelectedEmoji] = React.useState<string>(
         Object.keys(emojiCounts)[0]
     );
-    const [reactorList, setReactorList] = React.useState<userItf[]>([]);
+    const [reactorList, setReactorList] = React.useState<UserItf[]>([]);
     const { currentChat } = useChatSocket();
 
     const getReactorList = useCallback(

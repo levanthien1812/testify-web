@@ -92,9 +92,8 @@ const createTestSlice = createSlice({
             if (action.payload?.level) state.level = action.payload.level;
             if (action.payload?.share_option)
                 state.shareOption = action.payload.share_option;
-            if (action.payload?.public_answers_option)
-                if (action.payload?.testId)
-                    state.testId = action.payload.testId;
+
+            if (action.payload?.testId) state.testId = action.payload.testId;
             if (action.payload?.options)
                 state.options = JSON.parse(
                     JSON.stringify(action.payload.options)
@@ -379,13 +378,15 @@ const createTestSlice = createSlice({
             action.payload.forEach((taker) => {
                 if (
                     !state.selectedTestTakers.some(
-                        (selectedTaker) => selectedTaker.email === taker.email
+                        (selectedTaker) =>
+                            selectedTaker.user.email === taker.user.email
                     )
                 ) {
                     state.selectedTestTakers.push(taker);
                 } else {
                     state.selectedTestTakers = state.selectedTestTakers.filter(
-                        (selectedTaker) => selectedTaker.email !== taker.email
+                        (selectedTaker) =>
+                            selectedTaker.user.email !== taker.user.email
                     );
                 }
             });
@@ -648,7 +649,7 @@ const createTestSlice = createSlice({
                 is_saved: part?.id ? true : false,
             }));
 
-            state.testTakers = action.payload.test.taker_ids;
+            state.testTakers = action.payload.test.takers;
 
             switch (state.status) {
                 case TEST_STATUS.DRAFT: {

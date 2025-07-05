@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { SubmissionItf, userItf } from "../../../types/types";
+import { SubmissionItf, TakerItf } from "../../../types/types";
 import {
     useReactTable,
     getCoreRowModel,
@@ -33,11 +33,9 @@ const SubmissionsTable = ({ submissions, refetch }: SubmissionsTableProps) => {
         () => [
             {
                 header: "Name",
-                accessorKey: "taker_id.name",
+                accessorKey: "taker.name",
                 cell: ({ row }) => {
-                    return _.capitalize(
-                        (row.original.taker_id as userItf).name
-                    );
+                    return _.capitalize(row.original.taker.name);
                 },
                 sortingFn: "alphanumeric",
                 filterFn: "includesString",
