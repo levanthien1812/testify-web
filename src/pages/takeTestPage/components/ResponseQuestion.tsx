@@ -2,6 +2,7 @@ import { ChangeEvent, useState } from "react";
 import { QuestionItf, ResponseQuestionItf } from "../../../types/types";
 import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../../stores/takeTest";
+import HtmlDisplay from "../../../components/elements/HtmlDisplay";
 
 type ResponseQuestionProps = {
     question: QuestionItf<ResponseQuestionItf>;
@@ -28,13 +29,9 @@ const ResponseQuestion = ({ question }: ResponseQuestionProps) => {
 
     return (
         <>
-            <div
-                className=""
-                dangerouslySetInnerHTML={{
-                    __html: question.content!.text.replaceAll("***", "___"),
-                }}
-            ></div>
-
+            <HtmlDisplay
+                htmlContent={question.content!.text.replaceAll("***", "___")}
+            />
             <textarea
                 id="response"
                 name="response"

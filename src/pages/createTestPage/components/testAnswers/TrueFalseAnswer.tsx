@@ -1,3 +1,4 @@
+import HtmlDisplay from "../../../../components/elements/HtmlDisplay";
 import RadioList from "../../../../components/elements/RadioList";
 import {
     ResponseQuestionItf,
@@ -18,12 +19,7 @@ const TrueFalseAnswer = ({
 }: TrueFalseAnswerProps) => {
     return (
         <>
-            <div
-                className=""
-                dangerouslySetInnerHTML={{
-                    __html: content.text,
-                }}
-            ></div>
+            <HtmlDisplay htmlContent={content.text} />
 
             <RadioList
                 name="is_true"

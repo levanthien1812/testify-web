@@ -5,6 +5,7 @@ import {
 } from "../../../types/types";
 import { formatImageUrl } from "../../../utils/formatImageUrl";
 import { USER_ANSWER_STATUS } from "../../../config/constants/tests";
+import HtmlDisplay from "../../../components/elements/HtmlDisplay";
 
 type MultipleChoicesAnswerProps = {
     questionContent: MultipleChoiceQuestionItf;
@@ -71,10 +72,7 @@ const MultipleChoicesAnswer = ({
 
     return (
         <>
-            <div
-                className=""
-                dangerouslySetInnerHTML={{ __html: questionContent.text }}
-            ></div>
+            <HtmlDisplay htmlContent={questionContent.text} />
 
             <div className="space-y-1 mt-2">
                 {questionContent.options.map((option) => (

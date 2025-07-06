@@ -1,3 +1,4 @@
+import HtmlDisplay from "../../../../components/elements/HtmlDisplay";
 import { ResponseQuestionItf } from "../../../../types/types";
 
 type ResponseAnswerProps = {
@@ -7,12 +8,7 @@ type ResponseAnswerProps = {
 const ResponseAnswer = ({ content }: ResponseAnswerProps) => {
     return (
         <>
-            <div
-                className=""
-                dangerouslySetInnerHTML={{
-                    __html: content.text.replaceAll("***", "___"),
-                }}
-            ></div>
+            <HtmlDisplay htmlContent={content.text.replaceAll("***", "___")} />
 
             <p className="text-sm text-gray-500 italic">
                 You need to manually score student's answers for this question

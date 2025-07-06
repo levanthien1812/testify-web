@@ -48,9 +48,9 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
             <div className="grow w-full">
                 <select
                     className={`border border-gray-500 ${
-                        sizing === "sm" && "px-1 py-0.5"
+                        sizing === "sm" && "px-1 py-0"
                     } ${
-                        sizing === "md" && "px-2 py-1.5"
+                        sizing === "md" && "px-2 py-1"
                     } focus:border-orange-600 outline-none disabled:bg-gray-100 disabled:cursor-not-allowed w-full ${className}`}
                     ref={ref}
                     {...rest}

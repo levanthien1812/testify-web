@@ -26,7 +26,7 @@ const TestTakers = () => {
         testId,
         shareOption,
         testLink,
-        testTakers,
+        selectedTestTakers,
         passcode,
         isValidShareOption,
         editibility,
@@ -69,7 +69,7 @@ const TestTakers = () => {
             mutationFn: async () => {
                 await assignTakers(
                     testId!,
-                    testTakers!.map((taker) => taker.user.email)
+                    selectedTestTakers!.map((taker) => taker.id)
                 );
             },
             onSuccess: () => {

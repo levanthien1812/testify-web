@@ -24,7 +24,7 @@ type CreateTakersProps = {
 const CreateTakers = ({ onClose }: CreateTakersProps) => {
     const [takers, setTakers] = useState<TakerBodyItf[]>([INITIAL_TAKER]);
     const { testId } = useAppSelector((state) => state.createTest);
-    const { addSelectedTestTakers } = createTestActions;
+    const { saveSelectedTestTakers } = createTestActions;
     const dispatch = useDispatch();
 
     const { mutate, isLoading } = useMutation({
@@ -39,7 +39,7 @@ const CreateTakers = ({ onClose }: CreateTakersProps) => {
         onSuccess: (data) => {
             onClose();
             toast.success(TOAST_MESSAGES.CREATE_TAKERS_SUCCESSFULLY);
-            dispatch(addSelectedTestTakers(data.takers));
+            dispatch(saveSelectedTestTakers(data.takers));
         },
     });
 

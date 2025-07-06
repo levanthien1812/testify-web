@@ -1,23 +1,42 @@
 import { useEffect, useState } from "react";
-import { TakerItf } from "../../../../types/types";
+import { TakerGroupItf, TakerItf } from "../../../../types/types";
 import Input from "../../../../components/elements/Input";
+import Select from "../../../../components/elements/Select";
+import { useQuery } from "react-query";
+import { getTakerGroups } from "../../../../services/user";
+import { QUERY_KEYS } from "../../../../config/constants/queryMutationKeys";
 
 type TakersChoserProps = {
     label?: string;
     takers: TakerItf[];
     selectedTestTakers: TakerItf[];
-    onSelect: (takers: TakerItf[]) => void;
+    onCheck: (takers: TakerItf, checked: boolean) => void;
+    onCheckAll: (takers: TakerItf[], checked: boolean) => void;
 };
 
 const TakersChoser = ({
     label = "Choose takers",
     takers = [],
     selectedTestTakers = [],
-    onSelect,
+    onCheck,
+    onCheckAll,
 }: TakersChoserProps) => {
     const [filteredTakers, setFilteredTakers] = useState<TakerItf[]>([]);
     const [search, setSearch] = useState("");
     const [selectAll, setSelectAll] = useState<boolean>(false);
+    const [selectedGroup, setSelectedGroup] = useState<TakerGroupItf | null>(
+        null
+    );
+
+    const { data: takerGroups, isLoading: isLoadingTakerGroups } = useQuery<
+        TakerGroupItf[]
+    >({
+        queryFn: async () => {
+            const data = await getTakerGroups();
+            return data.taker_groups;
+        },
+        queryKey: [QUERY_KEYS.GET_TAKER_GROUPS],
+    });
 
     useEffect(() => {
         if (takers) {
@@ -39,23 +58,46 @@ const TakersChoser = ({
         }
     }, [search, takers]);
 
+    let groupOptions = takerGroups
+        ? takerGroups.map((group) => ({
+              value: group.id,
+              label: group.name,
+          }))
+        : [];
+
+    groupOptions.unshift({ value: "", label: "Select group" });
+
     const handleSelectAllTakers = (e: React.ChangeEvent<HTMLInputElement>) => {
         setSelectAll(e.target.checked);
         if (e.target.checked) {
-            // dispatch(
-            //     saveSelectedTestTakers({ selectedTestTakers: filteredTakers })
-            // );
-            onSelect(filteredTakers);
+            onCheckAll(takers, true);
         } else {
-            // dispatch(saveSelectedTestTakers({ selectedTestTakers: [] }));
-            onSelect([]);
+            onCheckAll(takers, false);
         }
     };
 
+    useEffect(() => {
+        if (selectedGroup) {
+            setFilteredTakers(
+                takers.filter((taker) => taker.group_id === selectedGroup.id)
+            );
+            setSelectAll(false);
+        } else {
+            setFilteredTakers(takers);
+        }
+    }, [selectedGroup, takers]);
+
     const handleSelectTaker = (taker: TakerItf) => {
-        // dispatch(addSelectedTestTakers([taker]));
-        onSelect([taker]);
+        onCheck(taker, !selectedTestTakers.some((t) => t.id === taker.id));
     };
+
+    useEffect(() => {
+        const isAllSelected = filteredTakers.every((taker) =>
+            selectedTestTakers.some((t) => t.id === taker.id)
+        );
+        setSelectAll(isAllSelected);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedTestTakers, filteredTakers]);
 
     return (
         <div>
@@ -74,6 +116,23 @@ const TakersChoser = ({
                         Select all
                     </label>
                 </div>
+                {takerGroups && takerGroups.length > 0 && (
+                    <div className="flex gap-2">
+                        <Select
+                            value={selectedGroup?.id}
+                            onChange={(e) =>
+                                setSelectedGroup(
+                                    takerGroups.find(
+                                        (group) => group.id === e.target.value
+                                    )!
+                                )
+                            }
+                            options={groupOptions}
+                            defaultValue={"Select group"}
+                            name="select-group"
+                        />
+                    </div>
+                )}
                 <div className="grow">
                     <Input
                         type="text"

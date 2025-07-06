@@ -7,6 +7,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import { questionTypeToIcon } from "../../../utils/mapping";
 import { QuestionContentItf, QuestionItf } from "../../../types/types";
+import HtmlDisplay from "../../../components/elements/HtmlDisplay";
 
 type PickQuestionsProps = {
     selectedBank: QuestionBankItf;
@@ -72,12 +73,11 @@ const PickQuestions = ({
                                     className="text-gray-700"
                                 />
                             </span>
-                            <div
+                            <HtmlDisplay
+                                htmlContent={question.content!.text}
                                 className="text-md"
-                                dangerouslySetInnerHTML={{
-                                    __html: question.content!.text,
-                                }}
-                            ></div>
+                                maxLength={50}
+                            />
                         </div>
                     </div>
                 ))}

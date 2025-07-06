@@ -10,6 +10,7 @@ import { questionTypeToIcon } from "../../../utils/mapping";
 import CreateQuestion from "./CreateQuestion";
 import NoResult from "../../../components/notFound/NoResult";
 import { shorten } from "../../../utils/text";
+import HtmlDisplay from "../../../components/elements/HtmlDisplay";
 
 type QuestionsProps = {
     questions: QuestionInBankItf<QuestionContentItf>[];
@@ -67,12 +68,11 @@ const Questions = ({
                                 />
                             </span>
                         </div>
-                        <div
+                        <HtmlDisplay
+                            htmlContent={question.content?.text || ""}
+                            maxLength={50}
                             className="p-2"
-                            dangerouslySetInnerHTML={{
-                                __html: shorten(question.content!.text, 100),
-                            }}
-                        ></div>
+                        />
                     </div>
                 ))}
             </div>

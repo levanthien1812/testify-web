@@ -24,6 +24,7 @@ import { toast } from "react-toastify";
 import { TOAST_MESSAGES } from "../../../../config/constants/toasts";
 import TrueFalseAnswer from "./TrueFalseAnswer";
 import TextEditor from "../../../../components/richTextEditor/TiptapEditor";
+import HtmlDisplay from "../../../../components/elements/HtmlDisplay";
 
 const Answer: React.FC<{
     question: QuestionItf<QuestionContentItf>;
@@ -209,12 +210,10 @@ const Answer: React.FC<{
                                 </Button>
                             )}
                         </div>
-                        <div
-                            dangerouslySetInnerHTML={{
-                                __html: question.content.answer.explaination,
-                            }}
+                        <HtmlDisplay
+                            htmlContent={question.content.answer.explaination}
                             className="bg-orange-50 border border-gray-400 p-2"
-                        ></div>
+                        />
                     </div>
                 )}
 

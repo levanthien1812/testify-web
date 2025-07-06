@@ -362,34 +362,13 @@ const createTestSlice = createSlice({
             }
         },
         saveTestAnswers(state, action) {},
-        saveTestTakers(
-            state,
-            action: PayloadAction<{ testTakers: TakerItf[] }>
-        ) {
-            state.testTakers = action.payload.testTakers;
+        saveSelectedTestTakers(state, action: PayloadAction<TakerItf[]>) {
+            state.selectedTestTakers = action.payload;
         },
-        saveSelectedTestTakers(
-            state,
-            action: PayloadAction<{ selectedTestTakers: TakerItf[] }>
-        ) {
-            state.testTakers = action.payload.selectedTestTakers;
-        },
-        addSelectedTestTakers(state, action: PayloadAction<TakerItf[]>) {
-            action.payload.forEach((taker) => {
-                if (
-                    !state.selectedTestTakers.some(
-                        (selectedTaker) =>
-                            selectedTaker.user.email === taker.user.email
-                    )
-                ) {
-                    state.selectedTestTakers.push(taker);
-                } else {
-                    state.selectedTestTakers = state.selectedTestTakers.filter(
-                        (selectedTaker) =>
-                            selectedTaker.user.email !== taker.user.email
-                    );
-                }
-            });
+        removeSelectedTestTakers(state, action: PayloadAction<TakerItf>) {
+            state.selectedTestTakers = state.selectedTestTakers.filter(
+                (selectedTaker) => selectedTaker.id !== action.payload.id
+            );
         },
         setAvailableTakers(state, action: PayloadAction<TakerItf[]>) {
             state.availableTakers = action.payload;
@@ -649,7 +628,7 @@ const createTestSlice = createSlice({
                 is_saved: part?.id ? true : false,
             }));
 
-            state.testTakers = action.payload.test.takers;
+            state.selectedTestTakers = action.payload.test.takers;
 
             switch (state.status) {
                 case TEST_STATUS.DRAFT: {

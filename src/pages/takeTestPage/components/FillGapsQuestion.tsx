@@ -3,6 +3,7 @@ import { FillGapsQuestionItf, QuestionItf } from "../../../types/types";
 import Input from "../../../components/elements/Input";
 import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../../stores/takeTest";
+import HtmlDisplay from "../../../components/elements/HtmlDisplay";
 
 type FillGapsQuestionProps = {
     question: QuestionItf<FillGapsQuestionItf>;
@@ -29,13 +30,9 @@ const FillGapsQuestion = ({ question }: FillGapsQuestionProps) => {
 
     return (
         <>
-            <div
-                className=""
-                dangerouslySetInnerHTML={{
-                    __html: question.content!.text.replaceAll("***", "___"),
-                }}
-            ></div>
-
+            <HtmlDisplay
+                htmlContent={question.content!.text.replaceAll("***", "___")}
+            />
             <div className="space-y-1 mt-2">
                 {[...Array(question.content!.num_gaps)].map((num, index) => (
                     <div className="flex gap-3 items-end ps-2" key={index + 1}>

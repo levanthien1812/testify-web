@@ -2,6 +2,7 @@ import { useCallback, useMemo } from "react";
 import { FillGapsAnswerItf, FillGapsQuestionItf } from "../../../types/types";
 import Input from "../../../components/elements/Input";
 import { USER_ANSWER_STATUS } from "../../../config/constants/tests";
+import HtmlDisplay from "../../../components/elements/HtmlDisplay";
 
 type FillGapsAnswerProps = {
     questionContent: FillGapsQuestionItf;
@@ -32,12 +33,9 @@ const FillGapsAnswer = ({
 
     return (
         <>
-            <div
-                className=""
-                dangerouslySetInnerHTML={{
-                    __html: questionContent.text.replaceAll("***", "___"),
-                }}
-            ></div>
+            <HtmlDisplay
+                htmlContent={questionContent.text.replaceAll("***", "___")}
+            />
 
             <div className="space-y-1 mt-2">
                 {[...Array(questionContent.num_gaps)].map((num, index) => (
