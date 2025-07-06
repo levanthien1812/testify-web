@@ -284,6 +284,7 @@ export interface TakerItf {
     maker_id: string;
     user_id: string;
     group_id?: string;
+    group?: TakerGroupItf;
     user: UserItf;
 }
 

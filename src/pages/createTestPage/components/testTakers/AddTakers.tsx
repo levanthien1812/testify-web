@@ -8,13 +8,14 @@ import CreateTakers from "./CreateTakers";
 import { useQuery } from "react-query";
 import { getAvailableTakers } from "../../../../services/test";
 import Button from "../../../../components/elements/Button";
-import { TakerItf } from "../../../../types/types";
+import { TakerGroupItf, TakerItf } from "../../../../types/types";
 import TakersChoser from "./TakersChoser";
 import { createTestActions } from "../../../../stores/createTest";
 import { QUERY_KEYS } from "../../../../config/constants/queryMutationKeys";
 import { useDispatch } from "react-redux";
 import Loading from "../../../../components/loadings/Loading";
 import { useAppSelector } from "../../../../hooks/hooks";
+import { getTakerGroups } from "../../../../services/user";
 
 type AddTakersProps = {
     onClose: () => void;
@@ -25,7 +26,9 @@ const AddTakers = ({ onClose }: AddTakersProps) => {
     const { testId, availableTakers, selectedTestTakers } = useAppSelector(
         (state) => state.createTest
     );
-    const { setAvailableTakers } = createTestActions;
+    const [selectedTakers, setSelectedTakers] =
+        useState<TakerItf[]>(selectedTestTakers);
+    const { setAvailableTakers, validate } = createTestActions;
     const dispatch = useDispatch();
 
     const { isFetching } = useQuery<TakerItf[]>({
@@ -40,10 +43,23 @@ const AddTakers = ({ onClose }: AddTakersProps) => {
     });
 
     const handleSave = () => {
-        dispatch(
-            createTestActions.saveTestTakers({ testTakers: selectedTestTakers })
-        );
+        dispatch(createTestActions.saveSelectedTestTakers(selectedTakers));
+        dispatch(validate());
         onClose();
+    };
+
+    const handleCheckTakers = (takers: TakerItf[], checked: boolean) => {
+        console.log(takers, checked);
+        takers.forEach((taker) => {
+            if (checked) {
+                if (selectedTakers.some((t) => t.id === taker.id)) return;
+                setSelectedTakers((prev) => [...prev, taker]);
+            } else {
+                setSelectedTakers((prev) =>
+                    prev.filter((t) => t.id !== taker.id)
+                );
+            }
+        });
     };
 
     return (
@@ -53,12 +69,13 @@ const AddTakers = ({ onClose }: AddTakersProps) => {
                 {!isCreateTaker && availableTakers && !isFetching && (
                     <TakersChoser
                         label="Select available takers"
-                        selectedTestTakers={selectedTestTakers}
+                        selectedTestTakers={selectedTakers}
                         takers={availableTakers}
-                        onSelect={(takers: TakerItf[]) =>
-                            dispatch(
-                                createTestActions.addSelectedTestTakers(takers)
-                            )
+                        onCheckAll={(takers, checked) =>
+                            handleCheckTakers(takers, checked)
+                        }
+                        onCheck={(taker, checked) =>
+                            handleCheckTakers([taker], checked)
                         }
                     />
                 )}

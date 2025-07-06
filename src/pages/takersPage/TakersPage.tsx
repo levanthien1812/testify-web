@@ -184,13 +184,10 @@ const TakersPage = () => {
                 accessorKey: TAKER_FIELDS.GROUP,
                 id: TAKER_FIELDS.GROUP,
                 cell: ({ row }) => {
-                    const group = takerGroups?.find(
-                        (group) => group.id === row.original.group_id
-                    );
-                    if (group) {
+                    if (row.original.group) {
                         return (
                             <div className="text-sm rounded-full border border-gray-300 px-2 py-1">
-                                {group.name}
+                                {row.original.group.name}
                             </div>
                         );
                     }
@@ -245,7 +242,7 @@ const TakersPage = () => {
                 enableSorting: false,
             },
         ],
-        [currentIdToShowActionModal, takerGroups]
+        [currentIdToShowActionModal]
     );
 
     const table = useReactTable({

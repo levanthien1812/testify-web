@@ -70,6 +70,7 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
         handleSubmit,
         formState: { errors },
         register,
+        unregister,
         setValue,
         watch,
         control,
@@ -80,7 +81,9 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
     const allValues = watch();
 
     useEffect(() => {
-        if (!question?.id && allValues?.type !== question.type) {
+        if (!question?.id || allValues?.type !== question.type) {
+            unregister("content");
+            register("content");
             setValue("content", getInitialQuestionContent(allValues?.type));
         }
         dispatch(

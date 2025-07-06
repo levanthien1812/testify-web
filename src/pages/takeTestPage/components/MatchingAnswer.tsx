@@ -4,6 +4,7 @@ import DraggableItem from "../../createTestPage/components/testAnswers/Draggable
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { USER_ANSWER_STATUS } from "../../../config/constants/tests";
+import HtmlDisplay from "../../../components/elements/HtmlDisplay";
 
 type MatchingAnswerProps = {
     questionContent: MatchingQuestionItf;
@@ -46,12 +47,7 @@ const MatchingAnswer = ({
 
     return (
         <>
-            <div
-                className=""
-                dangerouslySetInnerHTML={{
-                    __html: questionContent.text,
-                }}
-            ></div>
+            <HtmlDisplay htmlContent={questionContent.text} />
             <div className="flex gap-3 w-full mt-2 px-2">
                 <div className="space-y-2 w-1/2">
                     {questionContent.left_items.map((item) => (

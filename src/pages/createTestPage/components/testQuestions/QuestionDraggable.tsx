@@ -9,10 +9,7 @@ import { useAppSelector } from "../../../../hooks/hooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { questionTypeToIcon } from "../../../../utils/mapping";
 import { shorten } from "../../../../utils/text";
-import {
-    faCircleCheck,
-    faCircleExclamation,
-} from "@fortawesome/free-solid-svg-icons";
+import HtmlDisplay from "../../../../components/elements/HtmlDisplay";
 
 type QuestionDraggableProps = {
     question: QuestionItf<QuestionContentItf>;
@@ -146,12 +143,11 @@ const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
                 </span>
             </div>
             {question.content && question.content.text && (
-                <div
-                    className="p-2 text-gray-600"
-                    dangerouslySetInnerHTML={{
-                        __html: shorten(question.content.text, 50),
-                    }}
-                ></div>
+                <HtmlDisplay
+                    htmlContent={question.content.text || ""}
+                    maxLength={50}
+                    className="p-2"
+                />
             )}
         </div>
     );

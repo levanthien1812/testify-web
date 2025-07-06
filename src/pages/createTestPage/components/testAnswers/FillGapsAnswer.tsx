@@ -4,6 +4,7 @@ import {
     FillGapsQuestionItf,
 } from "../../../../types/types";
 import Input from "../../../../components/elements/Input";
+import HtmlDisplay from "../../../../components/elements/HtmlDisplay";
 
 type FillGapsAnswerProps = {
     content: FillGapsQuestionItf;
@@ -37,13 +38,7 @@ const FillGapsAnswer = ({
 
     return (
         <>
-            <div
-                className=""
-                dangerouslySetInnerHTML={{
-                    __html: content.text.replaceAll("***", "___"),
-                }}
-            ></div>
-
+            <HtmlDisplay htmlContent={content.text.replaceAll("***", "___")} />
             <div className="space-y-1 mt-2">
                 {[...Array(content.num_gaps)].map((num, index) => (
                     <div className="flex gap-3 items-end ps-2" key={index + 1}>

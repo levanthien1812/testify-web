@@ -6,7 +6,7 @@ import Modal, {
 } from "../../../../components/modals/Modal";
 import Button from "../../../../components/elements/Button";
 import { useMutation, useQuery } from "react-query";
-import { TakerItf, UserItf } from "../../../../types/types";
+import { TakerItf } from "../../../../types/types";
 import { getTakers } from "../../../../services/user";
 import TakersChoser from "../../../createTestPage/components/testTakers/TakersChoser";
 import { createChats } from "../../../../services/chat";
@@ -17,8 +17,7 @@ import { SOCKET_EVENTS } from "../../../../config/constants/socket";
 
 const AddChat = ({ onClose }: { onClose: () => void }) => {
     const [selectedTakers, setSelectedTakers] = useState<TakerItf[]>([]);
-    const { availableTakers, setAvailableTakers, socket, setChats, chats } =
-        useChatSocket();
+    const { availableTakers, setAvailableTakers, socket } = useChatSocket();
 
     const { data: takers, isFetching } = useQuery<TakerItf[]>({
         queryFn: async () => {
@@ -31,8 +30,17 @@ const AddChat = ({ onClose }: { onClose: () => void }) => {
         queryKey: [QUERY_KEYS.GET_AVAILABLE_TAKERS],
     });
 
-    const handleAfterSelect = (takers: TakerItf[]) => {
-        setSelectedTakers(takers);
+    const handleCheckTakers = (takers: TakerItf[], checked: boolean) => {
+        takers.forEach((taker) => {
+            if (checked) {
+                if (selectedTakers.some((t) => t.id === taker.id)) return;
+                setSelectedTakers((prev) => [...prev, taker]);
+            } else {
+                setSelectedTakers((prev) =>
+                    prev.filter((t) => t.id !== taker.id)
+                );
+            }
+        });
     };
 
     const { mutate, isLoading } = useMutation({
@@ -74,7 +82,12 @@ const AddChat = ({ onClose }: { onClose: () => void }) => {
                         label="Select member to create chat with"
                         takers={availableTakers}
                         selectedTestTakers={selectedTakers}
-                        onSelect={handleAfterSelect}
+                        onCheckAll={(takers, checked) =>
+                            handleCheckTakers(takers, checked)
+                        }
+                        onCheck={(taker, checked) =>
+                            handleCheckTakers([taker], checked)
+                        }
                     />
                 )}
             </ModalBody>

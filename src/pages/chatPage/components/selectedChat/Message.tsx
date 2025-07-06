@@ -26,6 +26,7 @@ import {
 } from "../../../../config/constants/chat";
 import { useAppSelector } from "../../../../hooks/hooks";
 import IconButton from "../../../../components/elements/IconButton";
+import HtmlDisplay from "../../../../components/elements/HtmlDisplay";
 
 type MessageProps = {
     message: MessageItf;
@@ -338,12 +339,12 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                                                 }}
                                                 id="message-text"
                                             >
-                                                <div
-                                                    dangerouslySetInnerHTML={{
-                                                        __html: enhancedMessageText,
-                                                    }}
-                                                    className="w-full break-words "
-                                                ></div>
+                                                <HtmlDisplay
+                                                    htmlContent={
+                                                        enhancedMessageText
+                                                    }
+                                                    className="w-full break-words"
+                                                />
                                                 {message.link_preview &&
                                                     message.links &&
                                                     message.links.length >

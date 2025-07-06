@@ -6,6 +6,7 @@ import {
 } from "../../../types/types";
 import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../../stores/takeTest";
+import HtmlDisplay from "../../../components/elements/HtmlDisplay";
 
 type MultipleChoicesQuestionProps = {
     question: QuestionItf<MultipleChoiceQuestionItf>;
@@ -31,10 +32,7 @@ const MultipleChoicesQuestion = ({
 
     return (
         <>
-            <div
-                className=""
-                dangerouslySetInnerHTML={{ __html: question.content!.text }}
-            ></div>
+            <HtmlDisplay htmlContent={question.content!.text} />
 
             <div className="space-y-1 mt-2">
                 {question.content!.options.map((option) => (

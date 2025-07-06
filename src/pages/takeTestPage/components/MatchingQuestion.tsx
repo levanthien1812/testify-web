@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../../stores/takeTest";
+import HtmlDisplay from "../../../components/elements/HtmlDisplay";
 
 type MatchingQuestionProps = {
     question: QuestionItf<MatchingQuestionItf>;
@@ -48,12 +49,7 @@ const MatchingQuestion = ({ question }: MatchingQuestionProps) => {
 
     return (
         <>
-            <div
-                className=""
-                dangerouslySetInnerHTML={{
-                    __html: question.content!.text,
-                }}
-            ></div>
+            <HtmlDisplay htmlContent={question.content!.text} />
             <div className="flex gap-3 w-full mt-2 px-2">
                 <div className="space-y-2 w-1/2">
                     {question.content!?.left_items?.map((item) => (
