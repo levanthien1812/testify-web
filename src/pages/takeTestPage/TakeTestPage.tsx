@@ -59,6 +59,12 @@ const TakeTestPage = () => {
             ) {
                 dispatch(takeTestActions.setIsEnteringPasscode(true));
             }
+            if (
+                error.response?.data?.errorCode ===
+                ERROR_CODE.TEST_ACCESS_DENIED
+            ) {
+                dispatch(takeTestActions.setForbidden(true));
+            }
         },
         onSuccess: (data: any) => {
             dispatch(takeTestActions.setTest(data));
@@ -187,7 +193,7 @@ const TakeTestPage = () => {
                     )} */}
                 </div>
             )}
-            {(isLoadingTest || isLoadingSubmissions) && (
+            {isLoadingTest && (
                 <Loading
                     isLoading={isLoadingTest}
                     loadingText={{ text: "Loading test's information..." }}
@@ -202,6 +208,13 @@ const TakeTestPage = () => {
                             refetchTest();
                         }, 0);
                     }}
+                />
+            )}
+
+            {isLoadingSubmissions && (
+                <Loading
+                    isLoading={isLoadingSubmissions}
+                    loadingText={{ text: "Loading submissions..." }}
                 />
             )}
             {submissions.length > 0 &&

@@ -22,6 +22,7 @@ import Select from "../../../components/elements/Select";
 import { useDispatch } from "react-redux";
 import { viewTestActions } from "../../../stores/viewTest";
 import { useAppSelector } from "../../../hooks/hooks";
+import Paginator from "../../../components/table/Paginator";
 
 type SubmissionsTableProps = {
     submissions: SubmissionItf[];
@@ -248,49 +249,7 @@ const SubmissionsTable = ({ submissions, refetch }: SubmissionsTableProps) => {
                     ))}
                 </tbody>
             </table>
-            <div className="flex gap-2 justify-center mt-4">
-                <button
-                    onClick={() => table.firstPage()}
-                    disabled={!table.getCanPreviousPage()}
-                    className="text-sm bg-orange-600 text-white py-0.5 hover:bg-orange-700 w-10 disabled:bg-gray-600"
-                >
-                    {"<<"}
-                </button>
-                <button
-                    onClick={() => table.previousPage()}
-                    disabled={!table.getCanPreviousPage()}
-                    className="text-sm bg-orange-600 text-white py-0.5 hover:bg-orange-700 w-10 disabled:bg-gray-600"
-                >
-                    {"<"}
-                </button>
-
-                <Select
-                    value={table.getState().pagination.pageSize}
-                    onChange={(e) => {
-                        table.setPageSize(Number(e.target.value));
-                    }}
-                    sizing="sm"
-                    options={[10, 20, 30, 40, 50].map((pageSize) => ({
-                        value: pageSize,
-                        label: pageSize,
-                    }))}
-                    label={{ text: "Rows per page" }}
-                />
-                <button
-                    onClick={() => table.nextPage()}
-                    disabled={!table.getCanNextPage()}
-                    className="text-sm bg-orange-600 text-white py-0.5 hover:bg-orange-700 w-10 disabled:bg-gray-600"
-                >
-                    {">"}
-                </button>
-                <button
-                    onClick={() => table.lastPage()}
-                    disabled={!table.getCanNextPage()}
-                    className="text-sm bg-orange-600 text-white py-0.5 hover:bg-orange-700 w-10 disabled:bg-gray-600"
-                >
-                    {">>"}
-                </button>
-            </div>
+            <Paginator table={table} />
             {currentSubmissionBeingViewed && <TakerSubmissionDetail />}
         </div>
     );

@@ -46,7 +46,11 @@ function App() {
                     ],
                 },
                 {
-                    element: <ProtectedRoute allowedRoles={[ROLES.MAKER]} />,
+                    element: (
+                        <ProtectedRoute
+                            allowedRoles={[ROLES.MAKER, ROLES.TAKER]}
+                        />
+                    ),
                     children: [
                         {
                             path: "/",
@@ -64,7 +68,17 @@ function App() {
                                         },
                                         {
                                             path: "create",
-                                            element: <CreateTestPage />,
+                                            element: (
+                                                <ProtectedRoute
+                                                    allowedRoles={[ROLES.MAKER]}
+                                                />
+                                            ),
+                                            children: [
+                                                {
+                                                    index: true,
+                                                    element: <CreateTestPage />,
+                                                },
+                                            ],
                                             handle: {
                                                 crumb: "Create Test",
                                             } as BreadcrumbHandle,
@@ -74,23 +88,41 @@ function App() {
                                             children: [
                                                 {
                                                     index: true,
-                                                    element: <ViewTestPage />,
+                                                    element:
+                                                        user?.role ===
+                                                        ROLES.MAKER ? (
+                                                            <ViewTestPage />
+                                                        ) : (
+                                                            <TakeTestPage />
+                                                        ),
                                                 },
                                                 {
                                                     path: "edit",
-                                                    element: <CreateTestPage />,
+                                                    element: (
+                                                        <ProtectedRoute
+                                                            allowedRoles={[
+                                                                ROLES.MAKER,
+                                                            ]}
+                                                        />
+                                                    ),
+                                                    children: [
+                                                        {
+                                                            index: true,
+                                                            element: (
+                                                                <CreateTestPage />
+                                                            ),
+                                                        },
+                                                    ],
                                                     handle: {
                                                         crumb: "Edit Test",
                                                     } as BreadcrumbHandle,
                                                 },
                                             ],
                                             handle: {
-                                                crumb: (data) => {
-                                                    if (!data || !data.test) {
-                                                        return "Test Detail";
-                                                    }
-                                                    return `${data.test.name}`;
-                                                },
+                                                crumb:
+                                                    user?.role === ROLES.MAKER
+                                                        ? "View Test"
+                                                        : "Take Test",
                                             } as BreadcrumbHandle,
                                         },
                                     ],
@@ -100,6 +132,11 @@ function App() {
                                 },
                                 {
                                     path: "question-banks",
+                                    element: (
+                                        <ProtectedRoute
+                                            allowedRoles={[ROLES.MAKER]}
+                                        />
+                                    ),
                                     children: [
                                         {
                                             index: true,
@@ -127,6 +164,11 @@ function App() {
                                 },
                                 {
                                     path: "takers",
+                                    element: (
+                                        <ProtectedRoute
+                                            allowedRoles={[ROLES.MAKER]}
+                                        />
+                                    ),
                                     children: [
                                         {
                                             index: true,
@@ -137,84 +179,39 @@ function App() {
                                         crumb: "Takers",
                                     } as BreadcrumbHandle,
                                 },
+                                {
+                                    path: "/chat",
+                                    children: [
+                                        {
+                                            index: true,
+                                            element: (
+                                                <ChatSocketProvider>
+                                                    <ChatPage />
+                                                </ChatSocketProvider>
+                                            ),
+                                            handle: {
+                                                crumb: "Chat",
+                                            } as BreadcrumbHandle,
+                                        },
+                                        {
+                                            path: ":chatId",
+                                            element: (
+                                                <ChatSocketProvider>
+                                                    <ChatPage />
+                                                </ChatSocketProvider>
+                                            ),
+                                            handle: {
+                                                crumb: "Chat",
+                                            } as BreadcrumbHandle,
+                                        },
+                                    ],
+                                },
                             ],
                             handle: {
                                 crumb: "Home",
                             } as BreadcrumbHandle,
                         },
                     ],
-                },
-                {
-                    element: <ProtectedRoute allowedRoles={[ROLES.TAKER]} />,
-                    children: [
-                        {
-                            path: "/",
-                            children: [
-                                {
-                                    index: true,
-                                    element: <HomePage />,
-                                },
-                                {
-                                    path: "/tests",
-                                    children: [
-                                        {
-                                            index: true,
-                                            element: <TestsPage />,
-                                        },
-                                        {
-                                            path: ":testId",
-                                            element: <TakeTestPage />,
-                                            handle: {
-                                                crumb: "Take Test",
-                                            } as BreadcrumbHandle,
-                                        },
-                                    ],
-                                    handle: {
-                                        crumb: "Tests",
-                                    } as BreadcrumbHandle,
-                                },
-                            ],
-                        },
-                    ],
-                },
-                {
-                    element: (
-                        <ProtectedRoute
-                            allowedRoles={[ROLES.MAKER, ROLES.TAKER]}
-                        />
-                    ),
-                    children: [
-                        {
-                            path: "/chat",
-                            children: [
-                                {
-                                    index: true,
-                                    element: (
-                                        <ChatSocketProvider>
-                                            <ChatPage />
-                                        </ChatSocketProvider>
-                                    ),
-                                    handle: {
-                                        crumb: "Chat",
-                                    } as BreadcrumbHandle,
-                                },
-                                {
-                                    path: ":chatId",
-                                    element: (
-                                        <ChatSocketProvider>
-                                            <ChatPage />
-                                        </ChatSocketProvider>
-                                    ),
-                                    handle: {
-                                        crumb: "Chat",
-                                    } as BreadcrumbHandle,
-                                },
-                            ],
-                        },
-                    ],
-                    handle: {
-                        crumb: "Home",
-                    } as BreadcrumbHandle,
                 },
             ],
         },

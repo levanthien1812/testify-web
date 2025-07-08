@@ -120,9 +120,11 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
             <div>
                 <span className="underline">Question {question.order}:</span>{" "}
                 <span className="font-bold italic">{`(${points} points)`}</span>{" "}
-                <span className="text-sm bg-yellow-500 text-white rounded-full px-2 shadow-sm ms-2">
-                    {USER_ANSWER_STATUS_LABEL[status]}
-                </span>
+                {status !== USER_ANSWER_STATUS.NOTHING && (
+                    <span className="text-sm bg-yellow-500 text-white rounded-full px-2 shadow-sm ms-2">
+                        {USER_ANSWER_STATUS_LABEL[status]}
+                    </span>
+                )}
             </div>
             {question.type === QUESTION_TYPE.MULTIPLE_CHOICES && (
                 <MultipleChoicesAnswer

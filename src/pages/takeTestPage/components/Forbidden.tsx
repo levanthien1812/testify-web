@@ -11,7 +11,9 @@ const Forbidden = () => {
                 You are not allowed to take this test
             </p>
             <div className="flex gap-2 mt-4">
-                <Button onClick={() => navigate(-1)}>Back</Button>
+                <Button onClick={() => navigate(-1)} outlined>
+                    Back
+                </Button>
                 <Button onClick={() => navigate("/")}>Home</Button>
             </div>
         </div>

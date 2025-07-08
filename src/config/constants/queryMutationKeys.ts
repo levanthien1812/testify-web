@@ -16,6 +16,7 @@ const QUERY_KEYS = {
     GET_TAKERS: "get-takers",
     GET_QUESTIONS_IN_BANK: "get-questions-in-bank",
     GET_TAKER_GROUPS: "get-taker-groups",
+    GET_QUESTIONS_RESULT_FOR_TEST: "get-questions-result-for-test",
 };
 
 const MUTATION_KEYS = {

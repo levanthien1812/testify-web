@@ -16,6 +16,7 @@ import { createTaker, updateTaker } from "../../../services/test";
 import { toast } from "react-toastify";
 import { TOAST_MESSAGES } from "../../../config/constants/toasts";
 import { formatImageUrl } from "../../../utils/formatImageUrl";
+import { GENDER_OPTIONS } from "../../../config/constants/users";
 
 type AddTakersProps = {
     onClose: () => void;
@@ -106,9 +107,17 @@ const AddTakers = ({ onClose, taker, takerGroups }: AddTakersProps) => {
         setPreviewURL(null);
     };
 
+    const takerGroupOptions =
+        takerGroups
+            ?.map((group) => ({
+                value: group.id,
+                label: group.name,
+            }))
+            .concat({ value: "", label: "No group" }) || [];
+
     return (
         <Modal onClose={onClose}>
-            <ModalHeader title={"Add Takers"} />
+            <ModalHeader title={taker ? "Update Taker" : "Add Taker"} />
             <ModalBody>
                 <form>
                     <div className="flex gap-4">
@@ -142,10 +151,7 @@ const AddTakers = ({ onClose, taker, takerGroups }: AddTakersProps) => {
                             </div>
                             <div className="flex gap-2">
                                 <Select
-                                    options={[
-                                        { value: "male", label: "Male" },
-                                        { value: "female", label: "Female" },
-                                    ]}
+                                    options={GENDER_OPTIONS}
                                     {...register("gender", { required: false })}
                                     label={{ text: "Gender" }}
                                     error={errors.gender?.message}
@@ -179,11 +185,9 @@ const AddTakers = ({ onClose, taker, takerGroups }: AddTakersProps) => {
                                         })}
                                         label={{ text: "Group" }}
                                         error={errors.group_id?.message}
-                                        options={takerGroups.map((group) => ({
-                                            value: group.id,
-                                            label: group.name,
-                                        }))}
+                                        options={takerGroupOptions}
                                         disabled={takerGroups.length === 0}
+                                        defaultValue={""}
                                         helperText={
                                             takerGroups.length === 0
                                                 ? "No group available!"

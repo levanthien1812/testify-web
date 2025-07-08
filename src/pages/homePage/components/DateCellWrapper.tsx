@@ -43,7 +43,7 @@ const DateCellWrapper: React.FC<DateCellWrapperProps> = ({
 
             {isHovered && showButtonCondition && !isPastDay && (
                 <Button
-                    className="rounded-md"
+                    className="rounded-md relative z-20"
                     size="sm"
                     onClick={handleClickAddTest}
                 >

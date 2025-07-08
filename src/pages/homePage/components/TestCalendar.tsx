@@ -11,6 +11,8 @@ import Button from "../../../components/elements/Button";
 import IconButton from "../../../components/elements/IconButton";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import DateCellWrapper from "./DateCellWrapper";
+import { useAppSelector } from "../../../hooks/hooks";
+import { ROLES } from "../../../config/constants/tests";
 
 const localizer = momentLocalizer(moment);
 
@@ -26,6 +28,7 @@ const TestCalendar = () => {
     >([]);
 
     const navigate = useNavigate();
+    const user = useAppSelector((state) => state.auth.user);
     const [selectedTest, setSelectedTest] = useState<TestItf | null>(null);
 
     const { data: tests, isLoading: isLoadingTests } = useQuery<TestItf[]>({
@@ -135,21 +138,25 @@ const TestCalendar = () => {
                         </p>
 
                         <div className="flex gap-2 mt-auto">
-                            <Button
-                                onClick={() =>
-                                    navigate(`/tests/${selectedTest.id}/edit`)
-                                }
-                                outlined
-                                className="w-1/2 rounded-md"
-                            >
-                                Edit
-                            </Button>
+                            {user?.role === ROLES.MAKER && (
+                                <Button
+                                    onClick={() =>
+                                        navigate(
+                                            `/tests/${selectedTest.id}/edit`
+                                        )
+                                    }
+                                    outlined
+                                    className="grow rounded-md"
+                                >
+                                    Edit
+                                </Button>
+                            )}
                             <Button
                                 onClick={() =>
                                     navigate(`/tests/${selectedTest.id}`)
                                 }
                                 primary
-                                className="w-1/2 rounded-md"
+                                className="grow rounded-md"
                             >
                                 View detail
                             </Button>

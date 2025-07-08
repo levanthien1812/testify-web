@@ -17,3 +17,31 @@ export function findSmallestMissingPositive(nums: number[]): number {
         i++;
     }
 }
+
+export const generateEvenRanges = (totalInteger: number, numRanges: number) => {
+    if (totalInteger < 0 || numRanges <= 0) {
+        console.error(
+            "Invalid input: totalInteger must be non-negative, and numRanges must be positive."
+        );
+        return [];
+    }
+
+    const result = [];
+    const rangeSize = totalInteger / numRanges;
+
+    for (let i = 0; i < numRanges; i++) {
+        const start = i * rangeSize;
+        const end = (i + 1) * rangeSize;
+
+        let currentStart = Math.round(start);
+        let currentEnd = Math.round(end);
+
+        if (i === numRanges - 1) {
+            currentEnd = totalInteger;
+        }
+
+        result.push([currentStart, currentEnd]);
+    }
+
+    return result;
+};

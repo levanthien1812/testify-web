@@ -1,3 +1,9 @@
+import {
+    faCheckCircle,
+    faTimes,
+    faTimesCircle,
+} from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { forwardRef } from "react";
 
 interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
@@ -9,6 +15,7 @@ interface CheckboxProps extends React.InputHTMLAttributes<HTMLInputElement> {
         text: string;
         extraClass?: string;
     };
+    displayIcon?: boolean;
 }
 
 const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>((props, ref) => {
@@ -18,13 +25,14 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>((props, ref) => {
         error = null,
         helperText = null,
         label,
+        displayIcon = false,
         ...rest
     } = props;
     return (
         <>
-            <div className="flex">
+            <div className="flex items-center">
                 <input
-                    type="checkbox"
+                    type={displayIcon ? "hidden" : "checkbox"}
                     id={props.name}
                     // checked={props.checked}
                     className={`border border-gray-500 ${
@@ -35,6 +43,18 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>((props, ref) => {
                     {...rest}
                     ref={ref}
                 />
+                {displayIcon && !rest.checked && (
+                    <FontAwesomeIcon
+                        className="text-red-500"
+                        icon={faTimesCircle}
+                    />
+                )}
+                {displayIcon && rest.checked && (
+                    <FontAwesomeIcon
+                        className="text-green-500"
+                        icon={faCheckCircle}
+                    />
+                )}
                 {label && (
                     <label
                         className={`shrink-0 ms-2 ${label.extraClass} ${

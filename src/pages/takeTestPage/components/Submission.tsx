@@ -22,9 +22,10 @@ const Submission = ({ submission }: SubmissionProps) => {
 
     useQuery({
         queryFn: async () => {
+            if (!test) return;
             const responseData = await getSubmissionAnswers(
-                test!.id!,
-                submission.id!
+                test.id,
+                submission.id
             );
             dispatch(
                 takeTestActions.setSubmissionAnswers({
@@ -37,6 +38,7 @@ const Submission = ({ submission }: SubmissionProps) => {
             QUERY_KEYS.GET_SUBMISSION_ANSWERS,
             { submission_id: submission.id },
         ],
+        enabled: !submission.answers || submission.answers.length === 0,
     });
 
     const handleViewDetail = () => {
@@ -66,7 +68,7 @@ const Submission = ({ submission }: SubmissionProps) => {
                     <p>Wrong answers: {submission.wrong_answers}</p>
                 </>
             )}
-            <Button onClick={handleViewDetail}>
+            <Button onClick={handleViewDetail} className="mt-2" link>
                 {!viewDetail ? "View detail" : "Hide detail"}
             </Button>
 

@@ -25,7 +25,7 @@ const TestQuestionsAndAnswers = ({
         [userAnswers]
     );
     return (
-        <div className="mt-4">
+        <div className="">
             {test.num_parts > 1 && test.parts && (
                 <div className="space-y-4">
                     {test.parts.map((part) => {
