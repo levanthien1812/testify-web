@@ -17,6 +17,7 @@ import { useAppSelector } from "../../hooks/hooks";
 import PasscodeLink from "../../pages/createTestPage/components/testTakers/PasscodeLink";
 import { takeTestActions } from "../../stores/takeTest";
 import { PasscodeItf } from "../../types/types";
+import Profile from "../../pages/profile/Profile";
 
 const Header = () => {
     const { user, isAuthened } = useAppSelector((state) => state.auth);
@@ -24,6 +25,7 @@ const Header = () => {
     const dispatch = useDispatch();
     const [isEnteringPasscodeLink, setIsEnteringPasscodeLink] = useState(false);
     const { isPasscodeValidated } = useAppSelector((state) => state.takeTest);
+    const [isViewingProfile, setIsViewingProfile] = useState(false);
     const navigate = useNavigate();
 
     const { mutate, isLoading } = useMutation({
@@ -115,6 +117,16 @@ const Header = () => {
                         {showActions && (
                             <div className="absolute mt-2 bg-white shadow-md px-2 py-2 w-full">
                                 <Button
+                                    outlined
+                                    className="w-full"
+                                    onClick={() => {
+                                        setShowActions(false);
+                                        setIsViewingProfile(true);
+                                    }}
+                                >
+                                    Profile
+                                </Button>
+                                <Button
                                     secondary
                                     className="w-full"
                                     onClick={handleLogout}
@@ -138,6 +150,8 @@ const Header = () => {
                                 }}
                             />
                         )}
+
+                        {isViewingProfile && <Profile />}
                     </div>
                 </div>
             )}

@@ -13,6 +13,7 @@ import { useDispatch } from "react-redux";
 import { QUERY_KEYS } from "../../../config/constants/queryMutationKeys";
 import { viewTestActions } from "../../../stores/viewTest";
 import { useAppSelector } from "../../../hooks/hooks";
+import QuestionsResultDemonstrator from "./QuestionsResultDemonstrator";
 
 const TakerInfoItem = ({
     label,
@@ -164,11 +165,21 @@ const TakerSubmissionDetail = () => {
                     {isLoadingSubmissions && (
                         <p className="text-center">Loading...</p>
                     )}
+                    {submissionAnswers && test && test.questions && (
+                        <div className="mt-4 flex justify-center border border-dashed border-gray-400">
+                            <QuestionsResultDemonstrator
+                                questions={test.questions}
+                                answers={submissionAnswers}
+                            />
+                        </div>
+                    )}
                     {submissionAnswers && (
-                        <TestQuestionsAndAnswers
-                            test={test!}
-                            userAnswers={submissionAnswers}
-                        />
+                        <div className="mt-4 flex justify-center border border-dashed border-gray-400">
+                            <TestQuestionsAndAnswers
+                                test={test!}
+                                userAnswers={submissionAnswers}
+                            />
+                        </div>
                     )}
                 </div>
             </ModalBody>

@@ -13,6 +13,7 @@ import {
     ColumnFiltersState,
     getCoreRowModel,
     getFilteredRowModel,
+    getPaginationRowModel,
     getSortedRowModel,
     RowSelectionState,
     useReactTable,
@@ -43,6 +44,13 @@ const TakersPage = () => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState<any>("");
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
+    const [pagination, setPagination] = useState<{
+        pageIndex: number;
+        pageSize: number;
+    }>({
+        pageIndex: 0,
+        pageSize: 10,
+    });
     const [isAddingTakers, setIsAddingTakers] = useState(false);
     const [isAddingGroup, setIsAddingGroup] = useState(false);
     const [isViewingGroups, setIsViewingGroups] = useState(false);
@@ -255,16 +263,13 @@ const TakersPage = () => {
         onColumnFiltersChange: setColumnFilters,
         onGlobalFilterChange: setGlobalFilter,
         onRowSelectionChange: setRowSelection,
-        initialState: {
-            pagination: {
-                pageSize: 10,
-            },
-            // columnFilters: INITIAL_TAKERS_COLUMN_FILTERS,
-        },
+        getPaginationRowModel: getPaginationRowModel(),
+        onPaginationChange: setPagination,
         state: {
             columnFilters,
             globalFilter,
             rowSelection,
+            pagination,
         },
     });
 

@@ -79,7 +79,7 @@ const QuestionBankCard = ({
 
     return (
         <div
-            className={`border border-gray-300 rounded-xl p-4 ${randomGradient} h-full flex flex-col min-w-[300px]`}
+            className={`border border-gray-300 rounded-xl p-4 ${randomGradient} h-full flex flex-col min-w-[300px] max-w-[40%]`}
         >
             <div className="flex items-center">
                 <div className="flex gap-1">

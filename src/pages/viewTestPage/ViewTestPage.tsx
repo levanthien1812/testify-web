@@ -1,6 +1,10 @@
 import { TestItf, SubmissionItf } from "../../types/types";
 import { useQuery } from "react-query";
-import { getSubmissions, getTest } from "../../services/test";
+import {
+    getQuestionsResultForTest,
+    getSubmissions,
+    getTest,
+} from "../../services/test";
 import { useParams } from "react-router";
 import SubmissionsTable from "./components/SubmissionsTable";
 import { useState } from "react";
@@ -18,14 +22,37 @@ import { Link } from "react-router-dom";
 import { QUERY_KEYS } from "../../config/constants/queryMutationKeys";
 import { useAppSelector } from "../../hooks/hooks";
 import TestInfo from "./components/TestInfo";
+import ScoreRangeBarChart from "./components/ScoreRangeBarChart";
+import { QuestionResult } from "../../types/tests";
+import QuestionsResultChart from "./components/QuestionsResultChart";
+import {
+    Chart as ChartJS,
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend,
+} from "chart.js";
+
+ChartJS.register(
+    CategoryScale,
+    LinearScale,
+    BarElement,
+    Title,
+    Tooltip,
+    Legend
+);
 
 const ViewTestPage = () => {
     const { testId } = useParams();
     const [viewQuestionsAndAnswers, setViewQuestionsAndAnswers] =
         useState(false);
     const [viewProvideAnswers, setViewProvideAnswers] = useState(false);
-    const { test, submissions } = useAppSelector((state) => state.viewTest);
-    const { setTest, setSubmissions } = viewTestActions;
+    const { test, submissions, questionsResult } = useAppSelector(
+        (state) => state.viewTest
+    );
+    const { setTest, setSubmissions, setQuestionsResult } = viewTestActions;
     const dispatch = useDispatch();
 
     const { isLoading: isLoadingTest, refetch: refetchTest } =
@@ -54,6 +81,18 @@ const ViewTestPage = () => {
             retry: false,
         });
 
+    const { isLoading: isLoadingQuestionsResult } = useQuery<QuestionResult[]>({
+        queryKey: [QUERY_KEYS.GET_QUESTIONS_RESULT_FOR_TEST, testId],
+        queryFn: async () => {
+            const responseData = await getQuestionsResultForTest(testId!);
+            return responseData.questions_result;
+        },
+        onSuccess: (data) => {
+            dispatch(setQuestionsResult(data));
+        },
+        retry: false,
+    });
+
     return (
         <div className="xl:w-2/3 md:w-5/6 mx-auto py-10 shadow-lg px-8">
             {test && <TestInfo />}
@@ -74,21 +113,39 @@ const ViewTestPage = () => {
             </div>
 
             <div className=" mt-4">
-                <p className="text-2xl text-center">{`Submissions (${submissions?.length}/${test?.taker_ids.length})`}</p>
-                {isLoadingSubmissions && (
-                    <p className="text-center">Loading submission ...</p>
-                )}
                 {submissions && (
-                    <div className="space-y-1 mt-2">
-                        {submissions.length > 0 && (
-                            <SubmissionsTable
-                                submissions={submissions}
-                                refetch={refetchSubmissions}
+                    <div className="space-y-2">
+                        <h3 className="text-center text-2xl">
+                            Test result analysis
+                        </h3>
+                        <ScoreRangeBarChart submissions={submissions} />
+                        {questionsResult && (
+                            <QuestionsResultChart
+                                questionsResult={questionsResult}
                             />
                         )}
-                        {submissions.length === 0 && (
-                            <p className="text-center">No submission found.</p>
-                        )}
+                    </div>
+                )}
+
+                {isLoadingSubmissions && (
+                    <p className="text-center mt-4">Loading submission ...</p>
+                )}
+                {submissions && (
+                    <div className="mt-4">
+                        <p className="text-2xl text-center">{`Submissions (${submissions?.length}/${test?.taker_ids.length})`}</p>
+                        <div className="space-y-1 mt-2">
+                            {submissions.length > 0 && (
+                                <SubmissionsTable
+                                    submissions={submissions}
+                                    refetch={refetchSubmissions}
+                                />
+                            )}
+                            {submissions.length === 0 && (
+                                <p className="text-center">
+                                    No submission found.
+                                </p>
+                            )}
+                        </div>
                     </div>
                 )}
             </div>
@@ -127,7 +184,12 @@ const ViewTestPage = () => {
                                 </Button>
                             </div>
                         )}
-                        <TestQuestionsAndAnswers test={test} userAnswers={[]} />
+                        <div className="mt-4">
+                            <TestQuestionsAndAnswers
+                                test={test}
+                                userAnswers={[]}
+                            />
+                        </div>
                     </ModalBody>
                     <ModalFooter></ModalFooter>
                 </Modal>

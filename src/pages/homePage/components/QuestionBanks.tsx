@@ -61,14 +61,13 @@ const QuestionBanks = () => {
                 <div className="flex gap-4 mt-3 pb-1 custom-scrollbar-x">
                     {questionBanks.map((bank) => {
                         return (
-                            <div key={bank.id}>
-                                <QuestionBankCard
-                                    questionBank={bank}
-                                    onAfterUpdate={() => {
-                                        refetchQuestionBanks();
-                                    }}
-                                />
-                            </div>
+                            <QuestionBankCard
+                                questionBank={bank}
+                                onAfterUpdate={() => {
+                                    refetchQuestionBanks();
+                                }}
+                                key={bank.id}
+                            />
                         );
                     })}
 

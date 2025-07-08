@@ -34,6 +34,9 @@ const viewTestSlice = createSlice({
         setSubmissions(state, action) {
             state.submissions = action.payload;
         },
+        setQuestionsResult(state, action) {
+            state.questionsResult = action.payload;
+        },
         setCurrentSubmissionBeingViewed(state, action) {
             state.currentSubmissionBeingViewed = action.payload;
         },

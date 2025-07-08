@@ -5,6 +5,7 @@ import {
     ColumnDef,
     flexRender,
     getCoreRowModel,
+    getPaginationRowModel,
     getSortedRowModel,
     useReactTable,
 } from "@tanstack/react-table";
@@ -17,6 +18,7 @@ import SectionWrapper from "./SectionWrapper";
 import Loading from "../../../components/loadings/Loading";
 import NoResult from "../../../components/notFound/NoResult";
 import { formatImageUrl } from "../../../utils/formatImageUrl";
+import Paginator from "../../../components/table/Paginator";
 
 const TopTakers = () => {
     const { data: topTakers, isLoading: isLoadingTopTakers } = useQuery({
@@ -53,6 +55,9 @@ const TopTakers = () => {
             {
                 header: "Email",
                 accessorKey: "taker.email",
+                cell: ({ row }) => {
+                    return row.original.taker.user.email;
+                },
             },
             {
                 header: "Total tests assigned",
@@ -84,6 +89,7 @@ const TopTakers = () => {
         data: topTakers,
         getCoreRowModel: getCoreRowModel(),
         getSortedRowModel: getSortedRowModel(),
+        getPaginationRowModel: getPaginationRowModel(),
         initialState: {
             pagination: {
                 pageSize: 10,
@@ -114,65 +120,68 @@ const TopTakers = () => {
             )}
 
             {topTakers && topTakers.length > 0 && (
-                <table className="w-full mt-2">
-                    <thead>
-                        {table.getHeaderGroups().map((headerGroup) => (
-                            <tr key={headerGroup.id}>
-                                {headerGroup.headers.map((header) => (
+                <>
+                    <table className="w-full mt-2">
+                        <thead>
+                            {table.getHeaderGroups().map((headerGroup) => (
+                                <tr key={headerGroup.id}>
+                                    {headerGroup.headers.map((header) => (
+                                        <th
+                                            key={header.id}
+                                            className={`py-1 px-1 border align-middle border-slate-400 bg-orange-100 ${
+                                                header.column.getCanSort()
+                                                    ? "cursor-pointer"
+                                                    : ""
+                                            }`}
+                                            onClick={header.column.getToggleSortingHandler()}
+                                        >
+                                            {flexRender(
+                                                header.column.columnDef.header,
+                                                header.getContext()
+                                            )}
+                                            {header.column.getIsSorted()
+                                                ? header.column.getIsSorted() ===
+                                                  "asc"
+                                                    ? " 🔼"
+                                                    : " 🔽"
+                                                : ""}
+                                        </th>
+                                    ))}
                                     <th
-                                        key={header.id}
-                                        className={`py-1 px-1 border align-middle border-slate-400 bg-orange-100 ${
-                                            header.column.getCanSort()
-                                                ? "cursor-pointer"
-                                                : ""
-                                        }`}
-                                        onClick={header.column.getToggleSortingHandler()}
+                                        className={`py-1 px-1 align-top border border-slate-400 bg-orange-100`}
                                     >
-                                        {flexRender(
-                                            header.column.columnDef.header,
-                                            header.getContext()
-                                        )}
-                                        {header.column.getIsSorted()
-                                            ? header.column.getIsSorted() ===
-                                              "asc"
-                                                ? " 🔼"
-                                                : " 🔽"
-                                            : ""}
+                                        Actions
                                     </th>
-                                ))}
-                                <th
-                                    className={`py-1 px-1 align-top border border-slate-400 bg-orange-100`}
-                                >
-                                    Actions
-                                </th>
-                            </tr>
-                        ))}
-                    </thead>
-                    <tbody>
-                        {table.getRowModel().rows.map((row) => (
-                            <tr key={row.id}>
-                                {row.getVisibleCells().map((cell) => (
-                                    <td
-                                        key={cell.id}
-                                        className={`py-1 px-1 align-middle border text-center border-slate-400`}
-                                    >
-                                        {flexRender(
-                                            cell.column.columnDef.cell,
-                                            cell.getContext()
-                                        )}
+                                </tr>
+                            ))}
+                        </thead>
+                        <tbody>
+                            {table.getRowModel().rows.map((row) => (
+                                <tr key={row.id}>
+                                    {row.getVisibleCells().map((cell) => (
+                                        <td
+                                            key={cell.id}
+                                            className={`py-1 px-1 align-middle border text-center border-slate-400`}
+                                        >
+                                            {flexRender(
+                                                cell.column.columnDef.cell,
+                                                cell.getContext()
+                                            )}
+                                        </td>
+                                    ))}
+                                    <td className="text-center py-1 px-1 border border-slate-400">
+                                        <Link
+                                            to={`/takers/${row.original.taker.id}`}
+                                        >
+                                            <Button size="sm">Detail</Button>
+                                        </Link>
                                     </td>
-                                ))}
-                                <td className="text-center py-1 px-1 border border-slate-400">
-                                    <Link
-                                        to={`/takers/${row.original.taker.id}`}
-                                    >
-                                        <Button size="sm">Detail</Button>
-                                    </Link>
-                                </td>
-                            </tr>
-                        ))}
-                    </tbody>
-                </table>
+                                </tr>
+                            ))}
+                        </tbody>
+                    </table>
+                    <Paginator table={table} />
+                </>
             )}
         </SectionWrapper>
     );

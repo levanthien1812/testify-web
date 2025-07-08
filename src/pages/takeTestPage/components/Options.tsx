@@ -10,6 +10,8 @@ const Options = () => {
         <div className="mt-3 space-y-2">
             {test?.options.allow_close_time.let_taker_know && (
                 <Checkbox
+                    displayIcon={true}
+                    name="allow_close_time"
                     label={{ text: TEST_OPTIONS_LABELS.ALLOW_CLOSE_TIME.TAKER }}
                     checked={test.options.allow_close_time.enable}
                     disabled
@@ -18,6 +20,8 @@ const Options = () => {
             {test?.options.allow_multiple_submissions.let_taker_know && (
                 <div className="flex items-center gap-3">
                     <Checkbox
+                        displayIcon={true}
+                        name="allow_multiple_submissions"
                         label={{
                             text: TEST_OPTIONS_LABELS.ALLOW_MULTIPLE_SUBMISSIONS
                                 .TAKER,
@@ -45,6 +49,8 @@ const Options = () => {
             )}
             {test?.options.allow_review_before_submission.let_taker_know && (
                 <Checkbox
+                    displayIcon={true}
+                    name="allow_review_before_submission"
                     label={{
                         text: TEST_OPTIONS_LABELS.ALLOW_REVIEW_BEFORE_SUBMISSION
                             .TAKER,
@@ -55,6 +61,8 @@ const Options = () => {
             )}
             {test?.options.allow_save_progress.let_taker_know && (
                 <Checkbox
+                    displayIcon={true}
+                    name="allow_save_progress"
                     label={{
                         text: TEST_OPTIONS_LABELS.ALLOW_SAVE_PROGRESS.TAKER,
                     }}
@@ -65,6 +73,8 @@ const Options = () => {
             {test?.options.allow_show_maker_answers_after_test
                 .let_taker_know && (
                 <Checkbox
+                    displayIcon={true}
+                    name="allow_show_maker_answers_after_test"
                     label={{
                         text: TEST_OPTIONS_LABELS
                             .ALLOW_SHOW_MAKER_ANSWERS_AFTER_TEST.TAKER,
@@ -78,6 +88,8 @@ const Options = () => {
             {test?.options.allow_show_taker_answers_after_test
                 .let_taker_know && (
                 <Checkbox
+                    displayIcon={true}
+                    name="allow_show_taker_answers_after_test"
                     label={{
                         text: TEST_OPTIONS_LABELS
                             .ALLOW_SHOW_TAKER_ANSWERS_AFTER_TEST.TAKER,
@@ -90,6 +102,8 @@ const Options = () => {
             )}
             {test?.options.allow_shuffle_answers.let_taker_know && (
                 <Checkbox
+                    displayIcon={true}
+                    name="allow_shuffle_answers"
                     label={{
                         text: TEST_OPTIONS_LABELS.ALLOW_SHUFFLE_ANSWERS.TAKER,
                     }}
@@ -99,6 +113,8 @@ const Options = () => {
             )}
             {test?.options.allow_shuffle_questions.let_taker_know && (
                 <Checkbox
+                    displayIcon={true}
+                    name="allow_shuffle_questions"
                     label={{
                         text: TEST_OPTIONS_LABELS.ALLOW_SHUFFLE_QUESTIONS.TAKER,
                     }}
@@ -108,6 +124,8 @@ const Options = () => {
             )}
             {test?.options.allow_view_submission_after_test.let_taker_know && (
                 <Checkbox
+                    displayIcon={true}
+                    name="allow_view_submission_after_test"
                     label={{
                         text: TEST_OPTIONS_LABELS
                             .ALLOW_VIEW_SUBMISSION_AFTER_TEST.TAKER,
@@ -120,6 +138,8 @@ const Options = () => {
             )}
             {test?.options.disallow_time_limit.let_taker_know && (
                 <Checkbox
+                    displayIcon={true}
+                    name="disallow_time_limit"
                     label={{
                         text: TEST_OPTIONS_LABELS.DISALLOW_TIME_LIMIT.TAKER,
                     }}

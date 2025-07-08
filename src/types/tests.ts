@@ -143,6 +143,7 @@ export interface TakeTestContext {
 export interface ViewTestContext {
     test: TestItf | null;
     submissions: SubmissionItf[];
+    questionsResult: QuestionResult[];
     currentSubmissionBeingViewed: SubmissionItf | null;
 }
 
@@ -188,4 +189,11 @@ export interface EditabilityConfig {
     [CREATE_TEST_STEPS.TEST_TAKERS]: {
         share_option: boolean;
     };
+}
+
+export interface QuestionResult {
+    question: QuestionItf<QuestionContentItf>;
+    correct: number;
+    wrong: number;
+    skipped: number;
 }

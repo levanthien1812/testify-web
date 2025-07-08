@@ -479,3 +479,15 @@ export const updateTaker = async (
         throw error;
     }
 };
+
+export const getQuestionsResultForTest = async (testId: string) => {
+    try {
+        const response = await instance.get(
+            `/tests/${testId}/questions-result`
+        );
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
