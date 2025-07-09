@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import React from "react";
 import { formatTime } from "../../../utils/time";
 import { SubmissionItf } from "../../../types/types";
-import TestQuetionsAndAnswers from "./TestQuestionsAndAnswers";
+import TestQuestionsAndAnswers from "./TestQuestionsAndAnswers";
 import Button from "../../../components/elements/Button";
 import { useQuery } from "react-query";
 import { QUERY_KEYS } from "../../../config/constants/queryMutationKeys";
@@ -73,10 +73,12 @@ const Submission = ({ submission }: SubmissionProps) => {
             </Button>
 
             {viewDetail && (
-                <TestQuetionsAndAnswers
-                    test={test!}
-                    userAnswers={submission.answers}
-                />
+                <div className="border border-gray-300">
+                    <TestQuestionsAndAnswers
+                        test={test!}
+                        userAnswers={submission.answers}
+                    />
+                </div>
             )}
         </div>
     );

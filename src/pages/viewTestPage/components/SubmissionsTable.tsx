@@ -133,7 +133,7 @@ const SubmissionsTable = ({ submissions, refetch }: SubmissionsTableProps) => {
             },
             sorting: [
                 {
-                    id: "taker_id_name",
+                    id: "taker.name",
                     desc: false,
                 },
             ],

@@ -1,14 +1,12 @@
 import { Link, useNavigate } from "react-router-dom";
 import { register as registerService } from "../../services/auth";
 import { toast } from "react-toastify";
-import { AxiosError } from "axios";
-import { useDispatch } from "react-redux";
-import { authActions } from "../../stores/auth";
-import { ROLES } from "../../config/constants/tests";
 import Button from "../../components/elements/Button";
 import AuthInput from "./AuthInput";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { useMutation } from "react-query";
+import { useState } from "react";
+import ConfirmModal from "../../components/modals/ConfirmModal";
 
 type RegisterFields = {
     name: string;
@@ -19,14 +17,18 @@ type RegisterFields = {
 };
 
 const RegistePage = () => {
+    const [isNavigatingToEmailVerification, setIsNavigaingToEmailVerification] =
+        useState(false);
+
     const {
         register,
         handleSubmit,
+        watch,
         formState: { errors },
     } = useForm<RegisterFields>();
 
-    const dispatch = useDispatch();
     const navigate = useNavigate();
+    const { email: enteredEmail } = watch();
 
     const { mutate: registerMutate, isLoading: registerLoading } = useMutation({
         mutationFn: async (data: RegisterFields) => {
@@ -36,18 +38,7 @@ const RegistePage = () => {
         mutationKey: [`register`],
         onSuccess: (data: any) => {
             toast.success("Register successfully");
-
-            const { user, tokens } = data;
-            dispatch(authActions.authenticate({ user, tokens }));
-
-            if (user.role === ROLES.MAKER) {
-                navigate("/");
-            }
-        },
-        onError: (err) => {
-            if (err instanceof AxiosError) {
-                toast.error(err.response?.data.message);
-            }
+            setIsNavigaingToEmailVerification(true);
         },
     });
 
@@ -158,6 +149,21 @@ const RegistePage = () => {
                     </Link>
                 </p>
             </form>
+            {isNavigatingToEmailVerification && (
+                <ConfirmModal
+                    title="Email Verification"
+                    message="Your account has been created! Please proceed to confirm your email address to activate your account."
+                    onConfirm={() =>
+                        navigate("/verify-email", {
+                            state: {
+                                email: enteredEmail,
+                            },
+                        })
+                    }
+                    onClose={() => setIsNavigaingToEmailVerification(false)}
+                    actionText="Proceed"
+                />
+            )}
         </div>
     );
 };

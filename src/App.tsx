@@ -22,6 +22,9 @@ import QuestionBanksPage from "./pages/questionBanksPage/QuestionBanksPage";
 import QuestionBankPage from "./pages/questionBankDetailPage/QuestionBankPage";
 import { BreadcrumbHandle } from "./types/types";
 import TakersPage from "./pages/takersPage/TakersPage";
+import VerifyEmail from "./pages/authPage/VerifyEmail";
+import ForgotPassword from "./pages/authPage/ForgotPassword";
+import ResetPassword from "./pages/authPage/ResetPassword";
 
 const queryClient = new QueryClient(queryClientConfig);
 
@@ -42,6 +45,18 @@ function App() {
                         {
                             path: "/login",
                             element: <LoginPage />,
+                        },
+                        {
+                            path: "/verify-email",
+                            element: <VerifyEmail />,
+                        },
+                        {
+                            path: "/forgot-password",
+                            element: <ForgotPassword />,
+                        },
+                        {
+                            path: "/reset-password",
+                            element: <ResetPassword />,
                         },
                     ],
                 },

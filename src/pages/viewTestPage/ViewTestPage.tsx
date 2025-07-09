@@ -34,6 +34,7 @@ import {
     Tooltip,
     Legend,
 } from "chart.js";
+import Loading from "../../components/loadings/Loading";
 
 ChartJS.register(
     CategoryScale,
@@ -96,7 +97,12 @@ const ViewTestPage = () => {
     return (
         <div className="xl:w-2/3 md:w-5/6 mx-auto py-10 shadow-lg px-8">
             {test && <TestInfo />}
-            {isLoadingTest && <p className="text-center">Loading test ...</p>}
+            {isLoadingTest && (
+                <Loading
+                    isLoading={isLoadingTest}
+                    loadingText={{ text: "Loading test's information..." }}
+                />
+            )}
             <div className="flex justify-end mt-2">
                 <button
                     className="text-orange-600 underline hover:italic"
@@ -128,7 +134,10 @@ const ViewTestPage = () => {
                 )}
 
                 {isLoadingSubmissions && (
-                    <p className="text-center mt-4">Loading submission ...</p>
+                    <Loading
+                        isLoading={isLoadingTest}
+                        loadingText={{ text: "Loading submissions..." }}
+                    />
                 )}
                 {submissions && (
                     <div className="mt-4">

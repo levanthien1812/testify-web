@@ -43,6 +43,22 @@ export interface RegisterBodyItf {
     password: string;
 }
 
+export interface VerifyEmailBodyItf {
+    email: string;
+    code: string;
+}
+
+export interface ForgotPasswordBodyItf {
+    email: string;
+}
+
+export interface ResetPasswordBodyItf {
+    email: string;
+    token: string;
+    password: string;
+    password_confirm: string;
+}
+
 export interface LoginBodyItf {
     email: string;
     password: string;

@@ -14,6 +14,7 @@ import { QUERY_KEYS } from "../../../config/constants/queryMutationKeys";
 import { viewTestActions } from "../../../stores/viewTest";
 import { useAppSelector } from "../../../hooks/hooks";
 import QuestionsResultDemonstrator from "./QuestionsResultDemonstrator";
+import Loading from "../../../components/loadings/Loading";
 
 const TakerInfoItem = ({
     label,
@@ -163,7 +164,12 @@ const TakerSubmissionDetail = () => {
                     )}
                     <div className="sentinel" ref={sentinelRef}></div>
                     {isLoadingSubmissions && (
-                        <p className="text-center">Loading...</p>
+                        <Loading
+                            isLoading={isLoadingSubmissions}
+                            loadingText={{
+                                text: "Loading submission...",
+                            }}
+                        />
                     )}
                     {submissionAnswers && test && test.questions && (
                         <div className="mt-4 flex justify-center border border-dashed border-gray-400">

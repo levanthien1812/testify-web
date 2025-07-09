@@ -8,6 +8,7 @@ type ConfirmModalProps = {
     onConfirm: () => void;
     onClose: () => void;
     isConfirming?: boolean;
+    actionText?: string;
 };
 
 const ConfirmModal = ({
@@ -16,6 +17,7 @@ const ConfirmModal = ({
     onClose,
     isConfirming,
     title,
+    actionText = "Confirm",
 }: ConfirmModalProps) => {
     return (
         <Modal onClose={onClose}>
@@ -25,7 +27,7 @@ const ConfirmModal = ({
             </ModalBody>
             <ModalFooter>
                 <Button disabled={isConfirming} onClick={onConfirm}>
-                    {!isConfirming ? "Confirm" : "Confirming..."}
+                    {!isConfirming ? actionText : "Confirming..."}
                 </Button>
             </ModalFooter>
         </Modal>
