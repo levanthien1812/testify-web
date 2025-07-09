@@ -4,7 +4,6 @@ import { login as loginService, loginGoogle } from "../../services/auth";
 import { isSuccess } from "../../utils/response";
 import { authActions } from "../../stores/auth";
 import { toast } from "react-toastify";
-import { ROLES } from "../../config/constants/tests";
 import { AxiosError } from "axios";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import Button from "../../components/elements/Button";
@@ -116,6 +115,14 @@ const LoginPage = () => {
                         tabIndex={2}
                         required
                     />
+                </div>
+                <div className="w-full mt-2">
+                    <Link
+                        to={"/forgot-password"}
+                        className="text-orange-600 hover:underline text-sm"
+                    >
+                        Forgot password?
+                    </Link>
                 </div>
 
                 <Button

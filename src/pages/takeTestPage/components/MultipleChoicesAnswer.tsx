@@ -4,8 +4,9 @@ import {
     MultipleChoiceQuestionItf,
 } from "../../../types/types";
 import { formatImageUrl } from "../../../utils/formatImageUrl";
-import { USER_ANSWER_STATUS } from "../../../config/constants/tests";
+import { ROLES, USER_ANSWER_STATUS } from "../../../config/constants/tests";
 import HtmlDisplay from "../../../components/elements/HtmlDisplay";
+import { useAppSelector } from "../../../hooks/hooks";
 
 type MultipleChoicesAnswerProps = {
     questionContent: MultipleChoiceQuestionItf;
@@ -18,6 +19,7 @@ const MultipleChoicesAnswer = ({
     answerContent,
     answerStatus,
 }: MultipleChoicesAnswerProps) => {
+    const user = useAppSelector((state) => state.auth.user);
     const makerAnswer = questionContent.answer?.options?.[0];
     const userAnswer = answerContent?.options[0];
 
@@ -25,12 +27,11 @@ const MultipleChoicesAnswer = ({
         (optionId: string) => {
             if (answerStatus === USER_ANSWER_STATUS.NOT_ANSWERED) return false;
 
-            if (optionId === makerAnswer) return true;
             if (optionId === userAnswer) return true;
 
             return false;
         },
-        [answerStatus, makerAnswer, userAnswer]
+        [answerStatus, userAnswer]
     );
 
     const getInputClasses = useCallback(
@@ -54,7 +55,9 @@ const MultipleChoicesAnswer = ({
 
     const getLabelClasses = useCallback(
         (optionId: string) => {
-            if (answerStatus === USER_ANSWER_STATUS.NOT_ANSWERED) return "";
+            if (user?.role === ROLES.TAKER) {
+                if (answerStatus === USER_ANSWER_STATUS.NOT_ANSWERED) return "";
+            }
 
             if (!makerAnswer && optionId === userAnswer) return `text-blue-600`;
 

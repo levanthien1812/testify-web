@@ -84,8 +84,11 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
     };
 
     const points = useMemo(() => {
-        if (userAnswer && userAnswer.score) {
+        if (userAnswer && Object.hasOwn(userAnswer, "score")) {
             return `${userAnswer.score}/${question.score}`;
+        }
+        if (!userAnswer) {
+            return `${0}/${question.score}`;
         }
         return question.score;
     }, [userAnswer, question.score]);
@@ -97,10 +100,10 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
         if (userAnswer && userAnswer.is_correct === false) {
             return USER_ANSWER_STATUS.WRONG;
         }
-        if (userAnswer === undefined || userAnswer === null) {
+        if (!userAnswer) {
             return USER_ANSWER_STATUS.NOT_ANSWERED;
         }
-        if (userAnswer && userAnswer.score === undefined) {
+        if (userAnswer && !Object.hasOwn(userAnswer, "score")) {
             return USER_ANSWER_STATUS.NOT_EVALUATED;
         }
         if (userAnswer && needManualScore) {

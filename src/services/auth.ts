@@ -1,9 +1,48 @@
 import { instance } from "../config/axios";
-import { LoginBodyItf, RegisterBodyItf } from "../types/types";
+import {
+    ForgotPasswordBodyItf,
+    LoginBodyItf,
+    RegisterBodyItf,
+    ResetPasswordBodyItf,
+    VerifyEmailBodyItf,
+} from "../types/types";
 
 export const register = async (registerBody: RegisterBodyItf) => {
     try {
         const response = await instance.post("/auth/register", registerBody);
+
+        return response;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const verifyEmail = async (body: VerifyEmailBodyItf) => {
+    try {
+        const response = await instance.post("/auth/verify-email", body);
+
+        return response;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const sendResetPasswordEmail = async (body: ForgotPasswordBodyItf) => {
+    try {
+        const response = await instance.patch(
+            "/auth/send-reset-password-email",
+            body
+        );
+
+        return response;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const resetPassword = async (body: ResetPasswordBodyItf) => {
+    try {
+        const response = await instance.patch("/auth/reset-password", body);
 
         return response;
     } catch (error) {
@@ -19,7 +58,6 @@ export const login = async (loginBody: LoginBodyItf) => {
     } catch (error) {
         throw error;
     }
-        
 };
 
 export const loginGoogle = async (token: string) => {
