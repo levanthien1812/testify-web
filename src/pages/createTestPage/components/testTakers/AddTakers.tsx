@@ -8,14 +8,13 @@ import CreateTakers from "./CreateTakers";
 import { useQuery } from "react-query";
 import { getAvailableTakers } from "../../../../services/test";
 import Button from "../../../../components/elements/Button";
-import { TakerGroupItf, TakerItf } from "../../../../types/types";
+import { TakerItf } from "../../../../types/types";
 import TakersChoser from "./TakersChoser";
 import { createTestActions } from "../../../../stores/createTest";
 import { QUERY_KEYS } from "../../../../config/constants/queryMutationKeys";
 import { useDispatch } from "react-redux";
 import Loading from "../../../../components/loadings/Loading";
 import { useAppSelector } from "../../../../hooks/hooks";
-import { getTakerGroups } from "../../../../services/user";
 
 type AddTakersProps = {
     onClose: () => void;
@@ -79,12 +78,10 @@ const AddTakers = ({ onClose }: AddTakersProps) => {
                         }
                     />
                 )}
-                {isFetching && (
-                    <Loading
-                        loadingText={{ text: "Loading takers..." }}
-                        isLoading={isFetching}
-                    />
-                )}
+                <Loading
+                    loadingText={{ text: "Loading takers..." }}
+                    isLoading={isFetching}
+                />
 
                 {!isFetching && (
                     <button

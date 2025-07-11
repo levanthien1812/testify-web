@@ -1,7 +1,7 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import TestInfo from "./components/TestInfo";
 import TestParts from "./components/TestParts";
-import { useLocation, useParams } from "react-router";
+import { useLocation, useNavigate, useParams } from "react-router";
 import { useQuery } from "react-query";
 import { getTest } from "../../services/test";
 import { useSearchParams } from "react-router-dom";
@@ -16,22 +16,18 @@ import { useDispatch } from "react-redux";
 import Loading from "../../components/loadings/Loading";
 import StatusPanel from "./components/StatusPanel";
 import { useAppSelector } from "../../hooks/hooks";
+import { AxiosError } from "axios";
+import MessageAction from "../others/MessageAction";
 
 const CreateTestPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const stepParam = searchParams.get("step");
     const { currentStep } = useAppSelector((state) => state.createTest);
-    const {
-        setTestFromAPI,
-        setStep,
-        saveTestInfo,
-        validate,
-        initializeTestParts,
-        initializeTestQuestions,
-        initializeTestAnswers,
-    } = createTestActions;
+    const [error, setError] = useState<string | null>(null);
+    const { setTestFromAPI, setStep, saveTestInfo } = createTestActions;
     const dispatch = useDispatch();
     const location = useLocation();
+    const navigate = useNavigate();
 
     const { testId: testIdParam } = useParams();
 
@@ -48,6 +44,11 @@ const CreateTestPage = () => {
         enabled: false,
         onSuccess: (data) => {
             dispatch(setTestFromAPI(data));
+        },
+        onError: (err: any) => {
+            if (err instanceof AxiosError) {
+                setError(err.response?.data.message);
+            }
         },
     });
 
@@ -77,23 +78,25 @@ const CreateTestPage = () => {
         }
     }, [stepParam, dispatch, setStep]);
 
-    useEffect(() => {
-        // dispatch(initializeTestParts());
-        // dispatch(initializeTestQuestions());
-        // dispatch(initializeTestAnswers());
-        // dispatch(validate({ step: CREATE_TEST_STEPS.TEST_INFORMATION }));
-        // dispatch(validate({ step: CREATE_TEST_STEPS.TEST_PARTS }));
-        // dispatch(validate({ step: CREATE_TEST_STEPS.TEST_QUESTIONS }));
-        // dispatch(validate({ step: CREATE_TEST_STEPS.TEST_ANSWERS }));
-        // dispatch(validate({ step: CREATE_TEST_STEPS.TEST_TAKERS }));
-    }, [validate, dispatch]);
-
     return (
         <>
             <Loading
                 isLoading={isLoadingTest}
                 loadingText={{ text: "Loading test..." }}
             />
+            {error && !isLoadingTest && (
+                <MessageAction
+                    message={{
+                        text: error,
+                    }}
+                    actions={{
+                        primary: {
+                            text: "Back to home",
+                            onClick: () => navigate("/"),
+                        },
+                    }}
+                />
+            )}
             {((test && testIdParam) || (!test && !testIdParam)) && (
                 <div className="xl:w-2/3 md:w-5/6 mx-auto py-10">
                     <Navigator />

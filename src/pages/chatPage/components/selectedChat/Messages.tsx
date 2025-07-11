@@ -287,12 +287,10 @@ const Messages = () => {
             className="grow p-2 custom-scrollbar-y pe-1"
             ref={messagesContainerRef}
         >
-            {messagesLoading && (
-                <Loading
-                    isLoading={messagesLoading}
-                    loadingText={{ text: "Loading messages..." }}
-                />
-            )}
+            <Loading
+                isLoading={messagesLoading}
+                loadingText={{ text: "Loading messages..." }}
+            />
             <div className="relative">
                 <div ref={sentinelRef}>
                     {chat &&

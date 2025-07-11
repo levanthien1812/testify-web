@@ -27,12 +27,10 @@ const ChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
                 </Button>
             </div>
             <div className="mt-4 ">
-                {isLoadingChats && (
-                    <Loading
-                        isLoading={isLoadingChats}
-                        loadingText={{ text: "Loading chats" }}
-                    />
-                )}
+                <Loading
+                    isLoading={isLoadingChats}
+                    loadingText={{ text: "Loading chats" }}
+                />
                 {chats && chats.length === 0 && !isLoadingChats && (
                     <p className="text-center text-gray-500 text-xl">
                         No chats yet

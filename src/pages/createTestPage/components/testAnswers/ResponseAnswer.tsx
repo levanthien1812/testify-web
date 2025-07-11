@@ -1,4 +1,5 @@
 import HtmlDisplay from "../../../../components/elements/HtmlDisplay";
+import InfoMessage from "../../../../components/elements/InfoMessage";
 import { ResponseQuestionItf } from "../../../../types/types";
 
 type ResponseAnswerProps = {
@@ -10,9 +11,7 @@ const ResponseAnswer = ({ content }: ResponseAnswerProps) => {
         <>
             <HtmlDisplay htmlContent={content.text.replaceAll("***", "___")} />
 
-            <p className="text-sm text-gray-500 italic">
-                You need to manually score student's answers for this question
-            </p>
+            <InfoMessage message="You need to manually score student's answers for this question" />
         </>
     );
 };

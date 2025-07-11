@@ -30,12 +30,10 @@ const SelectedAIChat = () => {
         <div className="flex shadow-md flex-[2] bg-white">
             <div className="flex flex-col grow">
                 <AIChatHeader />
-                {messagesLoading && (
-                    <Loading
-                        isLoading={messagesLoading}
-                        loadingText={{ text: "Loading messages..." }}
-                    />
-                )}
+                <Loading
+                    isLoading={messagesLoading}
+                    loadingText={{ text: "Loading messages..." }}
+                />
                 {chat?.messages && <AIMessages />}
                 <AIInputMessage />
             </div>

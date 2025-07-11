@@ -108,12 +108,10 @@ const TopTakers = () => {
             title={{ text: "Top takers" }}
             links={[{ to: "/takers", text: "View all" }]}
         >
-            {isLoadingTopTakers && (
-                <Loading
-                    isLoading={isLoadingTopTakers}
-                    loadingText={{ text: "Loading top takers..." }}
-                />
-            )}
+            <Loading
+                isLoading={isLoadingTopTakers}
+                loadingText={{ text: "Loading top takers..." }}
+            />
 
             {topTakers && topTakers.length === 0 && (
                 <NoResult message={{ text: "No takers found" }} />

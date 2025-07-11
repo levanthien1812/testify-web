@@ -302,12 +302,10 @@ const TakersPage = () => {
             {isViewingGroups && takerGroups && (
                 <TakerGroups groups={takerGroups} table={table} />
             )}
-            {isLoadingTakers && (
-                <Loading
-                    isLoading={isLoadingTakers}
-                    loadingText={{ text: "Loading top takers..." }}
-                />
-            )}
+            <Loading
+                isLoading={isLoadingTakers}
+                loadingText={{ text: "Loading top takers..." }}
+            />
             {takers && takers.length > 0 && (
                 <TakerFilters table={table} initialGroups={takerGroups || []} />
             )}

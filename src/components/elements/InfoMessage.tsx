@@ -1,4 +1,4 @@
-import { faCircleExclamation } from "@fortawesome/free-solid-svg-icons";
+import { faCircleInfo } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React from "react";
 
@@ -13,7 +13,7 @@ const InfoMessage = ({
 }) => {
     return (
         <p
-            className={`italic ${
+            className={`italic mt-1 ${
                 type === "info"
                     ? "text-gray-600"
                     : type === "warning"
@@ -21,7 +21,7 @@ const InfoMessage = ({
                     : "text-red-500"
             } ${extraClass}`}
         >
-            <FontAwesomeIcon icon={faCircleExclamation} className="mr-2" />
+            <FontAwesomeIcon icon={faCircleInfo} className="mr-2" />
             {message}
         </p>
     );

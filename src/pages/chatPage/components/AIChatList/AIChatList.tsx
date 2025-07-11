@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React from "react";
 import Button from "../../../../components/elements/Button";
 import Loading from "../../../../components/loadings/Loading";
 import { useChatSocket } from "../ChatSocketContext";
@@ -84,12 +84,11 @@ const AIChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
                 )}
             </div>
             <div className="mt-2">
-                {isLoadingChats && (
-                    <Loading
-                        isLoading={isLoadingChats}
-                        loadingText={{ text: "Loading chats" }}
-                    />
-                )}
+                <Loading
+                    isLoading={isLoadingChats}
+                    loadingText={{ text: "Loading chats" }}
+                />
+
                 {aiChats && aiChats.length === 0 && !isLoadingChats && (
                     <p className="text-center text-gray-500 text-xl">
                         No conversation created yet

@@ -8,6 +8,7 @@ import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import { questionTypeToIcon } from "../../../utils/mapping";
 import { QuestionContentItf, QuestionItf } from "../../../types/types";
 import HtmlDisplay from "../../../components/elements/HtmlDisplay";
+import InfoMessage from "../../../components/elements/InfoMessage";
 
 type PickQuestionsProps = {
     selectedBank: QuestionBankItf;
@@ -40,10 +41,10 @@ const PickQuestions = ({
             </div>
             <p className="mt-2">Pick questions:</p>
             {currentBank && (
-                <p className="text-gray-500 italic">
-                    Some questions existing in the current bank (
-                    {currentBank.name}) are not displayed!
-                </p>
+                <InfoMessage
+                    message={`Some questions existing in the current bank (
+                    ${currentBank.name}) are not displayed!`}
+                />
             )}
             <div className="grid grid-cols-3 gap-2 mt-1">
                 {questionList.map((question) => (

@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { useQuery } from "react-query";
-import { TakerItf } from "../../../types/types";
 import { getSubmissionAnswers } from "../../../services/test";
 import Modal, {
     ModalBody,
@@ -163,14 +162,12 @@ const TakerSubmissionDetail = () => {
                         </div>
                     )}
                     <div className="sentinel" ref={sentinelRef}></div>
-                    {isLoadingSubmissions && (
-                        <Loading
-                            isLoading={isLoadingSubmissions}
-                            loadingText={{
-                                text: "Loading submission...",
-                            }}
-                        />
-                    )}
+                    <Loading
+                        isLoading={isLoadingSubmissions}
+                        loadingText={{
+                            text: "Loading submission...",
+                        }}
+                    />
                     {submissionAnswers && test && test.questions && (
                         <div className="mt-4 flex justify-center border border-dashed border-gray-400">
                             <QuestionsResultDemonstrator
