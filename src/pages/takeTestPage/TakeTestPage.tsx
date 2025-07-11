@@ -3,9 +3,8 @@ import { useNavigate, useParams } from "react-router";
 import { getSubmissions, getTest } from "../../services/test";
 import { PasscodeItf, SubmissionItf } from "../../types/types";
 import DoingTest from "./DoingTest";
-import { SHARE_OPTIONS, TEST_STATUS } from "../../config/constants/tests";
+import { TEST_STATUS } from "../../config/constants/tests";
 import TestInfo from "./components/TestInfo";
-import Forbidden from "./components/Forbidden";
 import Button from "../../components/elements/Button";
 import { QUERY_KEYS } from "../../config/constants/queryMutationKeys";
 import { useDispatch } from "react-redux";
@@ -17,6 +16,7 @@ import PasscodeLink from "../createTestPage/components/testTakers/PasscodeLink";
 import Submissions from "./components/Submissions";
 import { useAppSelector } from "../../hooks/hooks";
 import { ERROR_CODE } from "../../config/constants/errorCode";
+import MessageAction from "../others/MessageAction";
 
 const TakeTestPage = () => {
     const { testId } = useParams();
@@ -193,13 +193,23 @@ const TakeTestPage = () => {
                     )} */}
                 </div>
             )}
-            {isLoadingTest && (
-                <Loading
-                    isLoading={isLoadingTest}
-                    loadingText={{ text: "Loading test's information..." }}
+            <Loading
+                isLoading={isLoadingTest}
+                loadingText={{ text: "Loading test's information..." }}
+            />
+            {!isLoadingTest && isForbidden && (
+                <MessageAction
+                    message={{
+                        text: "You are not allowed to access this test.",
+                    }}
+                    actions={{
+                        primary: {
+                            text: "Back to home",
+                            onClick: () => navigate("/"),
+                        },
+                    }}
                 />
             )}
-            {!isLoadingTest && isForbidden && <Forbidden />}
             {canEnterDoingTest && (
                 <DoingTest
                     onAfterSubmit={async () => {
@@ -211,12 +221,10 @@ const TakeTestPage = () => {
                 />
             )}
 
-            {isLoadingSubmissions && (
-                <Loading
-                    isLoading={isLoadingSubmissions}
-                    loadingText={{ text: "Loading submissions..." }}
-                />
-            )}
+            <Loading
+                isLoading={isLoadingSubmissions}
+                loadingText={{ text: "Loading submissions..." }}
+            />
             {submissions.length > 0 &&
                 !isStarted &&
                 test?.options.allow_view_submission_after_test.enable && (

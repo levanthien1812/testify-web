@@ -43,12 +43,10 @@ const RecentTests = () => {
                 },
             ]}
         >
-            {isLoadingTests && (
-                <Loading
-                    isLoading={isLoadingTests}
-                    loadingText={{ text: "Loading recent tests..." }}
-                />
-            )}
+            <Loading
+                isLoading={isLoadingTests}
+                loadingText={{ text: "Loading recent tests..." }}
+            />
             {tests && (
                 <div className="flex gap-6 mt-3 pb-1 custom-scrollbar-x">
                     {tests.map((test: TestItf) => {

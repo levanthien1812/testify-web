@@ -82,12 +82,10 @@ const QuestionBankPage = () => {
 
     return (
         <div className="w-3/4 mx-auto mt-4">
-            {isLoadingQuestionBank && (
-                <Loading
-                    loadingText={{ text: "Loading question bank..." }}
-                    isLoading={isLoadingQuestionBank}
-                />
-            )}
+            <Loading
+                loadingText={{ text: "Loading question bank..." }}
+                isLoading={isLoadingQuestionBank}
+            />
             {!isLoadingQuestionBank && questionBank && (
                 <div>
                     <Header questionBank={questionBank} />

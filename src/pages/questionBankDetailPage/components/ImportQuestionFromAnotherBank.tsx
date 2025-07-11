@@ -123,20 +123,16 @@ const ImportQuestionFromAnotherBank = ({
             <ModalHeader title="Import Questions" />
             <ModalBody>
                 <div className="py-2">
-                    {isLoadingQuestionBanks && (
-                        <Loading
-                            isLoading={isLoadingQuestionBanks}
-                            loadingText={{ text: "Loading question banks..." }}
-                        />
-                    )}
-                    {isLoadingSelectedBankDetail && (
-                        <Loading
-                            isLoading={isLoadingSelectedBankDetail}
-                            loadingText={{
-                                text: "Loading selected bank's questions...",
-                            }}
-                        />
-                    )}
+                    <Loading
+                        isLoading={isLoadingQuestionBanks}
+                        loadingText={{ text: "Loading question banks..." }}
+                    />
+                    <Loading
+                        isLoading={isLoadingSelectedBankDetail}
+                        loadingText={{
+                            text: "Loading selected bank's questions...",
+                        }}
+                    />
 
                     {currentStep === IMPORT_STEP.SELECT_BANK &&
                         questionBanks && (

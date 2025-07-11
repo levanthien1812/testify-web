@@ -67,7 +67,7 @@ const TestItemCard = ({ test }: TestItemCardProps) => {
                     {test.status}
                 </div>
             </div>
-            <div className="px-3 py-3 flex gap-2">
+            <div className="px-3 py-3 flex gap-2 bg-wave">
                 <div>
                     {test.num_parts > 1 && (
                         <p>
@@ -101,7 +101,7 @@ const TestItemCard = ({ test }: TestItemCardProps) => {
                     </p>
                 </div>
                 {user?.role === ROLES.MAKER && !!test.submissions_count && (
-                    <div className="flex flex-col items-center justify-center grow bg-gray-50 px-2 py-2 rounded-md shadow-md">
+                    <div className="flex flex-col items-center justify-center grow bg-gray-50 px-2 py-2 rounded-md shadow-md bg-opacity-70">
                         {test.taker_ids.length > 0 && (
                             <div className="w-1/2">
                                 <Circle
@@ -128,7 +128,7 @@ const TestItemCard = ({ test }: TestItemCardProps) => {
                     </div>
                 )}
                 {user?.role === ROLES.TAKER && test.submissions_count && (
-                    <div className="flex flex-col items-center justify-center grow bg-gray-50 px-2 py-2 rounded-md shadow-md">
+                    <div className="flex flex-col items-center justify-center grow bg-gray-50 px-2 py-2 rounded-md shadow-md bg-opacity-70">
                         {test.submissions_count > 0 && (
                             <>
                                 <img

@@ -17,10 +17,10 @@ const TakerGroups = ({ groups, table }: Props) => {
             {groups &&
                 groups.map((group) => (
                     <div
-                        className="flex flex-col bg-white rounded-md shadow-md shadow-gray-300 border-t relative overflow-hidden w-[250px]"
+                        className="flex flex-col bg-white rounded-md shadow-md shadow-gray-300 border-t relative overflow-hidden w-[250px] "
                         key={group.id}
                     >
-                        <div className="p-2 space-y-2">
+                        <div className="p-2 space-y-2 bg-wave">
                             <p className="font-bold text-xl">{group.name}</p>
                             {group.description && (
                                 <p className="text-gray-500 text-sm">

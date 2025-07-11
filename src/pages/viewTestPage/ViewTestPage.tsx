@@ -5,7 +5,7 @@ import {
     getSubmissions,
     getTest,
 } from "../../services/test";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import SubmissionsTable from "./components/SubmissionsTable";
 import { useState } from "react";
 import Modal, {
@@ -33,8 +33,11 @@ import {
     Title,
     Tooltip,
     Legend,
+    defaults,
 } from "chart.js";
 import Loading from "../../components/loadings/Loading";
+import MessageAction from "../others/MessageAction";
+import { AxiosError } from "axios";
 
 ChartJS.register(
     CategoryScale,
@@ -45,29 +48,38 @@ ChartJS.register(
     Legend
 );
 
+defaults.font.family = "'EB Garamond', serif";
+defaults.font.size = 16;
+
 const ViewTestPage = () => {
     const { testId } = useParams();
+    const navigate = useNavigate();
     const [viewQuestionsAndAnswers, setViewQuestionsAndAnswers] =
         useState(false);
     const [viewProvideAnswers, setViewProvideAnswers] = useState(false);
+    const [error, setError] = useState<string | null>(null);
     const { test, submissions, questionsResult } = useAppSelector(
         (state) => state.viewTest
     );
     const { setTest, setSubmissions, setQuestionsResult } = viewTestActions;
     const dispatch = useDispatch();
 
-    const { isLoading: isLoadingTest, refetch: refetchTest } =
-        useQuery<TestItf>({
-            queryKey: ["test", testId],
-            queryFn: async () => {
-                const responseData = await getTest(testId!);
-                return responseData;
-            },
-            onSuccess: (data: any) => {
-                dispatch(setTest(data));
-            },
-            retry: false,
-        });
+    const { isLoading: isLoadingTest } = useQuery<TestItf>({
+        queryKey: ["test", testId],
+        queryFn: async () => {
+            const responseData = await getTest(testId!);
+            return responseData;
+        },
+        onSuccess: (data: any) => {
+            dispatch(setTest(data));
+        },
+        onError: (err: any) => {
+            if (err instanceof AxiosError) {
+                setError(err.response?.data.message);
+            }
+        },
+        retry: false,
+    });
 
     const { isLoading: isLoadingSubmissions, refetch: refetchSubmissions } =
         useQuery<SubmissionItf[]>({
@@ -80,6 +92,7 @@ const ViewTestPage = () => {
                 dispatch(setSubmissions(data));
             },
             retry: false,
+            enabled: !!test,
         });
 
     const { isLoading: isLoadingQuestionsResult } = useQuery<QuestionResult[]>({
@@ -92,130 +105,154 @@ const ViewTestPage = () => {
             dispatch(setQuestionsResult(data));
         },
         retry: false,
+        enabled: !!test,
     });
 
     return (
         <div className="xl:w-2/3 md:w-5/6 mx-auto py-10 shadow-lg px-8">
-            {test && <TestInfo />}
-            {isLoadingTest && (
-                <Loading
-                    isLoading={isLoadingTest}
-                    loadingText={{ text: "Loading test's information..." }}
+            <Loading
+                isLoading={isLoadingTest}
+                loadingText={{ text: "Loading test's information..." }}
+            />
+            {error && !isLoadingTest && (
+                <MessageAction
+                    message={{
+                        text: error,
+                    }}
+                    actions={{
+                        primary: {
+                            text: "Back to home",
+                            onClick: () => navigate("/"),
+                        },
+                    }}
                 />
             )}
-            <div className="flex justify-end mt-2">
-                <button
-                    className="text-orange-600 underline hover:italic"
-                    onClick={() => setViewQuestionsAndAnswers(true)}
-                >
-                    <span>View questions and answers</span>
-                </button>
-                <Link
-                    to={`/tests/${testId}/edit`}
-                    className="ml-2 text-orange-600 underline hover:italic"
-                >
-                    Update test
-                </Link>
-            </div>
-
-            <div className=" mt-4">
-                {submissions && (
-                    <div className="space-y-2">
-                        <h3 className="text-center text-2xl">
-                            Test result analysis
-                        </h3>
-                        <ScoreRangeBarChart submissions={submissions} />
-                        {questionsResult && (
-                            <QuestionsResultChart
-                                questionsResult={questionsResult}
-                            />
-                        )}
+            {test && (
+                <>
+                    <TestInfo />
+                    <div className="flex justify-end mt-2">
+                        <button
+                            className="text-orange-600 underline hover:italic"
+                            onClick={() => setViewQuestionsAndAnswers(true)}
+                        >
+                            <span>View questions and answers</span>
+                        </button>
+                        <Link
+                            to={`/tests/${testId}/edit`}
+                            className="ml-2 text-orange-600 underline hover:italic"
+                        >
+                            Update test
+                        </Link>
                     </div>
-                )}
 
-                {isLoadingSubmissions && (
-                    <Loading
-                        isLoading={isLoadingTest}
-                        loadingText={{ text: "Loading submissions..." }}
-                    />
-                )}
-                {submissions && (
-                    <div className="mt-4">
-                        <p className="text-2xl text-center">{`Submissions (${submissions?.length}/${test?.taker_ids.length})`}</p>
-                        <div className="space-y-1 mt-2">
-                            {submissions.length > 0 && (
-                                <SubmissionsTable
-                                    submissions={submissions}
-                                    refetch={refetchSubmissions}
+                    <div className=" mt-4">
+                        <Loading
+                            isLoading={isLoadingSubmissions}
+                            loadingText={{ text: "Loading submissions..." }}
+                        />
+                        {submissions.length > 0 && (
+                            <div className="space-y-2">
+                                <h3 className="text-center text-2xl">
+                                    Test result analysis
+                                </h3>
+                                <ScoreRangeBarChart submissions={submissions} />
+                                <Loading
+                                    isLoading={isLoadingQuestionsResult}
+                                    loadingText={{
+                                        text: "Loading questions result...",
+                                    }}
                                 />
-                            )}
-                            {submissions.length === 0 && (
-                                <p className="text-center">
-                                    No submission found.
-                                </p>
-                            )}
-                        </div>
+                                {questionsResult.length > 0 && (
+                                    <QuestionsResultChart
+                                        questionsResult={questionsResult}
+                                    />
+                                )}
+                            </div>
+                        )}
+
+                        {submissions.length > 0 && (
+                            <div className="mt-4">
+                                <p className="text-2xl text-center">{`Submissions (${submissions?.length}/${test?.taker_ids.length})`}</p>
+                                <div className="space-y-1 mt-2">
+                                    {submissions.length > 0 && (
+                                        <SubmissionsTable
+                                            submissions={submissions}
+                                            refetch={refetchSubmissions}
+                                        />
+                                    )}
+                                    {submissions.length === 0 && (
+                                        <p className="text-center">
+                                            No submission found.
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                        )}
                     </div>
-                )}
-            </div>
 
-            {viewQuestionsAndAnswers && test && (
-                <Modal
-                    onClose={() => setViewQuestionsAndAnswers(false)}
-                    className="w-3/4 md:w-3/5"
-                >
-                    <ModalHeader title="Questions and Answers" />
-                    <ModalBody>
-                        {test.are_answers_provided === false && (
-                            <div className="bg-orange-200 px-8 py-2">
-                                Please provide answers for all questions{" "}
-                                <button
-                                    className="underline hover:font-bold"
-                                    onClick={() => {
-                                        setViewQuestionsAndAnswers(false);
-                                        setViewProvideAnswers(true);
-                                    }}
-                                >
-                                    here
-                                </button>
-                            </div>
-                        )}
-                        {test.are_answers_provided === true && (
-                            <div className="flex justify-end">
-                                <Button
-                                    size="sm"
-                                    onClick={() => {
-                                        setViewQuestionsAndAnswers(false);
-                                        setViewProvideAnswers(true);
-                                    }}
-                                >
-                                    Update answers
-                                </Button>
-                            </div>
-                        )}
-                        <div className="mt-4">
-                            <TestQuestionsAndAnswers
-                                test={test}
-                                userAnswers={[]}
-                            />
-                        </div>
-                    </ModalBody>
-                    <ModalFooter></ModalFooter>
-                </Modal>
-            )}
+                    {viewQuestionsAndAnswers && (
+                        <Modal
+                            onClose={() => setViewQuestionsAndAnswers(false)}
+                            className="w-3/4 md:w-3/5"
+                        >
+                            <ModalHeader title="Questions and Answers" />
+                            <ModalBody>
+                                {test.are_answers_provided === false && (
+                                    <div className="bg-orange-200 px-8 py-2">
+                                        Please provide answers for all questions{" "}
+                                        <button
+                                            className="underline hover:font-bold"
+                                            onClick={() => {
+                                                setViewQuestionsAndAnswers(
+                                                    false
+                                                );
+                                                setViewProvideAnswers(true);
+                                            }}
+                                        >
+                                            here
+                                        </button>
+                                    </div>
+                                )}
+                                {test.are_answers_provided === true && (
+                                    <div className="flex justify-end">
+                                        <Button
+                                            size="sm"
+                                            onClick={() => {
+                                                setViewQuestionsAndAnswers(
+                                                    false
+                                                );
+                                                setViewProvideAnswers(true);
+                                            }}
+                                        >
+                                            Update answers
+                                        </Button>
+                                    </div>
+                                )}
+                                <div className="mt-4">
+                                    <TestQuestionsAndAnswers
+                                        test={test}
+                                        userAnswers={[]}
+                                    />
+                                </div>
+                            </ModalBody>
+                            <ModalFooter></ModalFooter>
+                        </Modal>
+                    )}
 
-            {viewProvideAnswers && test && (
-                <Modal
-                    onClose={() => setViewProvideAnswers(false)}
-                    className="w-3/4 md:w-3/5"
-                >
-                    <ModalHeader title="Provide Answers" />
-                    <ModalBody>
-                        {/* PLEASE UPDATE THE LOGIC WHEN UPDATE ANSWERS - ENTER CREATE TEST SLICE */}
-                        <TestAnswers />
-                    </ModalBody>
-                    <ModalFooter></ModalFooter>
-                </Modal>
+                    {viewProvideAnswers && (
+                        <Modal
+                            onClose={() => setViewProvideAnswers(false)}
+                            className="w-3/4 md:w-3/5"
+                        >
+                            <ModalHeader title="Provide Answers" />
+                            <ModalBody>
+                                {/* PLEASE UPDATE THE LOGIC WHEN UPDATE ANSWERS - ENTER CREATE TEST SLICE */}
+                                <TestAnswers />
+                            </ModalBody>
+                            <ModalFooter></ModalFooter>
+                        </Modal>
+                    )}
+                </>
             )}
         </div>
     );

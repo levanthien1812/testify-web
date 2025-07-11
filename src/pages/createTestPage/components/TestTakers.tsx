@@ -20,6 +20,7 @@ import Passcode from "./testTakers/Passcode";
 import { TestBodyItf } from "../../../types/types";
 import Anyone from "./testTakers/Anyone";
 import { useAppSelector } from "../../../hooks/hooks";
+import InfoMessage from "../../../components/elements/InfoMessage";
 
 const TestTakers = () => {
     const {
@@ -167,18 +168,17 @@ const TestTakers = () => {
                     ]}
                     disabled={!editibility.TEST_TAKERS.share_option}
                 />
-                <div className="flex items-center gap-2 mt-1">
-                    <FontAwesomeIcon icon={faInfoCircle} />
-
-                    <p className="text-gray-700 italic">
-                        {shareOption === SHARE_OPTIONS.ANYONE &&
-                            "Anyone with the test's link can access the test"}
-                        {shareOption === SHARE_OPTIONS.RESTRICTED &&
-                            "Only those whose email included in the specified emails can access the test"}
-                        {shareOption === SHARE_OPTIONS.PASSCODE &&
-                            "Anyone with valid passcode can access the test"}
-                    </p>
-                </div>
+                <InfoMessage
+                    message={
+                        shareOption === SHARE_OPTIONS.ANYONE
+                            ? "Anyone with the test's link can access the test"
+                            : shareOption === SHARE_OPTIONS.RESTRICTED
+                            ? "Only those whose email included in the specified emails can access the test"
+                            : shareOption === SHARE_OPTIONS.PASSCODE
+                            ? "Anyone with valid passcode can access the test"
+                            : ""
+                    }
+                />
             </div>
             {shareOption === SHARE_OPTIONS.ANYONE && <Anyone />}
 

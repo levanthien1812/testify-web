@@ -102,12 +102,10 @@ const Passcode = () => {
                 />
             </div>
 
-            {isLoadingPasscode && (
-                <Loading
-                    isLoading={isLoadingPasscode}
-                    loadingText={{ text: "Loading passcode info..." }}
-                />
-            )}
+            <Loading
+                isLoading={isLoadingPasscode}
+                loadingText={{ text: "Loading passcode info..." }}
+            />
             {passcode.method === PASSCODE_METHOD.AUTO_GENERATED && (
                 <div>
                     <div className="flex gap-4 items-end mt-4">

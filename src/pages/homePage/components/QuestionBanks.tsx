@@ -51,12 +51,10 @@ const QuestionBanks = () => {
                 },
             ]}
         >
-            {isLoadingQuestionBanks && (
-                <Loading
-                    isLoading={isLoadingQuestionBanks}
-                    loadingText={{ text: "Loading question banks..." }}
-                />
-            )}
+            <Loading
+                isLoading={isLoadingQuestionBanks}
+                loadingText={{ text: "Loading question banks..." }}
+            />
             {questionBanks && (
                 <div className="flex gap-4 mt-3 pb-1 custom-scrollbar-x">
                     {questionBanks.map((bank) => {
