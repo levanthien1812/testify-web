@@ -18,11 +18,9 @@ type LoadingProps = {
         onClick: () => void;
         extraClass?: string;
     };
-    children?: React.ReactNode;
 };
 
 const Loading = ({
-    children,
     isLoading,
     loadingText,
     description,

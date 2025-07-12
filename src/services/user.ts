@@ -72,3 +72,33 @@ export const createTakerGroup = async (body: TakerGroupBodyItf) => {
         throw error;
     }
 };
+
+export const getTakerUsersByEmailSearch = async (search: string) => {
+    try {
+        const response = await instance.get(`users/search?email=${search}`);
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updateUser = async (body: any) => {
+    try {
+        const response = await instance.patch(`users`, body);
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getMakersWithGroup = async () => {
+    try {
+        const response = await instance.get("users/makers-group");
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};

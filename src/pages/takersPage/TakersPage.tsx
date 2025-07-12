@@ -37,6 +37,7 @@ import AddGroup from "./components/AddGroup";
 import TakersTable from "./components/TakersTable";
 import SelectPanel from "./components/SelectPanel";
 import TakerGroups from "./components/TakerGroups";
+import InlineLoading from "../../components/loadings/InlineLoading";
 
 const TakersPage = () => {
     const [currentIdToShowActionModal, setCurrentIdToShowActionModal] =
@@ -289,16 +290,20 @@ const TakersPage = () => {
                     <span>Add taker</span>
                 </Button>
             </div>
-            {takerGroups && takerGroups.length > 0 && (
-                <div className="flex justify-end">
+            <div className="flex justify-end">
+                <InlineLoading
+                    isLoading={isLoadingTakerGroups}
+                    loadingText={{ text: "Loading groups..." }}
+                />
+                {takerGroups && takerGroups.length > 0 && (
                     <Button
                         link
                         onClick={() => setIsViewingGroups((prev) => !prev)}
                     >
                         {isViewingGroups ? "Hide groups" : "View groups"}
                     </Button>
-                </div>
-            )}
+                )}
+            </div>
             {isViewingGroups && takerGroups && (
                 <TakerGroups groups={takerGroups} table={table} />
             )}

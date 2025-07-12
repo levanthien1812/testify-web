@@ -151,7 +151,11 @@ const Header = () => {
                             />
                         )}
 
-                        {isViewingProfile && <Profile />}
+                        {isViewingProfile && (
+                            <Profile
+                                onClose={() => setIsViewingProfile(false)}
+                            />
+                        )}
                     </div>
                 </div>
             )}

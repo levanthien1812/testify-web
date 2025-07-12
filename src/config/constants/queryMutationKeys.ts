@@ -17,6 +17,8 @@ const QUERY_KEYS = {
     GET_QUESTIONS_IN_BANK: "get-questions-in-bank",
     GET_TAKER_GROUPS: "get-taker-groups",
     GET_QUESTIONS_RESULT_FOR_TEST: "get-questions-result-for-test",
+    GET_USERS_BY_EMAIL_SEARCH: "get-users-by-email-search",
+    GET_MAKERS_WITH_GROUP: "get-makers-with-group",
 };
 
 const MUTATION_KEYS = {
@@ -59,6 +61,7 @@ const MUTATION_KEYS = {
     DELETE_QUESTION_BANK: "delete-question-bank",
     CREATE_QUESTION_BANK: "create-question-bank",
     CREATE_TAKER_GROUP: "create-taker-group",
+    UPDATE_USER: "update-user",
 };
 
 export { QUERY_KEYS, MUTATION_KEYS };
