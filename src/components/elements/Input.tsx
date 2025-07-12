@@ -38,18 +38,18 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
                 <input
                     type={type}
                     id={props.name}
-                    className={`border border-gray-500 ${
+                    className={`${className} border border-gray-500 ${
                         sizing === "md" && "px-2 py-1 text-md"
                     } ${sizing === "sm" && "px-1 py-0 text-sm"} ${
                         error ? "border-orange-600" : ""
                     } focus:border-orange-600 outline-none placeholder:italic disabled:bg-gray-100 disabled:cursor-not-allowed w-full file:bg-orange-600 file:border-none file:text-white file:text-sm ${
                         type === "file" ? "cursor-pointer" : ""
-                    } ${className}`}
+                    }`}
                     {...rest}
                     ref={ref}
                 />
                 {helperText && (
-                    <p className="text-end text-gray-500 text-sm mt-1">
+                    <p className="text-end text-gray-500 text-sm mt-0.5 italic">
                         {helperText}
                     </p>
                 )}

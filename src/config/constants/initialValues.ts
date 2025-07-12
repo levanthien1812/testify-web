@@ -449,6 +449,11 @@ export const INITIAL_TAKER: TakerBodyItf = {
     email: "",
 };
 
+export const INITIAL_USER: TakerBodyItf = {
+    name: "",
+    email: "",
+};
+
 export const INITIAL_TAKER_GROUP: TakerGroupBodyItf = {
     name: "",
 };

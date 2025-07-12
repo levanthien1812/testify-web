@@ -1,3 +1,4 @@
+import { password } from "./../validations/custom";
 import {
     PASSCODE_VALID_UNIT,
     QUESTION_LEVEL,
@@ -9,18 +10,25 @@ import {
 import { QUESTION_TYPE } from "../config/constants/tests";
 import { TestOptions } from "./tests";
 
-export interface UserItf {
-    username?: string;
+export interface UserBodyItf {
     name: string;
     email: string;
+    gender?: string;
+    birthday?: Date;
+    phone_number?: string;
+    photo?: FileList | string;
+    old_password?: string;
+    password?: string;
+    password_confirm?: string;
+}
+
+export interface UserItf extends UserBodyItf {
+    username?: string;
     role: ROLES;
     id: string;
     photo?: string;
     blocked_users?: string[];
     blocked_by?: string[];
-    birthday?: Date;
-    gender?: string;
-    phone_number?: string;
 }
 
 export interface authInitialStateItf {
@@ -284,13 +292,7 @@ export type UserAnswerItf<T extends AnswerBodyContentItf> = {
     is_correct?: boolean;
 };
 
-export interface TakerBodyItf {
-    name: string;
-    email: string;
-    gender?: string;
-    birthday?: Date;
-    phone_number?: string;
-    photo?: FileList | string;
+export interface TakerBodyItf extends UserBodyItf {
     group_id?: string;
 }
 

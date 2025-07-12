@@ -1,22 +1,32 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import Modal, {
     ModalBody,
     ModalFooter,
     ModalHeader,
 } from "../../../components/modals/Modal";
 import { useForm } from "react-hook-form";
-import { TakerBodyItf, TakerGroupItf, TakerItf } from "../../../types/types";
+import {
+    TakerBodyItf,
+    TakerGroupItf,
+    TakerItf,
+    UserItf,
+} from "../../../types/types";
 import { INITIAL_TAKER } from "../../../config/constants/initialValues";
 import Input from "../../../components/elements/Input";
 import Select from "../../../components/elements/Select";
 import Button from "../../../components/elements/Button";
-import { useMutation } from "react-query";
-import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
+import { useMutation, useQuery } from "react-query";
+import {
+    MUTATION_KEYS,
+    QUERY_KEYS,
+} from "../../../config/constants/queryMutationKeys";
 import { createTaker, updateTaker } from "../../../services/test";
 import { toast } from "react-toastify";
 import { TOAST_MESSAGES } from "../../../config/constants/toasts";
 import { formatImageUrl } from "../../../utils/formatImageUrl";
 import { GENDER_OPTIONS } from "../../../config/constants/users";
+import { getTakerUsersByEmailSearch } from "../../../services/user";
+import InlineLoading from "../../../components/loadings/InlineLoading";
 
 type AddTakersProps = {
     onClose: () => void;
@@ -31,6 +41,7 @@ const AddTakers = ({ onClose, taker, takerGroups }: AddTakersProps) => {
             : null
     );
     const [hoverPreview, setHoverPreview] = useState<boolean>(false);
+    const [debouncedEmail, setDebouncedEmail] = useState<string>("");
 
     const { mutate: createTakerMutate, isLoading: createTakerLoading } =
         useMutation({
@@ -44,6 +55,20 @@ const AddTakers = ({ onClose, taker, takerGroups }: AddTakersProps) => {
                 onClose();
                 toast.success(TOAST_MESSAGES.CREATE_TAKERS_SUCCESSFULLY);
             },
+        });
+
+    const { data: usersByEmailSearch, isLoading: isLoadingUsersByEmailSearch } =
+        useQuery<UserItf[]>({
+            queryFn: async () => {
+                const data = await getTakerUsersByEmailSearch(debouncedEmail);
+
+                return data.users;
+            },
+            queryKey: [
+                QUERY_KEYS.GET_USERS_BY_EMAIL_SEARCH,
+                { email: debouncedEmail },
+            ],
+            enabled: debouncedEmail.length > 3,
         });
 
     const { mutate: updateTakerMutate, isLoading: updateTakerLoading } =
@@ -90,6 +115,7 @@ const AddTakers = ({ onClose, taker, takerGroups }: AddTakersProps) => {
     };
 
     const photo = watch("photo");
+    const email = watch("email");
 
     useEffect(() => {
         if (
@@ -115,6 +141,24 @@ const AddTakers = ({ onClose, taker, takerGroups }: AddTakersProps) => {
             }))
             .concat({ value: "", label: "No group" }) || [];
 
+    useEffect(() => {
+        const timer = setTimeout(() => {
+            setDebouncedEmail(email);
+        }, 700);
+
+        return () => clearTimeout(timer);
+    }, [email]);
+
+    const handleClickFoundUser = (user: UserItf) => {
+        setValue("name", user.name);
+        setValue("email", user.email);
+        setValue("birthday", user.birthday);
+        setValue("gender", user.gender);
+        setValue("phone_number", user.phone_number);
+        setPreviewURL(formatImageUrl(user.photo as string));
+        setDebouncedEmail("");
+    };
+
     return (
         <Modal onClose={onClose}>
             <ModalHeader title={taker ? "Update Taker" : "Add Taker"} />
@@ -122,19 +166,6 @@ const AddTakers = ({ onClose, taker, takerGroups }: AddTakersProps) => {
                 <form>
                     <div className="flex gap-4">
                         <div className="flex flex-col gap-2">
-                            <div className="flex gap-2">
-                                <Input
-                                    {...register("name", {
-                                        required: {
-                                            value: true,
-                                            message: "Name is required",
-                                        },
-                                    })}
-                                    label={{ text: "Name" }}
-                                    error={errors.name?.message}
-                                    required
-                                />
-                            </div>
                             <div className="flex gap-2">
                                 <Input
                                     {...register("email", {
@@ -146,6 +177,51 @@ const AddTakers = ({ onClose, taker, takerGroups }: AddTakersProps) => {
                                     label={{ text: "Email" }}
                                     error={errors.email?.message}
                                     type="email"
+                                    required
+                                />
+                            </div>
+                            <InlineLoading
+                                isLoading={isLoadingUsersByEmailSearch}
+                                loadingText={{ text: "Loading users..." }}
+                            />
+                            {usersByEmailSearch &&
+                                usersByEmailSearch.length > 0 && (
+                                    <div>
+                                        <p>
+                                            Found {usersByEmailSearch?.length}{" "}
+                                            users:
+                                        </p>
+                                        <div className="flex gap-2 flex-wrap">
+                                            {usersByEmailSearch.map((user) => (
+                                                <div
+                                                    key={user.id}
+                                                    className="p-2 rounded-sm bg-orange-50 cursor-pointer hover:bg-orange-100 shadow-md"
+                                                    onClick={() =>
+                                                        handleClickFoundUser(
+                                                            user
+                                                        )
+                                                    }
+                                                    tabIndex={0}
+                                                >
+                                                    <div>{user.name}</div>
+                                                    <div className="text-gray-500 text-sm">
+                                                        {user.email}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+                            <div className="flex gap-2">
+                                <Input
+                                    {...register("name", {
+                                        required: {
+                                            value: true,
+                                            message: "Name is required",
+                                        },
+                                    })}
+                                    label={{ text: "Name" }}
+                                    error={errors.name?.message}
                                     required
                                 />
                             </div>
@@ -225,7 +301,7 @@ const AddTakers = ({ onClose, taker, takerGroups }: AddTakersProps) => {
                                 </div>
                             )}
                             {!previewUrl && (
-                                <div className="w-[160px] h-[160px] bg-gray-300 rounded-xl flex justify-center items-center">
+                                <div className="w-full h-[160px] bg-gray-300 rounded-xl flex justify-center items-center">
                                     <span className="text-gray-500">
                                         No photo
                                     </span>
