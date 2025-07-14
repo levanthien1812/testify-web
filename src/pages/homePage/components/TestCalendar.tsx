@@ -13,6 +13,7 @@ import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import DateCellWrapper from "./DateCellWrapper";
 import { useAppSelector } from "../../../hooks/hooks";
 import { ROLES } from "../../../config/constants/tests";
+import { shorten } from "../../../utils/text";
 
 const localizer = momentLocalizer(moment);
 
@@ -40,7 +41,7 @@ const TestCalendar = () => {
                 data.tests.map((test: TestItf) => {
                     return {
                         id: test.id,
-                        title: test.title,
+                        title: shorten(test.title, 20),
                         start: new Date(test.datetime),
                         end: new Date(test.datetime),
                         // end: new Date(

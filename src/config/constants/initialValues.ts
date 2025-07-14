@@ -11,16 +11,21 @@ import {
     ViewTestContext,
 } from "../../types/tests";
 import {
+    FillGapsAnswerItf,
     FillGapsQuestionItf,
+    MatchingAnswerItf,
     MatchingQuestionItf,
+    MultipleChoiceAnswerItf,
     MultipleChoiceQuestionItf,
     QuestionContentItf,
     QuestionItf,
+    ResponseAnswerItf,
     ResponseQuestionItf,
     TakerBodyItf,
     TakerGroupBodyItf,
     TestBodyItf,
     TestPartItf,
+    TrueFalseAnswerItf,
     TrueFalseQuestionItf,
 } from "../../types/types";
 import { formatTimezone } from "../../utils/time";
@@ -386,6 +391,26 @@ export const INITIAL_RESPONSE_QUESTION: ResponseQuestionItf = {
 
 export const INITIAL_TRUE_FALSE_QUESTION: TrueFalseQuestionItf = {
     text: "",
+};
+
+export const INITIAL_MULTIPLE_CHOICES_ANSWER: MultipleChoiceAnswerItf = {
+    options: [],
+};
+
+export const INITIAL_FILL_GAPS_ANSWER: FillGapsAnswerItf = {
+    gaps: [],
+};
+
+export const INITIAL_MATCHING_ANSWER: MatchingAnswerItf = {
+    matchings: [],
+};
+
+export const INITIAL_RESPONSE_ANSWER: ResponseAnswerItf = {
+    response: "",
+};
+
+export const INITIAL_TRUE_FALSE_ANSWER: TrueFalseAnswerItf = {
+    is_true: false,
 };
 
 export const INITIAL_QUESTION: QuestionItf<QuestionContentItf> = {

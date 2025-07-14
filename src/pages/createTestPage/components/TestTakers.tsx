@@ -1,12 +1,9 @@
 import { ChangeEvent, useEffect } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faInfoCircle } from "@fortawesome/free-solid-svg-icons";
 import Takers from "./testTakers/Takers";
 import { useMutation } from "react-query";
 import {
     assignTakers,
     createPasscode,
-    generatePasscode,
     updateTest,
 } from "../../../services/test";
 import { useNavigate } from "react-router";
@@ -95,7 +92,7 @@ const TestTakers = () => {
                 assignTakersMutate();
                 break;
             case SHARE_OPTIONS.PASSCODE:
-                updateTestMutate({ passcode: passcode.id });
+                updateTestMutate({ passcode_id: passcode.id });
                 createPasscodeMutate();
                 break;
             default:

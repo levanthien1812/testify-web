@@ -1,16 +1,18 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { INITIAL_TAKE_TEST_CONTEXT } from "../config/constants/initialValues";
 import {
-    AnswerBodyContentItf,
+    AnswerContentItf,
     PasscodeItf,
     QuestionContentItf,
     QuestionItf,
     TestItf,
     TestPartItf,
+    UserAnswerBodyItf,
     UserAnswerItf,
 } from "../types/types";
 import { TEST_STATUS } from "../config/constants/tests";
 import { sortQuestionsByOrder } from "../utils/test";
+import { getInitialAnswerContent } from "../utils/mapping";
 
 const TakeTestSlice = createSlice({
     initialState: INITIAL_TAKE_TEST_CONTEXT,
@@ -57,7 +59,7 @@ const TakeTestSlice = createSlice({
         },
         addAnswer(
             state,
-            action: PayloadAction<UserAnswerItf<AnswerBodyContentItf>>
+            action: PayloadAction<UserAnswerBodyItf<AnswerContentItf>>
         ) {
             let index = state.answers.findIndex(
                 (ans) => ans.question_id === action.payload.question_id
@@ -91,8 +93,10 @@ const TakeTestSlice = createSlice({
                 } else {
                     questions = state.test.questions!;
                 }
-                const questionIds = questions.map((question) => question.id!);
-                state.answers = questionIds.map((id) => ({ question_id: id }));
+                state.answers = questions.map((question) => ({
+                    question_id: question.id!,
+                    content: getInitialAnswerContent(question.type),
+                }));
             }
         },
         setSubmissionAnswers(state, action) {

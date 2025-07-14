@@ -1,14 +1,10 @@
 import { useCallback } from "react";
-import {
-    AnswerBodyContentItf,
-    TestItf,
-    UserAnswerItf,
-} from "../../../types/types";
+import { AnswerContentItf, TestItf, UserAnswerItf } from "../../../types/types";
 import Answer from "./Answer";
 
 type TestQuestionsAndAnswersProps = {
     test: TestItf;
-    userAnswers: UserAnswerItf<AnswerBodyContentItf>[] | undefined;
+    userAnswers: UserAnswerItf<AnswerContentItf>[] | undefined;
 };
 
 const TestQuestionsAndAnswers = ({

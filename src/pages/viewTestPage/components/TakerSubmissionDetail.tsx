@@ -14,6 +14,7 @@ import { viewTestActions } from "../../../stores/viewTest";
 import { useAppSelector } from "../../../hooks/hooks";
 import QuestionsResultDemonstrator from "./QuestionsResultDemonstrator";
 import Loading from "../../../components/loadings/Loading";
+import { AnswerContentItf, UserAnswerItf } from "../../../types/types";
 
 const TakerInfoItem = ({
     label,
@@ -65,7 +66,7 @@ const TakerSubmissionDetail = () => {
     }, []);
 
     const { isLoading: isLoadingSubmissions, data: submissionAnswers } =
-        useQuery({
+        useQuery<UserAnswerItf<AnswerContentItf>[]>({
             queryFn: async () => {
                 const responseData = await getSubmissionAnswers(
                     test!.id!,
@@ -85,6 +86,18 @@ const TakerSubmissionDetail = () => {
                 { submission_id: submission!.id },
             ],
         });
+
+    const calculateTotalPartScore = (partId: string) => {
+        const part = test?.parts.find((part) => part.id === partId);
+        const totalScore = part?.questions?.reduce((total, question) => {
+            const questionResult = submissionAnswers?.find(
+                (answer) => answer.question_id === question.id
+            );
+            return total + (questionResult?.score || 0);
+        }, 0);
+        return totalScore;
+    };
+
     return (
         <Modal
             onClose={() =>
@@ -176,6 +189,24 @@ const TakerSubmissionDetail = () => {
                             />
                         </div>
                     )}
+                    {submissionAnswers &&
+                        test &&
+                        test.parts.every((part) => part.questions) &&
+                        test.parts.map((part) => (
+                            <div className="mt-4 flex flex-col items-center justify-center border border-dashed border-gray-400">
+                                <p>
+                                    Part {part.order} -{" "}
+                                    <span className="font-bold">
+                                        {calculateTotalPartScore(part.id!)}
+                                    </span>{" "}
+                                    pts
+                                </p>
+                                <QuestionsResultDemonstrator
+                                    questions={part.questions!}
+                                    answers={submissionAnswers}
+                                />
+                            </div>
+                        ))}
                     {submissionAnswers && (
                         <div className="mt-4 flex justify-center border border-dashed border-gray-400">
                             <TestQuestionsAndAnswers

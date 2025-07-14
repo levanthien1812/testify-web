@@ -11,9 +11,12 @@ import {
     ResponseQuestionItf,
     QuestionContentItf,
     UserAnswerItf,
-    AnswerBodyContentItf,
+    AnswerContentItf,
+    TrueFalseQuestionItf,
+    TrueFalseAnswerItf,
 } from "../../../types/types";
 import {
+    AUTO_SCORE_TYPES,
     MANUAL_SCORE_TYPES,
     ROLES,
     USER_ANSWER_STATUS,
@@ -32,10 +35,11 @@ import Input from "../../../components/elements/Input";
 import { QUESTION_TYPE } from "../../../config/constants/tests";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
 import { useAppSelector } from "../../../hooks/hooks";
+import TrueFalseAnswer from "./TrueFalseAnswer";
 
 type QuestionProps = {
     question: QuestionItf<QuestionContentItf>;
-    userAnswer?: UserAnswerItf<AnswerBodyContentItf> | null;
+    userAnswer?: UserAnswerItf<AnswerContentItf> | null;
     onUpdateScore?: () => void;
 };
 
@@ -94,23 +98,23 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
     }, [userAnswer, question.score]);
 
     const status = useMemo<USER_ANSWER_STATUS>(() => {
-        if (userAnswer && userAnswer.is_correct === true) {
-            return USER_ANSWER_STATUS.CORRECT;
-        }
-        if (userAnswer && userAnswer.is_correct === false) {
-            return USER_ANSWER_STATUS.WRONG;
-        }
-        if (!userAnswer) {
+        if (!userAnswer || userAnswer.skipped) {
             return USER_ANSWER_STATUS.NOT_ANSWERED;
         }
-        if (userAnswer && !Object.hasOwn(userAnswer, "score")) {
+        if (userAnswer.is_correct === true) {
+            return USER_ANSWER_STATUS.CORRECT;
+        }
+        if (userAnswer.is_correct === false) {
+            return USER_ANSWER_STATUS.WRONG;
+        }
+        if (userAnswer.evaluated === false) {
             return USER_ANSWER_STATUS.NOT_EVALUATED;
         }
-        if (userAnswer && needManualScore) {
+        if (needManualScore) {
             return USER_ANSWER_STATUS.MANUALLY_SCORED;
         }
         return USER_ANSWER_STATUS.NOTHING;
-    }, [userAnswer]);
+    }, [userAnswer, needManualScore]);
 
     return (
         <div
@@ -123,11 +127,12 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
             <div>
                 <span className="underline">Question {question.order}:</span>{" "}
                 <span className="font-bold italic">{`(${points} points)`}</span>{" "}
-                {status !== USER_ANSWER_STATUS.NOTHING && (
-                    <span className="text-sm bg-yellow-500 text-white rounded-full px-2 shadow-sm ms-2">
-                        {USER_ANSWER_STATUS_LABEL[status]}
-                    </span>
-                )}
+                {status !== USER_ANSWER_STATUS.NOTHING &&
+                    AUTO_SCORE_TYPES.includes(question.type) && (
+                        <span className="text-sm bg-yellow-500 text-white rounded-full px-2 shadow-sm ms-2">
+                            {USER_ANSWER_STATUS_LABEL[status]}
+                        </span>
+                    )}
             </div>
             {question.type === QUESTION_TYPE.MULTIPLE_CHOICES && (
                 <MultipleChoicesAnswer
@@ -160,11 +165,19 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
                     answerContent={userAnswer?.content as ResponseAnswerItf}
                 />
             )}
+            {question.type === QUESTION_TYPE.TRUE_FALSE && (
+                <TrueFalseAnswer
+                    questionContent={question.content as TrueFalseQuestionItf}
+                    answerContent={userAnswer?.content as TrueFalseAnswerItf}
+                    answerStatus={status}
+                />
+            )}
 
             {user?.role === ROLES.MAKER && needManualScore && (
                 <div className="border-t pt-2 border-gray-400 border-dashed space-x-2">
-                    {((userAnswer && !userAnswer.score) || isUpdatingScore) && (
-                        <>
+                    {((userAnswer && !userAnswer.evaluated) ||
+                        isUpdatingScore) && (
+                        <div className="flex gap-2 items-center">
                             <label htmlFor="manualScore">Score: </label>
                             <Input
                                 type="number"
@@ -205,9 +218,9 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
                                     Cancel
                                 </Button>
                             )}
-                        </>
+                        </div>
                     )}
-                    {userAnswer && userAnswer.score && !isUpdatingScore && (
+                    {userAnswer && userAnswer.evaluated && !isUpdatingScore && (
                         <Button
                             size="sm"
                             onClick={() => setIsUpdatingScore(true)}

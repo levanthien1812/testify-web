@@ -6,10 +6,15 @@ import {
     faUpDownLeftRight,
 } from "@fortawesome/free-solid-svg-icons";
 import {
+    INITIAL_FILL_GAPS_ANSWER,
     INITIAL_FILL_GAPS_QUESTION,
+    INITIAL_MATCHING_ANSWER,
     INITIAL_MATCHING_QUESTION,
+    INITIAL_MULTIPLE_CHOICES_ANSWER,
     INITIAL_MULTIPLE_CHOICES_QUESTION,
+    INITIAL_RESPONSE_ANSWER,
     INITIAL_RESPONSE_QUESTION,
+    INITIAL_TRUE_FALSE_ANSWER,
 } from "../config/constants/initialValues";
 import { QUESTION_TYPE } from "../config/constants/tests";
 import FillGapsQuestion from "../pages/createTestPage/components/testQuestions/FillGapsQuestion";
@@ -17,10 +22,10 @@ import MatchingQuestion from "../pages/createTestPage/components/testQuestions/M
 import MulitpleChoiceQuestion from "../pages/createTestPage/components/testQuestions/MultipleChoicesQuestion";
 import ResponseQuestion from "../pages/createTestPage/components/testQuestions/ResponseQuestion";
 import {
+    AnswerContentItf,
     FillGapsQuestionItf,
     MatchingQuestionItf,
     MultipleChoiceQuestionItf,
-    QuestionBodyContentItf,
     ResponseQuestionItf,
 } from "../types/types";
 import {
@@ -65,6 +70,25 @@ export const getInitialQuestionContent = (
             return INITIAL_RESPONSE_QUESTION;
         default:
             return INITIAL_MULTIPLE_CHOICES_QUESTION;
+    }
+};
+
+export const getInitialAnswerContent = (
+    type: QUESTION_TYPE
+): AnswerContentItf => {
+    switch (type) {
+        case QUESTION_TYPE.MULTIPLE_CHOICES:
+            return INITIAL_MULTIPLE_CHOICES_ANSWER;
+        case QUESTION_TYPE.FILL_IN_THE_GAPS:
+            return INITIAL_FILL_GAPS_ANSWER;
+        case QUESTION_TYPE.RESPONSE:
+            return INITIAL_RESPONSE_ANSWER;
+        case QUESTION_TYPE.MATCHING:
+            return INITIAL_MATCHING_ANSWER;
+        case QUESTION_TYPE.TRUE_FALSE:
+            return INITIAL_TRUE_FALSE_ANSWER;
+        default:
+            return INITIAL_MULTIPLE_CHOICES_ANSWER;
     }
 };
 

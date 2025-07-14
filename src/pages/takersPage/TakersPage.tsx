@@ -38,10 +38,9 @@ import TakersTable from "./components/TakersTable";
 import SelectPanel from "./components/SelectPanel";
 import TakerGroups from "./components/TakerGroups";
 import InlineLoading from "../../components/loadings/InlineLoading";
+import Popover from "../../components/modals/Popover";
 
 const TakersPage = () => {
-    const [currentIdToShowActionModal, setCurrentIdToShowActionModal] =
-        useState<string | null>(null);
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
     const [globalFilter, setGlobalFilter] = useState<any>("");
     const [rowSelection, setRowSelection] = useState<RowSelectionState>({});
@@ -210,40 +209,28 @@ const TakersPage = () => {
                 cell: ({ row }) => {
                     return (
                         <div className="relative flex justify-center">
-                            <IconButton
-                                icon={faEllipsis}
-                                onClick={() => {
-                                    if (
-                                        currentIdToShowActionModal ===
-                                        row.original.id
-                                    ) {
-                                        setCurrentIdToShowActionModal(null);
-                                        return;
-                                    }
-                                    setCurrentIdToShowActionModal(
-                                        row.original.id!
-                                    );
-                                }}
-                            />
-                            {currentIdToShowActionModal === row.original.id && (
-                                <div className="absolute top-6 bg-gray-100 z-10 shadow-md shadow-gray-300 px-2 py-2 flex flex-col gap-2 w-[120px]">
-                                    <Button className="w-full" size="md">
-                                        Delete
-                                    </Button>
-                                    <Button
-                                        className="w-full"
-                                        size="md"
-                                        onClick={() => {
-                                            setCurrentTakerBeingViewed(
-                                                row.original
-                                            );
-                                            setCurrentIdToShowActionModal(null);
-                                        }}
-                                    >
-                                        Edit
-                                    </Button>
-                                </div>
-                            )}
+                            <Popover
+                                content={
+                                    <div className="px-2 py-2 flex flex-col gap-2">
+                                        <Button className="w-full" size="md">
+                                            Delete
+                                        </Button>
+                                        <Button
+                                            className="w-full"
+                                            size="md"
+                                            onClick={() => {
+                                                setCurrentTakerBeingViewed(
+                                                    row.original
+                                                );
+                                            }}
+                                        >
+                                            Edit
+                                        </Button>
+                                    </div>
+                                }
+                            >
+                                <FontAwesomeIcon icon={faEllipsis} />
+                            </Popover>
                         </div>
                     );
                 },
@@ -251,7 +238,7 @@ const TakersPage = () => {
                 enableSorting: false,
             },
         ],
-        [currentIdToShowActionModal]
+        []
     );
 
     const table = useReactTable({

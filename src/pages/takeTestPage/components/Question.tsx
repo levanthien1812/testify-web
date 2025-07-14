@@ -5,12 +5,14 @@ import {
     QuestionContentItf,
     QuestionItf,
     ResponseQuestionItf,
+    TrueFalseQuestionItf,
 } from "../../../types/types";
 import MultipleChoicesQuestion from "./MultipleChoicesQuestion";
 import FillGapsQuestion from "./FillGapsQuestion";
 import MatchingQuestion from "./MatchingQuestion";
 import ResponseQuestion from "./ResponseQuestion";
 import { QUESTION_TYPE } from "../../../config/constants/tests";
+import TrueFalseQuestion from "./TrueFalseQuestion";
 
 type QuestionProps = {
     question: QuestionItf<QuestionContentItf>;
@@ -40,6 +42,11 @@ const Question = ({ question }: QuestionProps) => {
             {question.type === QUESTION_TYPE.RESPONSE && (
                 <ResponseQuestion
                     question={question as QuestionItf<ResponseQuestionItf>}
+                />
+            )}
+            {question.type === QUESTION_TYPE.TRUE_FALSE && (
+                <TrueFalseQuestion
+                    question={question as QuestionItf<TrueFalseQuestionItf>}
                 />
             )}
         </div>

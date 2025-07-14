@@ -7,7 +7,7 @@ import {
 } from "../config/constants/tests";
 import { PUBLIC_ANSWER_VISIBILITY_LEVEL } from "../config/constants/tests";
 import {
-    AnswerBodyContentItf,
+    AnswerContentItf,
     PasscodeItf,
     QuestionContentItf,
     QuestionItf,
@@ -121,7 +121,7 @@ export interface CreateTestContext {
 
 export interface TakeTestContext {
     test: TestItf | null;
-    answers: UserAnswerItf<AnswerBodyContentItf>[];
+    answers: UserAnswerItf<AnswerContentItf>[];
     startTime: Date;
     closeTime: Date;
     submissions: SubmissionItf[];

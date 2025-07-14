@@ -91,7 +91,7 @@ export interface TestBodyItf {
     num_parts: number;
     level: TEST_LEVEL;
     share_option?: SHARE_OPTIONS;
-    passcode?: string;
+    passcode_id?: string;
     options: TestOptions;
 }
 export interface TestItf extends TestBodyItf {
@@ -106,6 +106,7 @@ export interface TestItf extends TestBodyItf {
     questions?: QuestionItf<QuestionContentItf>[];
     submissions_count?: number;
     status: TEST_STATUS;
+    passcode?: PasscodeItf;
 }
 
 export interface PartBodyItf {
@@ -199,7 +200,7 @@ export interface TrueFalseQuestionItf
     id?: string;
 }
 
-export interface BaseQuestionContentItf<T extends AnswerBodyContentItf> {
+export interface BaseQuestionContentItf<T extends AnswerContentItf> {
     answer?: T;
 }
 
@@ -243,7 +244,7 @@ export interface BaseAnswerItf {
     explaination?: string;
 }
 
-export type AnswerBodyContentItf =
+export type AnswerContentItf =
     | MultipleChoiceAnswerItf
     | FillGapsAnswerItf
     | MatchingAnswerItf
@@ -283,14 +284,20 @@ export interface PasscodeItf {
 
 export type GeneratePasscodeBodyItf = Pick<PasscodeItf, "format">;
 
-export type UserAnswerItf<T extends AnswerBodyContentItf> = {
-    id?: string;
+export interface UserAnswerBodyItf<T extends AnswerContentItf> {
     question_id: string;
+    content: T;
+}
+
+export interface UserAnswerItf<T extends AnswerContentItf>
+    extends UserAnswerBodyItf<T> {
+    id?: string;
     date?: Date;
-    content?: T;
     score?: number;
     is_correct?: boolean;
-};
+    skipped?: boolean;
+    evaluated?: boolean;
+}
 
 export interface TakerBodyItf extends UserBodyItf {
     group_id?: string;
@@ -323,7 +330,7 @@ export interface SubmissionItf {
     start_time: Date;
     submit_time: Date;
     is_evaluated: boolean;
-    answers?: UserAnswerItf<AnswerBodyContentItf>[];
+    answers?: UserAnswerItf<AnswerContentItf>[];
 }
 
 export type FilterState = {

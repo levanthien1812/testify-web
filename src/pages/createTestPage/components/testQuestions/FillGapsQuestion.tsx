@@ -6,7 +6,7 @@ import {
 import TextEditor from "../../../../components/richTextEditor/TiptapEditor";
 import Input from "../../../../components/elements/Input";
 import { Control, Controller, FieldErrors } from "react-hook-form";
-import { FILL_GAP_SIGN } from "../../../../config/constants/tests";
+import { FILL_GAP_INDICATOR } from "../../../../config/constants/tests";
 import { getNum } from "../../../../utils/primitives";
 
 const FillGapsQuestion: React.FC<{
@@ -44,11 +44,11 @@ const FillGapsQuestion: React.FC<{
                     rules={{
                         required: "Text is required",
                         validate: (value) => {
-                            if (!value.includes(FILL_GAP_SIGN)) {
+                            if (!value.includes(FILL_GAP_INDICATOR)) {
                                 return "Text must contain at least one gap";
                             }
                             const noOfGaps =
-                                value.split(FILL_GAP_SIGN).length - 1;
+                                value.split(FILL_GAP_INDICATOR).length - 1;
                             if (noOfGaps !== getNum(content.num_gaps)) {
                                 return `Text must contain ${content.num_gaps} gaps`;
                             }

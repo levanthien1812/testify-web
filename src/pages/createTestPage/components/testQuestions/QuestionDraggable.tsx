@@ -8,7 +8,6 @@ import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
 import { useAppSelector } from "../../../../hooks/hooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { questionTypeToIcon } from "../../../../utils/mapping";
-import { shorten } from "../../../../utils/text";
 import HtmlDisplay from "../../../../components/elements/HtmlDisplay";
 
 type QuestionDraggableProps = {
@@ -138,7 +137,7 @@ const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
                         className="text-green-500 text-sm"
                     />
                 )} */}
-                <span className="bg-teal-500 py-1 w-6 px-1 text-center rounded-md text-white leading-none ml-auto">
+                <span className="bg-teal-500 py-1 min-w-6 w-fit px-1 text-center rounded-md text-white leading-none ml-auto">
                     {question.score}
                 </span>
             </div>

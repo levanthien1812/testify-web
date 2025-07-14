@@ -1,32 +1,29 @@
 import { useCallback } from "react";
-import {
-    MultipleChoiceAnswerItf,
-    MultipleChoiceQuestionItf,
-} from "../../../types/types";
+import { TrueFalseAnswerItf, TrueFalseQuestionItf } from "../../../types/types";
 import { ROLES, USER_ANSWER_STATUS } from "../../../config/constants/tests";
 import HtmlDisplay from "../../../components/elements/HtmlDisplay";
 import { useAppSelector } from "../../../hooks/hooks";
 
-type MultipleChoicesAnswerProps = {
-    questionContent: MultipleChoiceQuestionItf;
-    answerContent: MultipleChoiceAnswerItf;
+type TrueFalseAnswerProps = {
+    questionContent: TrueFalseQuestionItf;
+    answerContent: TrueFalseAnswerItf;
     answerStatus: USER_ANSWER_STATUS;
 };
 
-const MultipleChoicesAnswer = ({
+const TrueFalseAnswer = ({
     questionContent,
     answerContent,
     answerStatus,
-}: MultipleChoicesAnswerProps) => {
+}: TrueFalseAnswerProps) => {
     const user = useAppSelector((state) => state.auth.user);
-    const makerAnswer = questionContent.answer?.options?.[0];
-    const userAnswer = answerContent?.options[0];
+    const makerAnswer = questionContent.answer?.is_true;
+    const userAnswer = answerContent?.is_true;
 
     const getInputChecked = useCallback(
-        (optionId: string) => {
+        (isTrue: boolean) => {
             if (answerStatus === USER_ANSWER_STATUS.NOT_ANSWERED) return false;
 
-            if (optionId === userAnswer) return true;
+            if (isTrue === userAnswer) return true;
 
             return false;
         },
@@ -34,17 +31,17 @@ const MultipleChoicesAnswer = ({
     );
 
     const getInputClasses = useCallback(
-        (optionId: string) => {
+        (isTrue: boolean) => {
             if (answerStatus === USER_ANSWER_STATUS.NOT_ANSWERED) return "";
 
-            if (!makerAnswer && optionId === userAnswer)
+            if (makerAnswer === undefined && isTrue === userAnswer)
                 return `accent-blue-600`;
 
-            if (optionId === makerAnswer) return `accent-green-600`;
+            if (isTrue === makerAnswer) return `accent-green-600`;
             if (
-                makerAnswer &&
+                makerAnswer !== undefined &&
                 makerAnswer !== userAnswer &&
-                optionId === userAnswer
+                isTrue === userAnswer
             )
                 return `accent-red-600`;
             return "";
@@ -53,18 +50,19 @@ const MultipleChoicesAnswer = ({
     );
 
     const getLabelClasses = useCallback(
-        (optionId: string) => {
+        (isTrue: boolean) => {
             if (user?.role === ROLES.TAKER) {
                 if (answerStatus === USER_ANSWER_STATUS.NOT_ANSWERED) return "";
             }
 
-            if (!makerAnswer && optionId === userAnswer) return `text-blue-600`;
+            if (makerAnswer === undefined && isTrue === userAnswer)
+                return `text-blue-600`;
 
-            if (optionId === makerAnswer) return `text-green-600`;
+            if (isTrue === makerAnswer) return `text-green-600`;
             if (
-                makerAnswer &&
+                makerAnswer !== undefined &&
                 makerAnswer !== userAnswer &&
-                optionId === userAnswer
+                isTrue === userAnswer
             )
                 return `text-red-600`;
             return "";
@@ -76,26 +74,26 @@ const MultipleChoicesAnswer = ({
         <>
             <HtmlDisplay htmlContent={questionContent.text} />
 
-            <div className="space-y-1 mt-2">
-                {questionContent.options.map((option) => (
+            <div className="flex gap-1 mt-2">
+                {[true, false].map((option) => (
                     <div
                         className="flex gap-3 items-center ps-2 hover:bg-gray-200 cursor-pointer"
-                        key={option.id}
+                        key={`${option}`}
                     >
                         <input
                             type="radio"
                             name={questionContent.id}
-                            value={option.id}
-                            id={option.id}
-                            checked={getInputChecked(option.id!)}
-                            className={getInputClasses(option.id!)}
+                            value={`${option}`}
+                            id={`${option}`}
+                            checked={getInputChecked(option)}
+                            className={getInputClasses(option)}
                             readOnly
                         />
                         <label
-                            htmlFor={option.id}
-                            className={`grow ${getLabelClasses(option.id!)}`}
+                            htmlFor={`${option}`}
+                            className={`grow ${getLabelClasses(option)}`}
                         >
-                            {option.text}
+                            {option ? "True" : "False"}
                         </label>
                     </div>
                 ))}
@@ -105,11 +103,7 @@ const MultipleChoicesAnswer = ({
                 <div className="mt-2 bg-green-500 p-2">
                     <p className="text-white">Correct answer:</p>
                     <div className="text-white">
-                        {
-                            questionContent.options.find(
-                                (option) => option.id === makerAnswer
-                            )?.text
-                        }
+                        {questionContent.answer.is_true ? "True" : "False"}
                     </div>
                 </div>
             )}
@@ -117,4 +111,4 @@ const MultipleChoicesAnswer = ({
     );
 };
 
-export default MultipleChoicesAnswer;
+export default TrueFalseAnswer;
