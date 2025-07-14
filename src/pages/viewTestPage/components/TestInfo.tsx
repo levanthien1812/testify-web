@@ -1,53 +1,27 @@
 import React from "react";
-import { PasscodeItf, TestItf } from "../../../types/types";
 import { format } from "date-fns";
 import { useAppSelector } from "../../../hooks/hooks";
 import { SHARE_OPTIONS } from "../../../config/constants/tests";
-import { getPasscode } from "../../../services/test";
-import { QUERY_KEYS } from "../../../config/constants/queryMutationKeys";
-import { useQuery } from "react-query";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCopy } from "@fortawesome/free-solid-svg-icons";
 
 const TestInfo = () => {
     const { test } = useAppSelector((state) => state.viewTest);
-    const [passcode, setPasscode] = React.useState<PasscodeItf | null>(null);
     const [isPasscodeRevealed, setIsPasscodeRevealed] =
         React.useState<boolean>(false);
     const [isPasscodeCopied, setIsPasscodeCopied] =
         React.useState<boolean>(false);
-
-    const { isLoading: isLoadingPasscode, refetch: refetchPasscode } = useQuery(
-        {
-            queryFn: async () => {
-                const data = await getPasscode(test!.id);
-
-                return data.passcode;
-            },
-            queryKey: [QUERY_KEYS.GET_PASSCODE],
-            onSuccess: (data) => {
-                if (!data) return;
-                setPasscode(data);
-            },
-            onError: () => {},
-            enabled: !!test && test.share_option === SHARE_OPTIONS.PASSCODE,
-            retry: false,
-        }
-    );
 
     if (!test) return null;
 
     const handleClickRevealPasscode = () => {
         if (!isPasscodeRevealed) {
             setIsPasscodeRevealed(true);
-            refetchPasscode();
         } else {
             setIsPasscodeRevealed(false);
         }
     };
 
     const handleClickCopyPasscode = () => {
-        navigator.clipboard.writeText(passcode!.code);
+        navigator.clipboard.writeText(test.passcode!.code);
         setIsPasscodeCopied(true);
     };
 
@@ -107,11 +81,9 @@ const TestInfo = () => {
                 <div className="flex justify-center mt-2 gap-2">
                     <p className="text-lg">
                         Passcode:{" "}
-                        {passcode &&
-                        isPasscodeRevealed &&
-                        !isLoadingPasscode ? (
+                        {test.passcode && isPasscodeRevealed ? (
                             <span className="text-orange-600">
-                                {passcode.code}
+                                {test.passcode.code}
                             </span>
                         ) : (
                             <span className="text-orange-600 tracking-wide">
@@ -119,16 +91,13 @@ const TestInfo = () => {
                             </span>
                         )}
                     </p>
-                    {!isLoadingPasscode && (
-                        <button
-                            onClick={handleClickRevealPasscode}
-                            className="hover:underline text-gray-500 hover:text-gray-600"
-                        >
-                            {isPasscodeRevealed ? "Hide" : "Reveal"}
-                        </button>
-                    )}
-                    {isLoadingPasscode && <p>Loading...</p>}
-                    {!isLoadingPasscode && passcode && (
+                    <button
+                        onClick={handleClickRevealPasscode}
+                        className="hover:underline text-gray-500 hover:text-gray-600"
+                    >
+                        {isPasscodeRevealed ? "Hide" : "Reveal"}
+                    </button>
+                    {test.passcode && (
                         <button
                             onClick={handleClickCopyPasscode}
                             className="hover:underline text-gray-500 hover:text-gray-600"

@@ -1,4 +1,4 @@
-import { useCallback, useMemo } from "react";
+import { useCallback } from "react";
 import { MatchingAnswerItf, MatchingQuestionItf } from "../../../types/types";
 import DraggableItem from "../../createTestPage/components/testAnswers/DraggableItem";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -111,6 +111,51 @@ const MatchingAnswer = ({
                         ))}
                 </div>
             </div>
+
+            {questionContent.answer && (
+                <div className="mt-2 bg-green-500 p-2">
+                    <p className="text-white">Correct answer:</p>
+                    <div className="text-white">
+                        {questionContent.answer.matchings.length > 0 && (
+                            <div className="border border-white px-4 py-2 space-y-2">
+                                {questionContent.answer.matchings.map(
+                                    (matching) => (
+                                        <div
+                                            key={matching.left}
+                                            className="px-4 py-1 grid grid-cols-8 items-center gap-1 relative border border-white text-white"
+                                        >
+                                            <span className="col-span-3">
+                                                {
+                                                    questionContent.left_items.find(
+                                                        (left_item) =>
+                                                            left_item.id ===
+                                                            matching.left
+                                                    )?.text
+                                                }
+                                            </span>
+                                            <div className="col-span-1 text-center">
+                                                <FontAwesomeIcon
+                                                    icon={faArrowRight}
+                                                    className="text-xs "
+                                                />
+                                            </div>
+                                            <span className="col-span-3">
+                                                {
+                                                    questionContent.right_items.find(
+                                                        (right_item) =>
+                                                            right_item.id ===
+                                                            matching.right
+                                                    )?.text
+                                                }
+                                            </span>
+                                        </div>
+                                    )
+                                )}
+                            </div>
+                        )}
+                    </div>
+                </div>
+            )}
         </>
     );
 };

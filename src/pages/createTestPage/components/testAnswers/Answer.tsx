@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
-    AnswerBodyContentItf,
+    AnswerContentItf,
     FillGapsQuestionItf,
     MatchingQuestionItf,
     MultipleChoiceQuestionItf,
@@ -37,7 +37,7 @@ const Answer: React.FC<{
     const dispatch = useDispatch();
 
     const { mutate, isLoading } = useMutation({
-        mutationFn: async (answerBody: AnswerBodyContentItf) =>
+        mutationFn: async (answerBody: AnswerContentItf) =>
             await addAnswer(question.test_id, question.id!, answerBody),
         mutationKey: [MUTATION_KEYS.ADD_ANSWER, { question_id: question.id }],
         onSuccess: (data) => {
@@ -63,7 +63,7 @@ const Answer: React.FC<{
         },
     });
 
-    const handleProvideAnswer = (answerBody: AnswerBodyContentItf) => {
+    const handleProvideAnswer = (answerBody: AnswerContentItf) => {
         setReset(false);
         const updatedContent = {
             ...question.content,

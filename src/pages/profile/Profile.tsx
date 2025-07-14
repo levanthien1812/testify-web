@@ -24,6 +24,7 @@ import { getMakersWithGroup, updateUser } from "../../services/user";
 import SetUpPassword from "./SetUpPassword";
 import UpdatePassword from "./UpdatePassword";
 import InlineLoading from "../../components/loadings/InlineLoading";
+import { ROLES } from "../../config/constants/tests";
 
 type Props = {
     onClose: () => void;
@@ -233,44 +234,51 @@ const Profile = ({ onClose }: Props) => {
                                     type="date"
                                 />
                             </div>
-                            <div>
-                                <p>Your makers and groups:</p>
-                                <InlineLoading
-                                    isLoading={isLoadingMakersWithGroup}
-                                    loadingText={{ text: "Loading makers..." }}
-                                />
-                                {makersWithGroup &&
-                                    makersWithGroup.length > 0 && (
-                                        <div className="flex flex-wrap space-x-2">
-                                            {makersWithGroup.map(
-                                                (makerGroup) => (
-                                                    <div
-                                                        className="p-2 rounded-sm bg-orange-50 shadow-md"
-                                                        key={
-                                                            makerGroup.maker.id
-                                                        }
-                                                    >
-                                                        <p>
-                                                            {
+                            {user?.role === ROLES.TAKER && (
+                                <div>
+                                    <p>Your makers and groups:</p>
+                                    <InlineLoading
+                                        isLoading={isLoadingMakersWithGroup}
+                                        loadingText={{
+                                            text: "Loading makers...",
+                                        }}
+                                    />
+                                    {makersWithGroup &&
+                                        makersWithGroup.length > 0 && (
+                                            <div className="flex flex-wrap space-x-2">
+                                                {makersWithGroup.map(
+                                                    (makerGroup) => (
+                                                        <div
+                                                            className="p-2 rounded-sm bg-orange-50 shadow-md"
+                                                            key={
                                                                 makerGroup.maker
-                                                                    .user.name
+                                                                    .id
                                                             }
-                                                        </p>
-                                                        {makerGroup.group && (
-                                                            <p className="text-gray-500 text-sm">
+                                                        >
+                                                            <p>
                                                                 {
                                                                     makerGroup
-                                                                        .group
+                                                                        .maker
+                                                                        .user
                                                                         .name
                                                                 }
                                                             </p>
-                                                        )}
-                                                    </div>
-                                                )
-                                            )}
-                                        </div>
-                                    )}
-                            </div>
+                                                            {makerGroup.group && (
+                                                                <p className="text-gray-500 text-sm">
+                                                                    {
+                                                                        makerGroup
+                                                                            .group
+                                                                            .name
+                                                                    }
+                                                                </p>
+                                                            )}
+                                                        </div>
+                                                    )
+                                                )}
+                                            </div>
+                                        )}
+                                </div>
+                            )}
                             <div>
                                 <div>
                                     {!isSettingUpPassword &&

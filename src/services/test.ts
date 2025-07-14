@@ -1,6 +1,6 @@
 import { instance } from "../config/axios";
 import {
-    AnswerBodyContentItf,
+    AnswerContentItf,
     GeneratePasscodeBodyItf,
     PartBodyItf,
     PasscodeItf,
@@ -217,7 +217,7 @@ export const deleteQuestion = async (
 export const addAnswer = async (
     testId: string,
     questionId: string,
-    answerBody: AnswerBodyContentItf
+    answerBody: AnswerContentItf
 ) => {
     try {
         const response = await instance.patch(
@@ -352,7 +352,7 @@ export const validateQuestions = async (testId: string) => {
 
 export const submitAnswers = async (
     testId: string,
-    answers: UserAnswerItf<AnswerBodyContentItf>[],
+    answers: UserAnswerItf<AnswerContentItf>[],
     startTime: Date
 ) => {
     try {
@@ -405,7 +405,7 @@ export const getSubmissionAnswers = async (
 export const updateTakerAnswer = async (
     testId: string,
     answerId: string,
-    answerBody: Pick<UserAnswerItf<AnswerBodyContentItf>, "score">
+    answerBody: Pick<UserAnswerItf<AnswerContentItf>, "score">
 ) => {
     try {
         const response = await instance.patch(

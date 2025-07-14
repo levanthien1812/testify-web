@@ -18,10 +18,10 @@ import PasscodeLink from "../../pages/createTestPage/components/testTakers/Passc
 import { takeTestActions } from "../../stores/takeTest";
 import { PasscodeItf } from "../../types/types";
 import Profile from "../../pages/profile/Profile";
+import Popover from "../modals/Popover";
 
 const Header = () => {
     const { user, isAuthened } = useAppSelector((state) => state.auth);
-    const [showActions, setShowActions] = useState(false);
     const dispatch = useDispatch();
     const [isEnteringPasscodeLink, setIsEnteringPasscodeLink] = useState(false);
     const { isPasscodeValidated } = useAppSelector((state) => state.takeTest);
@@ -96,31 +96,13 @@ const Header = () => {
                             2
                         </div>
                     </div>
-                    <div className="relative">
-                        <button
-                            className="flex gap-2 items-center hover:bg-gray-100 p-1 min-w-40"
-                            onClick={() => setShowActions(!showActions)}
-                        >
-                            <img
-                                src={
-                                    user.photo && user.photo.length > 0
-                                        ? user.photo
-                                        : defaultUserPhoto
-                                }
-                                alt="user"
-                                className="w-[40px] h-[40px] object-cover rounded-full shadow-md"
-                            />
-
-                            <span className="me-2">{user.name}</span>
-                        </button>
-
-                        {showActions && (
-                            <div className="absolute mt-2 bg-white shadow-md px-2 py-2 w-full">
+                    <Popover
+                        content={
+                            <div className="bg-white shadow-md px-2 py-2 w-full space-y-1">
                                 <Button
                                     outlined
                                     className="w-full"
                                     onClick={() => {
-                                        setShowActions(false);
                                         setIsViewingProfile(true);
                                     }}
                                 >
@@ -134,8 +116,23 @@ const Header = () => {
                                     Logout
                                 </Button>
                             </div>
-                        )}
+                        }
+                    >
+                        <div className="flex gap-2 items-center hover:bg-gray-100 p-1 min-w-40 cursor-pointer">
+                            <img
+                                src={
+                                    user.photo && user.photo.length > 0
+                                        ? user.photo
+                                        : defaultUserPhoto
+                                }
+                                alt="user"
+                                className="w-[40px] h-[40px] object-cover rounded-full shadow-md"
+                            />
 
+                            <span className="me-2">{user.name}</span>
+                        </div>
+                    </Popover>
+                    <div className="relative">
                         {isEnteringPasscodeLink && (
                             <PasscodeLink
                                 onClose={() => setIsEnteringPasscodeLink(false)}

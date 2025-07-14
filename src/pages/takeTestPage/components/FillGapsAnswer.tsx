@@ -1,7 +1,10 @@
 import { useCallback, useMemo } from "react";
 import { FillGapsAnswerItf, FillGapsQuestionItf } from "../../../types/types";
 import Input from "../../../components/elements/Input";
-import { USER_ANSWER_STATUS } from "../../../config/constants/tests";
+import {
+    FILL_GAP_INDICATOR,
+    USER_ANSWER_STATUS,
+} from "../../../config/constants/tests";
 import HtmlDisplay from "../../../components/elements/HtmlDisplay";
 
 type FillGapsAnswerProps = {
@@ -20,7 +23,8 @@ const FillGapsAnswer = ({
 
     const getLabelClasses = useCallback(
         (index: number) => {
-            if (!makerAnswer) return "border-gray-500 text-black";
+            if (!makerAnswer || !userAnswer)
+                return "border-gray-500 text-black";
 
             if (makerAnswer[index] === userAnswer[index])
                 return "border-green-600 text-blue";
@@ -30,6 +34,26 @@ const FillGapsAnswer = ({
         },
         [answerStatus, makerAnswer, userAnswer]
     );
+
+    const textReplacements = useMemo(() => {
+        if (!questionContent.answer) return "";
+
+        const subStrings = questionContent.text.split(FILL_GAP_INDICATOR);
+        const filledText = subStrings.map((subString, index) => {
+            if (index === 0) return <span>{subString}</span>;
+            return (
+                <span key={index}>
+                    {" "}
+                    <span className="text-white underline font-bold">
+                        {questionContent.answer?.gaps?.[index - 1]}
+                    </span>{" "}
+                    <span>{subString}</span>
+                </span>
+            );
+        });
+
+        return <p className="text-white">{filledText}</p>;
+    }, [questionContent]);
 
     return (
         <>
@@ -49,21 +73,21 @@ const FillGapsAnswer = ({
                         <Input
                             type="text"
                             name={`gap-${index + 1}`}
-                            value={userAnswer[index]}
+                            value={userAnswer?.[index] || ""}
                             id={`gap-${index + 1}`}
-                            className={`border ${
-                                answerContent && questionContent.answer
-                                    ? answerContent.gaps[index] ===
-                                      questionContent.answer.gaps[index]
-                                        ? "border-green-600 text-blue"
-                                        : "border-red-600 text-red"
-                                    : "border-gray-500 text-black"
-                            } grow`}
+                            className={`border ${getLabelClasses(index)} grow`}
                             readOnly
                         />
                     </div>
                 ))}
             </div>
+
+            {questionContent.answer && (
+                <div className="mt-2 bg-green-500 p-2">
+                    <p className="text-white">Correct answer:</p>
+                    <div>{textReplacements} </div>
+                </div>
+            )}
         </>
     );
 };

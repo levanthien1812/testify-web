@@ -1,6 +1,6 @@
 import React, { useCallback } from "react";
 import {
-    AnswerBodyContentItf,
+    AnswerContentItf,
     QuestionContentItf,
     QuestionItf,
     UserAnswerItf,
@@ -8,7 +8,7 @@ import {
 
 type Props = {
     questions: QuestionItf<QuestionContentItf>[];
-    answers: UserAnswerItf<AnswerBodyContentItf>[];
+    answers: UserAnswerItf<AnswerContentItf>[];
 };
 
 const QuestionsResultDemonstrator = ({ questions, answers }: Props) => {
@@ -25,14 +25,14 @@ const QuestionsResultDemonstrator = ({ questions, answers }: Props) => {
     return (
         <div className="grid grid-cols-10 gap-1 px-2 py-1">
             {questions.map((question) => (
-                <div
+                <button
                     className={`w-4 h-4 ${
                         getCorrectStatus(question)
-                            ? "bg-green-400"
-                            : "bg-red-400"
+                            ? "bg-green-400 hover:bg-green-500"
+                            : "bg-red-400 hover:bg-red-500"
                     } rounded-full`}
                     key={question.id}
-                ></div>
+                ></button>
             ))}
         </div>
     );
