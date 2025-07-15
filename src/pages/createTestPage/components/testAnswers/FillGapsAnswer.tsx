@@ -1,10 +1,9 @@
-import { ChangeEvent, useEffect, useState } from "react";
 import {
     FillGapsAnswerItf,
     FillGapsQuestionItf,
 } from "../../../../types/types";
-import Input from "../../../../components/elements/Input";
 import HtmlDisplay from "../../../../components/elements/HtmlDisplay";
+import TextFillWithInputs from "./TextFillWithInputs";
 
 type FillGapsAnswerProps = {
     content: FillGapsQuestionItf;
@@ -17,48 +16,30 @@ const FillGapsAnswer = ({
     onProvideAnswer,
     reset,
 }: FillGapsAnswerProps) => {
-    const [gaps, setGaps] = useState<string[]>(
-        content.answer?.gaps || Array(content.num_gaps).fill("")
-    );
-
-    const handleFillGap = (e: ChangeEvent<HTMLInputElement>) => {
-        if (e.target.value) {
-            let updatedGaps = [...gaps];
-            let index = parseInt(e.target.name.split("-")[1]) - 1;
-            updatedGaps[index] = e.target.value;
-            setGaps(updatedGaps);
-            onProvideAnswer({ ...content.answer, gaps: updatedGaps });
-        }
+    const handleChangeAnswers = (answers: Record<string, string>) => {
+        onProvideAnswer({
+            gaps: Object.keys(answers).map((key) => ({
+                id: key,
+                text: answers[key],
+            })),
+        });
     };
-
-    useEffect(() => {
-        if (reset === true)
-            setGaps(content.answer?.gaps || Array(content.num_gaps).fill(""));
-    }, [reset]);
 
     return (
         <>
-            <HtmlDisplay htmlContent={content.text.replaceAll("***", "___")} />
-            <div className="space-y-1 mt-2">
-                {[...Array(content.num_gaps)].map((num, index) => (
-                    <div className="flex gap-3 items-end ps-2" key={index + 1}>
-                        <label
-                            htmlFor={`gap${index + 1}`}
-                            className="text-nowrap"
-                        >
-                            Gap {index + 1}:
-                        </label>
-                        <Input
-                            type="text"
-                            name={`gap-${index + 1}`}
-                            value={gaps[index]}
-                            id={`gap-${index + 1}`}
-                            onChange={handleFillGap}
-                            className="grow"
-                        />
-                    </div>
-                ))}
-            </div>
+            <HtmlDisplay htmlContent={content.text} />
+            <TextFillWithInputs
+                doc={JSON.parse(content.json_text)}
+                method={content.fill_method}
+                words={content.given_words}
+                onAnswersChange={handleChangeAnswers}
+                givenAnswers={content.answer?.gaps.reduce<
+                    Record<string, string>
+                >((acc, gap, index) => {
+                    acc[`gap-${index + 1}`] = gap.text;
+                    return acc;
+                }, {})}
+            />
         </>
     );
 };

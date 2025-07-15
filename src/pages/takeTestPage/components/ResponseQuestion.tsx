@@ -29,9 +29,7 @@ const ResponseQuestion = ({ question }: ResponseQuestionProps) => {
 
     return (
         <>
-            <HtmlDisplay
-                htmlContent={question.content!.text.replaceAll("***", "___")}
-            />
+            <HtmlDisplay htmlContent={question.content!.text} />
             <textarea
                 id="response"
                 name="response"
