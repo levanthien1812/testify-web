@@ -1,7 +1,6 @@
 import HtmlDisplay from "../../../../components/elements/HtmlDisplay";
 import RadioList from "../../../../components/elements/RadioList";
 import {
-    ResponseQuestionItf,
     TrueFalseAnswerItf,
     TrueFalseQuestionItf,
 } from "../../../../types/types";
@@ -22,12 +21,14 @@ const TrueFalseAnswer = ({
             <HtmlDisplay htmlContent={content.text} />
 
             <RadioList
-                name="is_true"
+                name={`${content.id}_is_true`}
                 options={[
                     { value: "true", label: "True" },
                     { value: "false", label: "False" },
                 ]}
-                selectedValue={String(content.answer?.is_true) || null}
+                selectedValue={
+                    content.answer ? `${content.answer.is_true}` : null
+                }
                 onChange={(is_true) => {
                     onProvideAnswer({
                         ...content.answer,

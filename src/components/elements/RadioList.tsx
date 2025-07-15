@@ -25,26 +25,23 @@ const RadioList = ({
 }: RadioListProps) => {
     return (
         <div className={"w-full mt-2"}>
-            <div className={`flex gap-4${className}`}>
+            <div className={`flex gap-4 ${className}`}>
                 {options.map((option) => (
                     <div key={option.value} className="flex items-center">
                         <input
                             type="radio"
-                            id={`${name}-${option.value}`}
+                            id={`${option.value}`}
                             name={name}
                             value={option.value}
                             checked={
-                                selectedValue
+                                selectedValue !== undefined
                                     ? selectedValue === option.value
                                     : false
                             }
                             onChange={() => onChange(option.value)}
                             className="text-orange-600 focus:ring-orange-500 border-gray-300"
                         />
-                        <label
-                            htmlFor={`${name}-${option.value}`}
-                            className="ml-1"
-                        >
+                        <label htmlFor={`${option.value}`} className="ml-1">
                             {option.label}
                         </label>
                     </div>

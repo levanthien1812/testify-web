@@ -1,11 +1,11 @@
-import { useCallback, useMemo } from "react";
+import { useMemo } from "react";
 import { FillGapsAnswerItf, FillGapsQuestionItf } from "../../../types/types";
-import Input from "../../../components/elements/Input";
 import {
     FILL_GAP_INDICATOR,
     USER_ANSWER_STATUS,
 } from "../../../config/constants/tests";
 import HtmlDisplay from "../../../components/elements/HtmlDisplay";
+import TextFillWithInputs from "../../createTestPage/components/testAnswers/TextFillWithInputs";
 
 type FillGapsAnswerProps = {
     questionContent: FillGapsQuestionItf;
@@ -18,23 +18,6 @@ const FillGapsAnswer = ({
     answerContent,
     answerStatus,
 }: FillGapsAnswerProps) => {
-    const makerAnswer = questionContent.answer?.gaps;
-    const userAnswer = answerContent?.gaps;
-
-    const getLabelClasses = useCallback(
-        (index: number) => {
-            if (!makerAnswer || !userAnswer)
-                return "border-gray-500 text-black";
-
-            if (makerAnswer[index] === userAnswer[index])
-                return "border-green-600 text-blue";
-            if (makerAnswer[index] !== userAnswer[index])
-                return "border-red-600 text-red";
-            return "border-gray-500 text-black";
-        },
-        [answerStatus, makerAnswer, userAnswer]
-    );
-
     const textReplacements = useMemo(() => {
         if (!questionContent.answer) return "";
 
@@ -45,7 +28,7 @@ const FillGapsAnswer = ({
                 <span key={index}>
                     {" "}
                     <span className="text-white underline font-bold">
-                        {questionContent.answer?.gaps?.[index - 1]}
+                        {questionContent.answer?.gaps?.[index - 1].text}
                     </span>{" "}
                     <span>{subString}</span>
                 </span>
@@ -57,30 +40,25 @@ const FillGapsAnswer = ({
 
     return (
         <>
-            <HtmlDisplay
-                htmlContent={questionContent.text.replaceAll("***", "___")}
-            />
+            <HtmlDisplay htmlContent={questionContent.text} />
 
-            <div className="space-y-1 mt-2">
-                {[...Array(questionContent.num_gaps)].map((num, index) => (
-                    <div className="flex gap-3 items-end ps-2" key={index + 1}>
-                        <label
-                            htmlFor={`gap${index + 1}`}
-                            className="text-nowrap"
-                        >
-                            Gap {index + 1}:
-                        </label>
-                        <Input
-                            type="text"
-                            name={`gap-${index + 1}`}
-                            value={userAnswer?.[index] || ""}
-                            id={`gap-${index + 1}`}
-                            className={`border ${getLabelClasses(index)} grow`}
-                            readOnly
-                        />
-                    </div>
-                ))}
-            </div>
+            <TextFillWithInputs
+                doc={JSON.parse(questionContent.json_text)}
+                method={questionContent.fill_method}
+                words={questionContent.given_words}
+                givenAnswers={
+                    answerContent
+                        ? answerContent.gaps.reduce<Record<string, string>>(
+                              (acc, gap, index) => {
+                                  acc[`gap-${index + 1}`] = gap.text;
+                                  return acc;
+                              },
+                              {}
+                          )
+                        : undefined
+                }
+                readonly={true}
+            />
 
             {questionContent.answer && (
                 <div className="mt-2 bg-green-500 p-2">

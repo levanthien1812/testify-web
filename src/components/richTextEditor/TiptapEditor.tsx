@@ -8,7 +8,7 @@ import Paragraph from "@tiptap/extension-paragraph";
 import Image from "@tiptap/extension-image";
 import { EditorProvider, useCurrentEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { MouseEventHandler, ReactNode, useEffect, useState } from "react";
+import { MouseEventHandler, ReactNode, useEffect } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faA,
@@ -23,6 +23,7 @@ import {
     faStrikethrough,
     faUndo,
 } from "@fortawesome/free-solid-svg-icons";
+import { InputPlaceholder } from "./InputPlaceholder";
 
 type EditorButtonProps = {
     children: ReactNode;
@@ -75,10 +76,15 @@ const MenuBar = ({
             {withInsertGapButton && (
                 <EditorButton
                     onClick={() =>
-                        editor.chain().focus().insertContent("___").run()
+                        editor.chain().focus().insertInputPlaceholder().run()
                     }
                     disabled={
-                        !editor.can().chain().focus().insertContent("___").run()
+                        !editor
+                            .can()
+                            .chain()
+                            .focus()
+                            .insertInputPlaceholder()
+                            .run()
                     }
                 >
                     Insert Gap
@@ -181,6 +187,7 @@ const extensions = [
     ListItem,
     Paragraph,
     Text,
+    InputPlaceholder,
     StarterKit.configure({
         bulletList: {
             keepMarks: true,
@@ -196,6 +203,7 @@ const extensions = [
 type TextEditorProps = {
     content: string;
     setContent: (content: string) => void;
+    setJson?: (json: string) => void;
     withInsertGapButton?: boolean;
 };
 
@@ -222,6 +230,7 @@ const editorClasses = `max-w-none border border-black outline-none px-4 py-1 foc
 const TextEditor = ({
     content,
     setContent,
+    setJson,
     withInsertGapButton = false,
 }: TextEditorProps) => {
     return (
@@ -231,6 +240,9 @@ const TextEditor = ({
             content={content}
             onUpdate={(e) => {
                 setContent(e.editor.getHTML());
+                if (setJson) {
+                    setJson(JSON.stringify(e.editor.getJSON()));
+                }
             }}
             editorProps={{
                 attributes: {

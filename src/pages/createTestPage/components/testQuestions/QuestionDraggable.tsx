@@ -126,17 +126,6 @@ const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
                     />
                 </span>
                 <p>Question {question.order}</p>
-                {/* {!question.is_content_provided ? (
-                    <FontAwesomeIcon
-                        icon={faCircleExclamation}
-                        className="text-yellow-500 text-sm"
-                    />
-                ) : (
-                    <FontAwesomeIcon
-                        icon={faCircleCheck}
-                        className="text-green-500 text-sm"
-                    />
-                )} */}
                 <span className="bg-teal-500 py-1 min-w-6 w-fit px-1 text-center rounded-md text-white leading-none ml-auto">
                     {question.score}
                 </span>

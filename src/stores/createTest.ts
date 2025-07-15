@@ -8,6 +8,7 @@ import {
     INITIAL_PART,
     INITIAL_QUESTION,
     INITIAL_OPTIONS,
+    INITIAL_PASSCODE,
 } from "../config/constants/initialValues";
 import {
     CREATE_TEST_STEPS,
@@ -621,6 +622,7 @@ const createTestSlice = createSlice({
                 action.payload.test.share_option || SHARE_OPTIONS.RESTRICTED;
             state.testId = action.payload.test.id;
             state.status = action.payload.test.status;
+            state.passcode = action.payload.test.passcode || INITIAL_PASSCODE;
 
             state.testParts = action.payload?.parts;
             state.testParts = state.testParts.map((part) => ({

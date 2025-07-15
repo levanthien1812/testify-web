@@ -17,6 +17,7 @@ import {
     MatchingQuestionItf,
     MultipleChoiceAnswerItf,
     MultipleChoiceQuestionItf,
+    PasscodeItf,
     QuestionContentItf,
     QuestionItf,
     ResponseAnswerItf,
@@ -30,6 +31,7 @@ import {
 } from "../../types/types";
 import { formatTimezone } from "../../utils/time";
 import {
+    FILL_GAP_METHOD,
     PAGINATION_MODE,
     PASSCODE_VALID_UNIT,
     PUBLIC_ANSWERS_OPTIONS,
@@ -377,6 +379,9 @@ export const INITIAL_MULTIPLE_CHOICES_QUESTION: MultipleChoiceQuestionItf = {
 export const INITIAL_FILL_GAPS_QUESTION: FillGapsQuestionItf = {
     text: "",
     num_gaps: 1,
+    fill_method: FILL_GAP_METHOD.DRAG_DROP,
+    json_text: "",
+    given_words: [],
 };
 
 export const INITIAL_MATCHING_QUESTION: MatchingQuestionItf = {
@@ -489,3 +494,11 @@ export const INITIAL_TAKERS_COLUMN_FILTERS: ColumnFiltersState = [
         value: "",
     },
 ];
+
+export const INITIAL_PASSCODE: PasscodeItf = {
+    code: "",
+    valid_till: new Date().toISOString(),
+    valid_in: 0,
+    valid_unit: PASSCODE_VALID_UNIT.MINUTES,
+    method: "",
+};

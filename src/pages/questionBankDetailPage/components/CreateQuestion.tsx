@@ -13,7 +13,7 @@ import {
     ResponseQuestionBodyItf,
     TrueFalseQuestionBodyItf,
 } from "../../../types/types";
-import { Control, useForm } from "react-hook-form";
+import { Control, useForm, UseFormSetValue } from "react-hook-form";
 import { getInitialQuestionContent } from "../../../utils/mapping";
 import { useMutation } from "react-query";
 import { createQuestion, updateQuestion } from "../../../services/questionBank";
@@ -231,6 +231,11 @@ const CreateQuestion = ({
                                             >
                                         }
                                         errors={errors}
+                                        setValue={
+                                            setValue as UseFormSetValue<
+                                                QuestionBodyItf<FillGapsQuestionBodyItf>
+                                            >
+                                        }
                                     />
                                 )}
                             {allValues.content &&

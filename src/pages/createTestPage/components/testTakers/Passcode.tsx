@@ -9,17 +9,10 @@ import { useDispatch } from "react-redux";
 import { createTestActions } from "../../../../stores/createTest";
 import Input from "../../../../components/elements/Input";
 import Button from "../../../../components/elements/Button";
-import { useMutation, useQuery } from "react-query";
-import {
-    MUTATION_KEYS,
-    QUERY_KEYS,
-} from "../../../../config/constants/queryMutationKeys";
-import { generatePasscode, getPasscode } from "../../../../services/test";
-import {
-    PASSCODE_VALID_UNIT,
-    SHARE_OPTIONS,
-} from "../../../../config/constants/tests";
-import Loading from "../../../../components/loadings/Loading";
+import { useMutation } from "react-query";
+import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
+import { generatePasscode } from "../../../../services/test";
+import { PASSCODE_VALID_UNIT } from "../../../../config/constants/tests";
 import { useAppSelector } from "../../../../hooks/hooks";
 import { format } from "date-fns";
 
@@ -39,22 +32,6 @@ const Passcode = () => {
         );
         dispatch(validate());
     };
-
-    const { isLoading: isLoadingPasscode } = useQuery({
-        queryFn: async () => {
-            const data = await getPasscode(testId!);
-
-            return data.passcode;
-        },
-        queryKey: [QUERY_KEYS.GET_PASSCODE, { testId: testId }],
-        onSuccess: (data) => {
-            if (!data) return;
-            dispatch(setPasscode(data));
-        },
-        onError: () => {},
-        enabled: shareOption === SHARE_OPTIONS.PASSCODE,
-        retry: false,
-    });
 
     const { mutate, isLoading: isGeneratingPasscode } = useMutation({
         mutationFn: async () => {
@@ -102,10 +79,6 @@ const Passcode = () => {
                 />
             </div>
 
-            <Loading
-                isLoading={isLoadingPasscode}
-                loadingText={{ text: "Loading passcode info..." }}
-            />
             {passcode.method === PASSCODE_METHOD.AUTO_GENERATED && (
                 <div>
                     <div className="flex gap-4 items-end mt-4">

@@ -1,0 +1,64 @@
+{
+    "type": "doc",
+    "content": [
+        {
+            "type": "paragraph",
+            "content": [
+                {
+                    "type": "text",
+                    "text": "Sto "
+                },
+                {
+                    "type": "inputPlaceholder",
+                    "attrs": {
+                        "id": "gap-1254"
+                    }
+                },
+                {
+                    "type": "text",
+                    "text": " turpis "
+                },
+                {
+                    "type": "inputPlaceholder",
+                    "attrs": {
+                        "id": "gap-4811"
+                    }
+                },
+                {
+                    "type": "text",
+                    "text": " ventito "
+                },
+                {
+                    "type": "inputPlaceholder",
+                    "attrs": {
+                        "id": "gap-1901"
+                    }
+                },
+                {
+                    "type": "text",
+                    "text": " dicta est "
+                },
+                {
+                    "type": "inputPlaceholder",
+                    "attrs": {
+                        "id": "gap-1500"
+                    }
+                },
+                {
+                    "type": "text",
+                    "text": " dolorum "
+                },
+                {
+                    "type": "inputPlaceholder",
+                    "attrs": {
+                        "id": "gap-7331"
+                    }
+                },
+                {
+                    "type": "text",
+                    "text": ". "
+                }
+            ]
+        }
+    ]
+}

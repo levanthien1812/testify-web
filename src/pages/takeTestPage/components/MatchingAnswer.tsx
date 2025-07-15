@@ -75,7 +75,7 @@ const MatchingAnswer = ({
 
             <div className="mt-2">
                 <p>Matchings:</p>
-                <div className="border border-gray-500 px-4 py-2 space-y-2">
+                <div className="border border-gray-500 px-2 py-2 space-y-2">
                     {userAnswer &&
                         userAnswer.map((matching) => (
                             <div
@@ -117,12 +117,12 @@ const MatchingAnswer = ({
                     <p className="text-white">Correct answer:</p>
                     <div className="text-white">
                         {questionContent.answer.matchings.length > 0 && (
-                            <div className="border border-white px-4 py-2 space-y-2">
+                            <div className="space-y-2">
                                 {questionContent.answer.matchings.map(
                                     (matching) => (
                                         <div
                                             key={matching.left}
-                                            className="px-4 py-1 grid grid-cols-8 items-center gap-1 relative border border-white text-white"
+                                            className="px-4 py-1 grid grid-cols-7 items-center gap-1 relative border border-white text-white"
                                         >
                                             <span className="col-span-3">
                                                 {

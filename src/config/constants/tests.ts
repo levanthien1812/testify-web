@@ -206,3 +206,19 @@ export const MILISECONDS_BY_UNIT = {
 };
 
 export const FILL_GAP_INDICATOR = "___";
+
+export enum FILL_GAP_METHOD {
+    INPUT = "INPUT",
+    DRAG_DROP = "DRAG_DROP",
+}
+
+export const FILL_GAP_METHOD_OPTIONS = [
+    {
+        label: "Input",
+        value: FILL_GAP_METHOD.INPUT,
+    },
+    {
+        label: "Drag and drop",
+        value: FILL_GAP_METHOD.DRAG_DROP,
+    },
+];

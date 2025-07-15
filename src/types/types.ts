@@ -1,5 +1,6 @@
 import { password } from "./../validations/custom";
 import {
+    FILL_GAP_METHOD,
     PASSCODE_VALID_UNIT,
     QUESTION_LEVEL,
     ROLES,
@@ -146,6 +147,11 @@ export interface MultipleChoiceQuestionItf
 export interface FillGapsQuestionBodyItf {
     text: string;
     num_gaps: number;
+    json_text: string;
+    fill_method: FILL_GAP_METHOD;
+    given_words?: {
+        text: string;
+    }[];
 }
 
 export interface FillGapsQuestionItf
@@ -228,7 +234,8 @@ export type QuestionBodyContentItf =
     | MultipleChoiceQuestionBodyItf
     | FillGapsQuestionBodyItf
     | MatchingQuestionBodyItf
-    | ResponseQuestionBodyItf;
+    | ResponseQuestionBodyItf
+    | TrueFalseQuestionBodyItf;
 
 export interface QuestionBodyItf<T extends QuestionBodyContentItf> {
     score?: number;
@@ -255,7 +262,10 @@ export interface MultipleChoiceAnswerItf extends BaseAnswerItf {
     options: string[];
 }
 export interface FillGapsAnswerItf extends BaseAnswerItf {
-    gaps: string[];
+    gaps: {
+        id: string;
+        text: string;
+    }[];
 }
 export interface MatchingAnswerItf extends BaseAnswerItf {
     matchings: {
@@ -369,4 +379,18 @@ export interface TakerGroupBodyItf {
 export interface TakerGroupItf extends TakerGroupBodyItf {
     id: string;
     maker_id: string;
+}
+
+export type TipTapTextType = "text" | "inputPlaceholder";
+
+export interface TipTapDoc {
+    type: "doc";
+    content: {
+        type: "paragraph";
+        content: {
+            type: TipTapTextType;
+            text: string;
+            attrs?: Record<string, any>;
+        }[];
+    }[];
 }

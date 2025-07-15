@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import {
     FillGapsQuestionBodyItf,
     MatchingQuestionBodyItf,
@@ -28,7 +28,7 @@ import ResponseQuestion from "./ResponseQuestion";
 import Button from "../../../../components/elements/Button";
 import Input from "../../../../components/elements/Input";
 import Select from "../../../../components/elements/Select";
-import { Control, useForm } from "react-hook-form";
+import { Control, useForm, UseFormSetValue } from "react-hook-form";
 import { createTestActions } from "../../../../stores/createTest";
 import { TOAST_MESSAGES } from "../../../../config/constants/toasts";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
@@ -184,6 +184,7 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
         });
 
     const onSubmit = (data: QuestionBodyItf<QuestionBodyContentItf>) => {
+        console.log(data);
         if (!question?.id) {
             createQuestionMutate(data);
         } else {
@@ -383,6 +384,11 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
                                                     >
                                                 }
                                                 errors={errors}
+                                                setValue={
+                                                    setValue as UseFormSetValue<
+                                                        QuestionBodyItf<FillGapsQuestionBodyItf>
+                                                    >
+                                                }
                                             />
                                         )}
                                     {question?.content &&
