@@ -1,7 +1,9 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
     FillGapsQuestionBodyItf,
+    FillGapsQuestionItf,
     MatchingQuestionBodyItf,
+    MatchingQuestionItf,
     MultipleChoiceQuestionBodyItf,
     QuestionBodyContentItf,
     QuestionBodyItf,
@@ -34,6 +36,7 @@ import { TOAST_MESSAGES } from "../../../../config/constants/toasts";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
 import { useDispatch } from "react-redux";
 import {
+    ALLOWED_PARTIAL_SCORING_TYPES,
     QUESTION_TYPE,
     QUESTION_TYPE_LABEL,
     TEST_LEVEL,
@@ -46,6 +49,7 @@ import { useAppSelector } from "../../../../hooks/hooks";
 import TrueFalseQuestion from "./TrueFalseQuestion";
 import ImportQuestionFromAnotherBank from "../../../questionBankDetailPage/components/ImportQuestionFromAnotherBank";
 import { QuestionInBankItf } from "../../../../types/questionBank";
+import Checkbox from "../../../../components/elements/Checkbox";
 
 type QuestionProps = {
     question: QuestionItf<QuestionContentItf>;
@@ -94,6 +98,7 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
                     type: allValues?.type,
                     level: allValues?.level,
                     score: Number(allValues?.score),
+                    partial_scoring: allValues?.partial_scoring,
                 },
             })
         );
@@ -103,6 +108,7 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
         allValues?.type,
         allValues?.level,
         allValues?.score,
+        allValues?.partial_scoring,
         part?.id,
         question?.order,
         dispatch,
@@ -242,6 +248,24 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
         setIsImportingFromBank(false);
     };
 
+    const scorePerCorrectAnswer = useMemo(() => {
+        switch (question.type) {
+            case QUESTION_TYPE.FILL_IN_THE_GAPS:
+                return (
+                    question.score /
+                    (question.content as FillGapsQuestionItf).num_gaps
+                ).toFixed(2);
+
+            case QUESTION_TYPE.MATCHING:
+                return (
+                    question.score /
+                    (question.content as MatchingQuestionItf).left_items.length
+                ).toFixed(2);
+            default:
+                return question.score.toFixed(2);
+        }
+    }, [question]);
+
     return (
         <>
             <QuestionDraggable
@@ -328,6 +352,28 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
                                             label={{ text: "Level" }}
                                         />
                                     </div>
+                                    {ALLOWED_PARTIAL_SCORING_TYPES.includes(
+                                        question.type
+                                    ) && (
+                                        <div className="">
+                                            <Checkbox
+                                                label={{
+                                                    text: "Partial scoring",
+                                                }}
+                                                {...register("partial_scoring")}
+                                                disabled={
+                                                    !editibility.TEST_QUESTIONS
+                                                        .partial_scoring
+                                                }
+                                            />
+                                        </div>
+                                    )}
+                                    {question.partial_scoring && (
+                                        <div className="text-sm bg-teal-600 text-white px-2 py-1">
+                                            {scorePerCorrectAnswer} point per
+                                            correct answer item
+                                        </div>
+                                    )}
                                     {question?.content &&
                                         editibility.TEST_QUESTIONS.content && (
                                             <div className="grow flex flex-col justify-end gap-1">

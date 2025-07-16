@@ -1,5 +1,9 @@
 import { useMemo } from "react";
-import { FillGapsAnswerItf, FillGapsQuestionItf } from "../../../types/types";
+import {
+    FillGapsAnswerItf,
+    FillGapsQuestionItf,
+    GivenAnswersTextFill,
+} from "../../../types/types";
 import {
     FILL_GAP_INDICATOR,
     USER_ANSWER_STATUS,
@@ -48,9 +52,17 @@ const FillGapsAnswer = ({
                 words={questionContent.given_words}
                 givenAnswers={
                     answerContent
-                        ? answerContent.gaps.reduce<Record<string, string>>(
+                        ? answerContent.gaps.reduce<GivenAnswersTextFill>(
                               (acc, gap, index) => {
-                                  acc[`gap-${index + 1}`] = gap.text;
+                                  acc[`gap-${index + 1}`] = {
+                                      value: gap.text,
+                                      status:
+                                          gap.is_correct === undefined
+                                              ? "normal"
+                                              : gap.is_correct === true
+                                              ? "correct"
+                                              : "wrong",
+                                  };
                                   return acc;
                               },
                               {}

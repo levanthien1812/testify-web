@@ -1,4 +1,8 @@
-import { FillGapsQuestionItf, QuestionItf } from "../../../types/types";
+import {
+    FillGapsQuestionItf,
+    GivenAnswersTextFill,
+    QuestionItf,
+} from "../../../types/types";
 import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../../stores/takeTest";
 import HtmlDisplay from "../../../components/elements/HtmlDisplay";
@@ -11,14 +15,14 @@ type FillGapsQuestionProps = {
 const FillGapsQuestion = ({ question }: FillGapsQuestionProps) => {
     const dispatch = useDispatch();
 
-    const handleChangeAnswers = (answers: Record<string, string>) => {
+    const handleChangeAnswers = (answers: GivenAnswersTextFill) => {
         dispatch(
             takeTestActions.addAnswer({
                 question_id: question.id!,
                 content: {
                     gaps: Object.keys(answers).map((key) => ({
                         id: key,
-                        text: answers[key],
+                        text: answers[key].value,
                     })),
                 },
             })

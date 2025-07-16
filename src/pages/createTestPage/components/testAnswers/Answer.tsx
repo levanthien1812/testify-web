@@ -25,6 +25,7 @@ import { TOAST_MESSAGES } from "../../../../config/constants/toasts";
 import TrueFalseAnswer from "./TrueFalseAnswer";
 import TextEditor from "../../../../components/richTextEditor/TiptapEditor";
 import HtmlDisplay from "../../../../components/elements/HtmlDisplay";
+import { getRound } from "../../../../utils/primitives";
 
 const Answer: React.FC<{
     question: QuestionItf<QuestionContentItf>;
@@ -117,7 +118,10 @@ const Answer: React.FC<{
                     } w-fit`}
                 >
                     Question {question.order}{" "}
-                    <span className="italic">({question.score} points)</span> :
+                    <span className="italic">
+                        ({getRound(question.score)} points)
+                    </span>{" "}
+                    :
                 </p>
                 {question?.content?.answer?.is_saved && (
                     <p className="text-orange-600 italic ms-1">Saved</p>

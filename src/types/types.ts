@@ -228,6 +228,7 @@ export interface QuestionItf<T extends QuestionContentItf> {
     content?: T;
     is_saved?: boolean;
     is_content_provided?: boolean;
+    partial_scoring: boolean;
 }
 
 export type QuestionBodyContentItf =
@@ -243,6 +244,7 @@ export interface QuestionBodyItf<T extends QuestionBodyContentItf> {
     type: QUESTION_TYPE;
     order?: number;
     part_id?: string;
+    partial_scoring?: boolean;
     content: T;
 }
 
@@ -265,12 +267,14 @@ export interface FillGapsAnswerItf extends BaseAnswerItf {
     gaps: {
         id: string;
         text: string;
+        is_correct?: boolean;
     }[];
 }
 export interface MatchingAnswerItf extends BaseAnswerItf {
     matchings: {
         left: string;
         right: string;
+        is_correct?: boolean;
     }[];
 }
 export interface ResponseAnswerItf extends BaseAnswerItf {
@@ -394,3 +398,8 @@ export interface TipTapDoc {
         }[];
     }[];
 }
+
+export type GivenAnswersTextFill = Record<
+    string,
+    { value: string; status?: "normal" | "correct" | "wrong" }
+>;

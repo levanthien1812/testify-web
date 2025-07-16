@@ -23,6 +23,7 @@ import { useDispatch } from "react-redux";
 import { viewTestActions } from "../../../stores/viewTest";
 import { useAppSelector } from "../../../hooks/hooks";
 import Paginator from "../../../components/table/Paginator";
+import { getRound } from "../../../utils/primitives";
 
 type SubmissionsTableProps = {
     submissions: SubmissionItf[];
@@ -102,6 +103,9 @@ const SubmissionsTable = ({ submissions, refetch }: SubmissionsTableProps) => {
                 header: "Score",
                 accessorKey: "score",
                 sortingFn: "alphanumeric",
+                cell: ({ row }) => {
+                    return getRound(row.original.score || 0);
+                },
                 filterFn: "inNumberRange",
             },
         ],
@@ -110,7 +114,6 @@ const SubmissionsTable = ({ submissions, refetch }: SubmissionsTableProps) => {
 
     const [enableFilter, setEnableFilter] = useState(false);
     const [filters, setFilters] = useState<ColumnFiltersState>([]);
-    const [selectedTakerId, setSelectedTakerId] = useState<string | null>();
     const { currentSubmissionBeingViewed } = useAppSelector(
         (state) => state.viewTest
     );
@@ -140,8 +143,6 @@ const SubmissionsTable = ({ submissions, refetch }: SubmissionsTableProps) => {
         },
         onColumnFiltersChange: setFilters,
     });
-
-    // console.log(table.getHeaderGroups()[0].headers[0].column);
 
     return (
         <div>

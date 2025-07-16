@@ -15,6 +15,7 @@ import { useAppSelector } from "../../../hooks/hooks";
 import QuestionsResultDemonstrator from "./QuestionsResultDemonstrator";
 import Loading from "../../../components/loadings/Loading";
 import { AnswerContentItf, UserAnswerItf } from "../../../types/types";
+import { getRound } from "../../../utils/primitives";
 
 const TakerInfoItem = ({
     label,
@@ -167,7 +168,7 @@ const TakerSubmissionDetail = () => {
                             />
                             <TakerInfoItem
                                 label="Score"
-                                text={submission.score || 0}
+                                text={getRound(submission.score || 0)}
                                 className={
                                     isSticky ? "col-span-4" : "col-span-3"
                                 }
@@ -191,22 +192,29 @@ const TakerSubmissionDetail = () => {
                     )}
                     {submissionAnswers &&
                         test &&
-                        test.parts.every((part) => part.questions) &&
-                        test.parts.map((part) => (
-                            <div className="mt-4 flex flex-col items-center justify-center border border-dashed border-gray-400">
-                                <p>
-                                    Part {part.order} -{" "}
-                                    <span className="font-bold">
-                                        {calculateTotalPartScore(part.id!)}
-                                    </span>{" "}
-                                    pts
-                                </p>
-                                <QuestionsResultDemonstrator
-                                    questions={part.questions!}
-                                    answers={submissionAnswers}
-                                />
+                        test.parts.every((part) => part.questions) && (
+                            <div className="space-y-1">
+                                {test.parts.map((part) => (
+                                    <div className="mt-4 flex flex-col items-center justify-center border border-dashed border-gray-400">
+                                        <p>
+                                            Part {part.order} -{" "}
+                                            <span className="font-bold">
+                                                {getRound(
+                                                    calculateTotalPartScore(
+                                                        part.id!
+                                                    ) || 0
+                                                )}
+                                            </span>{" "}
+                                            pts
+                                        </p>
+                                        <QuestionsResultDemonstrator
+                                            questions={part.questions!}
+                                            answers={submissionAnswers}
+                                        />
+                                    </div>
+                                ))}
                             </div>
-                        ))}
+                        )}
                     {submissionAnswers && (
                         <div className="mt-4 flex justify-center border border-dashed border-gray-400">
                             <TestQuestionsAndAnswers

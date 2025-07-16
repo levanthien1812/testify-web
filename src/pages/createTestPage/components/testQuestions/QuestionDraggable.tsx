@@ -9,6 +9,7 @@ import { useAppSelector } from "../../../../hooks/hooks";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { questionTypeToIcon } from "../../../../utils/mapping";
 import HtmlDisplay from "../../../../components/elements/HtmlDisplay";
+import { getRound } from "../../../../utils/primitives";
 
 type QuestionDraggableProps = {
     question: QuestionItf<QuestionContentItf>;
@@ -127,7 +128,7 @@ const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
                 </span>
                 <p>Question {question.order}</p>
                 <span className="bg-teal-500 py-1 min-w-6 w-fit px-1 text-center rounded-md text-white leading-none ml-auto">
-                    {question.score}
+                    {getRound(question.score)}
                 </span>
             </div>
             {question.content && question.content.text && (
