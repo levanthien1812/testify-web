@@ -184,6 +184,7 @@ export interface EditabilityConfig {
         type: boolean;
         order: boolean;
         content: boolean;
+        partial_scoring: boolean;
     };
     [CREATE_TEST_STEPS.TEST_ANSWERS]: {};
     [CREATE_TEST_STEPS.TEST_TAKERS]: {

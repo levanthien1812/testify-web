@@ -10,6 +10,7 @@ import { getSubmissionAnswers } from "../../../services/test";
 import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../../stores/takeTest";
 import { useAppSelector } from "../../../hooks/hooks";
+import { getRound } from "../../../utils/primitives";
 
 type SubmissionProps = {
     submission: SubmissionItf;
@@ -63,7 +64,7 @@ const Submission = ({ submission }: SubmissionProps) => {
 
             {submission.is_evaluated && (
                 <>
-                    <p>Score: {submission.score}</p>
+                    <p>Score: {getRound(submission.score || 0)}</p>
                     <p>Correct answers: {submission.correct_answers}</p>
                     <p>Wrong answers: {submission.wrong_answers}</p>
                 </>

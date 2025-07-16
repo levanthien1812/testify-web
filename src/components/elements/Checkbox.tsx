@@ -36,9 +36,9 @@ const Checkbox = forwardRef<HTMLInputElement, CheckboxProps>((props, ref) => {
                     id={props.name}
                     // checked={props.checked}
                     className={`border border-gray-500 ${
-                        sizing === "md" && "w-5 h-5"
+                        sizing === "md" && "w-4 h-4"
                     } ${
-                        sizing === "sm" && "w-4 h-4"
+                        sizing === "sm" && "w-3 h-3"
                     } focus:border-orange-600 accent-orange-500 flex items-center justify-center rounded-none ${className}`}
                     {...rest}
                     ref={ref}

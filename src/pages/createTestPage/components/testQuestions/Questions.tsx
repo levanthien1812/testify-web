@@ -9,6 +9,7 @@ import Answer from "../testAnswers/Answer";
 import Accordion from "../../../../components/accordions/Accordion";
 import { useAppSelector } from "../../../../hooks/hooks";
 import { setEqualHeight } from "../../../../utils/components";
+import { getRound } from "../../../../utils/primitives";
 
 const Questions: React.FC<{
     part?: TestPartItf;
@@ -60,7 +61,9 @@ const Questions: React.FC<{
                         title: {
                             text: `Part ${part.order}: ${part.name}`,
                             description: {
-                                text: `Score: ${part.score} | Questions: ${part.num_questions}`,
+                                text: `Score: ${getRound(
+                                    part.score
+                                )} | Questions: ${part.num_questions}`,
                             },
                         },
                     }}

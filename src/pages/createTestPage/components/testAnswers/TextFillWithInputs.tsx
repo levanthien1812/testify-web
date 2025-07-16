@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { TipTapDoc } from "../../../../types/types";
+import { GivenAnswersTextFill, TipTapDoc } from "../../../../types/types";
 import { FILL_GAP_METHOD } from "../../../../config/constants/tests";
 import InfoMessage from "../../../../components/elements/InfoMessage";
 
@@ -7,8 +7,8 @@ type Props = {
     doc: TipTapDoc;
     method: FILL_GAP_METHOD;
     words?: { text: string }[];
-    givenAnswers?: Record<string, string>;
-    onAnswersChange?: (answers: Record<string, string>) => void;
+    givenAnswers?: GivenAnswersTextFill;
+    onAnswersChange?: (answers: GivenAnswersTextFill) => void;
     readonly?: boolean;
 };
 
@@ -20,19 +20,21 @@ const TextFillWithInputs = ({
     onAnswersChange,
     givenAnswers,
 }: Props) => {
-    const [answers, setAnswers] = useState<Record<string, string>>(
+    const [answers, setAnswers] = useState<GivenAnswersTextFill>(
         givenAnswers || {}
     );
 
     const usedWords = Object.values(answers);
-    const unusedWords = words?.filter((word) => !usedWords.includes(word.text));
+    const unusedWords = words?.filter(
+        (word) => !usedWords.some((usedWord) => usedWord.value === word.text)
+    );
     const [draggingWord, setDraggingWord] = useState<string | null>(null);
 
     const handleDrop = (nodeId: string) => {
         if (draggingWord) {
             setAnswers({
                 ...answers,
-                [nodeId]: draggingWord,
+                [nodeId]: { value: draggingWord },
             });
         }
     };
@@ -40,7 +42,7 @@ const TextFillWithInputs = ({
     const handleRemove = (nodeId: string) => {
         setAnswers({
             ...answers,
-            [nodeId]: "",
+            [nodeId]: { value: "" },
         });
     };
 
@@ -49,6 +51,17 @@ const TextFillWithInputs = ({
             // onAnswersChange(answers);
         }
     }, [answers, onAnswersChange]);
+
+    const getInputClasses = (nodeId: string) => {
+        const answer = answers[nodeId];
+        if (!answer) return "bg-white";
+        if (answer.status === "correct") {
+            return "bg-green-50 border-green-500";
+        } else if (answer.status === "wrong") {
+            return "bg-red-50 border-red-500";
+        }
+        return "bg-white border-gray-500";
+    };
 
     return (
         <div className="space-y-2 mt-2">
@@ -64,7 +77,7 @@ const TextFillWithInputs = ({
                                         answers[
                                             node.attrs?.id ||
                                                 `gap-${nIndex + 1}`
-                                        ]
+                                        ]?.value
                                     }
                                     onChange={(e) =>
                                         setAnswers({
@@ -75,7 +88,9 @@ const TextFillWithInputs = ({
                                         })
                                     }
                                     id={node.attrs?.id}
-                                    className={`w-fit max-w-[120px] text-center px-2 py-0 outline-none border border-gray-300 text-nowrap ${
+                                    className={`w-fit max-w-[120px] text-center px-2 py-0 outline-none border ${getInputClasses(
+                                        node.attrs?.id || `gap-${nIndex + 1}`
+                                    )} text-nowrap ${
                                         readonly
                                             ? "pointer-events-none"
                                             : "focus:border-orange-500"

@@ -4,3 +4,7 @@ export const getNum = (number: any): number => {
     }
     return parseInt(number);
 };
+
+export const getRound = (number: Number, decimals: number = 2): number => {
+    return parseFloat(number.toFixed(decimals));
+};

@@ -36,6 +36,7 @@ import { QUESTION_TYPE } from "../../../config/constants/tests";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
 import { useAppSelector } from "../../../hooks/hooks";
 import TrueFalseAnswer from "./TrueFalseAnswer";
+import { getRound } from "../../../utils/primitives";
 
 type QuestionProps = {
     question: QuestionItf<QuestionContentItf>;
@@ -88,8 +89,8 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
     };
 
     const points = useMemo(() => {
-        if (userAnswer && Object.hasOwn(userAnswer, "score")) {
-            return `${userAnswer.score}/${question.score}`;
+        if (userAnswer && userAnswer.score !== undefined) {
+            return `${getRound(userAnswer.score)}/${question.score}`;
         }
         if (!userAnswer) {
             return `${0}/${question.score}`;

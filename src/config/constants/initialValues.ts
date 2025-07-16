@@ -143,6 +143,7 @@ export const DRAFT_EDITIBILITY_CONFIG: EditabilityConfig = {
         type: true,
         order: true,
         content: true,
+        partial_scoring: true,
     },
     [CREATE_TEST_STEPS.TEST_ANSWERS]: {},
     [CREATE_TEST_STEPS.TEST_TAKERS]: {
@@ -187,6 +188,7 @@ export const PUBLISHED_EDITABILITY_CONFIG: EditabilityConfig = {
         type: false,
         order: false,
         content: true,
+        partial_scoring: true,
     },
     [CREATE_TEST_STEPS.TEST_ANSWERS]: {},
     [CREATE_TEST_STEPS.TEST_TAKERS]: {
@@ -231,6 +233,7 @@ export const OPENED_EDITABILITY_CONFIG: EditabilityConfig = {
         type: false,
         order: false,
         content: true,
+        partial_scoring: true,
     },
     [CREATE_TEST_STEPS.TEST_ANSWERS]: {},
     [CREATE_TEST_STEPS.TEST_TAKERS]: {
@@ -275,6 +278,7 @@ export const CLOSED_EDITABILITY_CONFIG: EditabilityConfig = {
         type: false,
         order: false,
         content: false,
+        partial_scoring: false,
     },
     [CREATE_TEST_STEPS.TEST_ANSWERS]: {},
     [CREATE_TEST_STEPS.TEST_TAKERS]: {
@@ -425,6 +429,7 @@ export const INITIAL_QUESTION: QuestionItf<QuestionContentItf> = {
     test_id: "",
     type: QUESTION_TYPE.MULTIPLE_CHOICES,
     content: INITIAL_MULTIPLE_CHOICES_QUESTION,
+    partial_scoring: false,
 };
 
 export const INITIAL_QUESTION_IN_BANK: QuestionInBankItf<QuestionContentItf> = {

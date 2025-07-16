@@ -33,7 +33,7 @@ const MatchingAnswer = ({
     };
 
     const getClasses = useCallback(
-        (matching: { left: string; right: string }) => {
+        (matching: { left: string; right: string; is_correct?: boolean }) => {
             if (!makerAnswer && userAnswer) return "bg-gray-100 text-blue-600";
 
             if (makerAnswer && isCorrectMatching(matching))

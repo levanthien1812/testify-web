@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import {
     FillGapsQuestionBodyItf,
     QuestionBodyItf,
@@ -66,8 +66,6 @@ const FillGapsQuestion: React.FC<{
             setNewWord("");
         }
     };
-
-    useEffect(() => {}, [content]);
 
     return (
         <>
