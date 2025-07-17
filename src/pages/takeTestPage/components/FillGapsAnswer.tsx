@@ -10,6 +10,7 @@ import {
 } from "../../../config/constants/tests";
 import HtmlDisplay from "../../../components/elements/HtmlDisplay";
 import TextFillWithInputs from "../../createTestPage/components/testAnswers/TextFillWithInputs";
+import InstructionText from "../../createTestPage/components/testAnswers/InstructionText";
 
 type FillGapsAnswerProps = {
     questionContent: FillGapsQuestionItf;
@@ -44,6 +45,7 @@ const FillGapsAnswer = ({
 
     return (
         <>
+            <InstructionText text={questionContent.instruction_text} />
             <HtmlDisplay htmlContent={questionContent.text} />
 
             <TextFillWithInputs

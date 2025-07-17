@@ -6,15 +6,14 @@ import {
 import Option from "./Option";
 import TextEditor from "../../../../components/richTextEditor/TiptapEditor";
 import Button from "../../../../components/elements/Button";
-import ImagesChoser from "../../../../components/elements/ImagesChoser";
 import {
     Control,
     Controller,
     FieldErrors,
     useFieldArray,
-    UseFormRegister,
 } from "react-hook-form";
 import { useAppSelector } from "../../../../hooks/hooks";
+import Input from "../../../../components/elements/Input";
 
 const MulitpleChoiceQuestion: React.FC<{
     content: MultipleChoiceQuestionBodyItf;
@@ -36,6 +35,18 @@ const MulitpleChoiceQuestion: React.FC<{
 
     return (
         <>
+            <div className="flex flex-col">
+                <Input
+                    type="text"
+                    min={0}
+                    {...register("content.instruction_text")}
+                    error={
+                        errors.content?.instruction_text &&
+                        errors.content.instruction_text.message
+                    }
+                    label={{ text: "Instruction text" }}
+                />
+            </div>
             <div className="flex flex-col">
                 <label htmlFor="text">Text: </label>
                 <Controller

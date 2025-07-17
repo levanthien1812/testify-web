@@ -253,13 +253,13 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
             case QUESTION_TYPE.FILL_IN_THE_GAPS:
                 return (
                     question.score /
-                    (question.content as FillGapsQuestionItf).num_gaps
+                    (question.content as FillGapsQuestionItf)?.num_gaps
                 ).toFixed(2);
 
             case QUESTION_TYPE.MATCHING:
                 return (
                     question.score /
-                    (question.content as MatchingQuestionItf).left_items.length
+                    (question.content as MatchingQuestionItf).left_items?.length
                 ).toFixed(2);
             default:
                 return question.score.toFixed(2);

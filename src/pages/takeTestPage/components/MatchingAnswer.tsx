@@ -5,6 +5,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { USER_ANSWER_STATUS } from "../../../config/constants/tests";
 import HtmlDisplay from "../../../components/elements/HtmlDisplay";
+import InstructionText from "../../createTestPage/components/testAnswers/InstructionText";
 
 type MatchingAnswerProps = {
     questionContent: MatchingQuestionItf;
@@ -47,6 +48,7 @@ const MatchingAnswer = ({
 
     return (
         <>
+            <InstructionText text={questionContent.instruction_text} />
             <HtmlDisplay htmlContent={questionContent.text} />
             <div className="flex gap-3 w-full mt-2 px-2">
                 <div className="space-y-2 w-1/2">

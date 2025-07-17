@@ -8,6 +8,7 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import Button from "../../../../components/elements/Button";
 import HtmlDisplay from "../../../../components/elements/HtmlDisplay";
+import InstructionText from "./InstructionText";
 
 type MatchingAnswerProps = {
     content: MatchingQuestionItf;
@@ -60,6 +61,7 @@ const MatchingAnswer = ({
 
     return (
         <>
+            <InstructionText text={content.instruction_text} />
             <HtmlDisplay htmlContent={content.text} />
             <div className="grid grid-cols-2 gap-3 w-full mt-2 px-2 auto-rows-fr">
                 <div className="space-y-2">

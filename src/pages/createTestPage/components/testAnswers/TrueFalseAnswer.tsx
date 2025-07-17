@@ -4,6 +4,7 @@ import {
     TrueFalseAnswerItf,
     TrueFalseQuestionItf,
 } from "../../../../types/types";
+import InstructionText from "./InstructionText";
 
 type TrueFalseAnswerProps = {
     content: TrueFalseQuestionItf;
@@ -18,6 +19,7 @@ const TrueFalseAnswer = ({
 }: TrueFalseAnswerProps) => {
     return (
         <>
+            <InstructionText text={content.instruction_text} />
             <HtmlDisplay htmlContent={content.text} />
 
             <RadioList

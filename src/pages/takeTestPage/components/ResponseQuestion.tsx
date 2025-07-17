@@ -3,6 +3,7 @@ import { QuestionItf, ResponseQuestionItf } from "../../../types/types";
 import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../../stores/takeTest";
 import HtmlDisplay from "../../../components/elements/HtmlDisplay";
+import InstructionText from "../../createTestPage/components/testAnswers/InstructionText";
 
 type ResponseQuestionProps = {
     question: QuestionItf<ResponseQuestionItf>;
@@ -29,6 +30,7 @@ const ResponseQuestion = ({ question }: ResponseQuestionProps) => {
 
     return (
         <>
+            <InstructionText text={question.content!.instruction_text} />
             <HtmlDisplay htmlContent={question.content!.text} />
             <textarea
                 id="response"

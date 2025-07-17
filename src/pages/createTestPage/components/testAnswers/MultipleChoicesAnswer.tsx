@@ -5,6 +5,7 @@ import {
 } from "../../../../types/types";
 import { formatImageUrl } from "../../../../utils/formatImageUrl";
 import HtmlDisplay from "../../../../components/elements/HtmlDisplay";
+import InstructionText from "./InstructionText";
 
 type MultipleChoicesAnswerProps = {
     content: MultipleChoiceQuestionItf;
@@ -41,6 +42,7 @@ const MultipleChoicesAnswer = ({
 
     return (
         <div>
+            <InstructionText text={content.instruction_text} />
             <HtmlDisplay htmlContent={content.text} />
 
             <div className="space-y-1 mt-2">

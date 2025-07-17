@@ -15,6 +15,18 @@ const ResponseQuestion: React.FC<{
     const { register } = control;
     return (
         <>
+            <div className="flex flex-col">
+                <Input
+                    type="text"
+                    min={0}
+                    {...register("content.instruction_text")}
+                    error={
+                        errors.content?.instruction_text &&
+                        errors.content.instruction_text.message
+                    }
+                    label={{ text: "Instruction text" }}
+                />
+            </div>
             <div className="flex flex-col mt-2">
                 <label htmlFor="text">Text: </label>
                 <Controller

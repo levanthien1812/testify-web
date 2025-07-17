@@ -7,6 +7,7 @@ import {
 import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../../stores/takeTest";
 import HtmlDisplay from "../../../components/elements/HtmlDisplay";
+import InstructionText from "../../createTestPage/components/testAnswers/InstructionText";
 
 type MultipleChoicesQuestionProps = {
     question: QuestionItf<MultipleChoiceQuestionItf>;
@@ -32,6 +33,7 @@ const MultipleChoicesQuestion = ({
 
     return (
         <>
+            <InstructionText text={question.content!.instruction_text} />
             <HtmlDisplay htmlContent={question.content!.text} />
 
             <div className="space-y-1 mt-2">

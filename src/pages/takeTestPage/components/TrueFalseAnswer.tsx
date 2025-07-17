@@ -3,6 +3,7 @@ import { TrueFalseAnswerItf, TrueFalseQuestionItf } from "../../../types/types";
 import { ROLES, USER_ANSWER_STATUS } from "../../../config/constants/tests";
 import HtmlDisplay from "../../../components/elements/HtmlDisplay";
 import { useAppSelector } from "../../../hooks/hooks";
+import InstructionText from "../../createTestPage/components/testAnswers/InstructionText";
 
 type TrueFalseAnswerProps = {
     questionContent: TrueFalseQuestionItf;
@@ -72,6 +73,7 @@ const TrueFalseAnswer = ({
 
     return (
         <>
+            <InstructionText text={questionContent.instruction_text} />
             <HtmlDisplay htmlContent={questionContent.text} />
 
             <div className="flex gap-1 mt-2">

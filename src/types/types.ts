@@ -127,6 +127,7 @@ export interface TestPartItf extends PartBodyItf {
 }
 
 export interface MultipleChoiceQuestionBodyItf {
+    instruction_text?: string;
     text: string;
     allow_multiple: boolean;
     options: {
@@ -145,6 +146,7 @@ export interface MultipleChoiceQuestionItf
 }
 
 export interface FillGapsQuestionBodyItf {
+    instruction_text?: string;
     text: string;
     num_gaps: number;
     json_text: string;
@@ -161,6 +163,7 @@ export interface FillGapsQuestionItf
 }
 
 export interface MatchingQuestionBodyItf {
+    instruction_text?: string;
     text: string;
     left_items: {
         text: string;
@@ -185,6 +188,7 @@ export interface MatchingQuestionItf
 }
 
 export interface ResponseQuestionBodyItf {
+    instruction_text?: string;
     text: string;
     min_length?: number;
     max_length?: number;
@@ -197,6 +201,7 @@ export interface ResponseQuestionItf
 }
 
 export interface TrueFalseQuestionBodyItf {
+    instruction_text?: string;
     text: string;
 }
 
