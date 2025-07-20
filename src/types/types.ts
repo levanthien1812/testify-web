@@ -227,7 +227,7 @@ export interface QuestionItf<T extends QuestionContentItf> {
     order: number;
     test_id: string;
     score: number;
-    level: QUESTION_LEVEL;
+    level?: QUESTION_LEVEL;
     type: QUESTION_TYPE;
     part_id?: string;
     content?: T;

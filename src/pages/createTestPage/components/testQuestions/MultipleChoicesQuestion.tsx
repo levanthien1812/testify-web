@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     MultipleChoiceQuestionBodyItf,
     QuestionBodyItf,
@@ -11,15 +11,19 @@ import {
     Controller,
     FieldErrors,
     useFieldArray,
+    UseFormSetValue,
 } from "react-hook-form";
 import { useAppSelector } from "../../../../hooks/hooks";
 import Input from "../../../../components/elements/Input";
+import Checkbox from "../../../../components/elements/Checkbox";
+import { QUESTION_INSTRUCTIONS } from "../../../../config/constants/tests";
 
 const MulitpleChoiceQuestion: React.FC<{
     content: MultipleChoiceQuestionBodyItf;
     control: Control<QuestionBodyItf<MultipleChoiceQuestionBodyItf>>;
     errors: FieldErrors<QuestionBodyItf<MultipleChoiceQuestionBodyItf>>;
-}> = ({ content, control, errors }) => {
+    setValue: UseFormSetValue<QuestionBodyItf<MultipleChoiceQuestionBodyItf>>;
+}> = ({ content, control, errors, setValue }) => {
     const {
         fields: options,
         append: appendOption,
@@ -32,6 +36,29 @@ const MulitpleChoiceQuestion: React.FC<{
     const { register } = control;
 
     const { editibility } = useAppSelector((state) => state.createTest);
+
+    useEffect(() => {
+        if (
+            content.allow_multiple &&
+            content.instruction_text ===
+                QUESTION_INSTRUCTIONS.MULTIPLE_CHOICES_SINGLE
+        ) {
+            setValue(
+                "content.instruction_text",
+                QUESTION_INSTRUCTIONS.MULTIPLE_CHOICES_MULTIPLE
+            );
+        }
+        if (
+            !content.allow_multiple &&
+            content.instruction_text ===
+                QUESTION_INSTRUCTIONS.MULTIPLE_CHOICES_MULTIPLE
+        ) {
+            setValue(
+                "content.instruction_text",
+                QUESTION_INSTRUCTIONS.MULTIPLE_CHOICES_SINGLE
+            );
+        }
+    }, [content.allow_multiple, content.instruction_text]);
 
     return (
         <>
@@ -65,6 +92,17 @@ const MulitpleChoiceQuestion: React.FC<{
                         {errors.content.text.message}
                     </p>
                 )}
+            </div>
+            <div className="mt-2">
+                <Checkbox
+                    {...register("content.allow_multiple")}
+                    label={{ text: "Allow multiple selection" }}
+                    error={
+                        errors.content?.allow_multiple &&
+                        errors.content.allow_multiple.message
+                    }
+                    disabled={!editibility.TEST_QUESTIONS.content}
+                />
             </div>
             <div className="mt-2">
                 <p>Options</p>

@@ -60,7 +60,7 @@ const Header = () => {
     }, [isLoading]);
 
     return (
-        <div className="bg-white px-12 py-3 flex justify-between items-center shadow-md">
+        <div className="bg-white px-12 py-3 flex justify-between items-center shadow-md sticky top-0 z-10">
             <Link to={"/"}>
                 <img src={logoTestify} alt="testify-logo" className="w-44" />
             </Link>

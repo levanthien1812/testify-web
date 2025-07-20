@@ -3,7 +3,6 @@ import {
     MultipleChoiceAnswerItf,
     MultipleChoiceQuestionItf,
 } from "../../../../types/types";
-import { formatImageUrl } from "../../../../utils/formatImageUrl";
 import HtmlDisplay from "../../../../components/elements/HtmlDisplay";
 import InstructionText from "./InstructionText";
 
@@ -18,25 +17,33 @@ const MultipleChoicesAnswer = ({
     reset,
     onProvideAnswer,
 }: MultipleChoicesAnswerProps) => {
-    const [optionChosen, setOptionChosen] = useState<string>(
+    const [optionsChosen, setOptionsChosen] = useState<string[]>(
         content.answer && content.answer?.options?.length > 0
-            ? content.answer?.options[0]
-            : ""
+            ? content.answer?.options
+            : []
     );
 
     const handleChangeRadio = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.value) {
-            setOptionChosen(e.target.value);
+            setOptionsChosen([e.target.value]);
             onProvideAnswer({ ...content.answer, options: [e.target.value] });
         }
     };
 
+    const handleChangeCheckbox = (e: ChangeEvent<HTMLInputElement>) => {
+        const updatedOptions = e.target.checked
+            ? [...optionsChosen, e.target.value]
+            : optionsChosen.filter((option) => option !== e.target.value);
+        setOptionsChosen(updatedOptions);
+        onProvideAnswer({ ...content.answer, options: updatedOptions });
+    };
+
     useEffect(() => {
         if (reset === true)
-            setOptionChosen(
+            setOptionsChosen(
                 content.answer && content.answer?.options?.length > 0
-                    ? content.answer?.options[0]
-                    : ""
+                    ? content.answer?.options
+                    : []
             );
     }, [reset]);
 
@@ -51,14 +58,30 @@ const MultipleChoicesAnswer = ({
                         className="flex gap-3 items-center ps-2 hover:bg-gray-200 cursor-pointer"
                         key={option.id}
                     >
-                        <input
-                            type="radio"
-                            name={content.id}
-                            value={option.id}
-                            id={option.id}
-                            onChange={handleChangeRadio}
-                            checked={optionChosen === option.id}
-                        />
+                        {!content.allow_multiple && (
+                            <input
+                                type="radio"
+                                name={content.id}
+                                value={option.id}
+                                id={option.id}
+                                onChange={handleChangeRadio}
+                                checked={optionsChosen[0] === option.id}
+                            />
+                        )}
+                        {content.allow_multiple && (
+                            <input
+                                type="checkbox"
+                                name={option.id}
+                                value={option.id}
+                                id={option.id}
+                                onChange={handleChangeCheckbox}
+                                checked={
+                                    option.id
+                                        ? optionsChosen.includes(option.id)
+                                        : false
+                                }
+                            />
+                        )}
                         <label htmlFor={option.id} className="grow">
                             {option.text}
                         </label>

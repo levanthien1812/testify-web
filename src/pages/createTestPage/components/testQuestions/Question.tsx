@@ -66,6 +66,9 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
     const dispatch = useDispatch();
     const [isDeletingQuestion, setIsDeletingQuestion] =
         useState<boolean>(false);
+    const [currentType, setCurrentType] = useState<QUESTION_TYPE>(
+        question.type
+    );
 
     const [isImportingFromBank, setIsImportingFromBank] =
         useState<boolean>(false);
@@ -74,10 +77,10 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
         handleSubmit,
         formState: { errors },
         register,
-        unregister,
         setValue,
         watch,
         control,
+        reset,
     } = useForm<QuestionBodyItf<QuestionBodyContentItf>>({
         defaultValues: question,
     });
@@ -86,52 +89,13 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
 
     useEffect(() => {
         if (!question?.id || allValues?.type !== question.type) {
-            unregister("content");
-            register("content");
             setValue("content", getInitialQuestionContent(allValues?.type));
+        } else {
+            setValue("content", question.content as QuestionBodyContentItf);
         }
-        dispatch(
-            saveTestQuestions({
-                partId: part?.id,
-                questionOrder: question.order,
-                questionInfo: {
-                    type: allValues?.type,
-                    level: allValues?.level,
-                    score: Number(allValues?.score),
-                    partial_scoring: allValues?.partial_scoring,
-                },
-            })
-        );
-        dispatch(validate());
+        setCurrentType(allValues?.type);
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [
-        allValues?.type,
-        allValues?.level,
-        allValues?.score,
-        allValues?.partial_scoring,
-        part?.id,
-        question?.order,
-        dispatch,
-    ]);
-
-    useEffect(() => {
-        dispatch(
-            saveTestQuestions({
-                partId: part?.id,
-                questionOrder: question.order,
-                questionInfo: {
-                    content: JSON.parse(JSON.stringify(allValues?.content)),
-                },
-            })
-        );
-        dispatch(validate());
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [
-        JSON.stringify(allValues?.content),
-        part?.id,
-        question?.order,
-        dispatch,
-    ]);
+    }, [allValues?.type, question?.id]);
 
     const { mutate: createQuestionMutate, isLoading: createQuestionLoading } =
         useMutation({
@@ -147,14 +111,11 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
                 toast.success(TOAST_MESSAGES.CREATE_QUESTION_SUCCESSFULLY);
                 dispatch(
                     saveTestQuestions({
-                        partId: part?.id,
-                        questionOrder: question.order,
-                        questionInfo: {
-                            ...data.question,
-                            content: data?.content,
-                        },
+                        ...data.question,
+                        content: data.content,
                     })
                 );
+                dispatch(validate());
                 setOpen(false);
             },
         });
@@ -185,12 +146,18 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
             ],
             onSuccess: (data) => {
                 toast.success(TOAST_MESSAGES.UPDATE_QUESTION_SUCCESSFULLY);
+                dispatch(
+                    saveTestQuestions({
+                        ...data.question,
+                        content: data.content,
+                    })
+                );
+                dispatch(validate());
                 setOpen(false);
             },
         });
 
     const onSubmit = (data: QuestionBodyItf<QuestionBodyContentItf>) => {
-        console.log(data);
         if (!question?.id) {
             createQuestionMutate(data);
         } else {
@@ -200,15 +167,6 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
 
     const handleClearContent = () => {
         setValue("content", getInitialQuestionContent(question?.type));
-        dispatch(
-            saveTestQuestions({
-                partId: part?.id,
-                questionOrder: question.order,
-                questionInfo: {
-                    content: getInitialQuestionContent(question?.type),
-                },
-            })
-        );
     };
 
     const handleImportFromBank = () => {
@@ -231,20 +189,16 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
             setValue("content", selectedQuestion.content);
         }
         setValue("type", selectedQuestion.type);
-        setValue("level", selectedQuestion.level);
-        setValue("score", selectedQuestion.score);
-        dispatch(
-            saveTestQuestions({
-                partId: part?.id,
-                questionOrder: question.order,
-                questionInfo: {
-                    type: selectedQuestion.type,
-                    level: selectedQuestion.level,
-                    score: selectedQuestion.score,
-                    content: selectedQuestion.content,
-                },
-            })
-        );
+        if (selectedQuestion.partial_scoring) {
+            setValue("partial_scoring", selectedQuestion.partial_scoring);
+        }
+        if (selectedQuestion.level) {
+            setValue("level", selectedQuestion.level);
+        }
+        if (selectedQuestion.score) {
+            setValue("score", selectedQuestion.score);
+        }
+
         setIsImportingFromBank(false);
     };
 
@@ -266,6 +220,12 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
         }
     }, [question]);
 
+    const handleCancel = () => {
+        dispatch(saveTestQuestions(question));
+        reset();
+        setOpen(false);
+    };
+
     return (
         <>
             <QuestionDraggable
@@ -274,7 +234,7 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
             />
 
             {open && (
-                <Modal onClose={() => setOpen(false)}>
+                <Modal onClose={handleCancel}>
                     <ModalHeader title={`Question ${question?.order}`} />
                     <ModalBody>
                         <form
@@ -402,85 +362,90 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
                                 </div>
                                 <div className="border-l border-gray-300 border-dashed"></div>
                                 <div className="grow overflow-hidden">
-                                    {question?.content &&
-                                        question?.type ===
-                                            QUESTION_TYPE.MULTIPLE_CHOICES && (
-                                            <MulitpleChoiceQuestion
-                                                content={
-                                                    question?.content as MultipleChoiceQuestionBodyItf
-                                                }
-                                                control={
-                                                    control as Control<
-                                                        QuestionBodyItf<MultipleChoiceQuestionBodyItf>
-                                                    >
-                                                }
-                                                errors={errors}
-                                            />
-                                        )}
-                                    {question?.content &&
-                                        question?.type ===
-                                            QUESTION_TYPE.FILL_IN_THE_GAPS && (
-                                            <FillGapsQuestion
-                                                content={
-                                                    question?.content as FillGapsQuestionBodyItf
-                                                }
-                                                control={
-                                                    control as Control<
-                                                        QuestionBodyItf<FillGapsQuestionBodyItf>
-                                                    >
-                                                }
-                                                errors={errors}
-                                                setValue={
-                                                    setValue as UseFormSetValue<
-                                                        QuestionBodyItf<FillGapsQuestionBodyItf>
-                                                    >
-                                                }
-                                            />
-                                        )}
-                                    {question?.content &&
-                                        question?.type ===
-                                            QUESTION_TYPE.MATCHING && (
-                                            <MatchingQuestion
-                                                content={
-                                                    question?.content as MatchingQuestionBodyItf
-                                                }
-                                                control={
-                                                    control as Control<
-                                                        QuestionBodyItf<MatchingQuestionBodyItf>
-                                                    >
-                                                }
-                                                errors={errors}
-                                            />
-                                        )}
-                                    {question?.content &&
-                                        question?.type ===
-                                            QUESTION_TYPE.RESPONSE && (
-                                            <ResponseQuestion
-                                                content={
-                                                    question?.content as ResponseQuestionBodyItf
-                                                }
-                                                control={
-                                                    control as Control<
-                                                        QuestionBodyItf<ResponseQuestionBodyItf>
-                                                    >
-                                                }
-                                                errors={errors}
-                                            />
-                                        )}
-                                    {question?.content &&
-                                        question?.type ===
-                                            QUESTION_TYPE.TRUE_FALSE && (
-                                            <TrueFalseQuestion
-                                                content={
-                                                    question?.content as TrueFalseQuestionBodyItf
-                                                }
-                                                control={
-                                                    control as Control<
-                                                        QuestionBodyItf<TrueFalseQuestionBodyItf>
-                                                    >
-                                                }
-                                                errors={errors}
-                                            />
+                                    {allValues.content &&
+                                        allValues.type === currentType && (
+                                            <>
+                                                {allValues.type ===
+                                                    QUESTION_TYPE.MULTIPLE_CHOICES && (
+                                                    <MulitpleChoiceQuestion
+                                                        content={
+                                                            allValues?.content as MultipleChoiceQuestionBodyItf
+                                                        }
+                                                        control={
+                                                            control as Control<
+                                                                QuestionBodyItf<MultipleChoiceQuestionBodyItf>
+                                                            >
+                                                        }
+                                                        errors={errors}
+                                                        setValue={
+                                                            setValue as UseFormSetValue<
+                                                                QuestionBodyItf<MultipleChoiceQuestionBodyItf>
+                                                            >
+                                                        }
+                                                    />
+                                                )}
+                                                {allValues.type ===
+                                                    QUESTION_TYPE.FILL_IN_THE_GAPS && (
+                                                    <FillGapsQuestion
+                                                        content={
+                                                            allValues.content as FillGapsQuestionBodyItf
+                                                        }
+                                                        control={
+                                                            control as Control<
+                                                                QuestionBodyItf<FillGapsQuestionBodyItf>
+                                                            >
+                                                        }
+                                                        errors={errors}
+                                                        setValue={
+                                                            setValue as UseFormSetValue<
+                                                                QuestionBodyItf<FillGapsQuestionBodyItf>
+                                                            >
+                                                        }
+                                                    />
+                                                )}
+                                                {allValues.type ===
+                                                    QUESTION_TYPE.MATCHING && (
+                                                    <MatchingQuestion
+                                                        content={
+                                                            allValues.content as MatchingQuestionBodyItf
+                                                        }
+                                                        control={
+                                                            control as Control<
+                                                                QuestionBodyItf<MatchingQuestionBodyItf>
+                                                            >
+                                                        }
+                                                        errors={errors}
+                                                    />
+                                                )}
+                                                {allValues.type ===
+                                                    QUESTION_TYPE.RESPONSE && (
+                                                    <ResponseQuestion
+                                                        content={
+                                                            allValues.content as ResponseQuestionBodyItf
+                                                        }
+                                                        control={
+                                                            control as Control<
+                                                                QuestionBodyItf<ResponseQuestionBodyItf>
+                                                            >
+                                                        }
+                                                        errors={errors}
+                                                    />
+                                                )}
+                                                {allValues.type ===
+                                                    QUESTION_TYPE.TRUE_FALSE && (
+                                                    <TrueFalseQuestion
+                                                        content={
+                                                            allValues.content as TrueFalseQuestionBodyItf
+                                                        }
+                                                        control={
+                                                            control as Control<
+                                                                QuestionBodyItf<TrueFalseQuestionBodyItf>
+                                                            >
+                                                        }
+                                                        errors={errors}
+                                                    />
+                                                )}
+                                            </>
                                         )}
                                 </div>
                             </div>
@@ -507,7 +472,7 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
                                     <Button
                                         secondary
                                         type="button"
-                                        onClick={() => setOpen(false)}
+                                        onClick={handleCancel}
                                     >
                                         Cancel
                                     </Button>

@@ -216,6 +216,11 @@ const CreateQuestion = ({
                                             >
                                         }
                                         errors={errors}
+                                        setValue={
+                                            setValue as UseFormSetValue<
+                                                QuestionBodyItf<MultipleChoiceQuestionBodyItf>
+                                            >
+                                        }
                                     />
                                 )}
                             {allValues.content &&

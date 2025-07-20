@@ -379,7 +379,7 @@ export const INITIAL_MULTIPLE_CHOICES_QUESTION: MultipleChoiceQuestionItf = {
     options: [{ text: "" }, { text: "" }],
     text: "",
     allow_multiple: false,
-    instruction_text: QUESTION_INSTRUCTIONS.MULTIPLE_CHOICES,
+    instruction_text: QUESTION_INSTRUCTIONS.MULTIPLE_CHOICES_SINGLE,
 };
 
 export const INITIAL_FILL_GAPS_QUESTION: FillGapsQuestionItf = {

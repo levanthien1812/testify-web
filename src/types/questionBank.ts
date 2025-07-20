@@ -32,4 +32,5 @@ export interface QuestionInBankItf<T extends QuestionContentItf> {
     content?: T;
     is_saved?: boolean;
     is_content_provided?: boolean;
+    partial_scoring?: boolean;
 }
