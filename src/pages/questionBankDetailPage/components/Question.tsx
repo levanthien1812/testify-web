@@ -235,6 +235,11 @@ const Question = ({ question, questionBank }: QuestionProps) => {
                                                     >
                                                 }
                                                 errors={errors}
+                                                setValue={
+                                                    setValue as UseFormSetValue<
+                                                        QuestionBodyItf<MultipleChoiceQuestionBodyItf>
+                                                    >
+                                                }
                                             />
                                         )}
                                     {question?.content &&

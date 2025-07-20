@@ -6,6 +6,7 @@ import { faArrowRight } from "@fortawesome/free-solid-svg-icons";
 import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../../stores/takeTest";
 import HtmlDisplay from "../../../components/elements/HtmlDisplay";
+import InstructionText from "../../createTestPage/components/testAnswers/InstructionText";
 
 type MatchingQuestionProps = {
     question: QuestionItf<MatchingQuestionItf>;
@@ -49,6 +50,7 @@ const MatchingQuestion = ({ question }: MatchingQuestionProps) => {
 
     return (
         <>
+            <InstructionText text={question.content!.instruction_text} />
             <HtmlDisplay htmlContent={question.content!.text} />
             <div className="flex gap-3 w-full mt-2 px-2">
                 <div className="space-y-2 w-1/2">

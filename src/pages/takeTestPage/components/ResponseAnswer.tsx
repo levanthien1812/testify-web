@@ -1,6 +1,7 @@
 import { useMemo } from "react";
 import { ResponseAnswerItf, ResponseQuestionItf } from "../../../types/types";
 import HtmlDisplay from "../../../components/elements/HtmlDisplay";
+import InstructionText from "../../createTestPage/components/testAnswers/InstructionText";
 
 type ResponseAnswerProps = {
     questionContent: ResponseQuestionItf;
@@ -23,6 +24,7 @@ const ResponseAnswer = ({
 
     return (
         <div>
+            <InstructionText text={questionContent.instruction_text} />
             <HtmlDisplay htmlContent={questionContent.text} />
             <textarea
                 id="response"

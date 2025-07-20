@@ -71,6 +71,18 @@ const FillGapsQuestion: React.FC<{
         <>
             <div className="flex flex-col">
                 <Input
+                    type="text"
+                    min={0}
+                    {...register("content.instruction_text")}
+                    error={
+                        errors.content?.instruction_text &&
+                        errors.content.instruction_text.message
+                    }
+                    label={{ text: "Instruction text" }}
+                />
+            </div>
+            <div className="flex flex-col">
+                <Input
                     type="number"
                     min={1}
                     {...register("content.num_gaps", {

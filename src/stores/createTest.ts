@@ -285,57 +285,35 @@ const createTestSlice = createSlice({
 
         saveTestQuestions(
             state,
-            action: PayloadAction<{
-                partId?: string;
-                questionOrder: number;
-                questionInfo: Partial<QuestionItf<QuestionContentItf>>;
-            }>
+            action: PayloadAction<Partial<QuestionItf<QuestionContentItf>>>
         ) {
-            if (action.payload?.partId) {
+            if (action.payload?.part_id) {
                 const partIndex = state.testParts.findIndex(
-                    (part) => part.id === action.payload.partId
+                    (part) => part.id === action.payload.part_id
                 );
                 const partQuestions = state.testParts[partIndex].questions;
                 if (!partQuestions) return;
                 const questionIndex = partQuestions.findIndex(
-                    (question) =>
-                        question.order === action.payload.questionOrder
+                    (question) => question.order === action.payload.order
                 );
                 const question = partQuestions[questionIndex];
                 if (!question) return;
 
                 state.testParts[partIndex].questions![questionIndex] = {
                     ...question,
-                    ...action.payload.questionInfo,
+                    ...action.payload,
                 };
-
-                if (
-                    action.payload?.questionInfo?.content &&
-                    !action.payload?.questionInfo?.type
-                ) {
-                    state.testParts[partIndex].questions![questionIndex] = {
-                        ...state.testParts[partIndex].questions![questionIndex],
-                        content: action.payload?.questionInfo?.content,
-                    };
-                }
             } else {
                 const questionIndex = state.testQuestions.findIndex(
-                    (question) =>
-                        question.order === action.payload.questionOrder
+                    (question) => question.order === action.payload.order
                 );
                 const question = state.testQuestions[questionIndex];
                 if (!question) return;
 
                 state.testQuestions[questionIndex] = {
                     ...question,
-                    ...action.payload.questionInfo,
+                    ...action.payload,
                 };
-                if (action.payload?.questionInfo?.content) {
-                    state.testQuestions[questionIndex] = {
-                        ...state.testQuestions[questionIndex],
-                        content: action.payload?.questionInfo?.content,
-                    };
-                }
             }
         },
         initializeTestAnswers(state) {

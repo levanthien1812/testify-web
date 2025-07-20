@@ -35,6 +35,7 @@ import {
     PAGINATION_MODE,
     PASSCODE_VALID_UNIT,
     PUBLIC_ANSWERS_OPTIONS,
+    QUESTION_INSTRUCTIONS,
     QUESTION_LEVEL,
     SHARE_OPTIONS,
     TEST_LEVEL,
@@ -378,6 +379,7 @@ export const INITIAL_MULTIPLE_CHOICES_QUESTION: MultipleChoiceQuestionItf = {
     options: [{ text: "" }, { text: "" }],
     text: "",
     allow_multiple: false,
+    instruction_text: QUESTION_INSTRUCTIONS.MULTIPLE_CHOICES_SINGLE,
 };
 
 export const INITIAL_FILL_GAPS_QUESTION: FillGapsQuestionItf = {
@@ -386,20 +388,24 @@ export const INITIAL_FILL_GAPS_QUESTION: FillGapsQuestionItf = {
     fill_method: FILL_GAP_METHOD.DRAG_DROP,
     json_text: "",
     given_words: [],
+    instruction_text: QUESTION_INSTRUCTIONS.FILL_IN_THE_GAPS,
 };
 
 export const INITIAL_MATCHING_QUESTION: MatchingQuestionItf = {
     left_items: [{ text: "" }, { text: "" }],
     right_items: [{ text: "" }, { text: "" }],
     text: "",
+    instruction_text: QUESTION_INSTRUCTIONS.MATCHING,
 };
 
 export const INITIAL_RESPONSE_QUESTION: ResponseQuestionItf = {
     text: "",
+    instruction_text: QUESTION_INSTRUCTIONS.RESPONSE,
 };
 
 export const INITIAL_TRUE_FALSE_QUESTION: TrueFalseQuestionItf = {
     text: "",
+    instruction_text: QUESTION_INSTRUCTIONS.TRUE_FALSE,
 };
 
 export const INITIAL_MULTIPLE_CHOICES_ANSWER: MultipleChoiceAnswerItf = {

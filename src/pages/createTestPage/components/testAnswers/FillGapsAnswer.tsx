@@ -5,6 +5,7 @@ import {
 } from "../../../../types/types";
 import HtmlDisplay from "../../../../components/elements/HtmlDisplay";
 import TextFillWithInputs from "./TextFillWithInputs";
+import InstructionText from "./InstructionText";
 
 type FillGapsAnswerProps = {
     content: FillGapsQuestionItf;
@@ -28,6 +29,7 @@ const FillGapsAnswer = ({
 
     return (
         <>
+            <InstructionText text={content.instruction_text} />
             <HtmlDisplay htmlContent={content.text} />
             <TextFillWithInputs
                 doc={JSON.parse(content.json_text)}

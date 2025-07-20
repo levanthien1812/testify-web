@@ -7,6 +7,7 @@ import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../../stores/takeTest";
 import HtmlDisplay from "../../../components/elements/HtmlDisplay";
 import TextFillWithInputs from "../../createTestPage/components/testAnswers/TextFillWithInputs";
+import InstructionText from "../../createTestPage/components/testAnswers/InstructionText";
 
 type FillGapsQuestionProps = {
     question: QuestionItf<FillGapsQuestionItf>;
@@ -31,6 +32,7 @@ const FillGapsQuestion = ({ question }: FillGapsQuestionProps) => {
 
     return (
         <>
+            <InstructionText text={question.content!.instruction_text} />
             <HtmlDisplay htmlContent={question.content!.text} />
             <TextFillWithInputs
                 doc={JSON.parse(question.content!.json_text)}

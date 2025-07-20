@@ -12,6 +12,7 @@ import {
     FieldErrors,
     useFieldArray,
 } from "react-hook-form";
+import Input from "../../../../components/elements/Input";
 
 const MatchingQuestion: React.FC<{
     content: MatchingQuestionBodyItf;
@@ -43,6 +44,18 @@ const MatchingQuestion: React.FC<{
 
     return (
         <>
+            <div className="flex flex-col">
+                <Input
+                    type="text"
+                    min={0}
+                    {...register("content.instruction_text")}
+                    error={
+                        errors.content?.instruction_text &&
+                        errors.content.instruction_text.message
+                    }
+                    label={{ text: "Instruction text" }}
+                />
+            </div>
             <div className="flex flex-col">
                 <label htmlFor="text">Text: </label>
                 <Controller

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import {
     MultipleChoiceQuestionBodyItf,
     QuestionBodyItf,
@@ -6,21 +6,24 @@ import {
 import Option from "./Option";
 import TextEditor from "../../../../components/richTextEditor/TiptapEditor";
 import Button from "../../../../components/elements/Button";
-import ImagesChoser from "../../../../components/elements/ImagesChoser";
 import {
     Control,
     Controller,
     FieldErrors,
     useFieldArray,
-    UseFormRegister,
+    UseFormSetValue,
 } from "react-hook-form";
 import { useAppSelector } from "../../../../hooks/hooks";
+import Input from "../../../../components/elements/Input";
+import Checkbox from "../../../../components/elements/Checkbox";
+import { QUESTION_INSTRUCTIONS } from "../../../../config/constants/tests";
 
 const MulitpleChoiceQuestion: React.FC<{
     content: MultipleChoiceQuestionBodyItf;
     control: Control<QuestionBodyItf<MultipleChoiceQuestionBodyItf>>;
     errors: FieldErrors<QuestionBodyItf<MultipleChoiceQuestionBodyItf>>;
-}> = ({ content, control, errors }) => {
+    setValue: UseFormSetValue<QuestionBodyItf<MultipleChoiceQuestionBodyItf>>;
+}> = ({ content, control, errors, setValue }) => {
     const {
         fields: options,
         append: appendOption,
@@ -34,8 +37,43 @@ const MulitpleChoiceQuestion: React.FC<{
 
     const { editibility } = useAppSelector((state) => state.createTest);
 
+    useEffect(() => {
+        if (
+            content.allow_multiple &&
+            content.instruction_text ===
+                QUESTION_INSTRUCTIONS.MULTIPLE_CHOICES_SINGLE
+        ) {
+            setValue(
+                "content.instruction_text",
+                QUESTION_INSTRUCTIONS.MULTIPLE_CHOICES_MULTIPLE
+            );
+        }
+        if (
+            !content.allow_multiple &&
+            content.instruction_text ===
+                QUESTION_INSTRUCTIONS.MULTIPLE_CHOICES_MULTIPLE
+        ) {
+            setValue(
+                "content.instruction_text",
+                QUESTION_INSTRUCTIONS.MULTIPLE_CHOICES_SINGLE
+            );
+        }
+    }, [content.allow_multiple, content.instruction_text]);
+
     return (
         <>
+            <div className="flex flex-col">
+                <Input
+                    type="text"
+                    min={0}
+                    {...register("content.instruction_text")}
+                    error={
+                        errors.content?.instruction_text &&
+                        errors.content.instruction_text.message
+                    }
+                    label={{ text: "Instruction text" }}
+                />
+            </div>
             <div className="flex flex-col">
                 <label htmlFor="text">Text: </label>
                 <Controller
@@ -54,6 +92,17 @@ const MulitpleChoiceQuestion: React.FC<{
                         {errors.content.text.message}
                     </p>
                 )}
+            </div>
+            <div className="mt-2">
+                <Checkbox
+                    {...register("content.allow_multiple")}
+                    label={{ text: "Allow multiple selection" }}
+                    error={
+                        errors.content?.allow_multiple &&
+                        errors.content.allow_multiple.message
+                    }
+                    disabled={!editibility.TEST_QUESTIONS.content}
+                />
             </div>
             <div className="mt-2">
                 <p>Options</p>

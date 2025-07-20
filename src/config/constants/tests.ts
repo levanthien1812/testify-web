@@ -14,6 +14,19 @@ export const QUESTION_TYPE_LABEL: Record<QUESTION_TYPE, string> = {
     [QUESTION_TYPE.TRUE_FALSE]: "True/False",
 };
 
+export const QUESTION_INSTRUCTIONS = {
+    MULTIPLE_CHOICES_SINGLE:
+        "Select the correct answer from the given options.",
+    MULTIPLE_CHOICES_MULTIPLE:
+        "Select all the correct answers from the given options.",
+    FILL_IN_THE_GAPS:
+        "Fill in the blank(s) with the most appropriate word or phrase.",
+    TRUE_FALSE: "Select whether the statement is true or false.",
+    MATCHING:
+        "Match each item in the left column with the correct item in the right column.",
+    RESPONSE: "Write your answer in the text box provided.",
+};
+
 export enum CREATE_TEST_STEPS {
     TEST_INFORMATION = "TEST_INFORMATION",
     TEST_PARTS = "TEST_PARTS",

@@ -53,11 +53,8 @@ const Answer: React.FC<{
             };
             dispatch(
                 saveTestQuestions({
-                    partId: question?.part_id,
-                    questionOrder: question.order,
-                    questionInfo: {
-                        content: updatedContent as QuestionContentItf,
-                    },
+                    ...question,
+                    content: updatedContent as QuestionContentItf,
                 })
             );
             setIsAddingExplaination(false);
@@ -72,11 +69,8 @@ const Answer: React.FC<{
         };
         dispatch(
             saveTestQuestions({
-                partId: question?.part_id,
-                questionOrder: question.order,
-                questionInfo: {
-                    content: updatedContent as QuestionContentItf,
-                },
+                ...question,
+                content: updatedContent as QuestionContentItf,
             })
         );
         setSavable(true);
@@ -92,17 +86,14 @@ const Answer: React.FC<{
         }
         dispatch(
             saveTestQuestions({
-                partId: question?.part_id,
-                questionOrder: question.order,
-                questionInfo: {
-                    content: {
-                        ...question.content,
-                        answer: {
-                            ...question.content?.answer,
-                            explaination: value,
-                        },
-                    } as QuestionContentItf,
-                },
+                ...question,
+                content: {
+                    ...question.content,
+                    answer: {
+                        ...question.content?.answer,
+                        explaination: value,
+                    },
+                } as QuestionContentItf,
             })
         );
     };

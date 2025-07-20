@@ -3,6 +3,7 @@ import { TrueFalseQuestionItf, QuestionItf } from "../../../types/types";
 import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../../stores/takeTest";
 import HtmlDisplay from "../../../components/elements/HtmlDisplay";
+import InstructionText from "../../createTestPage/components/testAnswers/InstructionText";
 
 type TrueFalseQuestionProps = {
     question: QuestionItf<TrueFalseQuestionItf>;
@@ -24,6 +25,7 @@ const TrueFalseQuestion = ({ question }: TrueFalseQuestionProps) => {
 
     return (
         <>
+            <InstructionText text={question.content!.instruction_text} />
             <HtmlDisplay htmlContent={question.content!.text} />
 
             <div className="flex gap-1 mt-2">

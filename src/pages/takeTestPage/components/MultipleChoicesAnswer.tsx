@@ -6,6 +6,7 @@ import {
 import { ROLES, USER_ANSWER_STATUS } from "../../../config/constants/tests";
 import HtmlDisplay from "../../../components/elements/HtmlDisplay";
 import { useAppSelector } from "../../../hooks/hooks";
+import InstructionText from "../../createTestPage/components/testAnswers/InstructionText";
 
 type MultipleChoicesAnswerProps = {
     questionContent: MultipleChoiceQuestionItf;
@@ -19,14 +20,14 @@ const MultipleChoicesAnswer = ({
     answerStatus,
 }: MultipleChoicesAnswerProps) => {
     const user = useAppSelector((state) => state.auth.user);
-    const makerAnswer = questionContent.answer?.options?.[0];
-    const userAnswer = answerContent?.options[0];
+    const makerAnswer = questionContent.answer?.options;
+    const userAnswer = answerContent?.options;
 
     const getInputChecked = useCallback(
         (optionId: string) => {
             if (answerStatus === USER_ANSWER_STATUS.NOT_ANSWERED) return false;
 
-            if (optionId === userAnswer) return true;
+            if (userAnswer?.includes(optionId)) return true;
 
             return false;
         },
@@ -37,14 +38,15 @@ const MultipleChoicesAnswer = ({
         (optionId: string) => {
             if (answerStatus === USER_ANSWER_STATUS.NOT_ANSWERED) return "";
 
-            if (!makerAnswer && optionId === userAnswer)
+            if (!makerAnswer && userAnswer?.includes(optionId))
                 return `accent-blue-600`;
 
-            if (optionId === makerAnswer) return `accent-green-600`;
+            if (makerAnswer && makerAnswer.includes(optionId))
+                return `accent-green-600`;
             if (
                 makerAnswer &&
                 makerAnswer !== userAnswer &&
-                optionId === userAnswer
+                userAnswer?.includes(optionId)
             )
                 return `accent-red-600`;
             return "";
@@ -58,13 +60,15 @@ const MultipleChoicesAnswer = ({
                 if (answerStatus === USER_ANSWER_STATUS.NOT_ANSWERED) return "";
             }
 
-            if (!makerAnswer && optionId === userAnswer) return `text-blue-600`;
+            if (!makerAnswer && userAnswer?.includes(optionId))
+                return `text-blue-600`;
 
-            if (optionId === makerAnswer) return `text-green-600`;
+            if (makerAnswer && makerAnswer.includes(optionId))
+                return `text-green-600`;
             if (
                 makerAnswer &&
                 makerAnswer !== userAnswer &&
-                optionId === userAnswer
+                userAnswer?.includes(optionId)
             )
                 return `text-red-600`;
             return "";
@@ -74,6 +78,7 @@ const MultipleChoicesAnswer = ({
 
     return (
         <>
+            <InstructionText text={questionContent.instruction_text} />
             <HtmlDisplay htmlContent={questionContent.text} />
 
             <div className="space-y-1 mt-2">
@@ -82,15 +87,32 @@ const MultipleChoicesAnswer = ({
                         className="flex gap-3 items-center ps-2 hover:bg-gray-200 cursor-pointer"
                         key={option.id}
                     >
-                        <input
-                            type="radio"
-                            name={questionContent.id}
-                            value={option.id}
-                            id={option.id}
-                            checked={getInputChecked(option.id!)}
-                            className={getInputClasses(option.id!)}
-                            readOnly
-                        />
+                        {!questionContent.allow_multiple && (
+                            <input
+                                type="radio"
+                                name={questionContent.id}
+                                value={option.id}
+                                id={option.id}
+                                checked={getInputChecked(option.id!)}
+                                className={getInputClasses(option.id!)}
+                                readOnly
+                            />
+                        )}
+                        {questionContent.allow_multiple && (
+                            <input
+                                type="checkbox"
+                                name={option.id}
+                                value={option.id}
+                                id={option.id}
+                                checked={
+                                    option.id
+                                        ? userAnswer?.includes(option.id)
+                                        : false
+                                }
+                                className={getInputClasses(option.id!)}
+                                readOnly
+                            />
+                        )}
                         <label
                             htmlFor={option.id}
                             className={`grow ${getLabelClasses(option.id!)}`}

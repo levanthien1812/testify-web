@@ -47,31 +47,60 @@ const Submission = ({ submission }: SubmissionProps) => {
     };
 
     return (
-        <div className="border-t py-2">
-            <p>
-                Submit time:{" "}
-                {format(new Date(submission.submit_time), "dd/MM/yyyy HH:mm")}
-            </p>
+        <div
+            className={`border-2 ${
+                !submission.is_evaluated ? "border-green-500" : ""
+            } flex`}
+        >
+            <div
+                className={`flex ${
+                    viewDetail ? "flex-col w-[200px]" : "flex-row w-full"
+                }`}
+            >
+                <div className={`${viewDetail ? "" : "grow"} p-2 bg-white`}>
+                    <p>
+                        Submit time:{" "}
+                        <span className="font-bold">
+                            {format(
+                                new Date(submission.submit_time),
+                                "dd/MM/yyyy HH:mm"
+                            )}
+                        </span>
+                    </p>
 
-            <p>
-                Duration:{" "}
-                {formatTime(
-                    (new Date(submission.submit_time).getTime() -
-                        new Date(submission.start_time).getTime()) /
-                        1000
-                )}{" "}
-            </p>
+                    <p>
+                        Duration:{" "}
+                        <span className="font-bold">
+                            {formatTime(
+                                (new Date(submission.submit_time).getTime() -
+                                    new Date(submission.start_time).getTime()) /
+                                    1000
+                            )}
+                        </span>
+                    </p>
 
-            {submission.is_evaluated && (
-                <>
-                    <p>Score: {getRound(submission.score || 0)}</p>
-                    <p>Correct answers: {submission.correct_answers}</p>
-                    <p>Wrong answers: {submission.wrong_answers}</p>
-                </>
-            )}
-            <Button onClick={handleViewDetail} className="mt-2" link>
-                {!viewDetail ? "View detail" : "Hide detail"}
-            </Button>
+                    {submission.is_evaluated && (
+                        <>
+                            <p>Score: {getRound(submission.score || 0)}</p>
+                            <p>Correct answers: {submission.correct_answers}</p>
+                            <p>Wrong answers: {submission.wrong_answers}</p>
+                        </>
+                    )}
+                    <Button onClick={handleViewDetail} className="mt-2" link>
+                        {!viewDetail ? "View detail" : "Hide detail"}
+                    </Button>
+                </div>
+                <div
+                    className={`flex flex-col justify-center items-center ${
+                        viewDetail ? "w-full" : "w-[100px]"
+                    } bg-green-500 text-white`}
+                >
+                    <div>Score</div>
+                    <div className="text-2xl font-bold">
+                        {getRound(submission.score || 0)}
+                    </div>
+                </div>
+            </div>
 
             {viewDetail && (
                 <div className="border border-gray-300">
