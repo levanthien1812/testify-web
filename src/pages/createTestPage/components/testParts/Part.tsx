@@ -36,12 +36,7 @@ const Part: React.FC<{
                 await addPart(testId!, partBody),
             mutationKey: [MUTATION_KEYS.CREATE_PARTS, { body: part }],
             onSuccess: (data) => {
-                dispatch(
-                    saveTestParts({
-                        partOrder: part.order,
-                        partInfo: { id: data?.part?.id, is_saved: true },
-                    })
-                );
+                dispatch(saveTestParts({ ...data.part, is_saved: true }));
                 dispatch(validateParts());
                 setIsEditing(false);
                 toast.success(TOAST_MESSAGES.PART_ADDED_SUCCESSFULLY);
@@ -60,8 +55,8 @@ const Part: React.FC<{
                 dispatch(validateParts());
                 dispatch(
                     saveTestParts({
-                        partOrder: part.order,
-                        partInfo: { is_saved: true },
+                        ...data.part,
+                        is_saved: true,
                     })
                 );
                 setIsEditing(false);
@@ -83,7 +78,7 @@ const Part: React.FC<{
         handleSubmit,
         formState: { errors },
         register,
-        watch,
+        reset,
     } = useForm<PartBodyItf>({
         defaultValues: part,
     });
@@ -93,18 +88,6 @@ const Part: React.FC<{
             createPartMutate(pickFieldsFromObject(data, INITIAL_PART));
         else updatePartMutate(pickFieldsFromObject(data, INITIAL_PART));
     };
-
-    const allValues = watch();
-
-    useEffect(() => {
-        dispatch(
-            saveTestParts({
-                partOrder: part.order,
-                partInfo: { ...allValues, is_saved: false },
-            })
-        );
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [JSON.stringify(allValues), saveTestParts, dispatch]);
 
     const handleClickMoveUp = () => {
         dispatch(movePartAction({ partId: part.id!, direction: "up" }));
@@ -116,6 +99,13 @@ const Part: React.FC<{
         movePartMutate({ direction: "down" });
     };
 
+    const handleCancel = () => {
+        reset();
+        if (part.id) {
+            setIsEditing(false);
+        }
+    };
+
     return (
         <Accordion
             viewData={{
@@ -125,6 +115,12 @@ const Part: React.FC<{
                         text: "Edit",
                         onClick: () => {
                             setIsEditing(true);
+                            dispatch(
+                                saveTestParts({
+                                    order: part.order,
+                                    is_saved: false,
+                                })
+                            );
                         },
                         disabled: isEditting || isDeleting,
                         display: !!part.id,
@@ -223,36 +219,31 @@ const Part: React.FC<{
                     />
                 </div>
 
+                {part?.is_saved && (
+                    <p className="text-orange-600 italic text-end">
+                        Part is saved
+                    </p>
+                )}
                 {isEditting && (
                     <div className="flex justify-end gap-6 items-end">
-                        {part?.is_saved && (
-                            <p className="text-orange-600 italic">
-                                Part is saved
-                            </p>
-                        )}
-                        {!part?.is_saved && (
-                            <Button
-                                className="w-1/5"
-                                type="button"
-                                onClick={() => setIsEditing(false)}
-                                secondary
-                            >
-                                Cancel
-                            </Button>
-                        )}
-                        {!part?.is_saved && (
-                            <Button
-                                className="w-1/5"
-                                type="submit"
-                                disabled={
-                                    createPartLoading || updatePartLoading
-                                }
-                            >
-                                {createPartLoading || updatePartLoading
-                                    ? "Saving..."
-                                    : "Save"}
-                            </Button>
-                        )}
+                        <Button
+                            className="w-1/5"
+                            type="button"
+                            onClick={handleCancel}
+                            secondary
+                        >
+                            Cancel
+                        </Button>
+
+                        <Button
+                            className="w-1/5"
+                            type="submit"
+                            disabled={createPartLoading || updatePartLoading}
+                        >
+                            {createPartLoading || updatePartLoading
+                                ? "Saving..."
+                                : "Save"}
+                        </Button>
                     </div>
                 )}
             </form>

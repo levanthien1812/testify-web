@@ -6,12 +6,11 @@ import { useAppSelector } from "../../../hooks/hooks";
 
 const Navigator = () => {
     const { steps, currentStep } = useAppSelector((state) => state.createTest);
-    const { handleNavigation } = createTestActions;
+    const { handleNavigation, navigateStep } = createTestActions;
     const dispatch = useDispatch();
 
     const handleClickStep = (value: string) => {
-        // dispatch(setStep(value as CREATE_TEST_STEPS));
-        dispatch(handleNavigation(value as CREATE_TEST_STEPS));
+        dispatch(navigateStep(value as CREATE_TEST_STEPS));
     };
 
     const getColor = (step: CreateTestStep) => {

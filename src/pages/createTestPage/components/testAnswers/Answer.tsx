@@ -35,26 +35,29 @@ const Answer: React.FC<{
     const { saveTestQuestions } = createTestActions;
     const [isAddingExplaination, setIsAddingExplaination] =
         useState<boolean>(false);
+    const [contentTemp, setContentTemp] = useState<QuestionContentItf>(
+        question.content!
+    );
     const dispatch = useDispatch();
 
     const { mutate, isLoading } = useMutation({
-        mutationFn: async (answerBody: AnswerContentItf) =>
-            await addAnswer(question.test_id, question.id!, answerBody),
+        mutationFn: async () =>
+            await addAnswer(
+                question.test_id,
+                question.id!,
+                contentTemp.answer as AnswerContentItf
+            ),
         mutationKey: [MUTATION_KEYS.ADD_ANSWER, { question_id: question.id }],
         onSuccess: (data) => {
             setSavable(false);
             toast.success(TOAST_MESSAGES.ADD_ANSWER_SUCCESSFULLY);
-            const updatedContent = {
-                ...question.content,
-                answer: {
-                    ...question.content?.answer,
-                    is_saved: true,
-                },
-            };
             dispatch(
                 saveTestQuestions({
                     ...question,
-                    content: updatedContent as QuestionContentItf,
+                    content: {
+                        ...contentTemp,
+                        answer: { ...contentTemp.answer, is_saved: true },
+                    } as QuestionContentItf,
                 })
             );
             setIsAddingExplaination(false);
@@ -63,39 +66,38 @@ const Answer: React.FC<{
 
     const handleProvideAnswer = (answerBody: AnswerContentItf) => {
         setReset(false);
-        const updatedContent = {
-            ...question.content,
-            answer: answerBody,
-        };
-        dispatch(
-            saveTestQuestions({
-                ...question,
-                content: updatedContent as QuestionContentItf,
-            })
+        setContentTemp(
+            (prev) =>
+                ({
+                    ...prev,
+                    answer: answerBody,
+                } as QuestionContentItf)
         );
         setSavable(true);
     };
 
     const handleSaveAnswer = () => {
-        if (question?.content?.answer) mutate(question.content.answer);
+        mutate();
     };
 
     const handleExplainationChange = (value: string) => {
         if (value.length > 0) {
             setSavable(true);
         }
-        dispatch(
-            saveTestQuestions({
-                ...question,
-                content: {
-                    ...question.content,
-                    answer: {
-                        ...question.content?.answer,
-                        explaination: value,
-                    },
-                } as QuestionContentItf,
-            })
-        );
+        setContentTemp({
+            ...contentTemp,
+            answer: {
+                ...contentTemp.answer,
+                explaination: value,
+            },
+        } as QuestionContentItf);
+    };
+
+    const handleCancel = () => {
+        setReset(true);
+        setContentTemp(question.content!);
+        setSavable(false);
+        setIsAddingExplaination(false);
     };
 
     return (
@@ -103,7 +105,7 @@ const Answer: React.FC<{
             <div className="flex justify-start items-center">
                 <p
                     className={`px-2 text-white ${
-                        question.content?.answer?.is_saved
+                        contentTemp.answer?.is_saved
                             ? "bg-orange-600"
                             : "bg-gray-600"
                     } w-fit`}
@@ -114,7 +116,7 @@ const Answer: React.FC<{
                     </span>{" "}
                     :
                 </p>
-                {question?.content?.answer?.is_saved && (
+                {contentTemp.answer?.is_saved && (
                     <p className="text-orange-600 italic ms-1">Saved</p>
                 )}
             </div>
@@ -123,33 +125,33 @@ const Answer: React.FC<{
                 {question.type === QUESTION_TYPE.MULTIPLE_CHOICES && (
                     <MultipleChoicesAnswer
                         reset={reset}
-                        content={question.content as MultipleChoiceQuestionItf}
+                        content={contentTemp as MultipleChoiceQuestionItf}
                         onProvideAnswer={handleProvideAnswer}
                     />
                 )}
                 {question.type === QUESTION_TYPE.FILL_IN_THE_GAPS && (
                     <FillGapsAnswer
                         reset={reset}
-                        content={question.content as FillGapsQuestionItf}
+                        content={contentTemp as FillGapsQuestionItf}
                         onProvideAnswer={handleProvideAnswer}
                     />
                 )}
                 {question.type === QUESTION_TYPE.MATCHING && (
                     <MatchingAnswer
                         reset={reset}
-                        content={question.content as MatchingQuestionItf}
+                        content={contentTemp as MatchingQuestionItf}
                         onProvideAnswer={handleProvideAnswer}
                     />
                 )}
                 {question.type === QUESTION_TYPE.RESPONSE && (
                     <ResponseAnswer
-                        content={question.content as ResponseQuestionItf}
+                        content={contentTemp as ResponseQuestionItf}
                     />
                 )}
                 {question.type === QUESTION_TYPE.TRUE_FALSE && (
                     <TrueFalseAnswer
                         reset={reset}
-                        content={question.content as TrueFalseQuestionItf}
+                        content={contentTemp as TrueFalseQuestionItf}
                         onProvideAnswer={handleProvideAnswer}
                     />
                 )}
@@ -169,59 +171,48 @@ const Answer: React.FC<{
                         </Button>
                     </div>
                     <TextEditor
-                        content={question.content!.answer?.explaination || ""}
+                        content={contentTemp.answer?.explaination || ""}
                         setContent={handleExplainationChange}
                     />
                 </div>
             )}
 
-            {!question.content?.answer?.explaination &&
-                !isAddingExplaination && (
-                    <div className="mt-1">
-                        <Button
-                            outlined
-                            size="sm"
-                            onClick={() => setIsAddingExplaination(true)}
-                        >
-                            Add explaination
-                        </Button>
-                    </div>
-                )}
+            {!contentTemp?.answer?.explaination && !isAddingExplaination && (
+                <div className="mt-1">
+                    <Button
+                        outlined
+                        size="sm"
+                        onClick={() => setIsAddingExplaination(true)}
+                    >
+                        Add explaination
+                    </Button>
+                </div>
+            )}
 
-            {question.content?.answer?.explaination &&
-                !isAddingExplaination && (
-                    <div className="mt-2">
-                        <div className="flex gap-2 mb-1 items-center">
-                            <p className="">Explaination:</p>
-                            {!isAddingExplaination && (
-                                <Button
-                                    outlined
-                                    size="sm"
-                                    onClick={() =>
-                                        setIsAddingExplaination(true)
-                                    }
-                                >
-                                    Edit
-                                </Button>
-                            )}
-                        </div>
-                        <HtmlDisplay
-                            htmlContent={question.content.answer.explaination}
-                            className="bg-orange-50 border border-gray-400 p-2"
-                        />
+            {contentTemp.answer?.explaination && !isAddingExplaination && (
+                <div className="mt-2">
+                    <div className="flex gap-2 mb-1 items-center">
+                        <p className="">Explaination:</p>
+                        {!isAddingExplaination && (
+                            <Button
+                                outlined
+                                size="sm"
+                                onClick={() => setIsAddingExplaination(true)}
+                            >
+                                Edit
+                            </Button>
+                        )}
                     </div>
-                )}
+                    <HtmlDisplay
+                        htmlContent={contentTemp.answer.explaination}
+                        className="bg-orange-50 border border-gray-400 p-2"
+                    />
+                </div>
+            )}
 
             {savable && (
                 <div className="flex mt-2 gap-2 justify-end items-center">
-                    <Button
-                        secondary
-                        onClick={() => {
-                            setReset(true);
-                            setSavable(false);
-                        }}
-                        size="sm"
-                    >
+                    <Button secondary onClick={handleCancel} size="sm">
                         Cancel
                     </Button>
                     <Button

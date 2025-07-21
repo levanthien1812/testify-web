@@ -5,8 +5,6 @@ import {
     OPENED_EDITABILITY_CONFIG,
     CLOSED_EDITABILITY_CONFIG,
     INITIAL_CREATE_TEST_CONTEXT,
-    INITIAL_PART,
-    INITIAL_QUESTION,
     INITIAL_OPTIONS,
     INITIAL_PASSCODE,
 } from "../config/constants/initialValues";
@@ -28,12 +26,20 @@ import { SHARE_OPTIONS } from "../config/constants/tests";
 import { PASSCODE_FORMAT, PASSCODE_METHOD } from "../config/constants/passcode";
 import {
     addQuestion,
-    checkQuestionAnswerIsSaved,
     removeQuestion,
     reorderQuestions,
     sortByOrderFn,
 } from "../utils/test";
-import { findSmallestMissingPositive } from "../utils/array";
+import {
+    initializeAnswers,
+    initializeParts,
+    initializeQuestions,
+    validateAnswers,
+    validateParts,
+    validateQuestions,
+    validateShareOption,
+    validateTestInfo,
+} from "./actionFns/createTest";
 
 const createTestSlice = createSlice({
     initialState: INITIAL_CREATE_TEST_CONTEXT,
@@ -101,47 +107,23 @@ const createTestSlice = createSlice({
                 );
         },
         initializeTestParts(state) {
-            const countProvidedParts = state?.testParts?.filter(
-                (part) => part?.id
-            )?.length;
-
-            if (state.numParts > 1 && countProvidedParts === 0) {
-                state.testParts = [...Array(state?.numParts)].map(
-                    (item, index) => ({ ...INITIAL_PART, order: index + 1 })
-                );
-            }
-            if (countProvidedParts > 0 && state.testParts) {
-                state.testParts.sort(sortByOrderFn);
-            }
-
-            if (state.numParts > state.testParts.length) {
-                state.testParts = [
-                    ...state.testParts,
-                    ...[...Array(state.numParts - state.testParts.length)].map(
-                        (item, index) => ({
-                            ...INITIAL_PART,
-                            order: state.testParts.length + (index + 1),
-                        })
-                    ),
-                ];
-            }
+            state.testParts = initializeParts(
+                state.testParts,
+                state.numParts,
+                state.testId!
+            );
         },
-        saveTestParts(
-            state,
-            action: PayloadAction<{
-                partOrder: number;
-                partInfo: Partial<TestPartItf>;
-            }>
-        ) {
+        saveTestParts(state, action: PayloadAction<Partial<TestPartItf>>) {
+            if (!action.payload.order) return;
             const partIndex = state.testParts.findIndex(
-                (part) => part.order === action.payload.partOrder
+                (part) => part.order === action.payload.order
             );
             state.testParts[partIndex] = {
                 ...state.testParts[partIndex],
-                ...action.payload.partInfo,
+                ...action.payload,
             };
 
-            if (action.payload.partInfo?.is_saved) {
+            if (action.payload?.is_saved) {
                 state.testParts[partIndex].is_saved = true;
             } else {
                 state.testParts[partIndex].is_saved = false;
@@ -185,101 +167,23 @@ const createTestSlice = createSlice({
         initializeTestQuestions(state) {
             if (state.numParts > 1) {
                 state.testParts = state.testParts?.map((part) => {
-                    if (!part.questions || part.questions.length === 0) {
-                        part.questions = [...Array(part.num_questions)].map(
-                            (question, index) => {
-                                return {
-                                    ...INITIAL_QUESTION,
-                                    test_id: state.testId!,
-                                    part_id: part.id,
-                                    order: index + 1,
-                                };
-                            }
-                        );
-                    } else {
-                        if (part.questions.length < part.num_questions) {
-                            let orderArray = part.questions.map(
-                                (question) => question.order
-                            );
-
-                            part.questions = [
-                                ...part.questions,
-                                ...[
-                                    ...Array(
-                                        part.num_questions -
-                                            part.questions.length
-                                    ),
-                                ].map((item, index) => {
-                                    const missingOrder =
-                                        findSmallestMissingPositive(orderArray);
-                                    orderArray.push(missingOrder);
-                                    return {
-                                        ...INITIAL_QUESTION,
-                                        test_id: state.testId!,
-                                        part_id: part.id,
-                                        order: missingOrder,
-                                    };
-                                }),
-                            ];
-                        }
-
-                        part.questions = part.questions.map((question) => {
-                            let answer = {};
-                            if (question?.content?.answer) {
-                                answer = {
-                                    ...question?.content?.answer,
-                                    is_saved:
-                                        checkQuestionAnswerIsSaved(question),
-                                };
-                            }
-                            return {
-                                ...question,
-                                content: {
-                                    ...question.content,
-                                    answer: answer,
-                                } as QuestionContentItf,
-                            };
-                        });
-
-                        part.questions.sort(sortByOrderFn);
-                    }
-                    return part;
+                    const questions = initializeQuestions(
+                        part.questions || [],
+                        part.num_questions,
+                        state.testId!,
+                        part.id
+                    );
+                    return {
+                        ...part,
+                        questions,
+                    };
                 });
             } else {
-                if (state.testQuestions?.length === 0) {
-                    state.testQuestions = [...Array(state.numQuestions)].map(
-                        (question, index) => {
-                            return {
-                                ...INITIAL_QUESTION,
-                                test_id: state.testId!,
-                                order: index + 1,
-                            };
-                        }
-                    );
-                } else {
-                    let orderArray = state.testQuestions.map(
-                        (question) => question.order
-                    );
-
-                    state.testQuestions = [
-                        ...state.testQuestions,
-                        ...[
-                            ...Array(
-                                state.numQuestions - state.testQuestions?.length
-                            ),
-                        ].map((item, index) => {
-                            const missingOrder =
-                                findSmallestMissingPositive(orderArray);
-                            orderArray.push(missingOrder);
-                            return {
-                                ...INITIAL_QUESTION,
-                                test_id: state.testId!,
-                                order: missingOrder,
-                            };
-                        }),
-                    ];
-                }
-                state.testQuestions.sort(sortByOrderFn);
+                state.testQuestions = initializeQuestions(
+                    state.testQuestions,
+                    state.numQuestions,
+                    state.testId!
+                );
             }
         },
 
@@ -287,6 +191,7 @@ const createTestSlice = createSlice({
             state,
             action: PayloadAction<Partial<QuestionItf<QuestionContentItf>>>
         ) {
+            if (!action.payload.order) return;
             if (action.payload?.part_id) {
                 const partIndex = state.testParts.findIndex(
                     (part) => part.id === action.payload.part_id
@@ -319,25 +224,14 @@ const createTestSlice = createSlice({
         initializeTestAnswers(state) {
             if (state.numParts > 1) {
                 state.testParts.map((part) => {
-                    if (part.questions) {
-                        part.questions.map((question) => {
-                            if (question.content && question.content.answer) {
-                                question.content.answer.is_saved =
-                                    checkQuestionAnswerIsSaved(question);
-                            }
-                            return question;
-                        });
-                    }
-                    return part;
+                    const questions = initializeAnswers(part.questions!);
+                    return {
+                        ...part,
+                        questions,
+                    };
                 });
             } else {
-                state.testQuestions.map((question) => {
-                    if (question.content && question.content.answer) {
-                        question.content.answer.is_saved =
-                            checkQuestionAnswerIsSaved(question);
-                    }
-                    return question;
-                });
+                state.testQuestions = initializeAnswers(state.testQuestions);
             }
         },
         saveTestAnswers(state, action) {},
@@ -359,148 +253,45 @@ const createTestSlice = createSlice({
             const step = action.payload?.step || state.currentStep;
             switch (step) {
                 case CREATE_TEST_STEPS.TEST_INFORMATION: {
-                    state.isValidTestInfo =
-                        state.testTitle.length > 0 &&
-                        state.testDatetime.length > 0 &&
-                        state.testDuration > 0 &&
-                        state.maxScore > 0 &&
-                        state.numQuestions > 0 &&
-                        state.numParts > 0;
+                    state.isValidTestInfo = validateTestInfo({
+                        title: state.testTitle,
+                        datetime: state.testDatetime,
+                        duration: state.testDuration,
+                        max_score: state.maxScore,
+                        num_parts: state.numParts,
+                        num_questions: state.numQuestions,
+                    });
                     break;
                 }
                 case CREATE_TEST_STEPS.TEST_PARTS: {
-                    if (state.numParts <= 1) state.isValidParts = true;
-                    else {
-                        let isEqualTotalScores = false;
-                        let isEqualNumberQuestions = false;
-                        const totalPartsScores = state?.testParts?.reduce(
-                            (total, curr) => curr.score + total,
-                            0
-                        );
-                        if (
-                            totalPartsScores === state?.maxScore &&
-                            state?.testParts?.every(
-                                (part) => part.num_questions > 0
-                            )
-                        ) {
-                            isEqualTotalScores = true;
-                        }
-
-                        const totalPartsQuestions = state?.testParts?.reduce(
-                            (total, curr) => total + curr?.num_questions,
-                            0
-                        );
-                        if (
-                            totalPartsQuestions === state?.numQuestions &&
-                            state?.testParts?.every(
-                                (part) => part.num_questions > 0
-                            )
-                        ) {
-                            isEqualNumberQuestions = true;
-                        }
-                        console.log(totalPartsScores, totalPartsQuestions);
-                        state.isValidParts =
-                            isEqualTotalScores && isEqualNumberQuestions;
-                    }
+                    state.isValidParts = validateParts(
+                        state.testParts || [],
+                        state.numParts,
+                        state.numQuestions,
+                        state.maxScore
+                    );
                     break;
                 }
                 case CREATE_TEST_STEPS.TEST_QUESTIONS: {
-                    if (state?.numParts > 1) {
-                        state.isValidQuestions = state?.testParts?.every(
-                            (part) => {
-                                let isEqualTotalScores = false;
-                                let isEqualNumberQuestions = false;
-                                const totalQuestionsScore =
-                                    part?.questions?.reduce(
-                                        (total, curr) => curr.score + total,
-                                        0
-                                    );
-                                if (totalQuestionsScore === part?.score) {
-                                    isEqualTotalScores = true;
-                                }
-                                const totalQuestionsNumber =
-                                    part?.questions?.length;
-                                if (
-                                    totalQuestionsNumber === part.num_questions
-                                ) {
-                                    isEqualNumberQuestions = true;
-                                }
-                                return (
-                                    isEqualTotalScores && isEqualNumberQuestions
-                                );
-                            }
-                        );
-
-                        state.includesManuallyScoredQuestions =
-                            state.testParts.some((part) => {
-                                return part.questions?.some((question) =>
-                                    MANUAL_SCORE_TYPES.includes(question.type)
-                                );
-                            });
-                    } else {
-                        let isEqualTotalScores = false;
-                        let isEqualNumberQuestions = false;
-                        const totalQuestionsScore =
-                            state?.testQuestions?.reduce(
-                                (total, curr) => curr.score + total,
-                                0
-                            );
-                        if (totalQuestionsScore === state?.maxScore) {
-                            isEqualTotalScores = true;
-                        }
-                        const totalQuestionsNumber =
-                            state?.testQuestions?.filter(
-                                (question) => question.is_content_provided
-                            ).length;
-
-                        if (totalQuestionsNumber === state?.numQuestions) {
-                            isEqualNumberQuestions = true;
-                        }
-                        state.isValidQuestions =
-                            isEqualTotalScores && isEqualNumberQuestions;
-
-                        state.includesManuallyScoredQuestions =
-                            state.testQuestions.some((question) =>
-                                MANUAL_SCORE_TYPES.includes(question.type)
-                            );
-                    }
+                    state.isValidQuestions = validateQuestions(
+                        state.testParts || [],
+                        state.testQuestions || [],
+                        state.numQuestions,
+                        state.maxScore
+                    );
                     break;
                 }
                 case CREATE_TEST_STEPS.TEST_ANSWERS: {
+                    state.isValidAnswers = validateAnswers();
                     break;
                 }
                 case CREATE_TEST_STEPS.TEST_TAKERS: {
-                    state.isValidShareOption = false;
-                    switch (state.shareOption) {
-                        case SHARE_OPTIONS.RESTRICTED: {
-                            if (state.selectedTestTakers.length > 0) {
-                                state.isValidShareOption = true;
-                            }
-                            break;
-                        }
-                        case SHARE_OPTIONS.ANYONE: {
-                            state.isValidShareOption = true;
-                            break;
-                        }
-                        case SHARE_OPTIONS.PASSCODE: {
-                            if (
-                                state.passcode.method ===
-                                    PASSCODE_METHOD.AUTO_GENERATED &&
-                                state.passcode.format &&
-                                state.passcode.code
-                            ) {
-                                state.isValidShareOption = true;
-                            }
-                            if (
-                                state.passcode.method ===
-                                    PASSCODE_METHOD.MANUALLY_ENTERED &&
-                                state.passcode.code
-                            ) {
-                                state.isValidShareOption = true;
-                            }
-                            break;
-                        }
-                    }
+                    state.isValidShareOption = validateShareOption(
+                        state.shareOption,
+                        state.selectedTestTakers.length,
+                        state.passcode
+                    );
+                    break;
                 }
             }
         },
@@ -603,10 +394,11 @@ const createTestSlice = createSlice({
             state.passcode = action.payload.test.passcode || INITIAL_PASSCODE;
 
             state.testParts = action.payload?.parts;
-            state.testParts = state.testParts.map((part) => ({
-                ...part,
-                is_saved: part?.id ? true : false,
-            }));
+            state.testParts = initializeParts(
+                state.testParts,
+                state.numParts,
+                state.testId
+            );
 
             state.selectedTestTakers = action.payload.test.takers;
 
@@ -631,6 +423,11 @@ const createTestSlice = createSlice({
 
             if (action.payload.questions) {
                 state.testQuestions = action.payload.questions;
+                state.testQuestions = initializeQuestions(
+                    state.testQuestions,
+                    state.numQuestions,
+                    state.testId
+                );
             }
 
             state.includesManuallyScoredQuestions =
@@ -645,7 +442,97 @@ const createTestSlice = createSlice({
         reset(state) {
             return INITIAL_CREATE_TEST_CONTEXT;
         },
-        navigateStep(step) {},
+        navigateStep(state, action: PayloadAction<CREATE_TEST_STEPS>) {
+            const currentStep = state.steps?.find(
+                (step) => step.value === state.currentStep
+            );
+            const targetStep = state.steps?.find(
+                (step) => step.value === action.payload
+            );
+            if (!targetStep || !currentStep) return;
+
+            if (currentStep.index > targetStep.index) {
+                state.currentStep = targetStep.value;
+                return;
+            }
+
+            let currentStepIndex = currentStep.index;
+            stepLoop: for (
+                let i = currentStep.index - 1;
+                i < targetStep.index;
+                i++
+            ) {
+                currentStepIndex = i;
+                switch (state.steps[i].value) {
+                    case CREATE_TEST_STEPS.TEST_INFORMATION:
+                        if (
+                            validateTestInfo({
+                                title: state.testTitle,
+                                datetime: state.testDatetime,
+                                duration: state.testDuration,
+                                max_score: state.maxScore,
+                                num_parts: state.numParts,
+                                num_questions: state.numQuestions,
+                            })
+                        ) {
+                            state.isValidTestInfo = true;
+                            continue;
+                        }
+                        break stepLoop;
+                    case CREATE_TEST_STEPS.TEST_PARTS: {
+                        if (
+                            validateParts(
+                                state.testParts || [],
+                                state.numParts,
+                                state.numQuestions,
+                                state.maxScore
+                            )
+                        ) {
+                            state.isValidParts = true;
+                            continue;
+                        }
+                        break stepLoop;
+                    }
+                    case CREATE_TEST_STEPS.TEST_QUESTIONS: {
+                        if (
+                            validateQuestions(
+                                state.testParts,
+                                state.testQuestions,
+                                state.numQuestions,
+                                state.maxScore
+                            )
+                        ) {
+                            state.isValidQuestions = true;
+                            continue;
+                        }
+                        break stepLoop;
+                    }
+                    case CREATE_TEST_STEPS.TEST_ANSWERS: {
+                        if (validateAnswers()) {
+                            state.isValidAnswers = true;
+                            continue;
+                        }
+                        break stepLoop;
+                    }
+                    case CREATE_TEST_STEPS.TEST_TAKERS: {
+                        if (
+                            validateShareOption(
+                                state.shareOption,
+                                state.selectedTestTakers.length,
+                                state.passcode
+                            )
+                        ) {
+                            state.isValidShareOption = true;
+                            continue;
+                        }
+                        break stepLoop;
+                    }
+                    default:
+                        break;
+                }
+            }
+            state.currentStep = state.steps[currentStepIndex].value;
+        },
         generateTestLink(state) {
             state.testLink = `${window.location.origin}/tests/${state.testId}`;
         },
