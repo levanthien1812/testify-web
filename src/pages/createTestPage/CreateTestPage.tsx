@@ -22,9 +22,12 @@ import MessageAction from "../others/MessageAction";
 const CreateTestPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const stepParam = searchParams.get("step");
-    const { currentStep } = useAppSelector((state) => state.createTest);
+    const { currentStep, testTitle } = useAppSelector(
+        (state) => state.createTest
+    );
     const [error, setError] = useState<string | null>(null);
-    const { setTestFromAPI, setStep, saveTestInfo } = createTestActions;
+    const { setTestFromAPI, setStep, saveTestInfo, reset, navigateStep } =
+        createTestActions;
     const dispatch = useDispatch();
     const location = useLocation();
     const navigate = useNavigate();
@@ -56,7 +59,7 @@ const CreateTestPage = () => {
         if (testIdParam) {
             refetch();
         }
-    }, [testIdParam, refetch, dispatch, saveTestInfo, location.state]);
+    }, [testIdParam, refetch, dispatch]);
 
     useEffect(() => {
         if (location.state?.givenDate) {
@@ -73,10 +76,16 @@ const CreateTestPage = () => {
     }, [currentStep, setSearchParams]);
 
     useEffect(() => {
-        if (!stepParam) {
-            dispatch(setStep(CREATE_TEST_STEPS.TEST_INFORMATION));
+        if (stepParam && testTitle) {
+            dispatch(navigateStep(stepParam as CREATE_TEST_STEPS));
         }
-    }, [stepParam, dispatch, setStep]);
+    }, [stepParam, dispatch, setStep, navigateStep, testTitle]);
+
+    useEffect(() => {
+        return () => {
+            dispatch(reset());
+        };
+    }, []);
 
     return (
         <>

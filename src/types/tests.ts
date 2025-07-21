@@ -107,6 +107,7 @@ export interface CreateTestContext {
     isValidCurrentPart: boolean;
     isValidParts: boolean;
     isValidQuestions: boolean;
+    isValidAnswers: boolean;
     isValidShareOption: boolean;
     selectedTestTakers: TakerItf[];
     joinedTakers: TakerItf[];
