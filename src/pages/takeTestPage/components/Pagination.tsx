@@ -86,7 +86,7 @@ const QuestionsPagination = () => {
                     !test.options.pagination_mode.questions_per_page
                 )
                     return null;
-                if (test.num_parts <= 1) {
+                if (test.num_parts === 0) {
                     return {
                         questions: test.questions.slice(
                             (currentPage - 1) *

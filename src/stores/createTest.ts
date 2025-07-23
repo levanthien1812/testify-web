@@ -10,7 +10,6 @@ import {
 } from "../config/constants/initialValues";
 import {
     CREATE_TEST_STEPS,
-    MANUAL_SCORE_TYPES,
     MILISECONDS_BY_UNIT,
     TEST_STATUS,
 } from "../config/constants/tests";
@@ -394,11 +393,13 @@ const createTestSlice = createSlice({
             state.passcode = action.payload.test.passcode || INITIAL_PASSCODE;
 
             state.testParts = action.payload?.parts;
-            state.testParts = initializeParts(
-                state.testParts,
-                state.numParts,
-                state.testId
-            );
+            if (state.testParts && state.testParts.length > 0) {
+                state.testParts = initializeParts(
+                    state.testParts,
+                    state.numParts,
+                    state.testId
+                );
+            }
 
             state.selectedTestTakers = action.payload.test.takers;
 
@@ -421,7 +422,10 @@ const createTestSlice = createSlice({
                 }
             }
 
-            if (action.payload.questions) {
+            if (
+                action.payload.questions &&
+                action.payload.questions.length > 0
+            ) {
                 state.testQuestions = action.payload.questions;
                 state.testQuestions = initializeQuestions(
                     state.testQuestions,
@@ -635,6 +639,9 @@ const createTestSlice = createSlice({
                     break;
                 }
             }
+        },
+        setOpenAllParts(state, action: PayloadAction<boolean>) {
+            state.openAllParts = action.payload;
         },
     },
 });

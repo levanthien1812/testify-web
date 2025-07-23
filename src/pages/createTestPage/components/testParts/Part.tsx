@@ -18,9 +18,8 @@ import { useAppSelector } from "../../../../hooks/hooks";
 const Part: React.FC<{
     part: TestPartItf;
 }> = ({ part }) => {
-    const { testId, maxScore, editibility, numParts } = useAppSelector(
-        (state) => state.createTest
-    );
+    const { testId, maxScore, editibility, numParts, openAllParts } =
+        useAppSelector((state) => state.createTest);
     const [isEditting, setIsEditing] = useState(!part.id ? true : false);
     const [isDeleting, setIsDeleting] = useState(false);
     const {
@@ -147,6 +146,7 @@ const Part: React.FC<{
                         display: !!part.id,
                     },
                 ],
+                open: openAllParts,
             }}
         >
             <form

@@ -149,7 +149,7 @@ export const validateParts = (
     maxScore: number
 ) => {
     let isValidParts = false;
-    if (numParts <= 1) isValidParts = true;
+    if (numParts === 0) isValidParts = true;
     else {
         let isEqualTotalScores = false;
         let isEqualNumberQuestions = false;
@@ -201,6 +201,7 @@ export const validateQuestions = (
             if (totalQuestionsNumber === part.num_questions) {
                 isEqualNumberQuestions = true;
             }
+            console.log({ totalQuestionsNumber, totalQuestionsScore });
             return isEqualTotalScores && isEqualNumberQuestions;
         });
     } else if (questions.length > 0) {

@@ -133,7 +133,7 @@ const TakeTestPage = () => {
             test && test.num_parts > 1 && test.parts.length > 1;
         const isValidQuestions =
             test &&
-            test.num_parts <= 1 &&
+            test.num_parts === 0 &&
             test.questions &&
             test.questions.length > 0;
         return isStarted && !isEnded && (isValidParts || isValidQuestions);

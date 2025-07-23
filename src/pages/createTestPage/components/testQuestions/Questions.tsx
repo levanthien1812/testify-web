@@ -16,7 +16,9 @@ const Questions: React.FC<{
     withAnswer?: boolean;
 }> = ({ part, withAnswer = false }) => {
     const containerRef = useRef<HTMLDivElement>(null);
-    const { testQuestions } = useAppSelector((state) => state.createTest);
+    const { testQuestions, openAllParts } = useAppSelector(
+        (state) => state.createTest
+    );
     const audioElement = useRef<HTMLAudioElement>(null);
 
     const questions = useMemo(() => {
@@ -66,6 +68,7 @@ const Questions: React.FC<{
                                 )} | Questions: ${part.num_questions}`,
                             },
                         },
+                        open: openAllParts,
                     }}
                 >
                     <div

@@ -30,6 +30,17 @@ Welcome to the Test Creation Website project! This application is designed to st
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## Built With
+
+-   React (Typescript)
+-   Node.js
+-   Express
+-   MongoDB
+-   Tailwind CSS
+-   Socket IO
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
 ## DB Diagram
 
 <img src="src/assets/images/testiy-db-diagram.png" alt="db-diagram">

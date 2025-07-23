@@ -54,7 +54,7 @@ const TestQuestionsAndAnswers = ({
                     })}
                 </div>
             )}
-            {test.num_parts <= 1 &&
+            {test.num_parts === 0 &&
                 test.questions &&
                 test.questions.map((question) => (
                     <Answer

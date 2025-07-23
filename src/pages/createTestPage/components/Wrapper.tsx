@@ -1,6 +1,9 @@
-import React, { ReactNode, useEffect } from "react";
-import Button from "../elements/Button";
-import { ButtonProps } from "../../types/common";
+import { ReactNode } from "react";
+import Button from "../../../components/elements/Button";
+import { ButtonProps } from "../../../types/common";
+import { useAppSelector } from "../../../hooks/hooks";
+import { createTestActions } from "../../../stores/createTest";
+import { useDispatch } from "react-redux";
 
 type ViewData = {
     headerTitle: {
@@ -15,6 +18,7 @@ type ViewData = {
         outlinedButton: Partial<ButtonProps>;
         additionalButtons?: Partial<ButtonProps>[];
     };
+    canOpenParts?: boolean;
 };
 
 const Wrapper = ({
@@ -34,6 +38,7 @@ const Wrapper = ({
                 type: "button",
             },
         },
+        canOpenParts: false,
     },
     children,
 }: {
@@ -42,6 +47,12 @@ const Wrapper = ({
 }) => {
     const { containButton, outlinedButton, additionalButtons } =
         viewData?.bottomButtons;
+
+    const { openAllParts, testParts } = useAppSelector(
+        (state) => state.createTest
+    );
+    const { setOpenAllParts } = createTestActions;
+    const dispatch = useDispatch();
 
     return (
         <div className="px-20 py-12 shadow-2xl">
@@ -53,6 +64,17 @@ const Wrapper = ({
                 {viewData?.headerTitle?.description?.text}
             </p>
 
+            {viewData.canOpenParts && testParts.length > 1 && (
+                <div className="flex justify-end items-center">
+                    <Button
+                        outlined
+                        onClick={() => dispatch(setOpenAllParts(!openAllParts))}
+                        size="sm"
+                    >
+                        {openAllParts ? "Close all parts" : "Open all parts"}
+                    </Button>
+                </div>
+            )}
             <div className="mt-6">{children}</div>
 
             <div className="flex justify-end items-center gap-3 mt-6 pt-4 border-t border-gray-300">

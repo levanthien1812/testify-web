@@ -29,7 +29,7 @@ const TakeTestSlice = createSlice({
         ) {
             state.test = action.payload.test;
 
-            if (state.test.num_parts <= 1) {
+            if (state.test.num_parts === 0) {
                 state.test.parts = [];
                 state.test.questions = sortQuestionsByOrder(
                     action.payload.questions

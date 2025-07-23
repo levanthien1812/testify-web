@@ -443,7 +443,7 @@ const TestOptions = () => {
                                             if (
                                                 mode ===
                                                     PAGINATION_MODE.ONE_PARTS &&
-                                                numParts <= 1
+                                                numParts === 0
                                             )
                                                 return false;
                                             if (

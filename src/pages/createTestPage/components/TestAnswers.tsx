@@ -1,6 +1,6 @@
 import Answer from "./testAnswers/Answer";
 import Questions from "./testQuestions/Questions";
-import Wrapper from "../../../components/wrappers/Wrapper";
+import Wrapper from "./Wrapper";
 import { createTestActions } from "../../../stores/createTest";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "../../../hooks/hooks";
@@ -41,6 +41,7 @@ const TestAnswers = () => {
                         },
                     },
                 },
+                canOpenParts: true,
             }}
         >
             <div className={`space-y-3 mt-4`}>
@@ -48,7 +49,7 @@ const TestAnswers = () => {
                     testParts.map((part) => (
                         <Questions part={part} withAnswer={true} />
                     ))}
-                {numParts <= 1 && (
+                {numParts === 0 && (
                     <div className={`px-4 py-4 space-y-2`}>
                         {testQuestions.map((question) => (
                             <Answer question={question} key={question.id} />
