@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight, faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import IconButton from "../elements/IconButton";
@@ -32,6 +32,10 @@ const Accordion = ({
 }) => {
     const [open, setOpen] = useState<boolean>(viewData.open || false);
     const [showActions, setShowActions] = useState<boolean>(false);
+
+    useEffect(() => {
+        setOpen(viewData.open || false);
+    }, [viewData.open]);
 
     return (
         <div className={`border border-gray-300 ${viewData.extraClass}`}>

@@ -2,7 +2,7 @@ import { useMutation } from "react-query";
 import { validateParts } from "../../../services/test";
 import Part from "./testParts/Part";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
-import Wrapper from "../../../components/wrappers/Wrapper";
+import Wrapper from "./Wrapper";
 import { createTestActions } from "../../../stores/createTest";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
@@ -55,6 +55,7 @@ const TestParts = () => {
                         text: "Back",
                     },
                 },
+                canOpenParts: true,
             }}
         >
             <div className="space-y-3 mt-4">
@@ -80,7 +81,7 @@ const TestParts = () => {
                     testParts.map((part, index) => (
                         <Part key={part.id || index} part={part} />
                     ))}
-                {numParts === 1 && (
+                {numParts === 0 && (
                     <div>
                         <p>
                             Your test doesn't have multiple parts so you can

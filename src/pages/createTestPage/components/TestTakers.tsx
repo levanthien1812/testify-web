@@ -8,7 +8,7 @@ import {
 } from "../../../services/test";
 import { useNavigate } from "react-router";
 import Select from "../../../components/elements/Select";
-import Wrapper from "../../../components/wrappers/Wrapper";
+import Wrapper from "./Wrapper";
 import { createTestActions } from "../../../stores/createTest";
 import { useDispatch } from "react-redux";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";

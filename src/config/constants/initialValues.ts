@@ -340,7 +340,7 @@ export const INITIAL_CREATE_TEST_CONTEXT: CreateTestContext = {
     testId: "",
     maxScore: 10,
     numQuestions: 1,
-    numParts: 1,
+    numParts: 0,
     level: TEST_LEVEL.EASY,
     shareOption: SHARE_OPTIONS.RESTRICTED,
     testParts: [],
@@ -366,6 +366,7 @@ export const INITIAL_CREATE_TEST_CONTEXT: CreateTestContext = {
     status: TEST_STATUS.DRAFT,
     editibility: DRAFT_EDITIBILITY_CONFIG,
     includesManuallyScoredQuestions: false,
+    openAllParts: false,
 };
 
 export const INITIAL_PART: TestPartItf = {

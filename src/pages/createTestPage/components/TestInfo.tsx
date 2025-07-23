@@ -9,7 +9,7 @@ import { formatTimezone } from "../../../utils/time";
 import Input from "../../../components/elements/Input";
 import Select from "../../../components/elements/Select";
 import { FormProvider, useForm } from "react-hook-form";
-import Wrapper from "../../../components/wrappers/Wrapper";
+import Wrapper from "./Wrapper";
 import { createTestActions } from "../../../stores/createTest";
 import { useMutation } from "react-query";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
@@ -267,9 +267,13 @@ const TestInfo = () => {
                             {...register("num_parts", {
                                 required: "Number of parts is required",
                                 min: {
-                                    value: 1,
+                                    value: 0,
                                     message:
-                                        "Number of parts must be greater than 0",
+                                        "Number of parts must be greater than  or equal to 0",
+                                },
+                                validate: (value) => {
+                                    if (value === 1)
+                                        return "Number of parts must be 0 or greater than 1";
                                 },
                                 valueAsNumber: true,
                             })}

@@ -1,7 +1,7 @@
 import Questions from "./testQuestions/Questions";
 import { validateQuestions } from "../../../services/test";
 import { useMutation } from "react-query";
-import Wrapper from "../../../components/wrappers/Wrapper";
+import Wrapper from "./Wrapper";
 import { createTestActions } from "../../../stores/createTest";
 import { useDispatch } from "react-redux";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
@@ -56,6 +56,7 @@ const TestQuestions = () => {
                         },
                     },
                 },
+                canOpenParts: true,
             }}
         >
             {!isValidQuestions && (
@@ -65,6 +66,7 @@ const TestQuestions = () => {
                 />
             )}
             <InfoMessage message="Drag to reorder questions" type="info" />
+
             <div className="space-y-3 mt-4">
                 {testParts.length > 1 &&
                     testParts.map(
