@@ -53,7 +53,7 @@ const TestItemCard = ({ test }: TestItemCardProps) => {
 
     return (
         <div
-            className="shadow-md shadow-gray-200 relative overflow-hidden shrink-0 h-full w-full"
+            className="shadow-md shadow-gray-200 relative overflow-hidden shrink-0 h-full w-full flex flex-col"
             onMouseOver={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
         >
@@ -67,7 +67,7 @@ const TestItemCard = ({ test }: TestItemCardProps) => {
                     {test.status}
                 </div>
             </div>
-            <div className="px-3 py-3 flex gap-2 bg-wave">
+            <div className="px-3 py-3 flex gap-2 bg-wave grow">
                 <div>
                     {test.num_parts > 1 && (
                         <p>

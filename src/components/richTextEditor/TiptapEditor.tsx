@@ -8,10 +8,17 @@ import Paragraph from "@tiptap/extension-paragraph";
 import Image from "@tiptap/extension-image";
 import { EditorProvider, useCurrentEditor } from "@tiptap/react";
 import StarterKit from "@tiptap/starter-kit";
-import { MouseEventHandler, ReactNode, useEffect } from "react";
+import {
+    MouseEventHandler,
+    ReactNode,
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faA,
+    faArrowsLeftRightToLine,
     faArrowTurnDown,
     faBold,
     faCode,
@@ -24,6 +31,7 @@ import {
     faUndo,
 } from "@fortawesome/free-solid-svg-icons";
 import { InputPlaceholder } from "./InputPlaceholder";
+import Modal, { ModalBody, ModalFooter } from "../modals/Modal";
 
 type EditorButtonProps = {
     children: ReactNode;
@@ -205,6 +213,7 @@ type TextEditorProps = {
     setContent: (content: string) => void;
     setJson?: (json: string) => void;
     withInsertGapButton?: boolean;
+    allowZoom?: boolean;
 };
 
 const HelperButtons = ({
@@ -226,14 +235,24 @@ const HelperButtons = ({
     );
 };
 
-const editorClasses = `max-w-none border border-black outline-none px-4 py-1 focus:border-orange-600 bg-white overflow-y-scroll custom-scrollbar-y resize-none max-h-[400px] h-[60px]`;
 const TextEditor = ({
     content,
     setContent,
     setJson,
     withInsertGapButton = false,
+    allowZoom = true,
 }: TextEditorProps) => {
-    return (
+    const [isZoomed, setIsZoomed] = useState(false);
+
+    const baseClasses = `max-w-none border border-black outline-none px-4 py-1 focus:border-orange-600 bg-white overflow-y-scroll custom-scrollbar-y resize-none max-h-[400px]`;
+
+    const editorClasses = useMemo(() => {
+        return !isZoomed
+            ? `${baseClasses} h-[100px]`
+            : `${baseClasses} h-[200px]`;
+    }, [isZoomed, baseClasses]);
+
+    const editor = (
         <EditorProvider
             slotBefore={<MenuBar withInsertGapButton={withInsertGapButton} />}
             extensions={extensions}
@@ -250,6 +269,32 @@ const TextEditor = ({
                 },
             }}
         ></EditorProvider>
+    );
+
+    return (
+        <div className="relative">
+            {!isZoomed && editor}
+            {isZoomed && (
+                <Modal
+                    onClose={() => setIsZoomed(false)}
+                    allowClickBackdropToClose
+                >
+                    <ModalBody>{editor}</ModalBody>
+                    <ModalFooter includeCancelBtn></ModalFooter>
+                </Modal>
+            )}
+            {allowZoom && (
+                <button
+                    className="absolute bottom-1 right-1 bg-gray-100 rounded-sm py-0 px-1 leading-none hover:bg-gray-200 active:text-orange-600"
+                    onClick={() => setIsZoomed(true)}
+                >
+                    <FontAwesomeIcon
+                        icon={faArrowsLeftRightToLine}
+                        className="text-xs text-gray-500 hover:text-gray-600"
+                    />
+                </button>
+            )}
+        </div>
     );
 };
 

@@ -1,4 +1,3 @@
-import React from "react";
 import {
     QuestionBankItf,
     QuestionInBankItf,
@@ -6,11 +5,11 @@ import {
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
 import { questionTypeToIcon } from "../../../utils/mapping";
-import { QuestionContentItf, QuestionItf } from "../../../types/types";
+import { QuestionContentItf } from "../../../types/types";
 import HtmlDisplay from "../../../components/elements/HtmlDisplay";
 import InfoMessage from "../../../components/elements/InfoMessage";
 
-type PickQuestionsProps = {
+type PickQuestionsFromBankProps = {
     selectedBank: QuestionBankItf;
     currentBank?: QuestionBankItf;
     currentQuestion?: QuestionInBankItf<QuestionContentItf>;
@@ -18,13 +17,13 @@ type PickQuestionsProps = {
     onSelectQuestion: (question: QuestionInBankItf<QuestionContentItf>) => void;
 };
 
-const PickQuestions = ({
+const PickQuestionsFromBank = ({
     selectedBank,
     currentBank,
     currentQuestion,
     selectedQuestions,
     onSelectQuestion,
-}: PickQuestionsProps) => {
+}: PickQuestionsFromBankProps) => {
     const questionList = selectedBank.questions_detail.filter((question) =>
         currentBank
             ? !currentBank.questions.includes(question.id!)
@@ -32,6 +31,20 @@ const PickQuestions = ({
             ? question.id !== currentQuestion.id
             : true
     );
+
+    const importedQuestions = currentBank
+        ? currentBank.questions_detail
+              .filter((question) => question.imported_from)
+              .map((question) => question.imported_from!)
+        : [];
+
+    const isSelected = (question: QuestionInBankItf<QuestionContentItf>) => {
+        return selectedQuestions.find((q) => q.id === question.id);
+    };
+
+    const isImported = (question: QuestionInBankItf<QuestionContentItf>) => {
+        return importedQuestions.includes(question.id!);
+    };
 
     return (
         <div>
@@ -49,21 +62,25 @@ const PickQuestions = ({
             <div className="grid grid-cols-3 gap-2 mt-1">
                 {questionList.map((question) => (
                     <div
-                        onClick={() => onSelectQuestion(question)}
+                        onClick={() => {
+                            if (isImported(question)) return;
+                            onSelectQuestion(question);
+                        }}
                         key={question.id}
                         className={`cursor-pointer relative px-4 py-2 rounded-lg bg-orange-50 hover:bg-orange-100 shadow-sm ${
-                            selectedQuestions.find(
-                                (q) => q.id === question.id
-                            ) && "border border-orange-500"
-                        }`}
+                            isSelected(question) && "border border-orange-500"
+                        } ${isImported(question) && "border border-gray-500"}`}
                     >
-                        {selectedQuestions.find(
-                            (q) => q.id === question.id
-                        ) && (
+                        {(isSelected(question) || isImported(question)) && (
                             <span>
                                 <FontAwesomeIcon
                                     icon={faCheckCircle}
-                                    className="text-orange-600 absolute top-1 right-1"
+                                    className={`${
+                                        isSelected(question) &&
+                                        "text-orange-600"
+                                    } ${
+                                        isImported(question) && "text-gray-600"
+                                    } absolute top-1 right-1`}
                                 />
                             </span>
                         )}
@@ -76,7 +93,7 @@ const PickQuestions = ({
                             </span>
                             <HtmlDisplay
                                 htmlContent={question.content!.text}
-                                className="text-md"
+                                className="text-md grow"
                                 maxLength={50}
                             />
                         </div>
@@ -87,4 +104,4 @@ const PickQuestions = ({
     );
 };
 
-export default PickQuestions;
+export default PickQuestionsFromBank;

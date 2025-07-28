@@ -15,6 +15,7 @@ import { MUTATION_KEYS } from "../../config/constants/queryMutationKeys";
 import { toast } from "react-toastify";
 import { TOAST_MESSAGES } from "../../config/constants/toasts";
 import { QuestionContentItf } from "../../types/types";
+import ImportQuestionFromTest from "./components/ImportQuestionFromTest";
 
 const QuestionBankPage = () => {
     const params = useParams();
@@ -24,6 +25,8 @@ const QuestionBankPage = () => {
         useState<boolean>(false);
     const [isImportingFromAnotherBank, setIsImportingFromAnotherBank] =
         useState<boolean>(isImporting);
+    const [isImportingFromTest, setIsImportingFromTest] =
+        useState<boolean>(false);
 
     const {
         data: questionBank,
@@ -74,10 +77,16 @@ const QuestionBankPage = () => {
         setIsImportingFromAnotherBank(true);
     };
 
+    const handleImportFromTest = () => {
+        setIsImportingFromTest(true);
+    };
+
     const handleConfirmQuestions = (
         selectedQuestions: QuestionInBankItf<QuestionContentItf>[]
     ) => {
         importQuestionsMutate(selectedQuestions);
+        setIsImportingFromAnotherBank(false);
+        setIsImportingFromTest(false);
     };
 
     return (
@@ -107,6 +116,12 @@ const QuestionBankPage = () => {
                         >
                             Import from another bank
                         </button>
+                        <button
+                            onClick={handleImportFromTest}
+                            className="bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-md leading-none"
+                        >
+                            Import from a test
+                        </button>
                     </div>
                 </div>
             )}
@@ -123,6 +138,13 @@ const QuestionBankPage = () => {
                     currentBank={questionBank}
                     onClose={() => setIsImportingFromAnotherBank(false)}
                     onConfirmQuestions={handleConfirmQuestions}
+                />
+            )}
+            {questionBank && isImportingFromTest && (
+                <ImportQuestionFromTest
+                    currentBank={questionBank}
+                    onConfirmQuestions={handleConfirmQuestions}
+                    onClose={() => setIsImportingFromTest(false)}
                 />
             )}
         </div>

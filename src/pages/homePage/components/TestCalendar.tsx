@@ -81,7 +81,7 @@ const TestCalendar = () => {
                     }}
                 />
                 {selectedTest && (
-                    <div className="bg-gray-50 shadow-md rounded-lg p-4 min-w-[30%] flex flex-col">
+                    <div className="bg-gray-50 shadow-md rounded-lg p-4 max-w-[30%] flex flex-col">
                         <div className="flex justify-between items-center">
                             <p className="text-lg font-bold mb-2">
                                 Test information
@@ -92,35 +92,35 @@ const TestCalendar = () => {
                             />
                         </div>
 
-                        <p className="text-center text-[44px]">
+                        <p className="text-center text-3xl">
                             {selectedTest.title}
                         </p>
 
-                        <p className="text-xl text-center mt-2">
+                        <p className="text-lg text-center mt-2">
                             Duration:{" "}
                             <span className=" font-bold text-orange-600 underline">
                                 {selectedTest.duration} minutes
                             </span>
                         </p>
 
-                        <p className="text-xl text-center mt-2">
+                        <p className="text-lg text-center mt-2">
                             Parts:{" "}
                             <span className=" font-bold text-orange-600 underline"></span>{" "}
                             {selectedTest.num_parts}
                         </p>
 
-                        <p className="text-xl text-center mt-2">
+                        <p className="text-lg text-center mt-2">
                             Questions:{" "}
                             <span className=" font-bold text-orange-600 underline"></span>{" "}
                             {selectedTest.num_questions}
                         </p>
 
-                        <p className="text-xl text-center mt-2">
+                        <p className="text-lg text-center mt-2">
                             Max score: {selectedTest.max_score}
                         </p>
 
                         {selectedTest.level && (
-                            <p className="text-xl text-center mt-2">
+                            <p className="text-lg text-center mt-2">
                                 Level:{" "}
                                 <span className="capitalize">
                                     {selectedTest.level}
@@ -128,7 +128,7 @@ const TestCalendar = () => {
                             </p>
                         )}
 
-                        <p className="text-xl text-center mt-2">
+                        <p className="text-lg text-center mt-2">
                             Time start:{" "}
                             <span className="font-bold px-2 text-orange-600 underline">
                                 {format(
