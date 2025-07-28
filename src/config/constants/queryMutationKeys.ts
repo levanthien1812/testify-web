@@ -1,4 +1,5 @@
 const QUERY_KEYS = {
+    GET_TESTS: "get-tests",
     GET_TEST: "get-test",
     GET_AVAILABLE_TAKERS: "get-available-takers",
     GET_TEST_SUBMISSION: "get-test-submission",
@@ -19,6 +20,8 @@ const QUERY_KEYS = {
     GET_QUESTIONS_RESULT_FOR_TEST: "get-questions-result-for-test",
     GET_USERS_BY_EMAIL_SEARCH: "get-users-by-email-search",
     GET_MAKERS_WITH_GROUP: "get-makers-with-group",
+    GET_TESTS_TO_IMPORT_QUESTIONS_TO_BANK:
+        "get-tests-to-import-questions-to-bank",
 };
 
 const MUTATION_KEYS = {

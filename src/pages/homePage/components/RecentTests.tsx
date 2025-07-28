@@ -8,15 +8,16 @@ import { useAppSelector } from "../../../hooks/hooks";
 import SectionWrapper from "./SectionWrapper";
 import Loading from "../../../components/loadings/Loading";
 import NoResult from "../../../components/notFound/NoResult";
+import { QUERY_KEYS } from "../../../config/constants/queryMutationKeys";
 
 const RecentTests = () => {
     const navigate = useNavigate();
     const { user } = useAppSelector((state) => state.auth);
 
     const { data: tests, isLoading: isLoadingTests } = useQuery<TestItf[]>({
-        queryKey: ["tests"],
+        queryKey: [QUERY_KEYS.GET_TESTS],
         queryFn: async () => {
-            const data = await getTests();
+            const data = await getTests({ limit: 10, page: 1 });
             return data.tests;
         },
     });

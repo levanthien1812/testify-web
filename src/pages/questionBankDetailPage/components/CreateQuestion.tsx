@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import {
     QuestionBankItf,
     QuestionInBankItf,
@@ -16,7 +16,11 @@ import {
 import { Control, useForm, UseFormSetValue } from "react-hook-form";
 import { getInitialQuestionContent } from "../../../utils/mapping";
 import { useMutation } from "react-query";
-import { createQuestion, updateQuestion } from "../../../services/questionBank";
+import {
+    createQuestion,
+    deleteQuestion,
+    updateQuestion,
+} from "../../../services/questionBank";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
 import { toast } from "react-toastify";
 import { TOAST_MESSAGES } from "../../../config/constants/toasts";
@@ -39,6 +43,7 @@ import ResponseQuestion from "../../createTestPage/components/testQuestions/Resp
 import MatchingQuestion from "../../createTestPage/components/testQuestions/MatchingQuestion";
 import FillGapsQuestion from "../../createTestPage/components/testQuestions/FillGapsQuestion";
 import { INITIAL_QUESTION_IN_BANK } from "../../../config/constants/initialValues";
+import ConfirmModal from "../../../components/modals/ConfirmModal";
 
 type CreateQuestionProps = {
     question?: QuestionInBankItf<QuestionContentItf>;
@@ -53,6 +58,9 @@ const CreateQuestion = ({
     onAfterCreate,
     onClose,
 }: CreateQuestionProps) => {
+    const [isDeletingQuestion, setIsDeletingQuestion] =
+        useState<boolean>(false);
+
     const {
         handleSubmit,
         formState: { errors },
@@ -99,6 +107,21 @@ const CreateQuestion = ({
                 toast.success(TOAST_MESSAGES.UPDATE_QUESTION_SUCCESSFULLY);
                 onAfterCreate();
                 onClose();
+            },
+        });
+
+    const { mutate: deleteQuestionMutate, isLoading: deleteQuestionLoading } =
+        useMutation({
+            mutationFn: async () => {
+                if (!question) return;
+                return await deleteQuestion(questionBank.id, question.id!);
+            },
+            mutationKey: [MUTATION_KEYS.DELETE_QUESTION],
+            onSuccess: (data) => {
+                toast.success(TOAST_MESSAGES.DELETE_QUESTION_SUCCESSFULLY);
+                setIsDeletingQuestion(false);
+                onClose();
+                onAfterCreate();
             },
         });
 
@@ -289,6 +312,18 @@ const CreateQuestion = ({
                     </div>
 
                     <div className="flex mt-4 gap-2 border-t border-gray-300 pt-4">
+                        <div className="flex gap-2">
+                            {question && (
+                                <Button
+                                    secondary
+                                    type="button"
+                                    onClick={() => setIsDeletingQuestion(true)}
+                                    className="bg-red-500 text-white hover:bg-red-600"
+                                >
+                                    Delete
+                                </Button>
+                            )}
+                        </div>
                         <div className="flex gap-2 ml-auto">
                             <Button secondary type="button" onClick={onClose}>
                                 Cancel
@@ -311,6 +346,17 @@ const CreateQuestion = ({
                         </div>
                     </div>
                 </form>
+                {isDeletingQuestion && (
+                    <ConfirmModal
+                        message="Are you sure you want to delete this question? This action cannot be undone!"
+                        onConfirm={() => {
+                            deleteQuestionMutate();
+                        }}
+                        onClose={() => setIsDeletingQuestion(false)}
+                        title="Delete Question"
+                        isConfirming={deleteQuestionLoading}
+                    />
+                )}
             </ModalBody>
         </Modal>
     );

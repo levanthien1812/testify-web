@@ -1,6 +1,7 @@
 import { instance } from "../config/axios";
 import {
     AnswerContentItf,
+    FilterState,
     GeneratePasscodeBodyItf,
     PartBodyItf,
     PasscodeItf,
@@ -21,7 +22,7 @@ export const createTest = async (testBody: TestBodyItf) => {
     }
 };
 
-export const getTests = async (filter?: TestRequestFilter | null) => {
+export const getTests = async (filter?: FilterState | null) => {
     try {
         const response = await instance.get("/tests", {
             params: filter,
@@ -484,6 +485,18 @@ export const getQuestionsResultForTest = async (testId: string) => {
     try {
         const response = await instance.get(
             `/tests/${testId}/questions-result`
+        );
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getTestsToImportQuestionToBank = async () => {
+    try {
+        const response = await instance.get(
+            `/tests/tests-for-importing-questions-to-bank`
         );
 
         return response.data;

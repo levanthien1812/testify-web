@@ -234,6 +234,7 @@ export interface QuestionItf<T extends QuestionContentItf> {
     is_saved?: boolean;
     is_content_provided?: boolean;
     partial_scoring: boolean;
+    imported_from?: string;
 }
 
 export type QuestionBodyContentItf =
@@ -407,4 +408,9 @@ export interface TipTapDoc {
 export type GivenAnswersTextFill = Record<
     string,
     { value: string; status?: "normal" | "correct" | "wrong" }
+>;
+
+export type TestToImportQuestion = Pick<
+    TestItf,
+    "id" | "title" | "num_questions" | "questions"
 >;

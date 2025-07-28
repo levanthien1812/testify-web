@@ -14,9 +14,9 @@ import Modal, {
 } from "../../../components/modals/Modal";
 import Button from "../../../components/elements/Button";
 import PickBank from "./PickBank";
-import PickQuestions from "./PickQuestions";
 import Loading from "../../../components/loadings/Loading";
 import { QuestionContentItf, QuestionItf } from "../../../types/types";
+import PickQuestionsFromBank from "./PickQuestionsFromBank";
 
 enum IMPORT_STEP {
     SELECT_BANK = "SELECT_BANK",
@@ -134,8 +134,15 @@ const ImportQuestionFromAnotherBank = ({
                         }}
                     />
 
+                    {questionBanks && questionBanks.length === 0 && (
+                        <p className="text-center text-gray-500">
+                            No question banks found.
+                        </p>
+                    )}
+
                     {currentStep === IMPORT_STEP.SELECT_BANK &&
-                        questionBanks && (
+                        questionBanks &&
+                        questionBanks.length > 0 && (
                             <PickBank
                                 banks={questionBanks}
                                 onSelectBank={handleSelectBank}
@@ -144,7 +151,7 @@ const ImportQuestionFromAnotherBank = ({
                         )}
                     {currentStep === IMPORT_STEP.SELECT_QUESTIONS &&
                         selectedBankDetail && (
-                            <PickQuestions
+                            <PickQuestionsFromBank
                                 selectedBank={selectedBankDetail}
                                 currentBank={currentBank}
                                 currentQuestion={currentQuestion}
@@ -169,21 +176,24 @@ const ImportQuestionFromAnotherBank = ({
                         </Button>
                     )}
 
-                    <Button
-                        type="button"
-                        onClick={handleClickConfirm}
-                        disabled={
-                            currentStep === IMPORT_STEP.SELECT_BANK
-                                ? !selectedBank
-                                : currentStep === IMPORT_STEP.SELECT_QUESTIONS
-                                ? selectedQuestions.length === 0
-                                : false
-                        }
-                    >
-                        {currentStep === IMPORT_STEP.SELECT_BANK
-                            ? "Next"
-                            : "Confirm"}
-                    </Button>
+                    {questionBanks && questionBanks.length > 0 && (
+                        <Button
+                            type="button"
+                            onClick={handleClickConfirm}
+                            disabled={
+                                currentStep === IMPORT_STEP.SELECT_BANK
+                                    ? !selectedBank
+                                    : currentStep ===
+                                      IMPORT_STEP.SELECT_QUESTIONS
+                                    ? selectedQuestions.length === 0
+                                    : false
+                            }
+                        >
+                            {currentStep === IMPORT_STEP.SELECT_BANK
+                                ? "Next"
+                                : "Confirm"}
+                        </Button>
+                    )}
                 </div>
             </ModalBody>
         </Modal>

@@ -138,7 +138,7 @@ export const validateTestInfo = (
         testInfo.duration > 0 &&
         testInfo.max_score > 0 &&
         testInfo.num_questions > 0 &&
-        testInfo.num_parts > 0;
+        (testInfo.num_parts === 0 || testInfo.num_parts > 1);
     return isValidTestInfo;
 };
 
