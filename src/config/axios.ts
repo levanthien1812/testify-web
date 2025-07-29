@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 import { refreshToken } from "../services/auth";
 
 export const instance = axios.create({
-    baseURL: process.env.REACT_APP_API_URL,
+    baseURL: `${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/${process.env.REACT_APP_API_PREFIX}`,
     timeout: 10000,
     withCredentials: true,
     headers: {
