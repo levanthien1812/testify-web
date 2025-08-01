@@ -1,5 +1,5 @@
 import { instance } from "../config/axios";
-import { TakerGroupBodyItf } from "../types/types";
+import { TakerGroupBodyItf, UserBodyItf } from "../types/types";
 
 export const getTakersStatistics = async () => {
     try {
@@ -83,9 +83,28 @@ export const getTakerUsersByEmailSearch = async (search: string) => {
     }
 };
 
-export const updateUser = async (body: any) => {
+export const updateUser = async (body: UserBodyItf) => {
     try {
-        const response = await instance.patch(`users`, body);
+        const formData = new FormData();
+        formData.append("name", body.name);
+        formData.append("email", body.email);
+        if (body.gender) formData.append("gender", body.gender);
+        if (body.birthday)
+            formData.append("birthday", new Date(body.birthday).toISOString());
+        if (body.phone_number)
+            formData.append("phone_number", body.phone_number);
+        if (body.photo) formData.append("file", (body.photo as FileList)[0]);
+        if (body.old_password)
+            formData.append("old_password", body.old_password);
+        if (body.password) formData.append("password", body.password);
+        if (body.password_confirm)
+            formData.append("password_confirm", body.password_confirm);
+
+        const response = await instance.patch(`users`, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
 
         return response.data;
     } catch (error) {
