@@ -25,6 +25,8 @@ import SetUpPassword from "./SetUpPassword";
 import UpdatePassword from "./UpdatePassword";
 import InlineLoading from "../../components/loadings/InlineLoading";
 import { ROLES } from "../../config/constants/tests";
+import { useDispatch } from "react-redux";
+import { authActions } from "../../stores/auth";
 
 type Props = {
     onClose: () => void;
@@ -41,10 +43,12 @@ const Profile = ({ onClose }: Props) => {
     );
     const [editEmail, setEditEmail] = useState<boolean>(false);
     const [hoverPreview, setHoverPreview] = useState<boolean>(false);
+    const dispatch = useDispatch();
+    const { setUser } = authActions;
 
     const { mutate: updateUserMutate, isLoading: updateUserLoading } =
         useMutation({
-            mutationFn: async (userBody: Partial<UserBodyItf>) => {
+            mutationFn: async (userBody: UserBodyItf) => {
                 if (!user) return;
                 const data = await updateUser(userBody);
 
@@ -54,6 +58,7 @@ const Profile = ({ onClose }: Props) => {
             onSuccess: (data) => {
                 onClose();
                 toast.success(TOAST_MESSAGES.UPDATE_USER_SUCCESSFULLY);
+                dispatch(setUser(data.user));
             },
         });
 

@@ -19,6 +19,7 @@ import { takeTestActions } from "../../stores/takeTest";
 import { PasscodeItf } from "../../types/types";
 import Profile from "../../pages/profile/Profile";
 import Popover from "../modals/Popover";
+import { formatImageUrl } from "../../utils/formatImageUrl";
 
 const Header = () => {
     const { user, isAuthened } = useAppSelector((state) => state.auth);
@@ -122,7 +123,7 @@ const Header = () => {
                             <img
                                 src={
                                     user.photo && user.photo.length > 0
-                                        ? user.photo
+                                        ? formatImageUrl(user.photo)
                                         : defaultUserPhoto
                                 }
                                 alt="user"
