@@ -6,14 +6,18 @@ import Modal, {
 } from "../../../../components/modals/Modal";
 import Button from "../../../../components/elements/Button";
 import Input from "../../../../components/elements/Input";
-import { useMutation } from "react-query";
-import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
-import { checkPasscode } from "../../../../services/test";
+import { useMutation, useQuery } from "react-query";
+import {
+    MUTATION_KEYS,
+    QUERY_KEYS,
+} from "../../../../config/constants/queryMutationKeys";
+import { checkPasscode, getTestByCode } from "../../../../services/test";
 import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../../../stores/takeTest";
 import { PasscodeItf } from "../../../../types/types";
 import { useAppSelector } from "../../../../hooks/hooks";
 import useLocalStorage from "../../../../hooks/useLocalStorage";
+import { useNavigate } from "react-router";
 
 type PasscodeLinkProps = {
     onClose: () => void;
@@ -31,35 +35,39 @@ const PasscodeLink = ({
     );
     const [error, setError] = useState<string | null>(null);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { passcode, testLink } = useAppSelector((state) => state.takeTest);
     const [storedPasscodes, setPasscodes] = useLocalStorage<string[]>(
         "passcodes",
         []
     );
 
-    const { mutate: checkPasscodeMutate, isLoading: isCheckingPasscode } =
-        useMutation({
-            mutationFn: async () => {
-                const responseData = await checkPasscode(passcode.code);
-                return responseData.passcode;
-            },
-            mutationKey: MUTATION_KEYS.CHECK_PASSCODE,
-            onError: (err: any) => {
-                if (err) {
-                    setError(err.response?.data?.message);
-                }
-            },
-            onSuccess: (data: PasscodeItf) => {
-                if (!storedPasscodes.includes(passcode.code)) {
-                    setPasscodes((prev) => [...prev, passcode.code]);
-                }
-                onSuccess(data);
-            },
-        });
+    const { isLoading: isLoadingTest, refetch: refetchTest } = useQuery({
+        queryFn: async () => {
+            const data = await getTestByCode(passcode.code);
+            return data.test;
+        },
+        queryKey: QUERY_KEYS.GET_TEST,
+        enabled: false,
+        onSuccess: (data: any) => {
+            if (data) {
+                navigate(`/tests/${data.id}`);
+            }
+            dispatch(takeTestActions.setIsPasscodeValidated(true));
+            dispatch(takeTestActions.setIsEnteringPasscode(false));
+            onClose();
+        },
+        onError: (err: any) => {
+            if (err) {
+                setError(err.response?.data?.message);
+            }
+        },
+        retry: false,
+    });
 
     const handleClickNext = () => {
         if (currentOption === "PASSCODE") {
-            checkPasscodeMutate();
+            refetchTest();
         }
         if (currentOption === "LINK") {
         }
@@ -143,8 +151,8 @@ const PasscodeLink = ({
                 </div>
             </ModalBody>
             <ModalFooter>
-                <Button onClick={handleClickNext} disabled={isCheckingPasscode}>
-                    {!isCheckingPasscode ? "Next" : "Validating..."}
+                <Button onClick={handleClickNext} disabled={isLoadingTest}>
+                    {!isLoadingTest ? "Next" : "Validating..."}
                 </Button>
             </ModalFooter>
         </Modal>

@@ -283,11 +283,12 @@ const TestInfo = () => {
                             }
                             label={{ text: "Number of parts" }}
                             disabled={!editibility.TEST_INFORMATION.num_parts}
-                            helperText={
-                                numParts > 1 && testParts.length >= 1
-                                    ? "Be carefull when update number of parts because you already provided data for parts before!"
-                                    : ""
-                            }
+                            helperText={`Number of parts must be 0 or greater than 1. 
+                                ${
+                                    numParts > 1 && testParts.length >= 1
+                                        ? "Be carefull when update number of parts because you already provided data for parts before!"
+                                        : ""
+                                }`}
                         />
                         <Input
                             type="number"

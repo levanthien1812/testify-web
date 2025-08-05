@@ -38,7 +38,7 @@ const FillGapsAnswer = ({
                 onAnswersChange={handleChangeAnswers}
                 givenAnswers={content.answer?.gaps.reduce<GivenAnswersTextFill>(
                     (acc, gap, index) => {
-                        acc[`gap-${index + 1}`] = { value: gap.text };
+                        acc[gap.id || `gap-${index + 1}`] = { value: gap.text };
                         return acc;
                     },
                     {}

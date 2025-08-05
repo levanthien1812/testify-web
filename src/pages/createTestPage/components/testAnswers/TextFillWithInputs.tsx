@@ -30,27 +30,27 @@ const TextFillWithInputs = ({
     );
     const [draggingWord, setDraggingWord] = useState<string | null>(null);
 
+    const handleGapsChange = (nodeId: string, value: string) => {
+        const updatedGaps = { ...answers, [nodeId]: { value: value } };
+        setAnswers(updatedGaps);
+        if (onAnswersChange) {
+            onAnswersChange(updatedGaps);
+        }
+    };
+
     const handleDrop = (nodeId: string) => {
         if (draggingWord) {
-            setAnswers({
-                ...answers,
-                [nodeId]: { value: draggingWord },
-            });
+            handleGapsChange(nodeId, draggingWord);
+            setDraggingWord(null);
         }
     };
 
     const handleRemove = (nodeId: string) => {
-        setAnswers({
-            ...answers,
-            [nodeId]: { value: "" },
-        });
+        handleGapsChange(nodeId, "");
     };
-
-    useEffect(() => {
-        if (onAnswersChange) {
-            // onAnswersChange(answers);
-        }
-    }, [answers, onAnswersChange]);
+    const handleInputChange = (nodeId: string, value: string) => {
+        handleGapsChange(nodeId, value);
+    };
 
     const getInputClasses = (nodeId: string) => {
         const answer = answers[nodeId];
@@ -80,12 +80,11 @@ const TextFillWithInputs = ({
                                         ]?.value
                                     }
                                     onChange={(e) =>
-                                        setAnswers({
-                                            ...answers,
-                                            [node.attrs?.id ||
-                                            `gap-${nIndex + 1}`]:
-                                                e.target.value,
-                                        })
+                                        handleInputChange(
+                                            node.attrs?.id ||
+                                                `gap-${nIndex + 1}`,
+                                            e.target.value
+                                        )
                                     }
                                     id={node.attrs?.id}
                                     className={`w-fit max-w-[120px] text-center px-2 py-0 outline-none border ${getInputClasses(

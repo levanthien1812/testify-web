@@ -21,7 +21,7 @@ type QuestionProps = {
 const Question = ({ question }: QuestionProps) => {
     return (
         <div className="px-4 py-2 border border-gray-300 border-dashed mt-1">
-            <div>Question {question.order}: </div>
+            <div className="underline">Question {question.order}: </div>
             {question.type === QUESTION_TYPE.MULTIPLE_CHOICES && (
                 <MultipleChoicesQuestion
                     question={

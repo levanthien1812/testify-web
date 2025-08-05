@@ -45,13 +45,15 @@ const Modal = ({
         <ModalContext.Provider value={{ onClose }}>
             <Backdrop
                 onClick={allowClickBackdropToClose ? onClose : () => {}}
-                zIndex={currentZIndex.current - 1}
+                zIndex={currentZIndex.current - 5}
             />
-            <div
-                className={`fixed top-0 left-0 right-0 bottom-0 m-auto bg-white shadow-md w-fit h-fit min-w-40 md:min-w-80 2xl:min-w-[500px] lg:max-w-[800px] 2xl:max-w-[700px] z-[${currentZIndex.current}] ${className}`}
-            >
-                {children}
-            </div>
+            {currentZIndex.current && (
+                <div
+                    className={`fixed top-0 left-0 right-0 bottom-0 m-auto bg-white shadow-md w-fit h-fit min-w-40 md:min-w-80 2xl:min-w-[500px] lg:max-w-[800px] 2xl:max-w-[700px] z-50 ${className}`}
+                >
+                    {children}
+                </div>
+            )}
         </ModalContext.Provider>,
         document.getElementById("modal")!
     );

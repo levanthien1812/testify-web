@@ -299,7 +299,6 @@ export interface PasscodeItf {
     valid_unit?: PASSCODE_VALID_UNIT;
     method: string;
     format?: string;
-    test_id?: string;
 }
 
 export type GeneratePasscodeBodyItf = Pick<PasscodeItf, "format">;

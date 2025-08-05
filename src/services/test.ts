@@ -12,6 +12,7 @@ import {
     TestRequestFilter,
     UserAnswerItf,
 } from "../types/types";
+import { getQueryString } from "../utils/object";
 
 export const createTest = async (testBody: TestBodyItf) => {
     try {
@@ -35,13 +36,35 @@ export const getTests = async (filter?: FilterState | null) => {
 
 export const getTest = async (
     testId: string,
-    options?: { with_user_answers?: boolean; passcode?: string }
+    options?: {
+        with_user_answers?: boolean;
+        passcode?: string;
+        started?: boolean;
+    }
 ) => {
     try {
-        const queryString = Object.entries(options || {})
-            .map(([key, value]) => `${key}=${value}`)
-            .join("&");
-        const response = await instance.get(`/tests/${testId}?${queryString}`);
+        const response = await instance.get(
+            `/tests/${testId}${getQueryString(options)}`
+        );
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getTestByCode = async (
+    code: string,
+    options?: {
+        with_user_answers?: boolean;
+        passcode?: string;
+        started?: boolean;
+    }
+) => {
+    try {
+        const response = await instance.get(
+            `/tests/code/${code}${getQueryString(options)}`
+        );
 
         return response.data;
     } catch (error) {
