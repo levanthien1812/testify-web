@@ -38,3 +38,13 @@ export function isEmpty(value: any): boolean {
     // If none of the conditions match, the value is not empty
     return false;
 }
+
+export const getQueryString = (params?: Record<string, any>) => {
+    if (!params || Object.keys(params).length === 0) return "";
+
+    const queryString = Object.entries(params)
+        .map(([key, value]) => `${key}=${value}`)
+        .join("&");
+
+    return `?${queryString}`;
+};

@@ -31,6 +31,15 @@ instance.interceptors.response.use(
         return response;
     },
     async (error) => {
+        if (error.response.status === HttpStatusCode.Unauthorized) {
+            window.location.href = "/login";
+            localStorage.clear();
+            Cookies.remove("access_token");
+            Cookies.remove("refresh_token");
+            Cookies.remove("user");
+            return;
+        }
+
         const originalRequest = error.config;
 
         if (

@@ -94,7 +94,7 @@
 
 .rbc-month-row .rbc-row-content .rbc-date-cell button {
   font-size: 24px;
-  color: oklch(70.7% 0.022 261.325)
+  color: oklch(70.7% 0.022 261.325);
 }
 
 .rbc-month-row .rbc-row-content .rbc-date-cell.rbc-now button {
@@ -105,7 +105,11 @@
 
 .rbc-row {
   gap: 2px;
-  z-index: 10;
+  z-index: 3;
+}
+
+.rbc-row-content {
+  z-index: 2
 }
 
 .bg-wave {

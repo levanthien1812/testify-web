@@ -1,6 +1,6 @@
 import { useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router";
-import { getSubmissions, getTest } from "../../services/test";
+import { getSubmissions, getTest, getTestByCode } from "../../services/test";
 import { PasscodeItf, SubmissionItf } from "../../types/types";
 import DoingTest from "./DoingTest";
 import { TEST_STATUS } from "../../config/constants/tests";
@@ -33,6 +33,7 @@ const TakeTestPage = () => {
         submissions,
         enteredPasscode,
         submissionsCount,
+        passcode,
     } = useAppSelector((state) => state.takeTest);
     const dispatch = useDispatch();
     const navigate = useNavigate();
@@ -45,11 +46,18 @@ const TakeTestPage = () => {
             { with_user_answers: includeTakerAnswers, started: isStarted },
         ],
         queryFn: async () => {
-            const responseData = await getTest(testId!, {
+            let responseData;
+            let options = {
                 with_user_answers: includeTakerAnswers,
-                ...(enteredPasscode ? { passcode: enteredPasscode } : {}),
+                ...(passcode.code ? { passcode: passcode.code } : {}),
                 ...(isStarted ? { started: true } : {}),
-            });
+            };
+
+            if (passcode.code) {
+                responseData = await getTestByCode(passcode.code, options);
+            } else {
+                responseData = await getTest(testId!, options);
+            }
 
             return responseData;
         },

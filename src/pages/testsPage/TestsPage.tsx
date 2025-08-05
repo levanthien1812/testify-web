@@ -11,6 +11,8 @@ import {
     faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 import Select from "../../components/elements/Select";
+import { QUERY_KEYS } from "../../config/constants/queryMutationKeys";
+import { useSearchParams } from "react-router-dom";
 
 type TestsFetchResult = {
     tests: TestItf[];
@@ -25,7 +27,7 @@ const TestsPage = () => {
         isLoading: isLoadingTests,
         refetch: refetchTests,
     } = useQuery<TestsFetchResult>({
-        queryKey: ["tests", { ...filter }],
+        queryKey: [QUERY_KEYS.GET_TESTS, { ...filter }],
         queryFn: async () => {
             let requestFilter = { ...filter };
             if (requestFilter.sort && requestFilter.order) {

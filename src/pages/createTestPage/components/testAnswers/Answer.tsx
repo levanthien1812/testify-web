@@ -65,6 +65,7 @@ const Answer: React.FC<{
     });
 
     const handleProvideAnswer = (answerBody: AnswerContentItf) => {
+        console.log(answerBody);
         setReset(false);
         setContentTemp(
             (prev) =>

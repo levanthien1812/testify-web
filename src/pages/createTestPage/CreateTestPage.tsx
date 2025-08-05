@@ -120,10 +120,12 @@ const CreateTestPage = () => {
                         {currentStep === CREATE_TEST_STEPS.TEST_QUESTIONS && (
                             <TestQuestions />
                         )}
-                        {currentStep === CREATE_TEST_STEPS.TEST_ANSWERS &&
-                            test && <TestAnswers />}
-                        {currentStep === CREATE_TEST_STEPS.TEST_TAKERS &&
-                            test && <TestTakers />}
+                        {currentStep === CREATE_TEST_STEPS.TEST_ANSWERS && (
+                            <TestAnswers />
+                        )}
+                        {currentStep === CREATE_TEST_STEPS.TEST_TAKERS && (
+                            <TestTakers />
+                        )}
                     </div>
                 </div>
             )}
