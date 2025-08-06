@@ -48,8 +48,10 @@ const Submission = ({ submission }: SubmissionProps) => {
 
     return (
         <div
-            className={`border-2 ${
-                !submission.is_evaluated ? "border-green-500" : ""
+            className={`border ${
+                !submission.is_evaluated
+                    ? "border-green-500"
+                    : "border-gray-300"
             } flex`}
         >
             <div
@@ -103,7 +105,7 @@ const Submission = ({ submission }: SubmissionProps) => {
             </div>
 
             {viewDetail && (
-                <div className="border border-gray-300">
+                <div className="border-l border-gray-300 grow">
                     <TestQuestionsAndAnswers
                         test={test!}
                         userAnswers={submission.answers}

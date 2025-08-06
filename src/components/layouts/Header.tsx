@@ -144,7 +144,7 @@ const Header = () => {
                                         )
                                     );
                                     setIsEnteringPasscodeLink(false);
-                                    navigate(`/tests?code=${data.code}`);
+                                    navigate(`/tests/${data.id}`);
                                 }}
                             />
                         )}

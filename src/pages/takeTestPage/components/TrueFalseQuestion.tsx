@@ -37,9 +37,6 @@ const TrueFalseQuestion = ({ question }: TrueFalseQuestionProps) => {
                             value={`${option}`}
                             id={`${option}`}
                             onChange={handleChangeRadio}
-                            checked={
-                                question.content!.answer?.is_true === option
-                            }
                         />
                         <label htmlFor={`${option}`} className="grow">
                             {option ? "True" : "False"}

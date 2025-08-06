@@ -35,7 +35,6 @@ const PasscodeLink = ({
     );
     const [error, setError] = useState<string | null>(null);
     const dispatch = useDispatch();
-    const navigate = useNavigate();
     const { passcode, testLink } = useAppSelector((state) => state.takeTest);
     const [storedPasscodes, setPasscodes] = useLocalStorage<string[]>(
         "passcodes",
@@ -50,12 +49,8 @@ const PasscodeLink = ({
         queryKey: QUERY_KEYS.GET_TEST,
         enabled: false,
         onSuccess: (data: any) => {
-            if (data) {
-                navigate(`/tests/${data.id}`);
-            }
-            dispatch(takeTestActions.setIsPasscodeValidated(true));
-            dispatch(takeTestActions.setIsEnteringPasscode(false));
-            onClose();
+            setPasscodes([...storedPasscodes, passcode.code]);
+            onSuccess(data);
         },
         onError: (err: any) => {
             if (err) {
