@@ -81,6 +81,7 @@ const TakeTestPage = () => {
             }
         },
         retry: false,
+        refetchOnWindowFocus: false,
     });
 
     const { isLoading: isLoadingSubmissions, refetch: refetchSubmissions } =
@@ -123,15 +124,15 @@ const TakeTestPage = () => {
     }, [test, dispatch]);
 
     useEffect(() => {
-        if (isPasscodeValidated && enteredPasscode.length > 0) {
+        if (isPasscodeValidated && passcode.code.length > 0) {
             refetchTest();
         }
-    }, [enteredPasscode, isPasscodeValidated, refetchSubmissions, refetchTest]);
+    }, [passcode.code, isPasscodeValidated, refetchSubmissions, refetchTest]);
 
     const handleEnterCorrectPasscode = (data: PasscodeItf) => {
+        dispatch(takeTestActions.setEnteredPasscode(data.code));
         dispatch(takeTestActions.setIsPasscodeValidated(true));
         dispatch(takeTestActions.setIsEnteringPasscode(false));
-        dispatch(takeTestActions.setEnteredPasscode(data.code));
     };
 
     const canEnterDoingTest = useMemo(() => {

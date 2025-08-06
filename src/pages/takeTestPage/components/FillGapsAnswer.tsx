@@ -56,7 +56,7 @@ const FillGapsAnswer = ({
                     answerContent
                         ? answerContent.gaps.reduce<GivenAnswersTextFill>(
                               (acc, gap, index) => {
-                                  acc[`gap-${index + 1}`] = {
+                                  acc[gap.id || `gap-${index + 1}`] = {
                                       value: gap.text,
                                       status:
                                           gap.is_correct === undefined

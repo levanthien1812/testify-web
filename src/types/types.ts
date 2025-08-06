@@ -350,6 +350,7 @@ export interface SubmissionItf {
     submit_time: Date;
     is_evaluated: boolean;
     answers?: UserAnswerItf<AnswerContentItf>[];
+    shuffled_questions?: string[];
 }
 
 export type FilterState = {

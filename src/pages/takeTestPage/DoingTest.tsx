@@ -11,6 +11,7 @@ import { TOAST_MESSAGES } from "../../config/constants/toasts";
 import { MUTATION_KEYS } from "../../config/constants/queryMutationKeys";
 import { useAppSelector } from "../../hooks/hooks";
 import QuestionsPagination from "./components/Pagination";
+import InfoModal from "../../components/modals/InfoModal";
 
 type DoingTestProps = {
     onAfterSubmit: () => void;
@@ -20,6 +21,7 @@ const DoingTest = ({ onAfterSubmit }: DoingTestProps) => {
     const { answers, startTime, test, submittable } = useAppSelector(
         (state) => state.takeTest
     );
+    const [showWarning, setShowWarning] = useState(false);
     const dispatch = useDispatch();
     const remainingIntervalRef = useRef<NodeJS.Timer | null>(null);
     const [remainingTime, setRemainingTime] = useState(
@@ -61,6 +63,12 @@ const DoingTest = ({ onAfterSubmit }: DoingTestProps) => {
         dispatch(takeTestActions.initAnswers());
     }, [test, dispatch, answers]);
 
+    const handleVisibilityChange = () => {
+        if (document.hidden) {
+            setShowWarning(true);
+        }
+    };
+
     const handleSubmit = () => {
         Swal.fire({
             title: "Submission Confirmation",
@@ -83,9 +91,14 @@ const DoingTest = ({ onAfterSubmit }: DoingTestProps) => {
             event.preventDefault();
         };
 
+        document.addEventListener("visibilitychange", handleVisibilityChange);
         window.addEventListener("beforeunload", handleBeforeUnload);
 
         return () => {
+            document.removeEventListener(
+                "visibilitychange",
+                handleVisibilityChange
+            );
             window.removeEventListener("beforeunload", handleBeforeUnload);
             if (remainingIntervalRef.current) {
                 clearInterval(remainingIntervalRef.current);
@@ -126,6 +139,18 @@ const DoingTest = ({ onAfterSubmit }: DoingTestProps) => {
                         </div>
                     </div>
                 </>
+            )}
+            {showWarning && (
+                <InfoModal
+                    title="Warning"
+                    onClose={() => setShowWarning(false)}
+                >
+                    <p>Tab switch detected!</p>
+                    <p>
+                        You are not allowed to left the test page while taking
+                        test!
+                    </p>
+                </InfoModal>
             )}
         </div>
     );
