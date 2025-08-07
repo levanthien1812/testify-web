@@ -21,10 +21,7 @@ const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
     const [isDraggedOver, setIsDraggedOver] = useState<boolean>(false);
 
     const handleDragStart = (e: React.DragEvent<HTMLDivElement>) => {
-        e.dataTransfer.setData(
-            "start_index",
-            JSON.stringify(question.order - 1)
-        );
+        e.dataTransfer.setData("start_index", JSON.stringify(question.order));
         if (question.part_id) {
             e.dataTransfer.setData("part_id", JSON.stringify(question.part_id));
         }
@@ -73,26 +70,26 @@ const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
         e.preventDefault();
         setIsDraggedOver(false);
 
-        const startIndex = JSON.parse(e.dataTransfer.getData("start_index"));
-        const endIndex = question.order - 1;
+        const startOrder = JSON.parse(e.dataTransfer.getData("start_index"));
+        const endOrder = question.order;
         const partFromId = e.dataTransfer.getData("part_id")
             ? JSON.parse(e.dataTransfer.getData("part_id"))
             : undefined;
         const partToId = question.part_id;
 
-        if (startIndex === endIndex && partFromId === partToId) return;
+        if (startOrder === endOrder && partFromId === partToId) return;
 
         dispatch(
             createTestActions.handleReorderQuestion({
-                startIndex,
-                endIndex,
+                startOrder,
+                endOrder,
                 partFromId,
                 partToId,
             })
         );
         reorderQuestionsMutate({
-            startOrder: startIndex + 1,
-            endOrder: endIndex + 1,
+            startOrder: startOrder,
+            endOrder: endOrder,
             partFromId,
             partToId,
         });

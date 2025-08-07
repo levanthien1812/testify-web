@@ -1,6 +1,7 @@
 import {
     CREATE_TEST_STEPS,
     PUBLIC_ANSWERS_OPTIONS,
+    QUESTION_NUMBERING_METHOD,
     SHARE_OPTIONS,
     TEST_LEVEL,
     TEST_STATUS,
@@ -100,6 +101,7 @@ export interface CreateTestContext {
     numQuestions: number;
     numParts: number;
     level: TEST_LEVEL;
+    questionNumberingMethod?: QUESTION_NUMBERING_METHOD;
     shareOption?: SHARE_OPTIONS;
     testParts: TestPartItf[];
     testQuestions: QuestionItf<QuestionContentItf>[];

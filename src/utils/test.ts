@@ -1,4 +1,7 @@
-import { QUESTION_TYPE } from "../config/constants/tests";
+import {
+    QUESTION_NUMBERING_METHOD,
+    QUESTION_TYPE,
+} from "../config/constants/tests";
 import {
     FillGapsAnswerItf,
     MatchingAnswerItf,
@@ -44,15 +47,26 @@ export const reorderQuestions = (
 
 export const removeQuestion = (
     questions: QuestionItf<QuestionContentItf>[],
-    index: number
+    index: number,
+    moveDirection?: "up" | "down",
+    numberingMethod?: QUESTION_NUMBERING_METHOD
 ) => {
     const questionsToModified = JSON.parse(
         JSON.stringify(questions)
     ) as QuestionItf<QuestionContentItf>[];
 
     if (index < questions.length) {
-        for (let i = index + 1; i < questions.length; i++) {
-            questionsToModified[i].order -= 1;
+        if (
+            numberingMethod === QUESTION_NUMBERING_METHOD.CONTINUOUS &&
+            moveDirection === "up"
+        ) {
+            for (let i = 0; i < index; i++) {
+                questionsToModified[i].order += 1;
+            }
+        } else {
+            for (let i = index + 1; i < questions.length; i++) {
+                questionsToModified[i].order -= 1;
+            }
         }
     }
     questionsToModified.splice(index, 1);
@@ -62,21 +76,46 @@ export const removeQuestion = (
 export const addQuestion = (
     questions: QuestionItf<QuestionContentItf>[],
     questionToAdd: QuestionItf<QuestionContentItf>,
-    index: number
+    index: number,
+    moveDirection?: "up" | "down",
+    numberingMethod?: QUESTION_NUMBERING_METHOD
 ) => {
-    console.log(questions.length, questionToAdd, index);
     const questionsToModified = JSON.parse(
         JSON.stringify(questions)
     ) as QuestionItf<QuestionContentItf>[];
 
     if (index < questions.length) {
-        for (let i = index; i < questions.length; i++) {
-            questionsToModified[i].order += 1;
+        if (
+            numberingMethod === QUESTION_NUMBERING_METHOD.CONTINUOUS &&
+            moveDirection === "down"
+        ) {
+            for (let i = 0; i <= index; i++) {
+                questionsToModified[i].order -= 1;
+            }
+        } else {
+            for (let i = index; i < questions.length; i++) {
+                questionsToModified[i].order += 1;
+            }
         }
     }
     questionsToModified.splice(index, 0, questionToAdd);
     questionsToModified.sort(sortByOrderFn);
     return questionsToModified;
+};
+
+export const changeIntermediateQuestionsOrder = (
+    questions: QuestionItf<QuestionContentItf>[],
+    changeType: "increase" | "decrease"
+) => {
+    return questions.map((question, index) => {
+        return {
+            ...question,
+            order:
+                changeType === "increase"
+                    ? question.order + 1
+                    : question.order - 1,
+        };
+    });
 };
 
 export const sortQuestionsByOrder = (
