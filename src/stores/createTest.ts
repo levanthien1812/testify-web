@@ -25,6 +25,7 @@ import { SHARE_OPTIONS } from "../config/constants/tests";
 import { PASSCODE_FORMAT, PASSCODE_METHOD } from "../config/constants/passcode";
 import {
     addQuestion,
+    changeIntermediateQuestionsOrder,
     removeQuestion,
     reorderQuestions,
     sortByOrderFn,
@@ -165,13 +166,18 @@ const createTestSlice = createSlice({
         },
         initializeTestQuestions(state) {
             if (state.numParts > 1) {
+                let startOrder = 1;
                 state.testParts = state.testParts?.map((part) => {
                     const questions = initializeQuestions(
                         part.questions || [],
                         part.num_questions,
                         state.testId!,
-                        part.id
+                        part.id,
+                        startOrder
                     );
+
+                    startOrder += questions.length;
+
                     return {
                         ...part,
                         questions,
@@ -313,16 +319,36 @@ const createTestSlice = createSlice({
         handleReorderQuestion(
             state,
             action: PayloadAction<{
-                startIndex: number;
-                endIndex: number;
+                startOrder: number;
+                endOrder: number;
                 partFromId?: string;
                 partToId?: string;
             }>
         ) {
-            const { startIndex, endIndex, partFromId, partToId } =
+            const { startOrder, endOrder, partFromId, partToId } =
                 action.payload;
 
+            let startIndex, endIndex;
+
             if (partFromId && partToId) {
+                const partFrom = state.testParts.find(
+                    (part) => part.id === partFromId
+                );
+                const partTo = state.testParts.find(
+                    (part) => part.id === partToId
+                );
+
+                if (!partFrom || !partTo) return;
+                startIndex = partFrom.questions?.findIndex(
+                    (question) => question.order === startOrder
+                );
+                endIndex = partTo.questions?.findIndex(
+                    (question) => question.order === endOrder
+                );
+
+                if (startIndex === undefined || endIndex === undefined) return;
+
+                console.log("hello");
                 const partFromIndex = state.testParts.findIndex(
                     (part) => part.id === partFromId
                 );
@@ -346,23 +372,53 @@ const createTestSlice = createSlice({
 
                     const questionToAdd = partFromQuestions[startIndex];
                     questionToAdd.part_id = partToId;
-                    questionToAdd.order = endIndex + 1;
+                    questionToAdd.order = endOrder;
+
+                    const moveDirection =
+                        partFromIndex < partToIndex ? "down" : "up";
 
                     state.testParts[partToIndex].questions = addQuestion(
                         partToQuestions,
                         questionToAdd,
-                        endIndex
+                        endIndex,
+                        moveDirection,
+                        state.questionNumberingMethod
                     );
 
                     state.testParts[partFromIndex].questions = removeQuestion(
                         partFromQuestions,
-                        startIndex
+                        startIndex,
+                        moveDirection,
+                        state.questionNumberingMethod
                     );
+
+                    if (partFromIndex < partToIndex) {
+                        for (let i = partFromIndex + 1; i < partToIndex; i++) {
+                            changeIntermediateQuestionsOrder(
+                                state.testParts[i].questions!,
+                                "increase"
+                            );
+                        }
+                    } else {
+                        for (let i = partFromIndex - 1; i > partToIndex; i--) {
+                            changeIntermediateQuestionsOrder(
+                                state.testParts[i].questions!,
+                                "decrease"
+                            );
+                        }
+                    }
 
                     state.testParts[partFromIndex].num_questions -= 1;
                     state.testParts[partToIndex].num_questions += 1;
                 }
             } else {
+                startIndex = state.testQuestions?.findIndex(
+                    (question) => question.order === startOrder
+                );
+                endIndex = state.testQuestions?.findIndex(
+                    (question) => question.order === endOrder
+                );
+
                 state.testQuestions = reorderQuestions(
                     state.testQuestions,
                     startIndex,
@@ -391,6 +447,10 @@ const createTestSlice = createSlice({
             state.testId = action.payload.test.id;
             state.status = action.payload.test.status;
             state.passcode = action.payload.test.passcode || INITIAL_PASSCODE;
+            if (action.payload.test.question_numbering_method) {
+                state.questionNumberingMethod =
+                    action.payload.test.question_numbering_method;
+            }
 
             state.testParts = action.payload?.parts;
             if (state.testParts && state.testParts.length > 0) {

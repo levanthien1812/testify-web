@@ -1,6 +1,8 @@
 import { useEffect, useMemo } from "react";
 import {
     PUBLIC_ANSWERS_OPTIONS,
+    QUESTION_NUMBERING_METHOD,
+    QUESTION_NUMBERING_METHOD_LABEL,
     TEST_LEVEL,
     TEST_LEVEL_LABEL,
 } from "../../../config/constants/tests";
@@ -159,6 +161,15 @@ const TestInfo = () => {
         allValues?.options.allow_close_time.close_time,
         setValue,
     ]);
+
+    useEffect(() => {
+        if (
+            allValues.num_parts > 1 &&
+            allValues.num_questions < allValues.num_parts
+        ) {
+            setValue("num_questions", allValues.num_parts);
+        }
+    }, [allValues.num_parts, allValues.num_questions, setValue]);
 
     return (
         <Wrapper
@@ -322,6 +333,24 @@ const TestInfo = () => {
                                 !editibility.TEST_INFORMATION.num_questions
                             }
                         />
+                        {numParts > 1 && (
+                            <Select
+                                className="grow capitalize"
+                                {...register("question_numbering_method")}
+                                options={Object.values(
+                                    QUESTION_NUMBERING_METHOD
+                                ).map((method) => ({
+                                    label: QUESTION_NUMBERING_METHOD_LABEL[
+                                        method
+                                    ],
+                                    value: method,
+                                }))}
+                                label={{
+                                    text: "Question numbering method",
+                                }}
+                                disabled={!editibility.TEST_INFORMATION.level}
+                            />
+                        )}
                         <Select
                             className="grow capitalize"
                             {...register("level")}

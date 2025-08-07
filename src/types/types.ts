@@ -3,6 +3,7 @@ import {
     FILL_GAP_METHOD,
     PASSCODE_VALID_UNIT,
     QUESTION_LEVEL,
+    QUESTION_NUMBERING_METHOD,
     ROLES,
     SHARE_OPTIONS,
     TEST_LEVEL,
@@ -94,6 +95,7 @@ export interface TestBodyItf {
     share_option?: SHARE_OPTIONS;
     passcode_id?: string;
     options: TestOptions;
+    question_numbering_method?: QUESTION_NUMBERING_METHOD;
 }
 export interface TestItf extends TestBodyItf {
     id: string;

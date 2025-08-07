@@ -6,9 +6,9 @@ export function generateArray(n: number) {
     return result;
 }
 
-export function findSmallestMissingPositive(nums: number[]): number {
+export function findSmallestMissingPositive(nums: number[], start = 1): number {
     const numSet = new Set(nums);
-    let i = 1;
+    let i = start;
 
     while (true) {
         if (!numSet.has(i)) {
@@ -45,3 +45,14 @@ export const generateEvenRanges = (totalInteger: number, numRanges: number) => {
 
     return result;
 };
+
+export function generateArrayFromStart(
+    start: number,
+    total: number
+): number[] {
+    const result: number[] = [];
+    for (let i = 0; i < total; i++) {
+        result.push(start + i);
+    }
+    return result;
+}

@@ -3,7 +3,10 @@ import {
     INITIAL_QUESTION,
 } from "../../config/constants/initialValues";
 import { PASSCODE_METHOD } from "../../config/constants/passcode";
-import { SHARE_OPTIONS } from "../../config/constants/tests";
+import {
+    QUESTION_NUMBERING_METHOD,
+    SHARE_OPTIONS,
+} from "../../config/constants/tests";
 import {
     PasscodeItf,
     QuestionContentItf,
@@ -11,13 +14,17 @@ import {
     TestItf,
     TestPartItf,
 } from "../../types/types";
-import { findSmallestMissingPositive } from "../../utils/array";
+import {
+    findSmallestMissingPositive,
+    generateArrayFromStart,
+} from "../../utils/array";
 import { checkQuestionAnswerIsSaved, sortByOrderFn } from "../../utils/test";
 
 export const initializeParts = (
     existingParts: TestPartItf[],
     numParts: number,
-    testId: string
+    testId: string,
+    questionNumberingMethod?: QUESTION_NUMBERING_METHOD
 ) => {
     let updatedParts = [...existingParts];
 
@@ -29,13 +36,21 @@ export const initializeParts = (
         }));
     }
     if (existingParts.length > 0) {
+        let startOrder = 1;
         updatedParts.sort(sortByOrderFn).map((part) => {
             const questions = initializeQuestions(
                 part.questions || [],
                 part.num_questions,
                 testId,
-                part.id
+                part.id,
+                startOrder
             );
+
+            if (
+                questionNumberingMethod === QUESTION_NUMBERING_METHOD.CONTINUOUS
+            ) {
+                startOrder += questions.length;
+            }
             return { ...part, questions };
         });
     }
@@ -60,22 +75,27 @@ export const initializeQuestions = (
     existingQuestions: QuestionItf<QuestionContentItf>[],
     numQuestions: number,
     testId: string,
-    partId?: string
+    partId?: string,
+    startOrder?: number
 ) => {
     let updatedQuestions = [...existingQuestions];
 
     if (existingQuestions.length === 0) {
-        updatedQuestions = [...Array(numQuestions)].map((question, index) => {
+        const orderArray = generateArrayFromStart(
+            startOrder || 1,
+            numQuestions
+        );
+        updatedQuestions = orderArray.map((order) => {
             return {
                 ...INITIAL_QUESTION,
                 test_id: testId,
                 ...(partId ? { part_id: partId } : {}),
-                order: index + 1,
+                order: order,
             };
         });
     } else {
         if (existingQuestions.length < numQuestions) {
-            let orderArray = existingQuestions.map(
+            let existingOrderArray = existingQuestions.map(
                 (question) => question.order
             );
 
@@ -83,9 +103,11 @@ export const initializeQuestions = (
                 ...existingQuestions,
                 ...[...Array(numQuestions - existingQuestions.length)].map(
                     () => {
-                        const missingOrder =
-                            findSmallestMissingPositive(orderArray);
-                        orderArray.push(missingOrder);
+                        const missingOrder = findSmallestMissingPositive(
+                            existingOrderArray,
+                            startOrder
+                        );
+                        existingOrderArray.push(missingOrder);
                         return {
                             ...INITIAL_QUESTION,
                             test_id: testId,
