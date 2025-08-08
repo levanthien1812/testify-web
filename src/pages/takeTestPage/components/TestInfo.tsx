@@ -1,7 +1,4 @@
-import React from "react";
-import { TestItf } from "../../../types/types";
 import { format } from "date-fns";
-import Checkbox from "../../../components/elements/Checkbox";
 import Options from "./Options";
 import { TEST_LEVEL } from "../../../config/constants/tests";
 import { useAppSelector } from "../../../hooks/hooks";

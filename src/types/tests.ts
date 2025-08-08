@@ -149,6 +149,15 @@ export interface ViewTestContext {
     submissions: SubmissionItf[];
     questionsResult: QuestionResult[];
     currentSubmissionBeingViewed: SubmissionItf | null;
+    scores?: {
+        average: number;
+        highest: number;
+        lowest: number;
+    };
+    rates?: {
+        pass: number;
+        fail: number;
+    };
 }
 
 export interface EditabilityConfig {
@@ -201,4 +210,14 @@ export interface QuestionResult {
     correct: number;
     wrong: number;
     skipped: number;
+}
+
+export interface TestResult {
+    submissions: SubmissionItf[];
+    total_submissions: number;
+    average_score: number;
+    highest_score: number;
+    lowest_score: number;
+    pass_rate: number;
+    fail_rate: number;
 }

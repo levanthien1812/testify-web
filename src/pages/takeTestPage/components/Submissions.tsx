@@ -7,7 +7,7 @@ const Submissions = () => {
     return (
         <div className="space-y-2 px-8 py-4 mt-4 border-t-2 border-dashed ">
             <p className="text-xl">{"Your submissions"}</p>
-            <div>
+            <div className="space-y-2">
                 {submissions.map((submission) => (
                     <Submission submission={submission} key={submission.id} />
                 ))}

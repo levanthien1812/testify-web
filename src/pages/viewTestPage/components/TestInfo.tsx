@@ -26,8 +26,8 @@ const TestInfo = () => {
     };
 
     return (
-        <div>
-            <p className="text-center text-[44px]">{test.title}</p>
+        <div className="border border-gray-400 border-dashed p-2">
+            <p className="text-center text-[30px]">{test.title}</p>
 
             <p className="text-xl text-center mt-2">
                 Duration:{" "}

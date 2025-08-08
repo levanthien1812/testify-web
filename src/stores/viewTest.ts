@@ -7,6 +7,7 @@ import {
     TestPartItf,
 } from "../types/types";
 import { sortQuestionsByOrder } from "../utils/test";
+import { TestResult } from "../types/tests";
 
 const viewTestSlice = createSlice({
     name: "viewTest",
@@ -45,6 +46,22 @@ const viewTestSlice = createSlice({
                 ...state.currentSubmissionBeingViewed,
                 ...action.payload,
             };
+        },
+        setScores(state, action: PayloadAction<TestResult>) {
+            state.scores = {
+                average: action.payload.average_score,
+                highest: action.payload.highest_score,
+                lowest: action.payload.lowest_score,
+            };
+        },
+        setRates(state, action: PayloadAction<TestResult>) {
+            state.rates = {
+                pass: action.payload.pass_rate,
+                fail: action.payload.fail_rate,
+            };
+        },
+        reset(state) {
+            return INITIAL_VIEW_TEST_CONTEXT;
         },
     },
 });
