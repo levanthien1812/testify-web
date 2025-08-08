@@ -5,6 +5,10 @@ export const getNum = (number: any): number => {
     return parseInt(number);
 };
 
-export const getRound = (number: Number, decimals: number = 2): number => {
+export const getRound = (
+    number: number | undefined,
+    decimals: number = 2
+): number => {
+    if (!number) return 0;
     return parseFloat(number.toFixed(decimals));
 };

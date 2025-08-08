@@ -7,7 +7,7 @@ import {
 } from "../../services/test";
 import { useNavigate, useParams } from "react-router";
 import SubmissionsTable from "./components/SubmissionsTable";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Modal, {
     ModalBody,
     ModalFooter,
@@ -23,7 +23,7 @@ import { QUERY_KEYS } from "../../config/constants/queryMutationKeys";
 import { useAppSelector } from "../../hooks/hooks";
 import TestInfo from "./components/TestInfo";
 import ScoreRangeBarChart from "./components/ScoreRangeBarChart";
-import { QuestionResult } from "../../types/tests";
+import { QuestionResult, TestResult } from "../../types/tests";
 import QuestionsResultChart from "./components/QuestionsResultChart";
 import {
     Chart as ChartJS,
@@ -38,6 +38,8 @@ import {
 import Loading from "../../components/loadings/Loading";
 import MessageAction from "../others/MessageAction";
 import { AxiosError } from "axios";
+import TopTakers from "./components/TopTakers";
+import Statistics from "./components/Statistics";
 
 ChartJS.register(
     CategoryScale,
@@ -61,7 +63,8 @@ const ViewTestPage = () => {
     const { test, submissions, questionsResult } = useAppSelector(
         (state) => state.viewTest
     );
-    const { setTest, setSubmissions, setQuestionsResult } = viewTestActions;
+    const { setTest, setSubmissions, setScores, setRates, setQuestionsResult } =
+        viewTestActions;
     const dispatch = useDispatch();
 
     const { isLoading: isLoadingTest } = useQuery<TestItf>({
@@ -82,14 +85,16 @@ const ViewTestPage = () => {
     });
 
     const { isLoading: isLoadingSubmissions, refetch: refetchSubmissions } =
-        useQuery<SubmissionItf[]>({
+        useQuery<TestResult>({
             queryKey: [QUERY_KEYS.GET_TEST_SUBMISSIONS, testId],
             queryFn: async () => {
                 const responseData = await getSubmissions(testId!);
-                return responseData.submissions;
+                return responseData;
             },
             onSuccess: (data) => {
-                dispatch(setSubmissions(data));
+                dispatch(setSubmissions(data.submissions));
+                dispatch(setScores(data));
+                dispatch(setRates(data));
             },
             retry: false,
             enabled: !!test,
@@ -107,6 +112,13 @@ const ViewTestPage = () => {
         retry: false,
         enabled: !!test,
     });
+
+    const topSubmissions = useMemo(() => {
+        if (!submissions) return [];
+        return [...submissions]
+            .sort((a, b) => (a.score && b.score ? b.score - a.score : 1))
+            .slice(0, 5);
+    }, [submissions]);
 
     return (
         <div className="xl:w-2/3 md:w-5/6 mx-auto py-10 shadow-lg px-8">
@@ -129,7 +141,13 @@ const ViewTestPage = () => {
             )}
             {test && (
                 <>
-                    <TestInfo />
+                    <div className="flex gap-2">
+                        <TestInfo />
+                        <Statistics />
+                        {topSubmissions.length > 0 && (
+                            <TopTakers submissions={topSubmissions} />
+                        )}
+                    </div>
                     <div className="flex justify-end mt-2">
                         <button
                             className="text-orange-600 underline hover:italic"
