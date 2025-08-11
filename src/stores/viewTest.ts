@@ -29,7 +29,15 @@ const viewTestSlice = createSlice({
                     action.payload.questions
                 );
             } else {
-                state.test.parts = action.payload.parts;
+                state.test.parts = action.payload.parts.map((part) => {
+                    const questions = sortQuestionsByOrder(
+                        part.questions || []
+                    );
+                    return {
+                        ...part,
+                        questions,
+                    };
+                });
             }
         },
         setSubmissions(state, action) {
