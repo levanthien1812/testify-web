@@ -127,11 +127,13 @@ const MultipleChoicesAnswer = ({
                 <div className="mt-2 bg-green-500 p-2">
                     <p className="text-white">Correct answer:</p>
                     <div className="text-white">
-                        {
-                            questionContent.options.find(
-                                (option) => option.id === makerAnswer
-                            )?.text
-                        }
+                        {questionContent.options
+                            .filter((option) =>
+                                makerAnswer?.includes(option.id!)
+                            )
+                            ?.map((option) => (
+                                <p key={option.id}>{option.text}</p>
+                            ))}
                     </div>
                 </div>
             )}
