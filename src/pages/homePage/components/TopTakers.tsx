@@ -119,65 +119,70 @@ const TopTakers = () => {
 
             {topTakers && topTakers.length > 0 && (
                 <>
-                    <table className="w-full mt-2">
-                        <thead>
-                            {table.getHeaderGroups().map((headerGroup) => (
-                                <tr key={headerGroup.id}>
-                                    {headerGroup.headers.map((header) => (
+                    <div className="overflow-x-scroll">
+                        <table className="w-full mt-2">
+                            <thead>
+                                {table.getHeaderGroups().map((headerGroup) => (
+                                    <tr key={headerGroup.id}>
+                                        {headerGroup.headers.map((header) => (
+                                            <th
+                                                key={header.id}
+                                                className={`py-0 sm:py-1 px-1 border align-middle border-slate-400 bg-orange-100 ${
+                                                    header.column.getCanSort()
+                                                        ? "cursor-pointer"
+                                                        : ""
+                                                }`}
+                                                onClick={header.column.getToggleSortingHandler()}
+                                            >
+                                                {flexRender(
+                                                    header.column.columnDef
+                                                        .header,
+                                                    header.getContext()
+                                                )}
+                                                {header.column.getIsSorted()
+                                                    ? header.column.getIsSorted() ===
+                                                      "asc"
+                                                        ? " 🔼"
+                                                        : " 🔽"
+                                                    : ""}
+                                            </th>
+                                        ))}
                                         <th
-                                            key={header.id}
-                                            className={`py-1 px-1 border align-middle border-slate-400 bg-orange-100 ${
-                                                header.column.getCanSort()
-                                                    ? "cursor-pointer"
-                                                    : ""
-                                            }`}
-                                            onClick={header.column.getToggleSortingHandler()}
+                                            className={`py-0 sm:py-1 px-1 align-top border border-slate-400 bg-orange-100`}
                                         >
-                                            {flexRender(
-                                                header.column.columnDef.header,
-                                                header.getContext()
-                                            )}
-                                            {header.column.getIsSorted()
-                                                ? header.column.getIsSorted() ===
-                                                  "asc"
-                                                    ? " 🔼"
-                                                    : " 🔽"
-                                                : ""}
+                                            Actions
                                         </th>
-                                    ))}
-                                    <th
-                                        className={`py-1 px-1 align-top border border-slate-400 bg-orange-100`}
-                                    >
-                                        Actions
-                                    </th>
-                                </tr>
-                            ))}
-                        </thead>
-                        <tbody>
-                            {table.getRowModel().rows.map((row) => (
-                                <tr key={row.id}>
-                                    {row.getVisibleCells().map((cell) => (
-                                        <td
-                                            key={cell.id}
-                                            className={`py-1 px-1 align-middle border text-center border-slate-400`}
-                                        >
-                                            {flexRender(
-                                                cell.column.columnDef.cell,
-                                                cell.getContext()
-                                            )}
+                                    </tr>
+                                ))}
+                            </thead>
+                            <tbody>
+                                {table.getRowModel().rows.map((row) => (
+                                    <tr key={row.id}>
+                                        {row.getVisibleCells().map((cell) => (
+                                            <td
+                                                key={cell.id}
+                                                className={`py-0 sm:py-1 px-1 align-middle border text-center border-slate-400`}
+                                            >
+                                                {flexRender(
+                                                    cell.column.columnDef.cell,
+                                                    cell.getContext()
+                                                )}
+                                            </td>
+                                        ))}
+                                        <td className="text-center py-0 sm:py-1 px-1 border border-slate-400">
+                                            <Link
+                                                to={`/takers/${row.original.taker.id}`}
+                                            >
+                                                <Button size="sm">
+                                                    Detail
+                                                </Button>
+                                            </Link>
                                         </td>
-                                    ))}
-                                    <td className="text-center py-1 px-1 border border-slate-400">
-                                        <Link
-                                            to={`/takers/${row.original.taker.id}`}
-                                        >
-                                            <Button size="sm">Detail</Button>
-                                        </Link>
-                                    </td>
-                                </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                     <Paginator table={table} />
                 </>
             )}

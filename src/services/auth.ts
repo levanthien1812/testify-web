@@ -1,3 +1,4 @@
+import { HttpStatusCode } from "axios";
 import { instance } from "../config/axios";
 import {
     ForgotPasswordBodyItf,
@@ -6,6 +7,7 @@ import {
     ResetPasswordBodyItf,
     VerifyEmailBodyItf,
 } from "../types/types";
+import Cookies from "js-cookie";
 
 export const register = async (registerBody: RegisterBodyItf) => {
     try {
@@ -70,6 +72,14 @@ export const refreshToken = async (refreshToken: string) => {
     const response = await instance.post("/auth/refresh", {
         token: refreshToken,
     });
+
+    if (response.status === HttpStatusCode.Unauthorized) {
+        window.location.href = "/login";
+        localStorage.clear();
+        Cookies.remove("access_token");
+        Cookies.remove("refresh_token");
+        Cookies.remove("user");
+    }
 
     return response.data;
 };

@@ -7,7 +7,7 @@ import {
 } from "../../services/test";
 import { useNavigate, useParams } from "react-router";
 import SubmissionsTable from "./components/SubmissionsTable";
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import Modal, {
     ModalBody,
     ModalFooter,
@@ -66,6 +66,7 @@ const ViewTestPage = () => {
     const { setTest, setSubmissions, setScores, setRates, setQuestionsResult } =
         viewTestActions;
     const dispatch = useDispatch();
+    const submissionsTableRef = useRef<HTMLDivElement>(null);
 
     const { isLoading: isLoadingTest } = useQuery<TestItf>({
         queryKey: ["test", testId],
@@ -121,7 +122,7 @@ const ViewTestPage = () => {
     }, [submissions]);
 
     return (
-        <div className="xl:w-2/3 md:w-5/6 mx-auto py-10 shadow-lg px-8">
+        <div className="xl:w-2/3 mx-auto py-4 md:py-10 px-4 md:px-8 shadow-lg">
             <Loading
                 isLoading={isLoadingTest}
                 loadingText={{ text: "Loading test's information..." }}
@@ -141,11 +142,20 @@ const ViewTestPage = () => {
             )}
             {test && (
                 <>
-                    <div className="flex gap-2">
+                    <div className="flex flex-col md:flex-row gap-2">
                         <TestInfo />
                         <Statistics />
                         {topSubmissions.length > 0 && (
-                            <TopTakers submissions={topSubmissions} />
+                            <TopTakers
+                                submissions={topSubmissions}
+                                onViewMore={() => {
+                                    submissionsTableRef.current?.scrollIntoView(
+                                        {
+                                            behavior: "smooth",
+                                        }
+                                    );
+                                }}
+                            />
                         )}
                     </div>
                     <div className="flex justify-end mt-2">
@@ -189,7 +199,7 @@ const ViewTestPage = () => {
                         )}
 
                         {submissions.length > 0 && (
-                            <div className="mt-4">
+                            <div className="mt-4" ref={submissionsTableRef}>
                                 <p className="text-2xl text-center">{`Submissions (${submissions?.length}/${test?.taker_ids.length})`}</p>
                                 <div className="space-y-1 mt-2">
                                     {submissions.length > 0 && (

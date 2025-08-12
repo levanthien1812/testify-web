@@ -24,11 +24,11 @@ const Statistics = () => {
     );
 
     return (
-        <div className="flex flex-col gap-2 w-[20%] shrink-0">
+        <div className="flex flex-col gap-2 w-full md:w-[20%] shrink-0">
             {scores && (
                 <div className="border border-teal-500 border-dashed bg-teal-50">
-                    <div className="p-2">
-                        <p className="text-xl">Average score</p>
+                    <div className="p-2 flex flex-row md:flex-col gap-2 md:gap-0">
+                        <p className="text-xl">Average score:</p>
                         <p className="text-2xl font-bold text-teal-500">
                             {getRound(scores.average)}
                         </p>
@@ -53,8 +53,8 @@ const Statistics = () => {
             )}
 
             <div className="border border-teal-500 border-dashed bg-teal-50">
-                <div className="p-2">
-                    <p className="text-xl">Total submissions</p>
+                <div className="p-2 flex flex-row md:flex-col gap-2 md:gap-0">
+                    <p className="text-xl">Total submissions:</p>
                     <p className="text-2xl font-bold text-teal-500">
                         {getRound(submissions.length)}
                     </p>
@@ -63,7 +63,7 @@ const Statistics = () => {
             {rates && (
                 <div className="border border-teal-500 border-dashed bg-teal-50">
                     <div className="p-2">
-                        <p className="text-xl">Pass rate/Fail rate</p>
+                        <p className="text-xl">Pass rate/Fail rate:</p>
                         <div className="flex h-6 w-full mt-2">
                             <div
                                 className="bg-teal-500 text-start text-white px-2"
@@ -86,7 +86,7 @@ const Statistics = () => {
                 </div>
             )}
 
-            <div className="border border-teal-500 border-dashed bg-teal-50 grow">
+            <div className="border border-teal-500 border-dashed bg-teal-50 grow hidden md:block">
                 <div className="p-2"></div>
             </div>
         </div>

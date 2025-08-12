@@ -55,7 +55,7 @@ const Wrapper = ({
     const dispatch = useDispatch();
 
     return (
-        <div className="px-20 py-12 shadow-2xl">
+        <div className="px-2 sm:px-10 md:px-20 py-4 sm:py-8 md:py-12 md:shadow-2xl">
             <h2 className="text-center text-3xl">
                 {viewData?.headerTitle?.text}
             </h2>
@@ -75,9 +75,9 @@ const Wrapper = ({
                     </Button>
                 </div>
             )}
-            <div className="mt-6">{children}</div>
+            <div className="mt-2 sm:mt-6">{children}</div>
 
-            <div className="flex justify-end items-center gap-3 mt-6 pt-4 border-t border-gray-300">
+            <div className="flex justify-center md:justify-end items-center gap-3 mt-6 pt-4 border-t border-gray-300">
                 <>
                     {additionalButtons &&
                         additionalButtons?.map((button) => (

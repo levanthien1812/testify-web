@@ -24,7 +24,7 @@ const Navigator = () => {
     };
 
     return (
-        <div className="flex w-3/4 mx-auto">
+        <div className="flex w-full sm:w-5/6 md:w-3/4 mx-auto">
             {steps.map((step) => {
                 return (
                     <div className="grow flex items-center" key={step.value}>

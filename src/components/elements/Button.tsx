@@ -44,8 +44,8 @@ const Button = ({
                               : ""
                       } ${link ? "text-orange-600 hover:underline" : ""} ${
                           size === "sm" ? "px-4 py-0.5 text-sm" : ""
-                      }${size === "md" ? "px-8 py-1" : ""}${
-                          size === "lg" ? "px-12 py-1.5" : ""
+                      }${size === "md" ? "px-4 py-0.5 sm:px-8 sm:py-1" : ""}${
+                          size === "lg" ? "py-1 px-8 sm:px-12 sm:py-1.5" : ""
                       } disabled:bg-gray-300 disabled:cursor-not-allowed disabled:shadow-gray-200 transition-colors duration-150 text-nowrap ${className}`
                     : `bg-white text-orange-600 hover:underline hover:text-orange-700`
             }

@@ -103,6 +103,17 @@
   color: oklch(64.6% 0.222 41.116)
 }
 
+@media screen and (max-width: 768px) {
+  .rbc-month-row .rbc-row-content .rbc-date-cell button {
+      font-size: 20px;
+    }
+  
+    .rbc-month-row .rbc-row-content .rbc-date-cell.rbc-now button {
+      font-size: 20px;
+    }
+  }
+
+
 .rbc-row {
   gap: 2px;
   z-index: 3;

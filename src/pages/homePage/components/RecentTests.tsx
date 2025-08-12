@@ -49,7 +49,7 @@ const RecentTests = () => {
                 loadingText={{ text: "Loading recent tests..." }}
             />
             {tests && (
-                <div className="flex gap-6 mt-3 pb-1 custom-scrollbar-x">
+                <div className="flex gap-2 sm:gap-4 md:gap-6 mt-3 pb-1 custom-scrollbar-x">
                     {tests.map((test: TestItf) => {
                         return (
                             <div key={test.id}>

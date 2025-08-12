@@ -41,7 +41,7 @@ const UseMatchesBreadcrumbs = () => {
     return (
         <nav
             aria-label="Breadcrumb"
-            className="text-sm text-gray-600 mb-2 px-4 py-1 bg-orange-600"
+            className="text-sm text-gray-600 mb-2 px-4 py-0.5 sm:py-1 bg-orange-600"
         >
             <ol className="flex space-x-2">{crumbs}</ol>
         </nav>

@@ -27,6 +27,7 @@ const Header = () => {
     const [isEnteringPasscodeLink, setIsEnteringPasscodeLink] = useState(false);
     const { isPasscodeValidated } = useAppSelector((state) => state.takeTest);
     const [isViewingProfile, setIsViewingProfile] = useState(false);
+    const [hideActions, setHideActions] = useState(false);
     const navigate = useNavigate();
 
     const { mutate, isLoading } = useMutation({
@@ -61,12 +62,16 @@ const Header = () => {
     }, [isLoading]);
 
     return (
-        <div className="bg-white px-12 py-3 flex justify-between items-center shadow-md sticky top-0 z-10">
+        <div className="bg-white px-2 sm:px-4 md:px-12 py-1 sm:py-2 md:py-3 flex justify-between items-center shadow-md sticky top-0 z-10">
             <Link to={"/"}>
-                <img src={logoTestify} alt="testify-logo" className="w-44" />
+                <img
+                    src={logoTestify}
+                    alt="testify-logo"
+                    className="w-28 sm:w-36 md:w-44"
+                />
             </Link>
             {!isAuthened && (
-                <div className="flex gap-6">
+                <div className="md:flex gap-6 hidden">
                     <Button>
                         <Link to={"/register"}>Register</Link>
                     </Button>
@@ -105,6 +110,7 @@ const Header = () => {
                                     className="w-full"
                                     onClick={() => {
                                         setIsViewingProfile(true);
+                                        setHideActions(true);
                                     }}
                                 >
                                     Profile
@@ -118,8 +124,9 @@ const Header = () => {
                                 </Button>
                             </div>
                         }
+                        hideContent={hideActions}
                     >
-                        <div className="flex gap-2 items-center hover:bg-gray-100 p-1 min-w-40 cursor-pointer">
+                        <div className="flex gap-2 items-center hover:bg-gray-100 p-1 cursor-pointer">
                             <img
                                 src={
                                     user.photo && user.photo.length > 0
@@ -127,10 +134,12 @@ const Header = () => {
                                         : defaultUserPhoto
                                 }
                                 alt="user"
-                                className="w-[40px] h-[40px] object-cover rounded-full shadow-md"
+                                className="w-[32px] h-[32px] sm:w-[38px] sm:h-[38px] md:w-[44px] md:h-[44px] object-cover rounded-full shadow-md"
                             />
 
-                            <span className="me-2">{user.name}</span>
+                            <span className="me-2 hidden md:block">
+                                {user.name}
+                            </span>
                         </div>
                     </Popover>
                     <div className="relative">
@@ -151,7 +160,10 @@ const Header = () => {
 
                         {isViewingProfile && (
                             <Profile
-                                onClose={() => setIsViewingProfile(false)}
+                                onClose={() => {
+                                    setIsViewingProfile(false);
+                                    setHideActions(false);
+                                }}
                             />
                         )}
                     </div>

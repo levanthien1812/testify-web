@@ -34,7 +34,7 @@ const TestOptions = () => {
                 onToggle: () => setIsViewOptions(!isViewingOptions),
             }}
         >
-            <div className="flex-col space-y-2 p-4">
+            <div className="flex-col space-y-2 px-2 py-2 sm:px-4 sm:py-4">
                 <TestOption
                     mainOption={
                         <Checkbox
@@ -61,7 +61,7 @@ const TestOptions = () => {
                     ]}
                     additionalInfo={
                         options.allow_close_time.enable && (
-                            <div className="grid grid-cols-[2fr_5fr] px-4 py-2 bg-orange-50">
+                            <div className="grid grid-cols-[2fr_5fr] ">
                                 <Input
                                     type="datetime-local"
                                     {...register(
@@ -136,7 +136,7 @@ const TestOptions = () => {
                     ]}
                     additionalInfo={
                         options.allow_multiple_submissions.enable && (
-                            <div className="grid grid-cols-[2fr_5fr] px-4 py-2 bg-orange-50">
+                            <div className="grid grid-cols-[2fr_5fr] ">
                                 <Input
                                     type="number"
                                     {...register(
@@ -240,7 +240,7 @@ const TestOptions = () => {
                     ]}
                     additionalInfo={
                         options.allow_show_maker_answers_after_test.enable && (
-                            <div className="grid grid-cols-[2fr_5fr] gap-2 px-4 py-2 bg-orange-50">
+                            <div className="grid grid-cols-[2fr_5fr] gap-2 ">
                                 <Select
                                     className="w-0 grow capitalize"
                                     {...register(
@@ -428,7 +428,7 @@ const TestOptions = () => {
                     ]}
                     additionalInfo={
                         options.pagination_mode.enable && (
-                            <div className="px-4 py-2 bg-orange-50 space-y-2">
+                            <div className=" space-y-2">
                                 <Select
                                     className="w-0 grow capitalize"
                                     {...register(

@@ -239,10 +239,10 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
                     <ModalBody>
                         <form
                             onSubmit={handleSubmit(onSubmit)}
-                            className="w-[600px] relative"
+                            className="md:w-[600px] relative"
                         >
-                            <div className="flex gap-4">
-                                <div className="space-y-2 w-1/3 shrink-0 flex flex-col">
+                            <div className="flex flex-col md:flex-row gap-4">
+                                <div className="space-y-2 w-full md:w-1/3 shrink-0 flex flex-col">
                                     <div>
                                         <Input
                                             type="number"
@@ -450,7 +450,7 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
                                 </div>
                             </div>
 
-                            <div className="flex justify-between mt-4 gap-2 border-t border-gray-300 pt-4">
+                            <div className="flex justify-between mt-4 gap-2 border-t border-gray-300 pt-2 md:pt-4">
                                 <div className="flex gap-2">
                                     <Button
                                         secondary

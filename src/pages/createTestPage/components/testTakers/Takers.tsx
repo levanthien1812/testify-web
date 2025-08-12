@@ -21,44 +21,49 @@ const Takers = () => {
     return (
         <div className="mt-4">
             <div className="space-y-2">
-                {selectedTestTakers &&
-                    selectedTestTakers.map((taker, index) => (
-                        <div
-                            className="px-4 py-2 bg-orange-100 flex justify-between items-center"
-                            key={Math.random()}
-                        >
-                            <div className="flex gap-2 items-center">
-                                <input
-                                    type="checkbox"
-                                    name={taker.user.email}
-                                    id={taker.user.email}
-                                    checked={true}
-                                    readOnly
-                                />
-                                <label
-                                    htmlFor={taker.user.email}
-                                    className="cursor-pointer"
+                <div className="max-h-60 overflow-y-scroll space-y-1 sm:space-y-2">
+                    {selectedTestTakers &&
+                        selectedTestTakers.map((taker, index) => (
+                            <div
+                                className="px-4 py-2 bg-orange-100 flex justify-between items-center"
+                                key={Math.random()}
+                            >
+                                <div className="flex gap-2 items-center">
+                                    <input
+                                        type="checkbox"
+                                        name={taker.user.email}
+                                        id={taker.user.email}
+                                        checked={true}
+                                        readOnly
+                                    />
+                                    <label
+                                        htmlFor={taker.user.email}
+                                        className="cursor-pointer"
+                                    >
+                                        <span>{taker.name}</span>
+                                        <span className="text-gray-600">
+                                            {" "}
+                                            - {taker.user.email}
+                                        </span>
+                                    </label>
+                                    {taker.group && (
+                                        <span className="text-orange-600 bg-orange-50 px-2 rounded-full py-0 border border-orange-600">
+                                            {taker.group.name}
+                                        </span>
+                                    )}
+                                </div>
+                                <button
+                                    onClick={() => handleRemoveTaker(taker)}
                                 >
-                                    <span>{taker.name}</span>
-                                    <span className="text-gray-600">
-                                        {" "}
-                                        - {taker.user.email}
-                                    </span>
-                                </label>
-                                {taker.group && (
-                                    <span className="text-orange-600 bg-orange-50 px-2 rounded-full py-0 border border-orange-600">
-                                        {taker.group.name}
-                                    </span>
-                                )}
+                                    <FontAwesomeIcon
+                                        className="text-gray-500 hover:text-gray-600"
+                                        icon={faTimes}
+                                    />
+                                </button>
                             </div>
-                            <button onClick={() => handleRemoveTaker(taker)}>
-                                <FontAwesomeIcon
-                                    className="text-gray-500 hover:text-gray-600"
-                                    icon={faTimes}
-                                />
-                            </button>
-                        </div>
-                    ))}
+                        ))}
+                </div>
+
                 <Button
                     size="lg"
                     secondary
