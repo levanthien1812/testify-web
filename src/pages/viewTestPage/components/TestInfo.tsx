@@ -1,7 +1,10 @@
 import React from "react";
 import { format } from "date-fns";
 import { useAppSelector } from "../../../hooks/hooks";
-import { SHARE_OPTIONS } from "../../../config/constants/tests";
+import {
+    SHARE_OPTIONS,
+    TEST_LEVEL_LABEL,
+} from "../../../config/constants/tests";
 
 const TestInfo = () => {
     const { test } = useAppSelector((state) => state.viewTest);
@@ -27,38 +30,41 @@ const TestInfo = () => {
 
     return (
         <div className="border border-gray-400 border-dashed p-2">
-            <p className="text-center text-[30px]">{test.title}</p>
+            <p className="text-center text-2xl font-bold">{test.title}</p>
 
-            <p className="text-xl text-center mt-2">
+            <p className="text-lg sm:text-xl text-center mt-1 sm:mt-2">
                 Duration:{" "}
                 <span className=" font-bold text-orange-600 underline">
                     {test.duration} minutes
                 </span>
             </p>
 
-            <p className="text-xl text-center mt-2">
+            <p className="text-lg sm:text-xl text-center mt-1 sm:mt-2">
                 Parts:{" "}
                 <span className=" font-bold text-orange-600 underline"></span>{" "}
                 {test.num_parts}
             </p>
 
-            <p className="text-xl text-center mt-2">
+            <p className="text-lg sm:text-xl text-center mt-1 sm:mt-2">
                 Questions:{" "}
                 <span className=" font-bold text-orange-600 underline"></span>{" "}
                 {test.num_questions}
             </p>
 
-            <p className="text-xl text-center mt-2">
+            <p className="text-lg sm:text-xl text-center mt-1 sm:mt-2">
                 Max score: {test.max_score}
             </p>
 
             {test.level && (
-                <p className="text-xl text-center mt-2">
-                    Level: <span className="capitalize">{test.level}</span>
+                <p className="text-lg sm:text-xl text-center mt-1 sm:mt-2">
+                    Level:{" "}
+                    <span className="capitalize">
+                        {TEST_LEVEL_LABEL[test.level]}
+                    </span>
                 </p>
             )}
 
-            <p className="text-xl text-center mt-2">
+            <p className="text-lg sm:text-xl text-center mt-1 sm:mt-2">
                 Time start:{" "}
                 <span className="font-bold px-2 text-orange-600 underline">
                     {format(new Date(test.datetime), "dd/MM/yyyy HH:mm")}
@@ -66,7 +72,7 @@ const TestInfo = () => {
             </p>
 
             {test.options.allow_close_time.enable && (
-                <p className="text-xl text-center mt-2">
+                <p className="text-lg sm:text-xl text-center mt-1 sm:mt-2">
                     Time close:{" "}
                     <span className="font-bold px-2 text-orange-600 underline">
                         {format(
@@ -78,7 +84,7 @@ const TestInfo = () => {
             )}
 
             {test.share_option === SHARE_OPTIONS.PASSCODE && (
-                <div className="flex justify-center mt-2 gap-2">
+                <div className="flex justify-center mt-1 sm:mt-2 gap-2">
                     <p className="text-lg">
                         Passcode:{" "}
                         {test.passcode && isPasscodeRevealed ? (
@@ -109,7 +115,7 @@ const TestInfo = () => {
             )}
 
             {test.description && (
-                <div className="bg-gray-100 px-6 py-4 mt-2">
+                <div className="bg-gray-100 px-2 sm:px-6 py-1 sm:py-4 mt-1 sm:mt-2">
                     <p className="text-md">
                         Description:{" "}
                         <span className="italic">{test.description}</span>

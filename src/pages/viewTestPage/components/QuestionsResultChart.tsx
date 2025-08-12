@@ -17,6 +17,7 @@ const QuestionsResultChart = ({
             },
         },
         responsive: true,
+        maintainAspectRatio: false,
         scales: {
             x: {
                 stacked: true,
@@ -57,7 +58,11 @@ const QuestionsResultChart = ({
             },
         ],
     };
-    return <Bar options={options} data={config} />;
+    return (
+        <div className="h-80 md:h-96">
+            <Bar options={options} data={config} />
+        </div>
+    );
 };
 
 export default QuestionsResultChart;

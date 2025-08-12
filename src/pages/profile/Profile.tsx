@@ -120,11 +120,11 @@ const Profile = ({ onClose }: Props) => {
     };
 
     return (
-        <Modal onClose={onClose} className="w-2/3">
+        <Modal onClose={onClose} className="md:w-2/3">
             <ModalHeader title={"Profile"} />
             <ModalBody>
                 <form>
-                    <div className="flex gap-4">
+                    <div className="flex flex-col md:flex-row gap-4">
                         <div>
                             {previewUrl && (
                                 <div

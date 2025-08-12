@@ -9,7 +9,7 @@ const HomePage = () => {
     const user = useAppSelector((state) => state.auth.user);
 
     return (
-        <div className="xl:w-2/3 md:w-5/6 mx-auto py-10 space-y-10">
+        <div className="xl:w-2/3 md:w-5/6 px-2 mx-auto py-4 sm:py-8 md:py-10 space-y-10">
             <TestCalendar />
             <RecentTests />
             {user?.role === ROLES.MAKER && <QuestionBanks />}

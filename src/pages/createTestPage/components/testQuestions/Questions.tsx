@@ -10,6 +10,7 @@ import Accordion from "../../../../components/accordions/Accordion";
 import { useAppSelector } from "../../../../hooks/hooks";
 import { setEqualHeight } from "../../../../utils/components";
 import { getRound } from "../../../../utils/primitives";
+import { shorten } from "../../../../utils/text";
 
 const Questions: React.FC<{
     part?: TestPartItf;
@@ -61,7 +62,7 @@ const Questions: React.FC<{
                 <Accordion
                     viewData={{
                         title: {
-                            text: `Part ${part.order}: ${part.name}`,
+                            text: `Part ${part.order}: ${shorten(part.name)}`,
                             description: {
                                 text: `Score: ${getRound(
                                     part.score
@@ -72,9 +73,9 @@ const Questions: React.FC<{
                     }}
                 >
                     <div
-                        className={`px-4 py-4 ${
+                        className={`px-2 sm:px-4 py-2 sm:py-4 ${
                             !withAnswer
-                                ? "grid grid-cols-3 gap-2 auto-rows-[minmax(60px,auto)]"
+                                ? "grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2 auto-rows-[minmax(60px,auto)]"
                                 : "space-y-2"
                         } `}
                         ref={containerRef}

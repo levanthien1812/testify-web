@@ -1,6 +1,7 @@
 import { Table } from "@tanstack/react-table";
 import React from "react";
 import Select from "../elements/Select";
+import Button from "../elements/Button";
 
 type Props = {
     table: Table<any>;
@@ -9,20 +10,20 @@ type Props = {
 const Paginator = ({ table }: Props) => {
     return (
         <div className="flex gap-2 justify-center mt-4">
-            <button
+            <Button
                 onClick={() => table.firstPage()}
+                size="sm"
                 disabled={!table.getCanPreviousPage()}
-                className="text-sm bg-orange-600 text-white py-0.5 hover:bg-orange-700 w-10 disabled:bg-gray-600"
             >
                 {"<<"}
-            </button>
-            <button
+            </Button>
+            <Button
                 onClick={() => table.previousPage()}
+                size="sm"
                 disabled={!table.getCanPreviousPage()}
-                className="text-sm bg-orange-600 text-white py-0.5 hover:bg-orange-700 w-10 disabled:bg-gray-600"
             >
                 {"<"}
-            </button>
+            </Button>
 
             <Select
                 value={table.getState().pagination.pageSize}
@@ -36,20 +37,20 @@ const Paginator = ({ table }: Props) => {
                 }))}
                 label={{ text: "Rows per page" }}
             />
-            <button
+            <Button
                 onClick={() => table.nextPage()}
+                size="sm"
                 disabled={!table.getCanNextPage()}
-                className="text-sm bg-orange-600 text-white py-0.5 hover:bg-orange-700 w-10 disabled:bg-gray-600"
             >
                 {">"}
-            </button>
-            <button
+            </Button>
+            <Button
                 onClick={() => table.lastPage()}
+                size="sm"
                 disabled={!table.getCanNextPage()}
-                className="text-sm bg-orange-600 text-white py-0.5 hover:bg-orange-700 w-10 disabled:bg-gray-600"
             >
                 {">>"}
-            </button>
+            </Button>
         </div>
     );
 };

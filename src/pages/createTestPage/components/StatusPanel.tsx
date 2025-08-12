@@ -46,16 +46,16 @@ const StatusPanel = () => {
     return (
         <>
             {open && (
-                <div className="relative 2xl:w-3/5 w-4/5 mx-auto my-6">
+                <div className="relative 2xl:w-3/5 mx-auto my-2 md:my-6">
                     {!dismissed && (
                         <div className="">
-                            <div className=" bg-white p-4 shadow-lg border border-orange-500">
+                            <div className=" bg-white p-2 sm:p-4 shadow-lg border border-orange-500">
                                 {status === TEST_STATUS.PUBLISHABLE && (
                                     <div className="flex items-center gap-4">
                                         <p className="text-md grow">
                                             This test is now publishable!
                                         </p>
-                                        <div className="flex gap-2">
+                                        <div className="flex gap-1 sm:gap-2">
                                             <Button
                                                 secondary
                                                 onClick={() =>

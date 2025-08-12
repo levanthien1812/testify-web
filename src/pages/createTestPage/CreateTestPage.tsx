@@ -107,10 +107,10 @@ const CreateTestPage = () => {
                 />
             )}
             {((test && testIdParam) || (!test && !testIdParam)) && (
-                <div className="xl:w-2/3 md:w-5/6 mx-auto py-10">
+                <div className="xl:w-2/3 md:w-5/6 mx-auto py-2 sm:py-4 md:py-10 px-2">
                     <Navigator />
                     <StatusPanel />
-                    <div className="2xl:w-2/3 md-5/6 w-11/12 mx-auto my-6 relative">
+                    <div className="2xl:w-2/3 mx-auto my-2 md:my-6 relative">
                         {currentStep === CREATE_TEST_STEPS.TEST_INFORMATION && (
                             <TestInfo />
                         )}

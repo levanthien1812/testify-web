@@ -205,7 +205,7 @@ const TestInfo = () => {
         >
             <FormProvider {...methods}>
                 <form className="mt-4 ">
-                    <div className="grid grid-cols-[2fr_5fr] gap-2">
+                    <div className="grid grid-cols-1 sm:grid-cols-[2fr_5fr] gap-2">
                         <Input
                             {...register("title", {
                                 required: "Title is required",

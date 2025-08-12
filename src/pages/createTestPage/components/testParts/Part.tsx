@@ -151,9 +151,9 @@ const Part: React.FC<{
         >
             <form
                 onSubmit={handleSubmit(onSubmit)}
-                className="border border-gray-300 px-4 py-4 space-y-3"
+                className="border border-gray-300 px-2 sm:px-4 py-4 space-y-2 sm:space-y-3"
             >
-                <div className="grid grid-cols-[2fr_5fr] gap-2">
+                <div className="grid grid-cols-1 sm:grid-cols-[2fr_5fr] gap-1 sm:gap-2">
                     <Input
                         {...register("name", {
                             required: "Name is required",

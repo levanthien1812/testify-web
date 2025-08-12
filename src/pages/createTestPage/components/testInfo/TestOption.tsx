@@ -19,7 +19,11 @@ const TestOption = ({
                     {subOptions}
                 </div>
             </div>
-            {additionalInfo && <div className="ms-4">{additionalInfo}</div>}
+            {additionalInfo && (
+                <div className="sm:ms-4 px-2 py-1 sm:px-4 sm:py-2 bg-orange-50">
+                    {additionalInfo}
+                </div>
+            )}
         </div>
     );
 };

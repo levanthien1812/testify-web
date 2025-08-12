@@ -12,6 +12,7 @@ const ScoreRangeBarChart = ({ submissions }: Props) => {
     const { test } = useAppSelector((state) => state.viewTest);
     const options = {
         responsive: true,
+        maintainAspectRatio: false,
         plugins: {
             legend: {
                 position: "top" as const,
@@ -52,7 +53,11 @@ const ScoreRangeBarChart = ({ submissions }: Props) => {
         ],
     };
 
-    return <Bar data={config} options={options} />;
+    return (
+        <div className="h-80 md:h-96">
+            <Bar data={config} options={options} />
+        </div>
+    );
 };
 
 export default ScoreRangeBarChart;

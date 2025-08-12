@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight, faEllipsis } from "@fortawesome/free-solid-svg-icons";
 import IconButton from "../elements/IconButton";
+import Popover from "../modals/Popover";
 
 type viewData = {
     title: {
@@ -31,7 +32,6 @@ const Accordion = ({
     children: React.ReactNode;
 }) => {
     const [open, setOpen] = useState<boolean>(viewData.open || false);
-    const [showActions, setShowActions] = useState<boolean>(false);
 
     useEffect(() => {
         setOpen(viewData.open || false);
@@ -40,14 +40,14 @@ const Accordion = ({
     return (
         <div className={`border border-gray-300 ${viewData.extraClass}`}>
             <div
-                className="flex items-center px-4 py-2 bg-gray-300 cursor-pointer gap-2"
+                className="flex items-center px-2 py-1 sm:px-4 sm:py-2 bg-gray-300 cursor-pointer gap-2"
                 onClick={() => {
                     setOpen((prev) => !prev);
                     if (viewData.onToggle) viewData.onToggle();
                 }}
             >
-                <p className="text-lg space-x-2 mr-auto">
-                    <span className={`uppercase ${viewData.title.extraClass}`}>
+                <p className="text-lg mr-auto flex flex-col lg:flex-row lg:gap-2">
+                    <span className={`text-xl ${viewData.title.extraClass}`}>
                         {viewData?.title?.text}
                     </span>
                     <span className="text-gray-500">
@@ -57,36 +57,29 @@ const Accordion = ({
 
                 {viewData.actions && (
                     <div className="relative flex justify-center">
-                        <IconButton
-                            icon={faEllipsis}
-                            onClick={(
-                                e: React.MouseEvent<HTMLButtonElement>
-                            ) => {
-                                e.stopPropagation();
-                                setShowActions(!showActions);
-                            }}
-                        />
-                        {showActions && (
-                            <div className="absolute top-6 bg-gray-100 z-10 shadow-md shadow-gray-300 px-1">
-                                {viewData.actions
-                                    .filter((action) => action.display)
-                                    .map((action, index) => (
-                                        <button
-                                            onClick={(e) => {
-                                                e.stopPropagation();
-                                                action.onClick();
-                                                setShowActions(false);
-                                            }}
-                                            className={`bg-white text-center px-6 text-nowrap border-none min-w-[30px] w-full text-sm text-gray-700 hover:bg-orange-600 hover:text-white disabled:cursor-not-allowed disabled:opacity-50 disabled:bg-gray-50 ${action.className}`}
-                                            type="button"
-                                            key={index}
-                                            disabled={action.disabled}
-                                        >
-                                            {action.text}
-                                        </button>
-                                    ))}
+                        <Popover
+                            position="bottom"
+                            content={viewData.actions
+                                .filter((action) => action.display)
+                                .map((action, index) => (
+                                    <button
+                                        onClick={(e) => {
+                                            e.stopPropagation();
+                                            action.onClick();
+                                        }}
+                                        className={`bg-white text-center px-6 text-nowrap border-none min-w-[30px] w-full text-sm text-gray-700 hover:bg-orange-600 hover:text-white disabled:cursor-not-allowed disabled:text-gray-400 disabled:bg-gray-50 ${action.className}`}
+                                        type="button"
+                                        key={index}
+                                        disabled={action.disabled}
+                                    >
+                                        {action.text}
+                                    </button>
+                                ))}
+                        >
+                            <div className="`border-none bg-gray-100 rounded-full flex justify-center items-center hover:bg-gray-200 leading-none w-6 h-6">
+                                <FontAwesomeIcon icon={faEllipsis} />
                             </div>
-                        )}
+                        </Popover>
                     </div>
                 )}
 

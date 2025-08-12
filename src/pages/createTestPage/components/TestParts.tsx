@@ -58,8 +58,8 @@ const TestParts = () => {
                 canOpenParts: true,
             }}
         >
-            <div className="space-y-3 mt-4">
-                <div className="flex gap-4">
+            <div className="space-y-3 mt-2 sm:mt-4">
+                <div className="flex gap-2 sm:gap-4">
                     <p>
                         Total score:{" "}
                         <span className="font-bold">{maxScore}</span>{" "}
