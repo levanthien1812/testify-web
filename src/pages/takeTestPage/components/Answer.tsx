@@ -119,7 +119,7 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
 
     return (
         <div
-            className={`px-4 py-2 ${
+            className={`px-2 sm:px-4 py-2 ${
                 needManualScore && userAnswer && !userAnswer.score
                     ? "bg-orange-100"
                     : "bg-white"

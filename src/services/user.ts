@@ -1,5 +1,9 @@
 import { instance } from "../config/axios";
-import { TakerGroupBodyItf, UserBodyItf } from "../types/types";
+import {
+    AddTakersToGroup,
+    TakerGroupBodyItf,
+    UserBodyItf,
+} from "../types/types";
 
 export const getTakersStatistics = async () => {
     try {
@@ -115,6 +119,19 @@ export const updateUser = async (body: UserBodyItf) => {
 export const getMakersWithGroup = async () => {
     try {
         const response = await instance.get("users/makers-group");
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const addTakersToGroup = async (data: AddTakersToGroup) => {
+    try {
+        const response = await instance.patch(
+            "users/takers/add-to-group",
+            data
+        );
 
         return response.data;
     } catch (error) {

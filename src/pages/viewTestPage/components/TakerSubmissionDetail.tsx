@@ -29,10 +29,10 @@ const TakerInfoItem = ({
 }) => {
     return (
         <div
-            className={`border border-dashed flex flex-col border-gray-400 px-2 py-1 transition-all ease-in-out duration-300 self-center ${className} `}
+            className={`border border-dashed flex flex-col border-gray-400 px-2 py-1 transition-all ease-in-out duration-300 self-center ${className} overflow-x-scroll `}
         >
             <span className="leading-tight text-sm">{label}:</span>
-            <span className="font-bold bg-orange-500 text-white w-fit px-2 rounded-full text-sm">
+            <span className="font-bold bg-orange-500 text-white w-fit px-2 rounded-md md:rounded-full text-sm">
                 {text}
             </span>
         </div>
@@ -94,7 +94,7 @@ const TakerSubmissionDetail = () => {
             onClose={() =>
                 dispatch(viewTestActions.setCurrentSubmissionBeingViewed(null))
             }
-            className="w-5/6 md:w-2/3 lg:w-1/2"
+            className="md:w-2/3 lg:w-1/2"
         >
             <ModalHeader title={`Taker's submissions detail`} />
             <ModalBody>
@@ -110,7 +110,7 @@ const TakerSubmissionDetail = () => {
                                     isSticky
                                         ? "hidden"
                                         : "row-span-4 col-span-2"
-                                } overflow-hidden self-start rounded-full shadow-md m-3 flex justify-center items-center w-20 h-20 mx-auto`}
+                                } hidden overflow-hidden self-start rounded-full shadow-md m-3 md:flex justify-center items-center w-20 h-20 mx-auto`}
                             >
                                 <img
                                     src={submission.taker.user?.photo}
@@ -122,13 +122,19 @@ const TakerSubmissionDetail = () => {
                                 label="Taker's name"
                                 text={submission.taker.user?.name}
                                 className={
-                                    isSticky ? "col-span-4" : "col-span-3"
+                                    isSticky
+                                        ? "col-span-4"
+                                        : "col-span-4 md:col-span-3"
                                 }
                             />
                             <TakerInfoItem
                                 label="Taker's email"
                                 text={submission.taker.user?.email}
-                                className={isSticky ? "hidden" : "col-span-3"}
+                                className={
+                                    isSticky
+                                        ? "hidden"
+                                        : "col-span-4 md:col-span-3"
+                                }
                             />
                             <TakerInfoItem
                                 label="Start time"
@@ -136,7 +142,11 @@ const TakerSubmissionDetail = () => {
                                     new Date(submission.start_time),
                                     "dd/MM/yyyy HH:mm:ss"
                                 )}
-                                className={isSticky ? "hidden" : "col-span-3"}
+                                className={
+                                    isSticky
+                                        ? "hidden"
+                                        : "col-span-4 md:col-span-3"
+                                }
                             />
                             <TakerInfoItem
                                 label="Submit time"
@@ -144,23 +154,37 @@ const TakerSubmissionDetail = () => {
                                     new Date(submission.submit_time),
                                     "dd/MM/yyyy HH:mm:ss"
                                 )}
-                                className={isSticky ? "hidden" : "col-span-3"}
+                                className={
+                                    isSticky
+                                        ? "hidden"
+                                        : "col-span-4 md:col-span-3"
+                                }
                             />
                             <TakerInfoItem
                                 label="Correct answers"
                                 text={submission.correct_answers || 0}
-                                className={isSticky ? "hidden" : "col-span-3"}
+                                className={
+                                    isSticky
+                                        ? "hidden"
+                                        : "col-span-4 md:col-span-3"
+                                }
                             />
                             <TakerInfoItem
                                 label="Wrong answers"
                                 text={submission.wrong_answers || 0}
-                                className={isSticky ? "hidden" : "col-span-3"}
+                                className={
+                                    isSticky
+                                        ? "hidden"
+                                        : "col-span-4 md:col-span-3"
+                                }
                             />
                             <TakerInfoItem
                                 label="Score"
                                 text={getRound(submission.score || 0)}
                                 className={
-                                    isSticky ? "col-span-4" : "col-span-3"
+                                    isSticky
+                                        ? "col-span-4"
+                                        : "col-span-4 md:col-span-3"
                                 }
                             />
                         </div>

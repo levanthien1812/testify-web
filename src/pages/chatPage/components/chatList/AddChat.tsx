@@ -47,7 +47,7 @@ const AddChat = ({ onClose }: { onClose: () => void }) => {
         mutationFn: async (option: string) => {
             const responseData = await createChats(
                 {
-                    members: selectedTakers.map((taker) => taker.id!),
+                    members: selectedTakers.map((taker) => taker.user.id),
                 },
                 option as CHAT_OPTIONS
             );
