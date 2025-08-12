@@ -121,7 +121,7 @@ const ChatPage = () => {
 
     return (
         <div
-            className={`mt-6 shadow-md w-5/6 h-[80vh] xl:w-3/4 2xl:w-2/3 mx-auto flex p-2 bg-slate-50 gap-2`}
+            className={`md:mt-6 shadow-md w-full md:w-5/6 h-[80vh] xl:w-3/4 2xl:w-2/3 mx-auto flex p-2 bg-slate-50 gap-2 relative md:static`}
         >
             {!isChattingWithAI && <ChatList isLoadingChats={isLoadingChats} />}
             {isChattingWithAI && (
@@ -129,7 +129,7 @@ const ChatPage = () => {
             )}
             {((!currentChat && !isChattingWithAI) ||
                 (!currentAIChat && isChattingWithAI)) && (
-                <p className="text-center mt-8 text-gray-500 text-xl grow">
+                <p className="text-center mt-8 text-gray-500 text-xl grow hidden md:block">
                     Select a chat to start chatting
                 </p>
             )}

@@ -10,7 +10,7 @@ const SelectedChat = () => {
 
     return (
         <div
-            className="flex shadow-md flex-[2]"
+            className="flex shadow-md flex-[2] absolute top-0 left-0 md:static h-full w-full"
             style={{
                 backgroundColor: chat?.appearances.background_color
                     ? CHAT_BACKGROUND_COLORS[chat?.appearances.background_color]

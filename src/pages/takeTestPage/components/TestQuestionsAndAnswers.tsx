@@ -27,7 +27,7 @@ const TestQuestionsAndAnswers = ({
                     {test.parts.map((part) => {
                         return (
                             <div key={part.id} className="">
-                                <div className="text-lg bg-gray-200 px-4 py-1">
+                                <div className="text-lg bg-gray-200 px-2 sm:px-4 py-1">
                                     <span className="underline">
                                         Part {part.order}:
                                     </span>{" "}

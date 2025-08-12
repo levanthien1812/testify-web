@@ -416,3 +416,9 @@ export type TestToImportQuestion = Pick<
     TestItf,
     "id" | "title" | "num_questions" | "questions"
 >;
+
+export type AddTakersToGroup = {
+    selectedGroup: string | null;
+    removeCurrentGroup: boolean;
+    takerIds: string[];
+};

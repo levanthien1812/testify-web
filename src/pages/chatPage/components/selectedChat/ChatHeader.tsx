@@ -6,6 +6,7 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import { useChatSocket } from "../ChatSocketContext";
 import { useAppSelector } from "../../../../hooks/hooks";
+import IconButton from "../../../../components/elements/IconButton";
 
 const ChatHeader = () => {
     const {
@@ -13,12 +14,20 @@ const ChatHeader = () => {
         onlineUsers,
         setIsOpeningChatInfo,
         isOpeningChatInfo,
+        setCurrentChat,
     } = useChatSocket();
     const user = useAppSelector((state) => state.auth.user);
 
     return (
         <div className="flex justify-between items-center p-2 border-b border-dashed border-gray-300 bg-white bg-opacity-40">
             <div className="flex items-center gap-2">
+                <IconButton
+                    icon={faChevronLeft}
+                    onClick={() => {
+                        setCurrentChat(null);
+                        setIsOpeningChatInfo(false);
+                    }}
+                />
                 <h3 className="text-2xl font-bold">{chat!.chat_name}</h3>
                 <FontAwesomeIcon
                     icon={faCircle}

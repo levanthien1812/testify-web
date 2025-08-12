@@ -84,11 +84,11 @@ const ScoreSummary = ({ answers }: Props) => {
     return (
         <div className="border border-dashed border-gray-400 mt-4 p-2">
             <p className="text-xl text-center">Score summary</p>
-            <div className="mt-2 flex gap-2">
+            <div className="mt-2 flex gap-2 overflow-x-scroll">
                 {test &&
                     test.parts.length > 1 &&
                     test.parts.map((part) => (
-                        <div key={part.id}>
+                        <div key={part.id} className="w-1/3 md:w-fit shrink-0">
                             <p className="bg-gray-300 text-black px-2 py-0 text-center">
                                 Part {part.order}
                             </p>

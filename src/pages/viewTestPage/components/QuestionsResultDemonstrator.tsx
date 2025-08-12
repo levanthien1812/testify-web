@@ -73,7 +73,7 @@ const QuestionsResultDemonstrator = ({ answers }: Pick<Props, "answers">) => {
             <p className="text-xl text-center mb-2">
                 Questions result demonstration
             </p>
-            <div className="w-[50%] mx-auto">
+            <div className="w-full md:w-[50%] mx-auto">
                 {test && test.questions && (
                     <div className="flex justify-center border border-dashed border-gray-400">
                         <Item questions={test.questions} answers={answers} />

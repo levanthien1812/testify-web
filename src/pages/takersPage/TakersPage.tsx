@@ -22,7 +22,6 @@ import { TakerGroupItf, TakerItf } from "../../types/types";
 import defaultUserPhoto from "../../assets/images/default-user-photo.png";
 import _ from "lodash";
 import Checkbox from "../../components/elements/Checkbox";
-import IconButton from "../../components/elements/IconButton";
 import { useQuery } from "react-query";
 import { getTakerGroups, getTakers } from "../../services/user";
 import { QUERY_KEYS } from "../../config/constants/queryMutationKeys";
@@ -105,7 +104,7 @@ const TakersPage = () => {
                     const photo = row.original.user.photo;
                     const src = photo || defaultUserPhoto;
                     return (
-                        <div className="flex items-center justify-start gap-2 rounded-full py-1 px-2 shadow-sm border border-gray-300 bg-white w-[80%] mx-auto">
+                        <div className="flex items-center justify-start bg-gray-50 gap-2 rounded-md py-1 px-2 md:py-1 md:px-2 shadow-sm border border-gray-300 w-full md:w-[80%] mx-auto">
                             <img
                                 className="w-5 h-5 rounded-full object-cover"
                                 src={formatImageUrl(src)}
@@ -194,7 +193,7 @@ const TakersPage = () => {
                 cell: ({ row }) => {
                     if (row.original.group) {
                         return (
-                            <div className="text-sm rounded-full border border-gray-300 px-2 py-1">
+                            <div className="text-sm rounded-md lg:rounded-full border border-gray-300 px-2 py-1">
                                 {row.original.group.name}
                             </div>
                         );
@@ -262,20 +261,25 @@ const TakersPage = () => {
     });
 
     return (
-        <div className="xl:w-2/3 md:w-5/6 mx-auto py-10">
-            <div className="flex items-center gap-2">
+        <div className="xl:w-2/3 md:w-5/6 mx-auto py-4 md:py-10 px-2">
+            <div className="flex flex-col md:flex-row md:items-center gap-2">
                 <h2 className="text-4xl">Your takers</h2>
-                <Button
-                    className="ml-auto"
-                    onClick={() => setIsAddingGroup(true)}
-                >
-                    <FontAwesomeIcon icon={faPlus} className="text-sm mr-1" />
-                    <span>Add group</span>
-                </Button>
-                <Button onClick={() => setIsAddingTakers(true)}>
-                    <FontAwesomeIcon icon={faPlus} className="text-sm mr-1" />
-                    <span>Add taker</span>
-                </Button>
+                <div className="flex gap-2 md:ml-auto">
+                    <Button className="" onClick={() => setIsAddingGroup(true)}>
+                        <FontAwesomeIcon
+                            icon={faPlus}
+                            className="text-sm mr-1"
+                        />
+                        <span>Add group</span>
+                    </Button>
+                    <Button onClick={() => setIsAddingTakers(true)}>
+                        <FontAwesomeIcon
+                            icon={faPlus}
+                            className="text-sm mr-1"
+                        />
+                        <span>Add taker</span>
+                    </Button>
+                </div>
             </div>
             <div className="flex justify-end">
                 <InlineLoading
@@ -325,7 +329,7 @@ const TakersPage = () => {
                 />
             )}
             {takers && table.getSelectedRowModel().rows.length > 0 && (
-                <SelectPanel table={table} />
+                <SelectPanel table={table} takerGroups={takerGroups} />
             )}
             {isAddingGroup && (
                 <AddGroup

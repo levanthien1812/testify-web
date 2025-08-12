@@ -160,13 +160,13 @@ const AddTakers = ({ onClose, taker, takerGroups }: AddTakersProps) => {
     };
 
     return (
-        <Modal onClose={onClose}>
+        <Modal onClose={onClose} className="md:w-2/3">
             <ModalHeader title={taker ? "Update Taker" : "Add Taker"} />
             <ModalBody>
                 <form>
-                    <div className="flex gap-4">
+                    <div className="flex flex-col md:flex-row gap-4">
                         <div className="flex flex-col gap-2">
-                            <div className="flex gap-2">
+                            <div className="flex flex-col sm:flex-row gap-0 sm:gap-2">
                                 <Input
                                     {...register("email", {
                                         required: {
@@ -212,7 +212,7 @@ const AddTakers = ({ onClose, taker, takerGroups }: AddTakersProps) => {
                                         </div>
                                     </div>
                                 )}
-                            <div className="flex gap-2">
+                            <div className="flex flex-col sm:flex-row gap-0 sm:gap-2">
                                 <Input
                                     {...register("name", {
                                         required: {
@@ -225,7 +225,7 @@ const AddTakers = ({ onClose, taker, takerGroups }: AddTakersProps) => {
                                     required
                                 />
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex flex-col sm:flex-row gap-0 sm:gap-2">
                                 <Select
                                     options={GENDER_OPTIONS}
                                     {...register("gender", { required: false })}
@@ -233,7 +233,7 @@ const AddTakers = ({ onClose, taker, takerGroups }: AddTakersProps) => {
                                     error={errors.gender?.message}
                                 />
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex flex-col sm:flex-row gap-0 sm:gap-2">
                                 <Input
                                     {...register("phone_number", {
                                         required: false,
@@ -243,7 +243,7 @@ const AddTakers = ({ onClose, taker, takerGroups }: AddTakersProps) => {
                                     type="tel"
                                 />
                             </div>
-                            <div className="flex gap-2">
+                            <div className="flex flex-col sm:flex-row gap-0 sm:gap-2">
                                 <Input
                                     {...register("birthday", {
                                         required: false,
@@ -254,7 +254,7 @@ const AddTakers = ({ onClose, taker, takerGroups }: AddTakersProps) => {
                                 />
                             </div>
                             {takerGroups && (
-                                <div className="flex gap-2">
+                                <div className="flex flex-col sm:flex-row gap-0 sm:gap-2">
                                     <Select
                                         {...register("group_id", {
                                             required: false,
