@@ -132,42 +132,49 @@ const Passcode = () => {
             )}
 
             {passcode.method && (
-                <div className="flex gap-4 items-end mt-4">
-                    <Input
-                        type="number"
-                        name="valid_in"
-                        step={1}
-                        min={1}
-                        value={passcode?.valid_in}
-                        onChange={handlePasscodeChange}
-                        label={{ text: "Valid in" }}
-                    />
-                    <Select
-                        options={[
-                            {
-                                label: "minutes",
-                                value: PASSCODE_VALID_UNIT.MINUTES,
-                            },
-                            {
-                                label: "hours",
-                                value: PASSCODE_VALID_UNIT.HOURS,
-                            },
-                            { label: "days", value: PASSCODE_VALID_UNIT.DAYS },
-                        ]}
-                        name="valid_unit"
-                        value={passcode?.valid_unit}
-                        onChange={handlePasscodeChange}
-                    />
-                    <Input
-                        type="datetime-local"
-                        name="valid_till"
-                        value={format(
-                            new Date(passcode?.valid_till || ""),
-                            "yyyy-MM-dd'T'HH:mm"
-                        )}
-                        onChange={handlePasscodeChange}
-                        label={{ text: "Valid till" }}
-                    />
+                <div className="flex flex-col md:flex-row gap-4 items-start md:items-end mt-4">
+                    <div className="flex items-end gap-2">
+                        <Input
+                            type="number"
+                            name="valid_in"
+                            step={1}
+                            min={1}
+                            value={passcode?.valid_in}
+                            onChange={handlePasscodeChange}
+                            label={{ text: "Valid in" }}
+                        />
+                        <Select
+                            options={[
+                                {
+                                    label: "minutes",
+                                    value: PASSCODE_VALID_UNIT.MINUTES,
+                                },
+                                {
+                                    label: "hours",
+                                    value: PASSCODE_VALID_UNIT.HOURS,
+                                },
+                                {
+                                    label: "days",
+                                    value: PASSCODE_VALID_UNIT.DAYS,
+                                },
+                            ]}
+                            name="valid_unit"
+                            value={passcode?.valid_unit}
+                            onChange={handlePasscodeChange}
+                        />
+                    </div>
+                    <div className="flex items-end gap-2">
+                        <Input
+                            type="datetime-local"
+                            name="valid_till"
+                            value={format(
+                                new Date(passcode?.valid_till || ""),
+                                "yyyy-MM-dd'T'HH:mm"
+                            )}
+                            onChange={handlePasscodeChange}
+                            label={{ text: "Valid till" }}
+                        />
+                    </div>
                 </div>
             )}
         </div>

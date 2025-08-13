@@ -62,7 +62,7 @@ const Header = () => {
     }, [isLoading]);
 
     return (
-        <div className="bg-white px-2 sm:px-4 md:px-12 py-1 sm:py-2 md:py-3 flex justify-between items-center shadow-md sticky top-0 z-10">
+        <div className="bg-white px-2 sm:px-4 md:px-12 py-2 md:py-3 flex justify-between items-center shadow-md sticky top-0 z-10">
             <Link to={"/"}>
                 <img
                     src={logoTestify}
