@@ -104,7 +104,7 @@ const Questions: React.FC<{
             )}
             {!part && (
                 <div
-                    className="px-4 py-4 grid grid-cols-3 gap-2"
+                    className="px-2 sm:px-4 py-2 sm:py-4 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-2"
                     ref={containerRef}
                 >
                     {questions &&

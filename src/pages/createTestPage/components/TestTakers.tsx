@@ -140,31 +140,35 @@ const TestTakers = () => {
                 },
             }}
         >
-            <div className="mt-4 px-8 py-4 bg-orange-100 space-x-2">
-                <label htmlFor="share-select">Choose access method: </label>
-                <Select
-                    name="share-select"
-                    id="share-select"
-                    value={shareOption}
-                    onChange={(e: ChangeEvent<HTMLSelectElement>) =>
-                        handleChangeShareOption(e.target.value)
-                    }
-                    options={[
-                        {
-                            value: SHARE_OPTIONS.ANYONE,
-                            label: "Anyone with the link",
-                        },
-                        {
-                            value: SHARE_OPTIONS.RESTRICTED,
-                            label: "Restricted",
-                        },
-                        {
-                            value: SHARE_OPTIONS.PASSCODE,
-                            label: "Passcode",
-                        },
-                    ]}
-                    disabled={!editibility.TEST_TAKERS.share_option}
-                />
+            <div className="mt-4 px-4 md:px-8 py-4 bg-orange-100 space-x-2">
+                <div>
+                    <Select
+                        name="share-select"
+                        id="share-select"
+                        value={shareOption}
+                        onChange={(e: ChangeEvent<HTMLSelectElement>) =>
+                            handleChangeShareOption(e.target.value)
+                        }
+                        options={[
+                            {
+                                value: SHARE_OPTIONS.ANYONE,
+                                label: "Anyone with the link",
+                            },
+                            {
+                                value: SHARE_OPTIONS.RESTRICTED,
+                                label: "Restricted",
+                            },
+                            {
+                                value: SHARE_OPTIONS.PASSCODE,
+                                label: "Passcode",
+                            },
+                        ]}
+                        disabled={!editibility.TEST_TAKERS.share_option}
+                        label={{
+                            text: "Share option",
+                        }}
+                    />
+                </div>
                 <InfoMessage
                     message={
                         shareOption === SHARE_OPTIONS.ANYONE

@@ -47,9 +47,9 @@ const RegistePage = () => {
     };
 
     return (
-        <div className="h-screen bg-orange-600 flex justify-center items-start">
+        <div className="h-screen bg-orange-600 flex justify-center items-center md:items-start">
             <form
-                className="bg-white px-4 pt-10 pb-6 mt-10 min-w-80 max-w-80 flex flex-col items-center shadow-xl shrink-0"
+                className="bg-white px-4 pt-6 md:pt-10 pb-6 mt-0 md:mt-10 min-w-80 max-w-96 flex flex-col items-center shadow-xl shrink-0"
                 onSubmit={handleSubmit(handleRegister)}
             >
                 <h2 className="text-3xl">Register</h2>

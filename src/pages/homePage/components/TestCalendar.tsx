@@ -59,7 +59,7 @@ const TestCalendar = () => {
 
     return (
         <SectionWrapper title={{ text: "Test Calendar" }}>
-            <div className="flex gap-2 items-stretch">
+            <div className="flex flex-col md:flex-row gap-2 items-stretch">
                 <Calendar
                     localizer={localizer}
                     events={eventList}
@@ -81,7 +81,7 @@ const TestCalendar = () => {
                     }}
                 />
                 {selectedTest && (
-                    <div className="bg-gray-50 shadow-md rounded-lg p-4 max-w-[30%] flex flex-col">
+                    <div className="bg-gray-50 shadow-md rounded-lg p-4 w-full md:max-w-[30%] flex flex-col">
                         <div className="flex justify-between items-center">
                             <p className="text-lg font-bold mb-2">
                                 Test information
