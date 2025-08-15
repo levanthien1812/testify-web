@@ -112,6 +112,7 @@ export interface MessageItf {
     notification_type?: NOTIFICATION_TYPE;
     link_preview?: string;
     links?: string[];
+    sender: Pick<UserItf, "name" | "photo">;
 }
 
 export interface AIModelsItf {
@@ -137,6 +138,9 @@ export interface ChatContext {
     aiModels: AIModelsItf[];
     selectedAIModel: string | null;
     isGeneratingResponse: boolean;
+    chatsOpen: boolean;
+    aiChatsOpen: boolean;
+    isLoadingChats: boolean;
 
     setChattingWithAI: (isChattingWithAI: boolean) => void;
     setIsOpeningChatInfo: (isOpeningChatInfo: boolean) => void;
@@ -161,6 +165,8 @@ export interface ChatContext {
     setIsGeneratingResponse: (isGeneratingResponse: boolean) => void;
     updateAIChat: (chatId: string, chatBody: Partial<AIChatItf>) => void;
     setPinnedAIChat: (chatId: string, isPinned: boolean) => void;
+    setChatsOpen: (chatsOpen: boolean) => void;
+    setAIChatsOpen: (aiChatsOpen: boolean) => void;
 }
 
 export interface Emoji {

@@ -1,12 +1,11 @@
 import { useEffect } from "react";
 import { useQuery } from "react-query";
-import { getChats, getChatsAI } from "../../services/chat";
-import { AIChatItf, ChatItf } from "../../types/chat";
+import { getChatsAI } from "../../services/chat";
+import { AIChatItf } from "../../types/chat";
 import SelectedChat from "./components/selectedChat/SelectedChat";
 import { useChatSocket } from "./components/ChatSocketContext";
 import { SOCKET_EVENTS } from "../../config/constants/socket";
 import { useNavigate, useParams } from "react-router";
-import { getChatName } from "../../utils/chat";
 import ChatInfo from "./components/chatInfo/ChatInfo";
 import { QUERY_KEYS } from "../../config/constants/queryMutationKeys";
 import { UserItf } from "../../types/types";
@@ -23,40 +22,19 @@ const ChatPage = () => {
         socket,
         currentChat,
         currentAIChat,
-        setChats,
+        chats,
         setCurrentChat,
         isOpeningChatInfo,
-        setChattingWithAI,
+        isLoadingChats,
         isChattingWithAI,
         setAIChats,
+        setChatsOpen,
+        setAIChatsOpen,
     } = useChatSocket();
     const user = useAppSelector((state) => state.auth.user);
     const params = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
-    const { data: chats, isLoading: isLoadingChats } = useQuery<ChatItf[]>({
-        queryFn: async () => {
-            const responseData = await getChats();
-            return responseData.chats;
-        },
-        queryKey: [QUERY_KEYS.GET_CHATS],
-        onSuccess: (data: ChatItf[]) => {
-            if (chats) return;
-            setChats(
-                data.map((chat) => {
-                    return {
-                        ...chat,
-                        scroll_position: 0,
-                        unread_messages: [],
-                        is_accessed: false,
-                        chat_name: getChatName(chat.members, user!),
-                    };
-                })
-            );
-        },
-        enabled: !isChattingWithAI,
-    });
 
     const { isLoading: isLoadingAiChats } = useQuery<AIChatItf[]>({
         queryFn: async () => {
@@ -95,10 +73,6 @@ const ChatPage = () => {
     useEffect(() => {
         if (!socket) return;
         socket.emit(SOCKET_EVENTS.ADD_ONLINE_USERS, user!.id);
-
-        return () => {
-            socket.emit(SOCKET_EVENTS.REMOVE_ONLINE_USERS, user!.id);
-        };
     }, [socket, user]);
 
     useEffect(() => {
@@ -118,6 +92,15 @@ const ChatPage = () => {
             navigate("/chat");
         }
     }, [chats, navigate, params.chatId, setCurrentChat]);
+
+    useEffect(() => {
+        if (!isChattingWithAI) setChatsOpen(true);
+        else setAIChatsOpen(true);
+        return () => {
+            setChatsOpen(false);
+            setAIChatsOpen(false);
+        };
+    }, [isChattingWithAI, setChatsOpen, setAIChatsOpen]);
 
     return (
         <div

@@ -7,7 +7,8 @@ import { useAppSelector } from "../../../../hooks/hooks";
 
 const ChatCard = ({ chat }: { chat: ChatItf }) => {
     const user = useAppSelector((state) => state.auth.user);
-    const { onlineUsers, setCurrentChat, currentChat } = useChatSocket();
+    const { onlineUsers, setCurrentChat, currentChat, updateChatInChats } =
+        useChatSocket();
 
     const handleClickCard = () => {
         if (currentChat?.id === chat.id) return;
@@ -17,6 +18,9 @@ const ChatCard = ({ chat }: { chat: ChatItf }) => {
                 chat.messages && chat.messages.length > 0 ? chat.messages : [],
             scroll_position: chat.scroll_position || 0,
             search_string: "",
+        });
+        updateChatInChats(chat.id, {
+            unread_messages: [],
         });
     };
 
