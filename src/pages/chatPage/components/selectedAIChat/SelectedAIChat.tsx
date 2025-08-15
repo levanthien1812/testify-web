@@ -27,7 +27,7 @@ const SelectedAIChat = () => {
     });
 
     return (
-        <div className="flex shadow-md flex-[2] bg-white">
+        <div className="flex shadow-md flex-[2] absolute top-0 left-0 md:static h-full w-full bg-white">
             <div className="flex flex-col grow">
                 <AIChatHeader />
                 <Loading

@@ -46,7 +46,9 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
     const dispatch = useDispatch();
 
     useEffect(() => {
-        const socket = io(process.env.REACT_APP_API_HOST!);
+        const socket = io(
+            `${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}`!
+        );
         setSocket(socket);
 
         return () => {

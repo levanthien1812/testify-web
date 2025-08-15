@@ -48,7 +48,7 @@ const LoginPage = () => {
     });
 
     const handleLogin = async (data: LoginFields) => {
-        loginMutate(data);
+        loginMutate({ ...data, email: data.email.trim() });
     };
 
     const handleLoginGoogle = async (

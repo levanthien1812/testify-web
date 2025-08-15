@@ -41,6 +41,63 @@ Welcome to the Test Creation Website project! This application is designed to st
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
+## Installation
+
+1. Clone the repo:
+
+```
+ git clone https://github.com/levanthien1812/testify-web.git
+```
+
+2. Install dependencies:
+
+```
+   npm install
+```
+
+3. Run the server:
+
+```
+   npm start
+```
+
+## Usage
+
+-   Visit `http://localhost:3001`
+-   Create an account, verify your email and/or log in
+-   Start creating tests!
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## Environment Variables
+
+Create a `.env` file in the root and add the following:
+
+```
+REACT_APP_API_HOST=your-api-host-here
+REACT_APP_API_PORT=your-api-port-here
+REACT_APP_API_PREFIX=your-api-prefix-here
+REACT_APP_GOOGLE_CLIENT_ID=your-google-client-id-here
+REACT_TIMEZONE=your-timezone-here
+PORT=your-port-here
+```
+
+<p align="right">(<a href="#readme-top">back to top</a>)</p>
+
+## 📸 Screenshots
+
+### Create Test Page
+
+<div style="display: flex; gap: 10px;">
+  <img src="./src/assets/screenshots/create-test-step-1.png" alt="Create Test Step 1" width="300"/>
+  <img src="./src/assets/screenshots/create-test-step-3.png" alt="Create Test Step 3" width="300"/>
+  <img src="./src/assets/screenshots/create-test-step-4.png" alt="Create Test Step 4" width="300"/>
+</div>
+
+### Test Report Page
+
+![Test Report](./src//assets/screenshots/view-test-page.png)
+
 ## DB Diagram
 
 <img src="src/assets/images/testiy-db-diagram.png" alt="db-diagram">

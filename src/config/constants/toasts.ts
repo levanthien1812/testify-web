@@ -20,6 +20,6 @@ const TOAST_MESSAGES = {
     CREATE_QUESTION_BANK_SUCCESSFULLY: "Create question bank successfully",
     CREATE_TAKER_GROUP_SUCCESSFULLY: "Create taker group successfully",
     UPDATE_USER_SUCCESSFULLY: "Update user successfully",
-};
+} as const;
 
 export { TOAST_MESSAGES };

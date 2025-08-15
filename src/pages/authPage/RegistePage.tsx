@@ -54,8 +54,8 @@ const RegistePage = () => {
             >
                 <h2 className="text-3xl">Register</h2>
                 <p className="text-center leading-5 text-gray-500 text-[14px] italic">
-                    Lorem ipsum dolor, sit amet consectetur adipisicing elit.
-                    Eveniet tenetur error.
+                    Create your free account. It only takes a minute to get
+                    started and unlock all of our features.
                 </p>
 
                 <div className="w-full mt-2 space-y-3">

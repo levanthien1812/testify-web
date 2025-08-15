@@ -29,7 +29,7 @@ const TakerInfoItem = ({
 }) => {
     return (
         <div
-            className={`border border-dashed flex flex-col border-gray-400 px-2 py-1 transition-all ease-in-out duration-300 self-center ${className} overflow-x-scroll `}
+            className={`border border-dashed flex flex-col border-gray-400 px-2 py-1 transition-all ease-in-out duration-300 self-center ${className} overflow-x-scroll md:overflow-x-auto `}
         >
             <span className="leading-tight text-sm">{label}:</span>
             <span className="font-bold bg-orange-500 text-white w-fit px-2 rounded-md md:rounded-full text-sm">
