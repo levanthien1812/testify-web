@@ -14,8 +14,12 @@ import { TakerItf } from "../../../types/types";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../../stores/auth";
 import { useAppSelector } from "../../../hooks/hooks";
-import { MESSAGE_AI_ROLE } from "../../../config/constants/chat";
-import _ from "lodash";
+import { MESSAGE_AI_ROLE, MESSAGE_TYPE } from "../../../config/constants/chat";
+import { toast } from "react-toastify";
+import MessageNoti from "../../../components/notifications/MessageNoti";
+import { useQuery } from "react-query";
+import { getChats } from "../../../services/chat";
+import { QUERY_KEYS } from "../../../config/constants/queryMutationKeys";
 
 const ChatSocketContext = React.createContext<ChatContext | undefined>(
     undefined
@@ -41,9 +45,34 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
     const [AIModels, setAIModels] = useState<AIModelsItf[]>([]);
     const [selectedAIModel, setSelectedAIModel] = useState<string | null>(null);
     const [isGeneratingResponse, setIsGeneratingResponse] = useState(false);
+    const [chatsOpen, setChatsOpen] = useState(false);
+    const [aiChatsOpen, setAIChatsOpen] = useState(false);
 
     const { user } = useAppSelector((state) => state.auth);
     const dispatch = useDispatch();
+
+    const { isLoading: isLoadingChats } = useQuery<ChatItf[]>({
+        queryFn: async () => {
+            const responseData = await getChats();
+            return responseData.chats;
+        },
+        queryKey: [QUERY_KEYS.GET_CHATS],
+        onSuccess: (data: ChatItf[]) => {
+            if (chats && chats.length > 0) return;
+            setChats(
+                data.map((chat) => {
+                    return {
+                        ...chat,
+                        scroll_position: 0,
+                        unread_messages: [],
+                        is_accessed: false,
+                        chat_name: getChatName(chat.members, user!),
+                    };
+                })
+            );
+        },
+        enabled: !isChattingWithAI,
+    });
 
     useEffect(() => {
         const socket = io(
@@ -135,6 +164,25 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
 
         socket.on(SOCKET_EVENTS.GET_MESSAGE, (message: MessageItf) => {
             if (!chats) return;
+            if (
+                (!chatsOpen ||
+                    (currentChat && currentChat.id !== message.chat_id)) &&
+                user &&
+                user.id !== message.sender_id &&
+                message.type === MESSAGE_TYPE.MESSAGE
+            ) {
+                toast(
+                    <MessageNoti
+                        message={message.text}
+                        sender={message.sender}
+                    />,
+                    {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: true,
+                    }
+                );
+            }
             if (currentChat && message.chat_id === currentChat!.id) {
                 setCurrentChat(
                     (prev) =>
@@ -215,6 +263,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
 
         socket.on(SOCKET_EVENTS.RECEIVE_REACTION, (data) => {
             if (!currentChat) return;
+
             const updatedMessages = currentChat.messages;
             const messageIndex = updatedMessages.findIndex(
                 (message) => message.id === data.message_id
@@ -275,7 +324,9 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
             dispatch(authActions.beUnblockedByUser({ userId: data.user_id }));
         });
 
-        socket.on(SOCKET_EVENTS.READ_MESSAGES, (data) => {});
+        socket.on(SOCKET_EVENTS.READ_MESSAGES, (data) => {
+            if (!chats) return;
+        });
 
         return () => {
             socket.off(SOCKET_EVENTS.SEND_ONLINE_USERS);
@@ -292,6 +343,13 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
         };
     }, [socket, currentChat, chats]);
 
+    useEffect(() => {
+        if (!socket) return;
+        return () => {
+            socket.emit(SOCKET_EVENTS.REMOVE_ONLINE_USERS, user!.id);
+        };
+    }, [socket, user]);
+
     return (
         <ChatSocketContext.Provider
             value={{
@@ -307,6 +365,9 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                 aiModels: AIModels,
                 selectedAIModel,
                 isGeneratingResponse,
+                chatsOpen,
+                aiChatsOpen,
+                isLoadingChats,
 
                 setAvailableTakers: (data) => {
                     setAvailableTakers(data);
@@ -525,6 +586,8 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                         setAIChats([...pinnedChats, ...unpinnedChats]);
                     }
                 },
+                setChatsOpen,
+                setAIChatsOpen,
             }}
         >
             {children}

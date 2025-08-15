@@ -20,6 +20,7 @@ import { PasscodeItf } from "../../types/types";
 import Profile from "../../pages/profile/Profile";
 import Popover from "../modals/Popover";
 import { formatImageUrl } from "../../utils/formatImageUrl";
+import { useChatSocket } from "../../pages/chatPage/components/ChatSocketContext";
 
 const Header = () => {
     const { user, isAuthened } = useAppSelector((state) => state.auth);
@@ -29,6 +30,7 @@ const Header = () => {
     const [isViewingProfile, setIsViewingProfile] = useState(false);
     const [hideActions, setHideActions] = useState(false);
     const navigate = useNavigate();
+    const { chats } = useChatSocket();
 
     const { mutate, isLoading } = useMutation({
         mutationFn: async () => {
@@ -60,6 +62,14 @@ const Header = () => {
             toast.dismiss();
         }
     }, [isLoading]);
+
+    const unreadChats =
+        (chats &&
+            chats.filter(
+                (chat) =>
+                    chat.unread_messages && chat.unread_messages.length > 0
+            ).length) ||
+        0;
 
     return (
         <div className="bg-white px-2 sm:px-4 md:px-12 py-2 md:py-3 flex justify-between items-center shadow-md sticky top-0 z-10">
@@ -98,9 +108,11 @@ const Header = () => {
                                 icon={faComments}
                             />
                         </Link>
-                        <div className="absolute -top-1 -right-1 bg-red-600 text-white rounded-full flex items-center justify-center px-1 leading-none">
-                            2
-                        </div>
+                        {unreadChats > 0 && (
+                            <div className="absolute -top-1 -right-1 bg-red-600 text-white rounded-full flex items-center justify-center px-1 leading-none">
+                                {unreadChats}
+                            </div>
+                        )}
                     </div>
                     <Popover
                         content={

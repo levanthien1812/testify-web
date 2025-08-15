@@ -199,22 +199,14 @@ function App() {
                                     children: [
                                         {
                                             index: true,
-                                            element: (
-                                                <ChatSocketProvider>
-                                                    <ChatPage />
-                                                </ChatSocketProvider>
-                                            ),
+                                            element: <ChatPage />,
                                             handle: {
                                                 crumb: "Chat",
                                             } as BreadcrumbHandle,
                                         },
                                         {
                                             path: ":chatId",
-                                            element: (
-                                                <ChatSocketProvider>
-                                                    <ChatPage />
-                                                </ChatSocketProvider>
-                                            ),
+                                            element: <ChatPage />,
                                             handle: {
                                                 crumb: "Chat",
                                             } as BreadcrumbHandle,
@@ -238,12 +230,14 @@ function App() {
 
     return (
         <QueryClientProvider client={queryClient}>
-            <RouterProvider router={router} />
-            <ToastContainer
-                position="top-center"
-                autoClose={4000}
-                bodyStyle={{ fontFamily: "Abhaya Libre" }}
-            />
+            <ChatSocketProvider>
+                <RouterProvider router={router} />
+                <ToastContainer
+                    position="top-center"
+                    autoClose={4000}
+                    bodyStyle={{ fontFamily: "Abhaya Libre" }}
+                />
+            </ChatSocketProvider>
         </QueryClientProvider>
     );
 }
