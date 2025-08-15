@@ -19,6 +19,7 @@ import Modal, {
 } from "../../../../components/modals/Modal";
 import Input from "../../../../components/elements/Input";
 import Button from "../../../../components/elements/Button";
+import Popover from "../../../../components/modals/Popover";
 
 type AIChatCardProps = {
     aiChat: AIChatItf;
@@ -50,7 +51,6 @@ const AIChatCard = ({ aiChat }: AIChatCardProps) => {
         setAIChats,
         setPinnedAIChat,
     } = useChatSocket();
-    const [isActionsOpen, setIsActionsOpen] = React.useState(false);
     const [isUpdatingChatName, setIsUpdatingChatName] = React.useState(false);
     const [updatedChatname, setUpdatedChatname] = React.useState(
         aiChat.chat_name
@@ -80,7 +80,6 @@ const AIChatCard = ({ aiChat }: AIChatCardProps) => {
     });
 
     const handleClickPin = () => {
-        setIsActionsOpen(false);
         const updatedPinned = !aiChat.is_pinned;
         updateChatMutate({
             is_pinned: updatedPinned,
@@ -90,7 +89,6 @@ const AIChatCard = ({ aiChat }: AIChatCardProps) => {
     };
 
     const handleClickRename = () => {
-        setIsActionsOpen(false);
         setIsUpdatingChatName(true);
     };
 
@@ -131,34 +129,29 @@ const AIChatCard = ({ aiChat }: AIChatCardProps) => {
                     icon={faThumbTack}
                 />
             )}
-            <IconButton
-                icon={faEllipsis}
-                onClick={() => {
-                    setIsActionsOpen(!isActionsOpen);
-                }}
-            />
-            {aiChat.id && isActionsOpen && (
-                <div
-                    className="absolute flex flex-col  top-10 bg-white shadow-md z-10 right-0"
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <ActionButton
-                        icon={!aiChat.is_pinned ? faThumbTack : faThumbTack}
-                        text={!aiChat.is_pinned ? "Pin" : "Unpin"}
-                        onClick={handleClickPin}
-                    />
-                    <ActionButton
-                        icon={faPen}
-                        text="Rename"
-                        onClick={handleClickRename}
-                    />
-                    <ActionButton
-                        icon={faTrash}
-                        text="Delete"
-                        onClick={handleClickDelete}
-                    />
-                </div>
-            )}
+            <Popover
+                content={
+                    <div className="flex flex-col bg-white shadow-md">
+                        <ActionButton
+                            icon={!aiChat.is_pinned ? faThumbTack : faThumbTack}
+                            text={!aiChat.is_pinned ? "Pin" : "Unpin"}
+                            onClick={handleClickPin}
+                        />
+                        <ActionButton
+                            icon={faPen}
+                            text="Rename"
+                            onClick={handleClickRename}
+                        />
+                        <ActionButton
+                            icon={faTrash}
+                            text="Delete"
+                            onClick={handleClickDelete}
+                        />
+                    </div>
+                }
+            >
+                <FontAwesomeIcon icon={faEllipsis} />
+            </Popover>
             {isUpdatingChatName && (
                 <Modal
                     onClose={() => {

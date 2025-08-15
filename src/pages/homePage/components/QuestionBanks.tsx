@@ -32,7 +32,19 @@ const QuestionBanks = () => {
 
     return (
         <SectionWrapper
-            title={{ text: "Question Banks" }}
+            title={{
+                text: "Question Banks",
+                moreInfo: (
+                    <p>
+                        Question Bank is a powerful tool designed to help you{" "}
+                        <strong>create</strong>, <strong>manage</strong>, and{" "}
+                        <strong>reuse questions</strong> for tests, quizzes, and
+                        assessments. By using the Question Bank, you can build a
+                        comprehensive repository of questions that can be easily
+                        organized, edited, and accessed whenever you need them.
+                    </p>
+                ),
+            }}
             buttons={[
                 {
                     text: "Create a question bank",

@@ -29,4 +29,4 @@ export const SOCKET_EVENTS = {
     UNBLOCK_USER: "unblock-user",
     RECEIVE_BLOCK_USER: "receive-block-user",
     RECEIVE_UNBLOCK_USER: "receive-unblock-user",
-};
+} as const;

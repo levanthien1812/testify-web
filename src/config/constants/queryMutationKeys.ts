@@ -22,7 +22,7 @@ const QUERY_KEYS = {
     GET_MAKERS_WITH_GROUP: "get-makers-with-group",
     GET_TESTS_TO_IMPORT_QUESTIONS_TO_BANK:
         "get-tests-to-import-questions-to-bank",
-};
+} as const;
 
 const MUTATION_KEYS = {
     UPDATE_TEST: "update-test",
@@ -66,6 +66,6 @@ const MUTATION_KEYS = {
     CREATE_TAKER_GROUP: "create-taker-group",
     UPDATE_USER: "update-user",
     ADD_TAKER_TO_GROUP: "add-taker-to-group",
-};
+} as const;
 
 export { QUERY_KEYS, MUTATION_KEYS };
