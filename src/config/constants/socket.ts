@@ -20,6 +20,8 @@ export const SOCKET_EVENTS = {
     STOP_TYPING: "stop-typing",
     SEND_REACTION: "send-reaction",
     RECEIVE_REACTION: "receive-reaction",
+    REMOVE_REACTION: "remove-reaction",
+    RECEIVE_REMOVE_REACTION: "receive-remove-reaction",
     CHANGE_NICKNAME: "change-nickname",
     RECEIVE_CHANGE_NICKNAME: "receive-change-nickname",
     CHANGE_APPREARANCES: "change-appearances",

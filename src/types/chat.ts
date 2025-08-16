@@ -178,6 +178,7 @@ export interface ReactionEmoji {
     emoji: string;
     user_id: string;
     created_at: string;
+    user?: Pick<UserItf, "id" | "name" | "photo">;
 }
 
 export interface MessageAIBody {

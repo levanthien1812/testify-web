@@ -1,7 +1,6 @@
 import React from "react";
-import { AIChatItf, ChatItf, UpdateAIChat } from "../../../../types/chat";
+import { AIChatItf, UpdateAIChat } from "../../../../types/chat";
 import { useChatSocket } from "../ChatSocketContext";
-import IconButton from "../../../../components/elements/IconButton";
 import {
     faEllipsis,
     faPen,

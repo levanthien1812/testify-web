@@ -15,7 +15,6 @@ import { useChatSocket } from "../ChatSocketContext";
 import { ChatItf } from "../../../../types/chat";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
 import { CLEAR_TYPING_INDICATOR_TIMEOUT } from "../../../../config/constants/chat";
-import { useAppSelector } from "../../../../hooks/hooks";
 import { getPreviewLink } from "../../../../utils/image";
 
 const InputMessage = () => {
@@ -29,7 +28,6 @@ const InputMessage = () => {
     const [openEmoji, setOpenEmoji] = useState(false);
     const inputMessageRef = useRef<HTMLInputElement>(null);
     const [currentMessageText, setCurrentMessageText] = useState("");
-    const user = useAppSelector((state) => state.auth.user);
     const [isTyping, setIsTyping] = useState(false);
     const typeingTimeout = useRef<NodeJS.Timeout | null>(null);
 
