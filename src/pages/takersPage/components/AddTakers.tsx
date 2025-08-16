@@ -160,7 +160,7 @@ const AddTakers = ({ onClose, taker, takerGroups }: AddTakersProps) => {
     };
 
     return (
-        <Modal onClose={onClose} className="md:w-2/3">
+        <Modal onClose={onClose} width="md:w-2/3">
             <ModalHeader title={taker ? "Update Taker" : "Add Taker"} />
             <ModalBody>
                 <form>
