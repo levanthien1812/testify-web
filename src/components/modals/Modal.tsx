@@ -7,7 +7,7 @@ import Backdrop from "./Backdrop";
 
 type ModalProps = {
     children: ReactNode;
-    className?: string;
+    width?: string;
     onClose: () => void;
     allowClickBackdropToClose?: boolean;
 };
@@ -32,7 +32,7 @@ const ModalContext = React.createContext<Pick<ModalProps, "onClose"> | null>(
 const Modal = ({
     children,
     onClose,
-    className,
+    width,
     allowClickBackdropToClose = true,
 }: ModalProps) => {
     const currentZIndex = React.useRef(50);
@@ -49,7 +49,9 @@ const Modal = ({
             />
             {currentZIndex.current && (
                 <div
-                    className={`fixed top-0 left-0 right-0 bottom-0 bg-white shadow-md mx-2 md:mx-auto my-auto md:w-fit h-fit max-h-[80vh] overflow-y-scroll min-w-40 md:min-w-[300px] 2xl:min-w-[500px] lg:max-w-[800px] 2xl:max-w-[700px] z-50 ${className}`}
+                    className={`fixed top-0 left-0 right-0 bottom-0 bg-white shadow-md mx-2 md:mx-auto my-auto ${
+                        width || "w-fit"
+                    } h-fit max-h-[80vh] overflow-y-scroll min-w-40 md:min-w-[300px] 2xl:min-w-[500px] z-50`}
                 >
                     {children}
                 </div>

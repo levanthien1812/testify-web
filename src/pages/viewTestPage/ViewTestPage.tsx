@@ -221,7 +221,7 @@ const ViewTestPage = () => {
                     {viewQuestionsAndAnswers && (
                         <Modal
                             onClose={() => setViewQuestionsAndAnswers(false)}
-                            className="w-3/4 md:w-3/5"
+                            width="w-3/4 md:w-3/5"
                         >
                             <ModalHeader title="Questions and Answers" />
                             <ModalBody>
@@ -270,7 +270,7 @@ const ViewTestPage = () => {
                     {viewProvideAnswers && (
                         <Modal
                             onClose={() => setViewProvideAnswers(false)}
-                            className="w-3/4 md:w-3/5"
+                            width="w-3/4 md:w-3/5"
                         >
                             <ModalHeader title="Provide Answers" />
                             <ModalBody>

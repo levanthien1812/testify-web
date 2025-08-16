@@ -26,6 +26,10 @@ import TrueFalseAnswer from "./TrueFalseAnswer";
 import TextEditor from "../../../../components/richTextEditor/TiptapEditor";
 import HtmlDisplay from "../../../../components/elements/HtmlDisplay";
 import { getRound } from "../../../../utils/primitives";
+import { getTextToAskAI } from "../../../../utils/test";
+import AIAssistant from "./AIAssistant";
+import { useChatSocket } from "../../../chatPage/components/ChatSocketContext";
+import { useAppSelector } from "../../../../hooks/hooks";
 
 const Answer: React.FC<{
     question: QuestionItf<QuestionContentItf>;
@@ -39,6 +43,10 @@ const Answer: React.FC<{
         question.content!
     );
     const dispatch = useDispatch();
+    const [isAskingAI, setIsAskingAI] = useState<boolean>(false);
+    const [textToAsk, setTextToAsk] = useState<string>("");
+    const { setCurrentAIChat } = useChatSocket();
+    const { user } = useAppSelector((state) => state.auth);
 
     const { mutate, isLoading } = useMutation({
         mutationFn: async () =>
@@ -101,6 +109,19 @@ const Answer: React.FC<{
         setIsAddingExplaination(false);
     };
 
+    const handleClickAskAI = () => {
+        setIsAskingAI(true);
+        setCurrentAIChat({
+            chat_name: "Ask AI",
+            messages: [],
+            created_at: new Date().toISOString(),
+            user_id: user!.id,
+        });
+        const textToAskAI = getTextToAskAI(question);
+        if (!textToAskAI) return;
+        setTextToAsk(textToAskAI);
+    };
+
     return (
         <div>
             <div className="flex justify-start items-center">
@@ -120,6 +141,11 @@ const Answer: React.FC<{
                 {contentTemp.answer?.is_saved && (
                     <p className="text-orange-600 italic ms-1">Saved</p>
                 )}
+                <div className="ms-auto">
+                    <Button link onClick={handleClickAskAI}>
+                        Ask AI
+                    </Button>
+                </div>
             </div>
 
             <div className={`px-2 py-2 bg-orange-50 border border-gray-400`}>
@@ -225,6 +251,13 @@ const Answer: React.FC<{
                         {isLoading ? "Saving..." : "Save"}
                     </Button>
                 </div>
+            )}
+
+            {isAskingAI && (
+                <AIAssistant
+                    message={textToAsk}
+                    onClose={() => setIsAskingAI(false)}
+                />
             )}
         </div>
     );

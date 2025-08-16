@@ -1,4 +1,11 @@
 import {
+    FillGapsQuestionBodyItf,
+    MatchingQuestionItf,
+    MultipleChoiceQuestionItf,
+    ResponseQuestionItf,
+    TrueFalseQuestionItf,
+} from "./../types/types";
+import {
     QUESTION_NUMBERING_METHOD,
     QUESTION_TYPE,
 } from "../config/constants/tests";
@@ -154,6 +161,62 @@ export const checkQuestionAnswerIsSaved = (
         }
         default: {
             return false;
+        }
+    }
+};
+
+export const getTextToAskAI = (question: QuestionItf<QuestionContentItf>) => {
+    if (!question.content) return null;
+    switch (question.type) {
+        case QUESTION_TYPE.MULTIPLE_CHOICES: {
+            const content = question.content as MultipleChoiceQuestionItf;
+            const options = content.options
+                .map((option) => option.text)
+                .join("\n");
+
+            return `${content.instruction_text || ""}\n${
+                content.text
+            }\nOptions:\n${options}\n${
+                content.allow_multiple
+                    ? "(Can choose multiple options)"
+                    : "(Choose only one option)"
+            }`;
+        }
+        case QUESTION_TYPE.FILL_IN_THE_GAPS: {
+            const content = question.content as FillGapsQuestionBodyItf;
+            const providedWords = content.given_words
+                ? content.given_words.map((word) => word.text).join(", ")
+                : "";
+
+            return `${content.instruction_text || ""}\n${content.text}\n${
+                content.given_words ? `Given words: ${providedWords}` : ""
+            }`;
+        }
+        case QUESTION_TYPE.MATCHING: {
+            const content = question.content as MatchingQuestionItf;
+            const left = content.left_items.map((item) => item.text).join("\n");
+            const right = content.right_items
+                .map((item) => item.text)
+                .join("\n");
+
+            return `${content.instruction_text || ""}\n${
+                content.text
+            }\nLeft items:\n${left}\nRight items:\n${right}`;
+        }
+        case QUESTION_TYPE.RESPONSE: {
+            const content = question.content as ResponseQuestionItf;
+            return `${content.instruction_text || ""}\n${
+                content.text
+            }\n(Minimum ${content.min_length} words, Maximum ${
+                content.max_length
+            } words)`;
+        }
+        case QUESTION_TYPE.TRUE_FALSE: {
+            const content = question.content as TrueFalseQuestionItf;
+            return `${content.instruction_text || ""}\n${content.text}`;
+        }
+        default: {
+            return null;
         }
     }
 };

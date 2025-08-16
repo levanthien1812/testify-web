@@ -94,7 +94,7 @@ const TakerSubmissionDetail = () => {
             onClose={() =>
                 dispatch(viewTestActions.setCurrentSubmissionBeingViewed(null))
             }
-            className="md:w-2/3 lg:w-1/2"
+            width="md:w-2/3 lg:w-1/2"
         >
             <ModalHeader title={`Taker's submissions detail`} />
             <ModalBody>

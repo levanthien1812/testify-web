@@ -29,3 +29,13 @@ export const getPreviewLink = async (images: FileList | null) => {
     const result = await Promise.all(filePromises);
     return result;
 };
+
+export const checkImageUrl = (url: string | undefined) => {
+    if (!url) return false;
+    return new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(true); // Image loaded successfully
+        img.onerror = () => resolve(false); // Image failed to load (e.g., 404, invalid URL)
+        img.src = url;
+    });
+};

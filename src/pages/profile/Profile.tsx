@@ -120,7 +120,7 @@ const Profile = ({ onClose }: Props) => {
     };
 
     return (
-        <Modal onClose={onClose} className="md:w-2/3">
+        <Modal onClose={onClose} width="md:w-2/3">
             <ModalHeader title={"Profile"} />
             <ModalBody>
                 <form>

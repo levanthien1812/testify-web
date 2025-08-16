@@ -69,10 +69,10 @@ export interface AIChatItf {
     created_at: string;
     updated_at?: string;
     messages: AIChatMessageItf[];
-    last_user_message_id: string | undefined;
-    last_assistant_message_id: string | undefined;
-    is_pinned: boolean;
-    is_archived: boolean;
+    last_user_message_id?: string;
+    last_assistant_message_id?: string;
+    is_pinned?: boolean;
+    is_archived?: boolean;
 }
 
 export interface AIChatBodyItf {
