@@ -35,6 +35,7 @@ const Header = () => {
     const { mutate, isLoading } = useMutation({
         mutationFn: async () => {
             const refreshToken = Cookies.get("refresh_token");
+            if (!refreshToken) return;
             return await logout(refreshToken!);
         },
         mutationKey: ["logout"],

@@ -50,7 +50,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
     const [chatsOpen, setChatsOpen] = useState(false);
     const [aiChatsOpen, setAIChatsOpen] = useState(false);
 
-    const { user } = useAppSelector((state) => state.auth);
+    const { user, isAuthened } = useAppSelector((state) => state.auth);
     const dispatch = useDispatch();
 
     const { isLoading: isLoadingChats } = useQuery<ChatItf[]>({
@@ -73,7 +73,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                 })
             );
         },
-        enabled: !isChattingWithAI,
+        enabled: isAuthened && !isChattingWithAI,
     });
 
     const { isLoading: isLoadingModels } = useQuery<AIModelsItf[]>({
@@ -87,7 +87,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
             setAIModels(data);
             setSelectedAIModel(data[0].id);
         },
-        enabled: AIModels.length === 0,
+        enabled: isAuthened && AIModels.length === 0,
     });
 
     useEffect(() => {
@@ -391,9 +391,9 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
     }, [socket, currentChat, chats]);
 
     useEffect(() => {
-        if (!socket) return;
+        if (!socket || !user) return;
         return () => {
-            socket.emit(SOCKET_EVENTS.REMOVE_ONLINE_USERS, user!.id);
+            socket.emit(SOCKET_EVENTS.REMOVE_ONLINE_USERS, user.id);
         };
     }, [socket, user]);
 
