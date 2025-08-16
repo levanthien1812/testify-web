@@ -20,6 +20,8 @@ import MessageNoti from "../../../components/notifications/MessageNoti";
 import { useQuery } from "react-query";
 import { getChats, getModelsAI } from "../../../services/chat";
 import { QUERY_KEYS } from "../../../config/constants/queryMutationKeys";
+import ReactionNoti from "../../../components/notifications/ReactionNoti";
+import { SendReaction } from "../../../types/socket";
 
 const ChatSocketContext = React.createContext<ChatContext | undefined>(
     undefined
@@ -279,12 +281,39 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
             setChats(updatedChats);
         });
 
-        socket.on(SOCKET_EVENTS.RECEIVE_REACTION, (data) => {
+        socket.on(SOCKET_EVENTS.RECEIVE_REACTION, (data: SendReaction) => {
+            if (
+                (!chatsOpen ||
+                    !currentChat ||
+                    currentChat.id !== data.chat_id) &&
+                user &&
+                data.new_reaction.user &&
+                user.id === data.message.sender_id &&
+                user.id !== data.new_reaction.user.id &&
+                data.type !== "remove"
+            ) {
+                toast(
+                    <ReactionNoti
+                        emoji={data.new_reaction.emoji}
+                        message={data.message.text}
+                        sender={data.new_reaction.user}
+                        type={data.type}
+                    />,
+                    {
+                        position: "top-right",
+                        autoClose: 5000,
+                        hideProgressBar: true,
+                        style: {
+                            fontFamily: "'EB Garamond', serif",
+                        },
+                    }
+                );
+            }
             if (!currentChat) return;
 
             const updatedMessages = currentChat.messages;
             const messageIndex = updatedMessages.findIndex(
-                (message) => message.id === data.message_id
+                (message) => message.id === data.message.id
             );
             if (messageIndex < 0) return;
             updatedMessages[messageIndex].reactions = data.reactions;

@@ -1,4 +1,4 @@
-import axios, { AxiosError, HttpStatusCode } from "axios";
+import axios, { HttpStatusCode } from "axios";
 import Cookies from "js-cookie";
 import { refreshToken } from "../services/auth";
 

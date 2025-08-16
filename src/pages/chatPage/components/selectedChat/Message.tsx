@@ -1,8 +1,7 @@
-import { forwardRef, useCallback, useEffect, useMemo, useState } from "react";
+import { forwardRef, useCallback, useMemo, useState } from "react";
 import { ChatItf, MessageBody, MessageItf } from "../../../../types/chat";
 import { useChatSocket } from "../ChatSocketContext";
 import { format } from "date-fns";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
     faInfoCircle,
     faPen,
@@ -27,6 +26,7 @@ import {
 import { useAppSelector } from "../../../../hooks/hooks";
 import IconButton from "../../../../components/elements/IconButton";
 import HtmlDisplay from "../../../../components/elements/HtmlDisplay";
+import { SendReaction } from "../../../../types/socket";
 
 type MessageProps = {
     message: MessageItf;
@@ -120,16 +120,8 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
 
                 return responseData.message;
             },
-            mutationKey: [MUTATION_KEYS.DELETE_MESSAGE, message.id],
-            onSuccess: (data) => {
-                if (socket) {
-                    socket.emit(SOCKET_EVENTS.SEND_REACTION, {
-                        chat_id: message.chat_id,
-                        message_id: message.id,
-                        reactions: data.reactions,
-                    });
-                }
-            },
+            mutationKey: [MUTATION_KEYS.UPDATE_MESSAGE, message.id],
+            onSuccess: (data) => {},
         });
 
         const handleClickDeleteMessage = () => {
@@ -206,11 +198,33 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
             const index = updatedReactions.findIndex(
                 (reaction) => reaction.user_id === user!.id
             );
+            let socketContent: SendReaction = {
+                chat_id: message.chat_id,
+                message: {
+                    id: message.id,
+                    sender_id: message.sender_id,
+                    text: message.text,
+                },
+                reactions: updatedReactions,
+                new_reaction: {
+                    user: {
+                        id: user!.id,
+                        name: user!.name,
+                        photo: user!.photo,
+                    },
+                    emoji: emojiCode,
+                },
+                type: "add",
+            };
+
             if (index !== -1) {
                 if (updatedReactions[index].emoji === emojiCode) {
                     updatedReactions.splice(index, 1);
+
+                    socketContent.type = "remove";
                 } else {
                     updatedReactions[index].emoji = emojiCode;
+                    socketContent.type = "change";
                 }
             } else {
                 updatedReactions.push({
@@ -218,6 +232,13 @@ const Message = forwardRef<HTMLDivElement, MessageProps>(
                     emoji: emojiCode,
                     user_id: user!.id,
                 });
+
+                socketContent.type = "add";
+            }
+
+            if (socket) {
+                socketContent.reactions = updatedReactions;
+                socket.emit(SOCKET_EVENTS.SEND_REACTION, socketContent);
             }
             updateMessageMutate({
                 reactions: updatedReactions,

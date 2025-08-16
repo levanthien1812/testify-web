@@ -2,13 +2,8 @@ import { faCircleStop, faPaperPlane } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useRef, useState } from "react";
 import Button from "../../../../components/elements/Button";
-import Input from "../../../../components/elements/Input";
 import { useMutation } from "react-query";
-import {
-    createChatAI,
-    createMessageAI,
-    createMockMessageAI,
-} from "../../../../services/chat";
+import { createChatAI, createMessageAI } from "../../../../services/chat";
 import { useChatSocket } from "../ChatSocketContext";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
 import { MESSAGE_AI_ROLE } from "../../../../config/constants/chat";
