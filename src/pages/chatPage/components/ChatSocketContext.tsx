@@ -18,7 +18,7 @@ import { MESSAGE_AI_ROLE, MESSAGE_TYPE } from "../../../config/constants/chat";
 import { toast } from "react-toastify";
 import MessageNoti from "../../../components/notifications/MessageNoti";
 import { useQuery } from "react-query";
-import { getChats } from "../../../services/chat";
+import { getChats, getModelsAI } from "../../../services/chat";
 import { QUERY_KEYS } from "../../../config/constants/queryMutationKeys";
 
 const ChatSocketContext = React.createContext<ChatContext | undefined>(
@@ -72,6 +72,20 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
             );
         },
         enabled: !isChattingWithAI,
+    });
+
+    const { isLoading: isLoadingModels } = useQuery<AIModelsItf[]>({
+        queryKey: [QUERY_KEYS.GET_AI_MODELS],
+        queryFn: async () => {
+            const responseData = await getModelsAI();
+            return responseData.models;
+        },
+        onSuccess: (data: any) => {
+            if (data.length === 0) return;
+            setAIModels(data);
+            setSelectedAIModel(data[0].id);
+        },
+        enabled: AIModels.length === 0,
     });
 
     useEffect(() => {
@@ -166,7 +180,8 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
             if (!chats) return;
             if (
                 (!chatsOpen ||
-                    (currentChat && currentChat.id !== message.chat_id)) &&
+                    !currentChat ||
+                    currentChat.id !== message.chat_id) &&
                 user &&
                 user.id !== message.sender_id &&
                 message.type === MESSAGE_TYPE.MESSAGE
@@ -180,6 +195,9 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                         position: "top-right",
                         autoClose: 5000,
                         hideProgressBar: true,
+                        style: {
+                            fontFamily: "'EB Garamond', serif",
+                        },
                     }
                 );
             }

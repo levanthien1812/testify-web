@@ -4,11 +4,8 @@ import Loading from "../../../../components/loadings/Loading";
 import { useChatSocket } from "../ChatSocketContext";
 import AIChats from "../AIChatList/AIChats";
 import { useAppSelector } from "../../../../hooks/hooks";
-import { AIChatItf, AIModelsItf } from "../../../../types/chat";
+import { AIChatItf } from "../../../../types/chat";
 import Select from "../../../../components/elements/Select";
-import { getModelsAI } from "../../../../services/chat";
-import { QUERY_KEYS } from "../../../../config/constants/queryMutationKeys";
-import { useQuery } from "react-query";
 
 const AIChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
     const user = useAppSelector((state) => state.auth.user);
@@ -22,7 +19,6 @@ const AIChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
         aiModels,
         selectedAIModel,
         setSelectedAIModel,
-        setAIModels,
     } = useChatSocket();
 
     const handleClickChatWithAI = () => {
@@ -37,10 +33,6 @@ const AIChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
             created_at: new Date().toISOString(),
             user_id: user!.id,
             messages: [],
-            last_user_message_id: undefined,
-            last_assistant_message_id: undefined,
-            is_pinned: false,
-            is_archived: false,
         };
         setAIChats([...(aiChats || []), newAIChat]);
         setCurrentAIChat(newAIChat);
@@ -49,18 +41,6 @@ const AIChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
     const handleAIModelChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedAIModel(e.target.value);
     };
-
-    const { isLoading: isLoadingModels } = useQuery<AIModelsItf[]>({
-        queryKey: [QUERY_KEYS.GET_AI_MODELS],
-        queryFn: async () => {
-            const responseData = await getModelsAI();
-            return responseData.models;
-        },
-        onSuccess: (data: any) => {
-            setAIModels(data);
-        },
-        enabled: aiModels.length === 0,
-    });
 
     return (
         <div className="p-2 bg-white shadow-md relative flex-[1] min-w-[30%]">

@@ -13,10 +13,17 @@ import { useChatSocket } from "../ChatSocketContext";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
 import { MESSAGE_AI_ROLE } from "../../../../config/constants/chat";
 import axios from "axios";
+import TextArea from "../../../../components/elements/TextArea";
 
-const AIInputMessage = () => {
-    const [currentMessageText, setCurrentMessageText] = useState("");
-    const inputMessageRef = useRef<HTMLInputElement>(null);
+type Props = {
+    initialMessage?: string;
+};
+
+const AIInputMessage = ({ initialMessage }: Props) => {
+    const [currentMessageText, setCurrentMessageText] = useState(
+        initialMessage || ""
+    );
+    const inputMessageRef = useRef<HTMLTextAreaElement>(null);
     const {
         currentAIChat,
         setCurrentAIChat,
@@ -40,7 +47,7 @@ const AIInputMessage = () => {
             },
             mutationKey: [MUTATION_KEYS.CREATE_AI_CHAT],
             onSuccess: (data: any) => {
-                setCurrentAIChat({ ...currentAIChat, ...data });
+                setCurrentAIChat((prev) => ({ ...prev, ...data }));
                 sendMessageMutate(data.id);
             },
         });
@@ -72,12 +79,13 @@ const AIInputMessage = () => {
             onMutate: () => {
                 setIsGeneratingResponse(true);
             },
-            mutationKey: [MUTATION_KEYS.SEND_MESSAGE, currentAIChat!.id],
+            mutationKey: [MUTATION_KEYS.SEND_MESSAGE],
             onSuccess: (data) => {
                 setIsGeneratingResponse(false);
 
                 setCurrentAIChat((prev) => {
                     const updatedMessages = [...prev!.messages];
+                    console.log(updatedMessages);
                     updatedMessages[updatedMessages.length - 1] =
                         data.userMessage;
                     updatedMessages?.push(data.assistantMessage);
@@ -92,12 +100,13 @@ const AIInputMessage = () => {
         });
 
     const handleMessageChange = (
-        event: React.ChangeEvent<HTMLInputElement>
+        event: React.ChangeEvent<HTMLTextAreaElement>
     ) => {
         setCurrentMessageText(event.target.value);
     };
 
     const handleClickSendBtn = async () => {
+        if (!currentAIChat) return;
         setCurrentAIChat((prev) => ({
             ...prev!,
             messages: [
@@ -117,7 +126,9 @@ const AIInputMessage = () => {
         }
     };
 
-    const handlePressEnter = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    const handlePressEnter = (
+        event: React.KeyboardEvent<HTMLTextAreaElement>
+    ) => {
         if (event.key === "Enter") {
             handleClickSendBtn();
         }
@@ -134,8 +145,9 @@ const AIInputMessage = () => {
     return (
         <div className="border-t border-dashed border-gray-300 p-2 bg-opacity-40 bg-white">
             <div className="flex gap-2 items-center">
-                <Input
-                    className="grow"
+                <TextArea
+                    rows={1}
+                    className="grow "
                     placeholder="Ask me anything..."
                     value={currentMessageText}
                     onChange={handleMessageChange}
@@ -148,7 +160,7 @@ const AIInputMessage = () => {
                         <FontAwesomeIcon icon={faPaperPlane} />
                     </Button>
                 )}
-                {isSendingMessage && (
+                {(isSendingMessage || isCreatingChat) && (
                     <Button onClick={handleClickStopBtn} className="px-2">
                         <FontAwesomeIcon icon={faCircleStop} />
                     </Button>

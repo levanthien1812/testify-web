@@ -19,6 +19,11 @@ const AIMessages = () => {
             className="grow p-2 custom-scrollbar-y pe-1 space-y-2"
             ref={messagesContainerRef}
         >
+            {(!chat || !chat.messages || chat.messages.length === 0) && (
+                <p className="my-8 text-center text-gray-400 text-xl">
+                    Feel free to ask me anything!
+                </p>
+            )}
             {chat &&
                 chat.messages &&
                 chat.messages.length > 0 &&
