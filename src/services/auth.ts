@@ -5,6 +5,7 @@ import {
     LoginBodyItf,
     RegisterBodyItf,
     ResetPasswordBodyItf,
+    SendVerificationCodeBodyItf,
     VerifyEmailBodyItf,
 } from "../types/types";
 import Cookies from "js-cookie";
@@ -22,6 +23,21 @@ export const register = async (registerBody: RegisterBodyItf) => {
 export const verifyEmail = async (body: VerifyEmailBodyItf) => {
     try {
         const response = await instance.post("/auth/verify-email", body);
+
+        return response;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const sendVerificationCode = async (
+    body: SendVerificationCodeBodyItf
+) => {
+    try {
+        const response = await instance.post(
+            "/auth/send-verification-code",
+            body
+        );
 
         return response;
     } catch (error) {

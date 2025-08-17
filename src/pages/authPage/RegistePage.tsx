@@ -11,7 +11,6 @@ import ConfirmModal from "../../components/modals/ConfirmModal";
 type RegisterFields = {
     name: string;
     email: string;
-    username: string;
     password: string;
     password_confirm: string;
 };
@@ -81,21 +80,6 @@ const RegistePage = () => {
                         placeholder="Eg. jenedy123@gmail.com"
                         error={errors?.email && errors?.email.message}
                         tabIndex={2}
-                        required
-                    />
-                    <AuthInput
-                        labelText="Username"
-                        {...register("username", {
-                            required: "Username is required",
-                            minLength: {
-                                value: 3,
-                                message:
-                                    "Username must be at least 3 characters",
-                            },
-                        })}
-                        placeholder="Eg. jenedy123"
-                        error={errors?.username && errors?.username.message}
-                        tabIndex={3}
                         required
                     />
                     <AuthInput

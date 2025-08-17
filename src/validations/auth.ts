@@ -6,7 +6,6 @@ export const registerSchema = Joi.object()
         email: Joi.string()
             .required()
             .email({ tlds: { allow: false } }),
-        username: Joi.string().required().min(10),
         name: Joi.string().required(),
         password: Joi.string().required().custom(password),
     })

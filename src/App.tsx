@@ -25,6 +25,7 @@ import TakersPage from "./pages/takersPage/TakersPage";
 import VerifyEmail from "./pages/authPage/VerifyEmail";
 import ForgotPassword from "./pages/authPage/ForgotPassword";
 import ResetPassword from "./pages/authPage/ResetPassword";
+import SendVerificationCode from "./pages/authPage/SendVerificationCode";
 
 const queryClient = new QueryClient(queryClientConfig);
 
@@ -45,6 +46,10 @@ function App() {
                         {
                             path: "/login",
                             element: <LoginPage />,
+                        },
+                        {
+                            path: "/send-verification-code",
+                            element: <SendVerificationCode />,
                         },
                         {
                             path: "/verify-email",

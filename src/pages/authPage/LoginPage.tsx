@@ -10,6 +10,8 @@ import Button from "../../components/elements/Button";
 import AuthInput from "./AuthInput";
 import { useMutation } from "react-query";
 import { useForm } from "react-hook-form";
+import { useState } from "react";
+import { ERROR_CODE } from "../../config/constants/errorCode";
 
 type LoginFields = {
     email: string;
@@ -19,12 +21,16 @@ type LoginFields = {
 const LoginPage = () => {
     const dispatch = useDispatch();
     const navigate = useNavigate();
+    const [errorCode, setErrorCode] = useState("");
 
     const {
         handleSubmit,
         register,
         formState: { errors },
+        watch,
     } = useForm<LoginFields>();
+
+    const allValues = watch();
 
     const { mutate: loginMutate, isLoading: loginLoading } = useMutation({
         mutationFn: async (data: LoginFields) => {
@@ -43,6 +49,9 @@ const LoginPage = () => {
         onError: (err) => {
             if (err instanceof AxiosError) {
                 toast.error(err.response?.data.message);
+                if (err.response?.data.errorCode) {
+                    setErrorCode(err.response?.data.errorCode);
+                }
             }
         },
     });
@@ -124,6 +133,21 @@ const LoginPage = () => {
                         Forgot password?
                     </Link>
                 </div>
+                {errorCode === ERROR_CODE.EMAIL_NOT_VERIFIED && (
+                    <div className="mt-2 bg-orange-50 border border-orange-500 p-2">
+                        <p className="text-gray-600 italic">
+                            Your email is not verified. Please verify your email{" "}
+                            <Link
+                                to={"/send-verification-code"}
+                                state={{ email: allValues.email }}
+                                className="text-orange-600 hover:underline"
+                            >
+                                here
+                            </Link>{" "}
+                            to continue.
+                        </p>
+                    </div>
+                )}
 
                 <Button
                     type="submit"
