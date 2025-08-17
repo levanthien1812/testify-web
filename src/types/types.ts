@@ -25,7 +25,6 @@ export interface UserBodyItf {
 }
 
 export interface UserItf extends UserBodyItf {
-    username?: string;
     role: ROLES;
     id: string;
     photo?: string;
@@ -40,7 +39,6 @@ export interface authInitialStateItf {
 
 export interface RegisterErrorItf {
     name?: string;
-    username?: string;
     email?: string;
     password?: string;
     password_confirm?: string;
@@ -48,7 +46,6 @@ export interface RegisterErrorItf {
 
 export interface RegisterBodyItf {
     name: string;
-    username: string;
     email: string;
     password: string;
 }
@@ -56,6 +53,10 @@ export interface RegisterBodyItf {
 export interface VerifyEmailBodyItf {
     email: string;
     code: string;
+}
+
+export interface SendVerificationCodeBodyItf {
+    email: string;
 }
 
 export interface ForgotPasswordBodyItf {

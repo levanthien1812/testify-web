@@ -59,7 +59,6 @@ describe("RegistePage", () => {
         renderComponent();
         expect(screen.getByLabelText("Name")).toBeInTheDocument();
         expect(screen.getByLabelText("Email")).toBeInTheDocument();
-        expect(screen.getByLabelText("Username")).toBeInTheDocument();
         expect(screen.getByLabelText("Password")).toBeInTheDocument();
         expect(screen.getByLabelText("Confirm Password")).toBeInTheDocument();
         expect(

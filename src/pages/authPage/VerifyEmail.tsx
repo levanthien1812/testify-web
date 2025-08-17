@@ -1,7 +1,10 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
-import { VerifyEmailBodyItf } from "../../types/types";
-import { verifyEmail } from "../../services/auth";
+import {
+    SendVerificationCodeBodyItf,
+    VerifyEmailBodyItf,
+} from "../../types/types";
+import { sendVerificationCode, verifyEmail } from "../../services/auth";
 import { useMutation } from "react-query";
 import { toast } from "react-toastify";
 import AuthInput from "./AuthInput";
@@ -11,17 +14,21 @@ import { useLocation, useNavigate } from "react-router";
 const VerifyEmail = () => {
     const location = useLocation();
     const navigate = useNavigate();
+    const [remainingTime, setRemainingTime] = useState(60);
 
     const {
         register,
         formState: { errors },
         handleSubmit,
+        watch,
     } = useForm<VerifyEmailBodyItf>({
         defaultValues: {
             email: location.state?.email || "",
             code: "",
         },
     });
+
+    const allValues = watch();
 
     const { mutate: verifyEmailMutate, isLoading: verifyEmailLoading } =
         useMutation({
@@ -36,6 +43,18 @@ const VerifyEmail = () => {
             },
         });
 
+    const { mutate: sendCodeMutate, isLoading: sendCodeLoading } = useMutation({
+        mutationFn: async (data: SendVerificationCodeBodyItf) => {
+            const responseData = await sendVerificationCode(data!);
+            return responseData.data;
+        },
+        mutationKey: [`send-verification-code`],
+        onSuccess: (data: any) => {
+            toast.success("Send verification code successfully");
+            setRemainingTime(60);
+        },
+    });
+
     const handleVerifyEmail = async (data: VerifyEmailBodyItf) => {
         verifyEmailMutate(data);
     };
@@ -46,6 +65,19 @@ const VerifyEmail = () => {
             navigate("register");
         }
     }, [location.state, navigate]);
+
+    useEffect(() => {
+        const interval = setInterval(() => {
+            if (remainingTime <= 0) {
+                clearInterval(interval);
+                return;
+            }
+            setRemainingTime((prevTime) => prevTime - 1);
+        }, 1000);
+
+        return () => clearInterval(interval);
+    }, []);
+
     return (
         <div className="h-screen bg-orange-600 flex justify-center items-center md:items-start">
             <form
@@ -79,12 +111,38 @@ const VerifyEmail = () => {
                         {...register("code", {
                             required: "Code is required",
                         })}
-                        placeholder="Eg. jenedy123"
                         error={errors?.code && errors?.code.message}
                         tabIndex={2}
                         required
                         className="text-center tracking-wide font-bold"
                     />
+                </div>
+
+                <div className="w-full mt-2 flex gap-1">
+                    <p className="text-gray-500 italic">
+                        Didn't receive the email?
+                    </p>
+                    <button
+                        className="text-orange-600 hover:underline italic disabled:text-gray-500 disabled:cursor-not-allowed"
+                        disabled={
+                            sendCodeLoading ||
+                            verifyEmailLoading ||
+                            remainingTime > 0
+                        }
+                        onClick={() => {
+                            sendCodeMutate({
+                                email: allValues.email,
+                            });
+                        }}
+                        type="button"
+                    >
+                        {sendCodeLoading ? "Resending..." : "Resend code"}
+                    </button>
+                    {remainingTime > 0 && (
+                        <div className="font-bold text-gray-500 italic">
+                            {remainingTime}s
+                        </div>
+                    )}
                 </div>
 
                 <Button

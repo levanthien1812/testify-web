@@ -42,6 +42,7 @@ instance.interceptors.response.use(
             const token = Cookies.get("refresh_token");
 
             if (!token) {
+                return Promise.reject(error);
             }
             const { tokens } = await refreshToken(token!);
             const { access, refresh } = tokens;
