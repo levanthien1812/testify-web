@@ -103,6 +103,12 @@ const RegistePage = () => {
                         type="password"
                         {...register("password_confirm", {
                             required: "Password confirmation is required",
+                            validate(value) {
+                                if (value !== watch("password")) {
+                                    return "Passwords do not match";
+                                }
+                                return true;
+                            },
                         })}
                         placeholder="********"
                         error={
