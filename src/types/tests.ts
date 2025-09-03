@@ -2,6 +2,7 @@ import {
     CREATE_TEST_STEPS,
     PUBLIC_ANSWERS_OPTIONS,
     QUESTION_NUMBERING_METHOD,
+    RECORD_MODE,
     SHARE_OPTIONS,
     TEST_LEVEL,
     TEST_STATUS,
@@ -73,6 +74,19 @@ export interface PaginationMode extends BaseOption {
     allow_back_navigation?: boolean;
     questions_per_page?: number;
 }
+
+export interface RequireScreenRecorder extends BaseOption {
+    record_mode: RECORD_MODE;
+    interval_in_seconds?: number;
+    include_audio?: boolean;
+}
+
+export interface RequireCameraOn extends BaseOption {
+    record_mode: RECORD_MODE;
+    interval_in_seconds?: number;
+    include_audio?: boolean;
+}
+
 export interface TestOptions {
     allow_close_time: AllowCloseTimeOption;
     allow_view_submission_after_test: AllowViewSubmission;
@@ -85,6 +99,8 @@ export interface TestOptions {
     allow_review_before_submission: AllowReviewBeforeSubmission;
     disallow_time_limit: DisallowTimeLimit;
     pagination_mode: PaginationMode;
+    require_screen_recorder: RequireScreenRecorder;
+    require_camera_on: RequireCameraOn;
 }
 
 export interface CreateTestContext {
@@ -142,6 +158,10 @@ export interface TakeTestContext {
     isPasscodeValidated: boolean;
     enteredPasscode: string;
     submissionsCount: number;
+    canAccessCamera: boolean;
+    canAccessScreen: boolean;
+    isUploadingMedia: boolean;
+    uploadProgress: number;
 }
 
 export interface ViewTestContext {
@@ -182,6 +202,8 @@ export interface EditabilityConfig {
             allow_review_before_submission: boolean;
             disallow_time_limit: boolean;
             pagination_mode: boolean;
+            require_screen_recorder: boolean;
+            require_camera_on: boolean;
         };
     };
     [CREATE_TEST_STEPS.TEST_PARTS]: {

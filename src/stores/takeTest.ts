@@ -8,7 +8,6 @@ import {
     TestItf,
     TestPartItf,
     UserAnswerBodyItf,
-    UserAnswerItf,
 } from "../types/types";
 import { TEST_STATUS } from "../config/constants/tests";
 import { sortQuestionsByOrder } from "../utils/test";
@@ -133,6 +132,18 @@ const TakeTestSlice = createSlice({
         },
         setEnteredPasscode(state, action) {
             state.enteredPasscode = action.payload;
+        },
+        setCanAccessCamera(state, action) {
+            state.canAccessCamera = action.payload;
+        },
+        setCanAccessScreen(state, action) {
+            state.canAccessScreen = action.payload;
+        },
+        setIsUploadingMedia(state, action) {
+            state.isUploadingMedia = action.payload;
+        },
+        setUploadProgress(state, action) {
+            state.uploadProgress = action.payload;
         },
         reset(state) {
             return INITIAL_TAKE_TEST_CONTEXT;

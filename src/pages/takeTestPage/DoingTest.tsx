@@ -30,12 +30,12 @@ const DoingTest = ({ onAfterSubmit }: DoingTestProps) => {
 
     const { mutate, isLoading } = useMutation({
         mutationFn: async () => {
-            const responseData = await submitAnswers(
-                test!.id,
-                answers,
-                startTime
-            );
-            return responseData.answers;
+            // const responseData = await submitAnswers(
+            //     test!.id,
+            //     answers,
+            //     startTime
+            // );
+            // return responseData.answers;
         },
         mutationKey: [
             MUTATION_KEYS.SUBMIT_ANSWERS,

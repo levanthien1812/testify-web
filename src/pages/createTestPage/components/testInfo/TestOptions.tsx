@@ -9,6 +9,8 @@ import {
     PAGINATION_MODE_LABEL,
     PUBLIC_ANSWERS_OPTIONS,
     PUBLIC_ANSWERS_OPTIONS_LABEL,
+    RECORD_MODE,
+    RECORD_MODE_LABEL,
     TEST_OPTIONS_LABELS,
 } from "../../../../config/constants/tests";
 import Input from "../../../../components/elements/Input";
@@ -503,6 +505,164 @@ const TestOptions = () => {
                                         />
                                     </>
                                 )}
+                            </div>
+                        )
+                    }
+                />
+                <TestOption
+                    mainOption={
+                        <Checkbox
+                            label={{
+                                text: TEST_OPTIONS_LABELS
+                                    .REQUIRE_SCREEN_RECORDING.MAKER,
+                            }}
+                            {...register(
+                                "options.require_screen_recorder.enable"
+                            )}
+                            disabled={
+                                !editibility.TEST_INFORMATION.options
+                                    .require_screen_recorder
+                            }
+                        />
+                    }
+                    subOptions={[
+                        <Checkbox
+                            label={{ text: "Let taker know" }}
+                            sizing="sm"
+                            {...register(
+                                "options.require_screen_recorder.let_taker_know"
+                            )}
+                            className="ms-8"
+                        />,
+                    ]}
+                    additionalInfo={
+                        options.require_screen_recorder.enable && (
+                            <div className=" space-y-2">
+                                <Select
+                                    className="w-0 grow capitalize"
+                                    {...register(
+                                        "options.require_screen_recorder.mode",
+                                        {
+                                            required:
+                                                "Pagination mode is required",
+                                        }
+                                    )}
+                                    options={Object.values(RECORD_MODE).map(
+                                        (mode) => ({
+                                            label: RECORD_MODE_LABEL[mode],
+                                            value: mode,
+                                        })
+                                    )}
+                                    disabled={
+                                        !editibility.TEST_INFORMATION.options
+                                            .require_screen_recorder
+                                    }
+                                />
+                                {options.require_screen_recorder.record_mode ===
+                                    RECORD_MODE.SCREEN_SHOTS && (
+                                    <div>
+                                        <Input
+                                            type="number"
+                                            step={5}
+                                            {...register(
+                                                "options.require_screen_recorder.interval_in_seconds"
+                                            )}
+                                            required
+                                            label={{
+                                                text: "Take a screen shot after each (seconds)",
+                                            }}
+                                            defaultValue={10}
+                                            min={5}
+                                        />
+                                    </div>
+                                )}
+                                <Checkbox
+                                    label={{
+                                        text: "Include audio",
+                                    }}
+                                    {...register(
+                                        "options.require_screen_recorder.include_audio"
+                                    )}
+                                    sizing="sm"
+                                />
+                            </div>
+                        )
+                    }
+                />
+                <TestOption
+                    mainOption={
+                        <Checkbox
+                            label={{
+                                text: TEST_OPTIONS_LABELS.REQUIRE_CAMERA_ON
+                                    .MAKER,
+                            }}
+                            {...register("options.require_camera_on.enable")}
+                            disabled={
+                                !editibility.TEST_INFORMATION.options
+                                    .require_camera_on
+                            }
+                        />
+                    }
+                    subOptions={[
+                        <Checkbox
+                            label={{ text: "Let taker know" }}
+                            sizing="sm"
+                            {...register(
+                                "options.require_camera_on.let_taker_know"
+                            )}
+                            className="ms-8"
+                        />,
+                    ]}
+                    additionalInfo={
+                        options.require_camera_on.enable && (
+                            <div className=" space-y-2">
+                                <Select
+                                    className="w-0 grow capitalize"
+                                    {...register(
+                                        "options.require_camera_on.mode",
+                                        {
+                                            required:
+                                                "Pagination mode is required",
+                                        }
+                                    )}
+                                    options={Object.values(RECORD_MODE).map(
+                                        (mode) => ({
+                                            label: RECORD_MODE_LABEL[mode],
+                                            value: mode,
+                                        })
+                                    )}
+                                    disabled={
+                                        !editibility.TEST_INFORMATION.options
+                                            .require_camera_on
+                                    }
+                                />
+                                {options.require_camera_on.record_mode ===
+                                    RECORD_MODE.SCREEN_SHOTS && (
+                                    <div>
+                                        <Input
+                                            type="number"
+                                            step={5}
+                                            {...register(
+                                                "options.require_camera_on.interval_in_seconds"
+                                            )}
+                                            required
+                                            label={{
+                                                text: "Take a screen shot after each (seconds)",
+                                            }}
+                                            defaultValue={10}
+                                            min={5}
+                                        />
+                                    </div>
+                                )}
+                                <Checkbox
+                                    label={{
+                                        text: "Include audio",
+                                    }}
+                                    {...register(
+                                        "options.require_camera_on.include_audio"
+                                    )}
+                                    sizing="sm"
+                                />
                             </div>
                         )
                     }
