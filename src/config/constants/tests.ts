@@ -168,6 +168,14 @@ export const TEST_OPTIONS_LABELS: Record<
         MAKER: "Pagination mode",
         TAKER: "Pagination mode",
     },
+    REQUIRE_SCREEN_RECORDING: {
+        MAKER: "Require screen recording",
+        TAKER: "Requires screen recording",
+    },
+    REQUIRE_CAMERA_ON: {
+        MAKER: "Require camera on",
+        TAKER: "Requires camera on",
+    },
 };
 
 export const ALLOWED_MAXIMUM_SUBMISSIONS = 10;
@@ -252,4 +260,14 @@ export const QUESTION_NUMBERING_METHOD_LABEL: Record<
 > = {
     [QUESTION_NUMBERING_METHOD.CONTINUOUS]: "Continuous",
     [QUESTION_NUMBERING_METHOD.PART_RESET]: "Part reset",
+};
+
+export enum RECORD_MODE {
+    VIDEO = "VIDEO",
+    SCREEN_SHOTS = "SCREEN_SHOTS",
+}
+
+export const RECORD_MODE_LABEL: Record<RECORD_MODE, string> = {
+    [RECORD_MODE.VIDEO]: "Full Video",
+    [RECORD_MODE.SCREEN_SHOTS]: "Periodic Screenshots",
 };

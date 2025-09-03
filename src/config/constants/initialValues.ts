@@ -37,6 +37,7 @@ import {
     PUBLIC_ANSWERS_OPTIONS,
     QUESTION_INSTRUCTIONS,
     QUESTION_LEVEL,
+    RECORD_MODE,
     SHARE_OPTIONS,
     TEST_LEVEL,
     TEST_STATUS,
@@ -93,6 +94,16 @@ export const INITIAL_OPTIONS: TestOptions = {
         allow_back_navigation: false,
         require_completion_before_next: false,
     },
+    require_screen_recorder: {
+        enable: false,
+        let_taker_know: false,
+        record_mode: RECORD_MODE.SCREEN_SHOTS,
+    },
+    require_camera_on: {
+        enable: false,
+        let_taker_know: false,
+        record_mode: RECORD_MODE.SCREEN_SHOTS,
+    },
 };
 
 export const INITIAL_TEST_INFO: TestBodyItf = {
@@ -129,6 +140,8 @@ export const DRAFT_EDITIBILITY_CONFIG: EditabilityConfig = {
             allow_review_before_submission: true,
             disallow_time_limit: true,
             pagination_mode: true,
+            require_screen_recorder: true,
+            require_camera_on: true,
         },
     },
     [CREATE_TEST_STEPS.TEST_PARTS]: {
@@ -174,6 +187,8 @@ export const PUBLISHED_EDITABILITY_CONFIG: EditabilityConfig = {
             allow_review_before_submission: true,
             disallow_time_limit: false,
             pagination_mode: true,
+            require_screen_recorder: true,
+            require_camera_on: true,
         },
     },
     [CREATE_TEST_STEPS.TEST_PARTS]: {
@@ -219,6 +234,8 @@ export const OPENED_EDITABILITY_CONFIG: EditabilityConfig = {
             allow_review_before_submission: false,
             disallow_time_limit: false,
             pagination_mode: true,
+            require_camera_on: true,
+            require_screen_recorder: true,
         },
     },
     [CREATE_TEST_STEPS.TEST_PARTS]: {
@@ -264,6 +281,8 @@ export const CLOSED_EDITABILITY_CONFIG: EditabilityConfig = {
             allow_review_before_submission: false,
             disallow_time_limit: false,
             pagination_mode: false,
+            require_camera_on: false,
+            require_screen_recorder: false,
         },
     },
     [CREATE_TEST_STEPS.TEST_PARTS]: {
@@ -471,6 +490,10 @@ export const INITIAL_TAKE_TEST_CONTEXT: TakeTestContext = {
     isEnteringPasscode: false,
     isPasscodeValidated: false,
     submissionsCount: 0,
+    canAccessCamera: false,
+    canAccessScreen: false,
+    isUploadingMedia: false,
+    uploadProgress: 0,
 };
 
 export const INITIAL_VIEW_TEST_CONTEXT: ViewTestContext = {
