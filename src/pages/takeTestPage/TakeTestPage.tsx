@@ -3,7 +3,13 @@ import { useNavigate, useParams } from "react-router";
 import { getSubmissions, getTest, getTestByCode } from "../../services/test";
 import { PasscodeItf, SubmissionItf } from "../../types/types";
 import DoingTest from "./DoingTest";
-import { TEST_STATUS } from "../../config/constants/tests";
+import {
+    DEFAULT_SCREENSHOT_INTERVAL,
+    RECORD_MODE,
+    RECORDING_FPS,
+    RECORDING_RESOLUTION_WIDTH,
+    TEST_STATUS,
+} from "../../config/constants/tests";
 import TestInfo from "./components/TestInfo";
 import Button from "../../components/elements/Button";
 import { QUERY_KEYS } from "../../config/constants/queryMutationKeys";
@@ -23,6 +29,8 @@ import { toast } from "react-toastify";
 import ResetPermissionsInstruction from "./components/ResetPermissionsInstruction";
 import useFirebaseUpload from "../../hooks/useFirebaseUpload";
 import UploadProcess from "./components/UploadProcess";
+import { format } from "date-fns";
+import { textToSlug } from "../../utils/text";
 
 const TakeTestPage = () => {
     const { testId } = useParams();
@@ -42,19 +50,25 @@ const TakeTestPage = () => {
         canAccessCamera,
         canAccessScreen,
     } = useAppSelector((state) => state.takeTest);
+    const { user } = useAppSelector((state) => state.auth);
     const { setCanAccessCamera, setCanAccessScreen, setIsUploadingMedia } =
         takeTestActions;
-    const dispatch = useDispatch();
-    const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [isAskingForPermissions, setIsAskingForPermissions] = useState(false);
     const [showResetPermissionsMessage, setShowReSetPermissionMessage] =
         useState(false);
     const [accepted, setAccepted] = useState(false);
+
     const screenVideoRef = useRef<HTMLVideoElement>(null);
     const webcamVideoRef = useRef<HTMLVideoElement>(null);
     const streamRef = useRef<MediaStream | null>(null);
     const recorderRef = useRef<MediaRecorder | null>(null);
+    const videoCanvasRef = useRef<HTMLCanvasElement | null>(null);
+    const screenShotCanvasRef = useRef<HTMLCanvasElement | null>(null);
+    const screenShotIntervalRef = useRef<NodeJS.Timer | null>(null);
+
+    const dispatch = useDispatch();
+    const navigate = useNavigate();
     const { uploadBlob, progress, status } = useFirebaseUpload();
 
     const { isLoading: isLoadingTest, refetch: refetchTest } = useQuery({
@@ -126,7 +140,7 @@ const TakeTestPage = () => {
             if (test && test.options.require_camera_on.enable) {
                 webcamStream = await navigator.mediaDevices.getUserMedia({
                     video: true,
-                    audio: true,
+                    audio: test.options.require_camera_on.include_audio,
                 });
                 if (webcamStream) {
                     dispatch(setCanAccessCamera(true));
@@ -152,7 +166,7 @@ const TakeTestPage = () => {
             if (test && test.options.require_screen_recorder.enable) {
                 captureStream = await navigator.mediaDevices.getDisplayMedia({
                     video: true,
-                    audio: true,
+                    audio: test.options.require_screen_recorder.include_audio,
                 });
                 if (captureStream) {
                     dispatch(setCanAccessScreen(true));
@@ -191,31 +205,113 @@ const TakeTestPage = () => {
         }
     };
 
-    const startRecording = async () => {
-        console.log({ streamRef, recorderRef });
-        if (!streamRef.current) return;
+    const startTakingScreenshot = () => {
+        if (!screenShotCanvasRef.current || !webcamVideoRef.current) return;
 
-        recorderRef.current = new MediaRecorder(streamRef.current);
+        const video = webcamVideoRef.current;
+        const canvas = screenShotCanvasRef.current;
+        const context = screenShotCanvasRef.current.getContext("2d");
+        if (!context) return;
+
+        canvas.width = video.videoWidth;
+        canvas.height = video.videoHeight;
+
+        context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob((blob) => {
+            if (blob) {
+                const timestamp = format(new Date(), "yyyy-MM-dd HH:mm:ss");
+                const filename = `${textToSlug(user!.name)} ${timestamp}`;
+
+                uploadBlob(blob, filename).then((url) => {
+                    console.log({ url });
+                });
+            }
+        });
+    };
+
+    const startRecording = async () => {
+        if (
+            !videoCanvasRef.current ||
+            !webcamVideoRef.current ||
+            !screenVideoRef.current
+        )
+            return;
+
+        let animationFrameId: number;
+        const video = screenVideoRef.current;
+        const canvas = videoCanvasRef.current;
+        const context = videoCanvasRef.current.getContext("2d");
+        if (!context) return;
+
+        const scale = Math.min(
+            RECORDING_RESOLUTION_WIDTH / video.videoWidth,
+            1
+        );
+        canvas.width = video.videoWidth * scale;
+        canvas.height = video.videoHeight * scale;
+
+        const drawFrame = () => {
+            if (!screenVideoRef.current || !webcamVideoRef.current) return;
+
+            context.clearRect(0, 0, canvas.width, canvas.height);
+            context.drawImage(
+                screenVideoRef.current!,
+                0,
+                0,
+                canvas.width,
+                canvas.height
+            );
+            const smallWidth = canvas.width / 4;
+            const smallHeight =
+                (webcamVideoRef.current!.videoHeight /
+                    webcamVideoRef.current!?.videoWidth) *
+                smallWidth;
+            context.drawImage(
+                webcamVideoRef.current!,
+                canvas.width - smallWidth - 10,
+                canvas.height - smallHeight - 10,
+                smallWidth,
+                smallHeight
+            );
+            animationFrameId = requestAnimationFrame(drawFrame);
+        };
+        drawFrame();
+
+        const canvasStream = canvas.captureStream(RECORDING_FPS);
+        recorderRef.current = new MediaRecorder(canvasStream, {
+            mimeType: "video/webm",
+        });
+
+        setTimeout(() => {
+            recorderRef.current!.start();
+        }, 200);
+
         const chunks: Blob[] = [];
         recorderRef.current.ondataavailable = (event) => {
             chunks.push(event.data);
         };
-        recorderRef.current.start();
 
         recorderRef.current.onstop = () => {
+            cancelAnimationFrame(animationFrameId);
             const blob = new Blob(chunks, { type: "video/webm" });
-
-            if (streamRef.current) {
-                streamRef.current.getTracks().forEach((track) => track.stop());
-            }
+            const filename = textToSlug(user!.name);
 
             dispatch(setIsUploadingMedia(true));
-            uploadBlob(blob, submissions[submissions.length - 1].id).then(
-                (url) => {
-                    console.log({ url });
-                }
-            );
+            uploadBlob(blob, filename).then((url) => {
+                console.log({ url });
+            });
         };
+    };
+
+    const stopStream = () => {
+        if (videoCanvasRef.current) {
+            videoCanvasRef.current.width = 0;
+            videoCanvasRef.current.height = 0;
+        }
+        if (streamRef.current) {
+            streamRef.current.getTracks().forEach((track) => track.stop());
+        }
     };
 
     const stopRecording = () => {
@@ -224,6 +320,13 @@ const TakeTestPage = () => {
         if (recorderRef.current.state === "recording") {
             recorderRef.current.stop();
         }
+    };
+
+    const stopTakingScreenshot = () => {
+        if (!screenShotIntervalRef.current) return;
+
+        clearInterval(screenShotIntervalRef.current);
+        screenShotIntervalRef.current = null;
     };
 
     const handleStartTest = async () => {
@@ -237,9 +340,29 @@ const TakeTestPage = () => {
             return;
         }
         if (canAccessCamera && canAccessScreen) {
-            startRecording();
+            if (
+                test.options.require_camera_on.record_mode ===
+                RECORD_MODE.SCREEN_SHOTS
+            ) {
+                screenShotIntervalRef.current = setInterval(() => {
+                    startTakingScreenshot();
+                }, (test.options.require_camera_on.interval_in_seconds || DEFAULT_SCREENSHOT_INTERVAL) * 1000);
+            } else {
+                startRecording();
+            }
         }
         dispatch(takeTestActions.setIsStarted(true));
+        setTimeout(() => {
+            refetchTest();
+        }, 0);
+    };
+
+    const handleStopTest = async () => {
+        stopRecording();
+        stopTakingScreenshot();
+        stopStream();
+        setAccepted(false);
+        dispatch(takeTestActions.setIsStarted(false));
         setTimeout(() => {
             refetchTest();
         }, 0);
@@ -262,6 +385,17 @@ const TakeTestPage = () => {
             // dispatch(takeTestActions.reset());
         };
     }, [test, dispatch]);
+
+    useEffect(() => {
+        return () => {
+            if (screenShotIntervalRef.current) {
+                clearInterval(screenShotIntervalRef.current);
+            }
+            if (recorderRef.current) {
+                recorderRef.current.stop();
+            }
+        };
+    }, []);
 
     useEffect(() => {
         if (isPasscodeValidated && passcode.code.length > 0) {
@@ -376,17 +510,7 @@ const TakeTestPage = () => {
                     }}
                 />
             )}
-            {canEnterDoingTest && (
-                <DoingTest
-                    onAfterSubmit={async () => {
-                        stopRecording();
-                        dispatch(takeTestActions.setIsStarted(false));
-                        setTimeout(() => {
-                            refetchTest();
-                        }, 0);
-                    }}
-                />
-            )}
+            {canEnterDoingTest && <DoingTest onAfterSubmit={handleStopTest} />}
 
             <Loading
                 isLoading={isLoadingSubmissions}
@@ -404,6 +528,9 @@ const TakeTestPage = () => {
                     screenVideoRef={screenVideoRef}
                 />
             )}
+
+            <canvas ref={videoCanvasRef} className="hidden"></canvas>
+            <canvas ref={screenShotCanvasRef} className="hidden"></canvas>
         </div>
     );
 };

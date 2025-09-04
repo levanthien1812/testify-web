@@ -271,3 +271,8 @@ export const RECORD_MODE_LABEL: Record<RECORD_MODE, string> = {
     [RECORD_MODE.VIDEO]: "Full Video",
     [RECORD_MODE.SCREEN_SHOTS]: "Periodic Screenshots",
 };
+
+export const DEFAULT_SCREENSHOT_INTERVAL = 10;
+export const RECORDING_RESOLUTION_WIDTH = 1280;
+export const RECORDING_RESOLUTION_HEIGHT = 720;
+export const RECORDING_FPS = 30;

@@ -36,7 +36,6 @@ const TestCalendar = () => {
         queryKey: ["tests"],
         queryFn: async () => {
             const data = await getTests();
-            console.log(data);
             setEventList(
                 data.tests.map((test: TestItf) => {
                     return {
