@@ -9,7 +9,7 @@ const UploadProcess = ({
             {status === "uploading" && (
                 <div className="bg-orange-50 border border-orange-500">
                     <div className="flex justify-between p-2">
-                        <p>Your...</p>
+                        <p>Your recording media is being uploaded...</p>
                         <span>{Math.round(progress)}%</span>
                     </div>
                     <div className="h-2 bg-orange-100">
@@ -22,7 +22,7 @@ const UploadProcess = ({
             )}
             {status === "completed" && (
                 <div className="bg-green-50 border border-green-500 p-2">
-                    <p>Your recording has been uploaded!</p>
+                    <p>Your recording media has been uploaded!</p>
                 </div>
             )}
         </>

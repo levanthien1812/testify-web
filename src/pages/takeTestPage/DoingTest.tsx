@@ -30,18 +30,18 @@ const DoingTest = ({ onAfterSubmit }: DoingTestProps) => {
 
     const { mutate, isLoading } = useMutation({
         mutationFn: async () => {
-            // const responseData = await submitAnswers(
-            //     test!.id,
-            //     answers,
-            //     startTime
-            // );
-            // return responseData.answers;
+            const responseData = await submitAnswers(
+                test!.id,
+                answers,
+                startTime
+            );
+            return responseData.answers;
         },
         mutationKey: [
             MUTATION_KEYS.SUBMIT_ANSWERS,
             { test_id: test!.id, date: new Date() },
         ],
-        onSuccess: (data) => {
+        onSuccess: (data: any) => {
             toast.success(TOAST_MESSAGES.TEST_SUBMITTED_SUCCESSFULLY);
             dispatch(takeTestActions.setIsEnded(true));
             onAfterSubmit();
