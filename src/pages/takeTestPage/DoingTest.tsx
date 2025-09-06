@@ -12,6 +12,7 @@ import { MUTATION_KEYS } from "../../config/constants/queryMutationKeys";
 import { useAppSelector } from "../../hooks/hooks";
 import QuestionsPagination from "./components/Pagination";
 import InfoModal from "../../components/modals/InfoModal";
+import { SubmissionItf } from "../../types/types";
 
 type DoingTestProps = {
     onAfterSubmit: () => void;
@@ -35,15 +36,16 @@ const DoingTest = ({ onAfterSubmit }: DoingTestProps) => {
                 answers,
                 startTime
             );
-            return responseData.answers;
+            return responseData;
         },
         mutationKey: [
             MUTATION_KEYS.SUBMIT_ANSWERS,
             { test_id: test!.id, date: new Date() },
         ],
-        onSuccess: (data: any) => {
+        onSuccess: (data: { submission: SubmissionItf }) => {
             toast.success(TOAST_MESSAGES.TEST_SUBMITTED_SUCCESSFULLY);
             dispatch(takeTestActions.setIsEnded(true));
+            dispatch(takeTestActions.setLatestSubmission(data.submission));
             onAfterSubmit();
         },
     });

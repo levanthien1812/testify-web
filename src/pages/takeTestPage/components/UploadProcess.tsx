@@ -1,9 +1,11 @@
 import { UploadState } from "../../../hooks/useFirebaseUpload";
 
-const UploadProcess = ({
-    status,
-    progress,
-}: Pick<UploadState, "progress" | "status">) => {
+type Props = {
+    status: UploadState["status"] | "saving-to-db";
+    progress: UploadState["progress"];
+};
+
+const UploadProcess = ({ status, progress }: Props) => {
     return (
         <>
             {status === "uploading" && (
@@ -18,6 +20,11 @@ const UploadProcess = ({
                             className="bg-orange-500 h-2 transition-all ease-in-out"
                         ></div>
                     </div>
+                </div>
+            )}
+            {status === "saving-to-db" && (
+                <div className="bg-blue-50 border border-orange-500 p-2">
+                    <p>Saving to database...</p>
                 </div>
             )}
             {status === "completed" && (

@@ -1,3 +1,4 @@
+import { SubmissionItf } from "./../../types/types";
 import { ColumnFiltersState } from "@tanstack/react-table";
 import {
     QuestionBankBodyTempItf,
@@ -494,6 +495,7 @@ export const INITIAL_TAKE_TEST_CONTEXT: TakeTestContext = {
     canAccessScreen: false,
     isUploadingMedia: false,
     uploadProgress: 0,
+    latestSubmission: null,
 };
 
 export const INITIAL_VIEW_TEST_CONTEXT: ViewTestContext = {

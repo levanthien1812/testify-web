@@ -162,6 +162,7 @@ export interface TakeTestContext {
     canAccessScreen: boolean;
     isUploadingMedia: boolean;
     uploadProgress: number;
+    latestSubmission: SubmissionItf | null;
 }
 
 export interface ViewTestContext {
