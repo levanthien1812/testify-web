@@ -66,6 +66,7 @@ const MUTATION_KEYS = {
     CREATE_TAKER_GROUP: "create-taker-group",
     UPDATE_USER: "update-user",
     ADD_TAKER_TO_GROUP: "add-taker-to-group",
+    UPDATE_SUBMISSION: "update-submission",
 } as const;
 
 export { QUERY_KEYS, MUTATION_KEYS };

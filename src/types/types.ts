@@ -4,6 +4,7 @@ import {
     PASSCODE_VALID_UNIT,
     QUESTION_LEVEL,
     QUESTION_NUMBERING_METHOD,
+    RECORD_MODE,
     ROLES,
     SHARE_OPTIONS,
     TEST_LEVEL,
@@ -354,6 +355,11 @@ export interface SubmissionItf {
     is_evaluated: boolean;
     answers?: UserAnswerItf<AnswerContentItf>[];
     shuffled_questions?: string[];
+    recording?: {
+        mode: RECORD_MODE;
+        video_url?: string;
+        screenshot_urls?: string[];
+    };
 }
 
 export type FilterState = {

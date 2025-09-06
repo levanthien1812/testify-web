@@ -145,6 +145,9 @@ const TakeTestSlice = createSlice({
         setUploadProgress(state, action) {
             state.uploadProgress = action.payload;
         },
+        setLatestSubmission(state, action) {
+            state.latestSubmission = action.payload;
+        },
         reset(state) {
             return INITIAL_TAKE_TEST_CONTEXT;
         },

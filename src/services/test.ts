@@ -7,6 +7,7 @@ import {
     PasscodeItf,
     QuestionBodyContentItf,
     QuestionBodyItf,
+    SubmissionItf,
     TakerBodyItf,
     TestBodyItf,
     TestRequestFilter,
@@ -88,6 +89,23 @@ export const getTestWithTakerAnswers = async (
     try {
         const response = await instance.get(
             `/tests/${testId}/submissions/${takerId}`
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const updateSubmission = async (
+    testId: string,
+    submissionId: string,
+    submissionBody: Pick<SubmissionItf, "recording">
+) => {
+    try {
+        const response = await instance.patch(
+            `/tests/${testId}/submissions/${submissionId}`,
+
+            submissionBody
         );
         return response.data;
     } catch (error) {

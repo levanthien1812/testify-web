@@ -1,6 +1,11 @@
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { useNavigate, useParams } from "react-router";
-import { getSubmissions, getTest, getTestByCode } from "../../services/test";
+import {
+    getSubmissions,
+    getTest,
+    getTestByCode,
+    updateSubmission,
+} from "../../services/test";
 import { PasscodeItf, SubmissionItf } from "../../types/types";
 import DoingTest from "./DoingTest";
 import {
@@ -12,7 +17,10 @@ import {
 } from "../../config/constants/tests";
 import TestInfo from "./components/TestInfo";
 import Button from "../../components/elements/Button";
-import { QUERY_KEYS } from "../../config/constants/queryMutationKeys";
+import {
+    MUTATION_KEYS,
+    QUERY_KEYS,
+} from "../../config/constants/queryMutationKeys";
 import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../stores/takeTest";
 import Loading from "../../components/loadings/Loading";
@@ -49,6 +57,7 @@ const TakeTestPage = () => {
         passcode,
         canAccessCamera,
         canAccessScreen,
+        latestSubmission,
     } = useAppSelector((state) => state.takeTest);
     const { user } = useAppSelector((state) => state.auth);
     const { setCanAccessCamera, setCanAccessScreen, setIsUploadingMedia } =
@@ -58,6 +67,8 @@ const TakeTestPage = () => {
     const [showResetPermissionsMessage, setShowReSetPermissionMessage] =
         useState(false);
     const [accepted, setAccepted] = useState(false);
+    const [screenshotUrls, setScreenshotUrls] = useState<string[]>([]);
+    const [videoUrl, setVideoUrl] = useState<string | null>(null);
 
     const screenVideoRef = useRef<HTMLVideoElement>(null);
     const webcamVideoRef = useRef<HTMLVideoElement>(null);
@@ -114,6 +125,30 @@ const TakeTestPage = () => {
         },
         retry: false,
         refetchOnWindowFocus: false,
+    });
+
+    const {
+        mutate: updateSubmissionMutate,
+        isLoading: updateSubmissionLoading,
+    } = useMutation({
+        mutationFn: async ({
+            submissionId,
+            submissionBody,
+        }: {
+            submissionId: string;
+            submissionBody: Pick<SubmissionItf, "recording">;
+        }) => {
+            const responseData = await updateSubmission(
+                testId!,
+                submissionId,
+                submissionBody
+            );
+            return responseData.submission;
+        },
+        mutationKey: [MUTATION_KEYS.UPDATE_SUBMISSION, user?.name],
+        onSuccess: (data: SubmissionItf) => {
+            console.log({ data });
+        },
     });
 
     const { isLoading: isLoadingSubmissions, refetch: refetchSubmissions } =
@@ -225,6 +260,7 @@ const TakeTestPage = () => {
 
                 uploadBlob(blob, filename).then((url) => {
                     console.log({ url });
+                    setScreenshotUrls((prev) => [...prev, url]);
                 });
             }
         });
@@ -300,6 +336,8 @@ const TakeTestPage = () => {
             dispatch(setIsUploadingMedia(true));
             uploadBlob(blob, filename).then((url) => {
                 console.log({ url });
+                setVideoUrl(url);
+                dispatch(setIsUploadingMedia(false));
             });
         };
     };
@@ -408,6 +446,24 @@ const TakeTestPage = () => {
         dispatch(takeTestActions.setIsPasscodeValidated(true));
         dispatch(takeTestActions.setIsEnteringPasscode(false));
     };
+
+    useEffect(() => {
+        if (latestSubmission && (videoUrl || screenshotUrls.length > 0)) {
+            updateSubmissionMutate({
+                submissionId: latestSubmission.id,
+                submissionBody: {
+                    recording: {
+                        mode: test!.options.require_camera_on.record_mode,
+                        ...(videoUrl ? { video_url: videoUrl } : {}),
+                        ...(screenshotUrls.length > 0
+                            ? { screenshot_urls: screenshotUrls }
+                            : {}),
+                    },
+                },
+            });
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [latestSubmission, videoUrl, screenshotUrls]);
 
     const canEnterDoingTest = useMemo(() => {
         if (!test) return false;
