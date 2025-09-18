@@ -18,6 +18,7 @@ import StatusPanel from "./components/StatusPanel";
 import { useAppSelector } from "../../hooks/hooks";
 import { AxiosError } from "axios";
 import MessageAction from "../others/MessageAction";
+import { formatTimezone } from "../../utils/time";
 
 const CreateTestPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -63,6 +64,7 @@ const CreateTestPage = () => {
 
     useEffect(() => {
         if (location.state?.givenDate) {
+            console.log(new Date(location.state.givenDate).toISOString());
             dispatch(
                 saveTestInfo({
                     datetime: new Date(location.state.givenDate).toISOString(),

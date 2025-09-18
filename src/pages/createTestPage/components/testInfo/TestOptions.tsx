@@ -541,11 +541,7 @@ const TestOptions = () => {
                                 <Select
                                     className="w-0 grow capitalize"
                                     {...register(
-                                        "options.require_screen_recorder.mode",
-                                        {
-                                            required:
-                                                "Pagination mode is required",
-                                        }
+                                        "options.require_screen_recorder.record_mode"
                                     )}
                                     options={Object.values(RECORD_MODE).map(
                                         (mode) => ({
@@ -619,7 +615,7 @@ const TestOptions = () => {
                                 <Select
                                     className="w-0 grow capitalize"
                                     {...register(
-                                        "options.require_camera_on.mode",
+                                        "options.require_camera_on.record_mode",
                                         {
                                             required:
                                                 "Pagination mode is required",

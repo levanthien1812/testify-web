@@ -5,6 +5,7 @@ import Select from "../../../../components/elements/Select";
 import { useQuery } from "react-query";
 import { getTakerGroups } from "../../../../services/user";
 import { QUERY_KEYS } from "../../../../config/constants/queryMutationKeys";
+import { shorten } from "../../../../utils/text";
 
 type TakersChoserProps = {
     label?: string;
@@ -173,6 +174,11 @@ const TakersChoser = ({
                                         - {taker.user.email}
                                     </span>
                                 </label>
+                                {taker.group && (
+                                    <span className="text-orange-600 bg-orange-50 px-2 rounded-full py-0 border border-orange-600">
+                                        {shorten(taker.group.name, 15)}
+                                    </span>
+                                )}
                             </div>
                         </div>
                     ))}

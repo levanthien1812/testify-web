@@ -4,7 +4,7 @@ import Modal, {
     ModalBody,
     ModalFooter,
 } from "../../../components/modals/Modal";
-import { Control, useFieldArray, useForm } from "react-hook-form";
+import { useFieldArray, useForm } from "react-hook-form";
 import {
     QuestionBankBodyItf,
     QuestionBankBodyTempItf,
@@ -134,7 +134,7 @@ const CreateBank = ({
         <Modal onClose={onClose} allowClickBackdropToClose={true}>
             <ModalHeader title={questionBank ? "Edit Bank" : "Create Bank"} />
             <ModalBody>
-                <form onSubmit={handleSubmit(onSubmit)} className="space-y-2">
+                <form className="space-y-2">
                     <div>
                         <Input
                             type="text"
@@ -206,21 +206,19 @@ const CreateBank = ({
                             defaultChecked={questionBank?.is_bookmarked}
                         />
                     </div>
-                    <div className="flex justify-end gap-2">
-                        <Button type="button" onClick={onClose} secondary>
-                            Cancel
-                        </Button>
-                        <Button
-                            type="submit"
-                            disabled={isCreatingBank || isUpdatingBank}
-                        >
-                            {isCreatingBank || isUpdatingBank
-                                ? "Creating..."
-                                : "Create"}
-                        </Button>
-                    </div>
                 </form>
             </ModalBody>
+            <ModalFooter>
+                <Button
+                    disabled={isCreatingBank || isUpdatingBank}
+                    onClick={handleSubmit(onSubmit)}
+                    type="submit"
+                >
+                    {isCreatingBank || isUpdatingBank
+                        ? "Creating..."
+                        : "Create"}
+                </Button>
+            </ModalFooter>
         </Modal>
     );
 };
