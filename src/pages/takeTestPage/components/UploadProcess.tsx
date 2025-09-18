@@ -1,7 +1,7 @@
 import { UploadState } from "../../../hooks/useFirebaseUpload";
 
 type Props = {
-    status: UploadState["status"] | "saving-to-db";
+    status: UploadState["status"];
     progress: UploadState["progress"];
 };
 
@@ -22,14 +22,17 @@ const UploadProcess = ({ status, progress }: Props) => {
                     </div>
                 </div>
             )}
-            {status === "saving-to-db" && (
-                <div className="bg-blue-50 border border-orange-500 p-2">
-                    <p>Saving to database...</p>
-                </div>
-            )}
             {status === "completed" && (
                 <div className="bg-green-50 border border-green-500 p-2">
                     <p>Your recording media has been uploaded!</p>
+                </div>
+            )}
+            {status === "error" && (
+                <div className="bg-red-50 border border-red-500 p-2">
+                    <p>
+                        Something went wrong while uploading your recording
+                        media!
+                    </p>
                 </div>
             )}
         </>

@@ -354,7 +354,7 @@ export const INITIAL_CREATE_TEST_CONTEXT: CreateTestContext = {
         },
     ],
     testTitle: "",
-    testDatetime: "",
+    testDatetime: formatTimezone(new Date()),
     testDescription: "",
     testDuration: 0,
     testId: "",

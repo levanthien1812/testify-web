@@ -136,6 +136,10 @@ const TestInfo = () => {
     ]);
 
     useEffect(() => {
+        setValue("datetime", formatTimezone(new Date(testDatetime)));
+    }, [testDatetime, setValue]);
+
+    useEffect(() => {
         dispatch(saveTestInfo(allValues));
         dispatch(validateTest());
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -170,6 +174,32 @@ const TestInfo = () => {
             setValue("num_questions", allValues.num_parts);
         }
     }, [allValues.num_parts, allValues.num_questions, setValue]);
+
+    useEffect(() => {
+        if (allValues.options.require_screen_recorder.enable) {
+            setValue(
+                "options.require_screen_recorder.record_mode",
+                allValues.options.require_camera_on.record_mode
+            );
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [
+        allValues.options.require_camera_on.record_mode,
+        allValues.options.require_screen_recorder.enable,
+    ]);
+
+    useEffect(() => {
+        if (allValues.options.require_camera_on.enable) {
+            setValue(
+                "options.require_camera_on.record_mode",
+                allValues.options.require_screen_recorder.record_mode
+            );
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [
+        allValues.options.require_screen_recorder.record_mode,
+        allValues.options.require_camera_on.enable,
+    ]);
 
     return (
         <Wrapper

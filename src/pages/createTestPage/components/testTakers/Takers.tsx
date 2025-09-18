@@ -7,6 +7,7 @@ import { useAppSelector } from "../../../../hooks/hooks";
 import { TakerItf } from "../../../../types/types";
 import { useDispatch } from "react-redux";
 import { createTestActions } from "../../../../stores/createTest";
+import { shorten } from "../../../../utils/text";
 
 const Takers = () => {
     const [isAddingTakers, setIsAddingTakers] = useState<boolean>(false);
@@ -26,7 +27,7 @@ const Takers = () => {
                         selectedTestTakers.map((taker, index) => (
                             <div
                                 className="px-4 py-2 bg-orange-100 flex justify-between items-center"
-                                key={Math.random()}
+                                key={taker.id}
                             >
                                 <div className="flex gap-2 items-center">
                                     <input
@@ -48,7 +49,7 @@ const Takers = () => {
                                     </label>
                                     {taker.group && (
                                         <span className="text-orange-600 bg-orange-50 px-2 rounded-full py-0 border border-orange-600">
-                                            {taker.group.name}
+                                            {shorten(taker.group.name, 15)}
                                         </span>
                                     )}
                                 </div>

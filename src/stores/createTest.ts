@@ -40,6 +40,7 @@ import {
     validateShareOption,
     validateTestInfo,
 } from "./actionFns/createTest";
+import { toast } from "react-toastify";
 
 const createTestSlice = createSlice({
     initialState: INITIAL_CREATE_TEST_CONTEXT,
@@ -84,8 +85,9 @@ const createTestSlice = createSlice({
         },
         saveTestInfo(state, action) {
             if (action.payload?.title) state.testTitle = action.payload.title;
-            if (action.payload?.datetime)
+            if (action.payload?.datetime) {
                 state.testDatetime = action.payload.datetime;
+            }
             if (action.payload?.description)
                 state.testDescription = action.payload.description;
             if (action.payload?.duration)
@@ -526,7 +528,7 @@ const createTestSlice = createSlice({
                 i < targetStep.index;
                 i++
             ) {
-                currentStepIndex = i;
+                currentStepIndex = i + 1;
                 switch (state.steps[i].value) {
                     case CREATE_TEST_STEPS.TEST_INFORMATION:
                         if (
@@ -595,7 +597,14 @@ const createTestSlice = createSlice({
                         break;
                 }
             }
-            state.currentStep = state.steps[currentStepIndex].value;
+
+            if (
+                targetStep.value !== CREATE_TEST_STEPS.TEST_INFORMATION &&
+                currentStepIndex !== targetStep.index
+            ) {
+                toast.warning("Please finish previous steps first!");
+            }
+            state.currentStep = state.steps[currentStepIndex - 1].value;
         },
         generateTestLink(state) {
             state.testLink = `${window.location.origin}/tests/${state.testId}`;
