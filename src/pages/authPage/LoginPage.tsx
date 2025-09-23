@@ -43,8 +43,6 @@ const LoginPage = () => {
 
             const { user, tokens } = data;
             dispatch(authActions.authenticate({ user, tokens }));
-
-            navigate("/");
         },
         onError: (err) => {
             if (err instanceof AxiosError) {
@@ -113,6 +111,7 @@ const LoginPage = () => {
                         error={errors?.email && errors?.email.message}
                         tabIndex={1}
                         required
+                        autoComplete="current-password"
                     />
                     <AuthInput
                         labelText="Password"
@@ -123,6 +122,7 @@ const LoginPage = () => {
                         error={errors?.password && errors?.password.message}
                         tabIndex={2}
                         required
+                        autoComplete="current-password"
                     />
                 </div>
                 <div className="w-full mt-2">

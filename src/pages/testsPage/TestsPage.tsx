@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { useQuery } from "react-query";
 import { getTests } from "../../services/test";
 import { FilterState, TestItf } from "../../types/types";
@@ -12,7 +12,6 @@ import {
 } from "@fortawesome/free-solid-svg-icons";
 import Select from "../../components/elements/Select";
 import { QUERY_KEYS } from "../../config/constants/queryMutationKeys";
-import { useSearchParams } from "react-router-dom";
 
 type TestsFetchResult = {
     tests: TestItf[];
