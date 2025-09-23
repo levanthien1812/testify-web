@@ -1,5 +1,5 @@
 import React from "react";
-import { Navigate, Outlet } from "react-router";
+import { Navigate, Outlet, useLocation } from "react-router";
 import { toast } from "react-toastify";
 import { useAppSelector } from "../../hooks/hooks";
 
@@ -7,8 +7,10 @@ const ProtectedRoute: React.FC<{
     allowedRoles: string[] | undefined;
 }> = ({ allowedRoles }) => {
     const user = useAppSelector((state) => state.auth.user);
+    const location = useLocation();
+
     if (!user) {
-        return <Navigate to={"/login"} />;
+        return <Navigate to={`/login?redirect_url=${location.pathname}`} />;
     }
 
     if (allowedRoles) {
