@@ -1,5 +1,5 @@
 import { Socket } from "socket.io-client";
-import { TakerItf, UserItf } from "./types";
+import { MakerItf, TakerItf, UserItf } from "./types";
 import {
     MESSAGE_AI_ROLE,
     MESSAGE_TYPE,
@@ -141,6 +141,7 @@ export interface ChatContext {
     chatsOpen: boolean;
     aiChatsOpen: boolean;
     isLoadingChats: boolean;
+    availableMakers: MakerItf[];
 
     setChattingWithAI: (isChattingWithAI: boolean) => void;
     setIsOpeningChatInfo: (isOpeningChatInfo: boolean) => void;
@@ -167,6 +168,7 @@ export interface ChatContext {
     setPinnedAIChat: (chatId: string, isPinned: boolean) => void;
     setChatsOpen: (chatsOpen: boolean) => void;
     setAIChatsOpen: (aiChatsOpen: boolean) => void;
+    setAvailableMakers: (makers: MakerItf[]) => void;
 }
 
 export interface Emoji {
