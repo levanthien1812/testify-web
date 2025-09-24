@@ -25,6 +25,16 @@ export const getTakers = async () => {
     }
 };
 
+export const getMakers = async () => {
+    try {
+        const response = await instance.get("users/makers");
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 export const blockUser = async (userIdToBlock: string) => {
     try {
         const response = await instance.patch(`users/block/${userIdToBlock}`);

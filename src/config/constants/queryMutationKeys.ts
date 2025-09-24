@@ -2,6 +2,7 @@ const QUERY_KEYS = {
     GET_TESTS: "get-tests",
     GET_TEST: "get-test",
     GET_AVAILABLE_TAKERS: "get-available-takers",
+    GET_AVAILABLE_MAKERS: "get-available-makers",
     GET_TEST_SUBMISSION: "get-test-submission",
     GET_TEST_STATUS: "get-test-status",
     GET_SUBMISSION_ANSWERS: "get-test-answers",

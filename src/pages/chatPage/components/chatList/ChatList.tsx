@@ -1,12 +1,17 @@
-import React from "react";
+import React, { useState } from "react";
 import Button from "../../../../components/elements/Button";
 import Loading from "../../../../components/loadings/Loading";
 import { useChatSocket } from "../ChatSocketContext";
 import AddChat from "./AddChat";
 import Chats from "./Chats";
+import { useAppSelector } from "../../../../hooks/hooks";
+import { ROLES } from "../../../../config/constants/tests";
+import RequestChat from "./RequestChat";
 
 const ChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
     const [isAddingChat, setIsAddingChat] = React.useState(false);
+    const [isRequestingChat, setIsRequestingChat] = useState(false);
+    const { user } = useAppSelector((state) => state.auth);
 
     const { chats, setChattingWithAI, isChattingWithAI } = useChatSocket();
 
@@ -18,13 +23,26 @@ const ChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
         setIsAddingChat(true);
     };
 
+    const handleClickRequestChat = () => {
+        setIsRequestingChat(true);
+    };
+
+    if (!user) return null;
+
     return (
         <div className="p-2 bg-white shadow-md relative flex-[1] min-w-[30%]">
             <div className="flex justify-between py-2 border-b border-dashed border-gray-300">
                 <h3 className="text-2xl font-bold">Messages</h3>
-                <Button size="sm" onClick={handleClickAddChat}>
-                    Add chat
-                </Button>
+                {user.role === ROLES.MAKER && (
+                    <Button size="sm" onClick={handleClickAddChat}>
+                        Add chat
+                    </Button>
+                )}
+                {user.role === ROLES.TAKER && (
+                    <Button size="sm" onClick={handleClickRequestChat}>
+                        Request chat
+                    </Button>
+                )}
             </div>
             <div className="mt-4 ">
                 <Loading
@@ -53,6 +71,9 @@ const ChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
                 </div>
             </div>
             {isAddingChat && <AddChat onClose={() => setIsAddingChat(false)} />}
+            {isRequestingChat && (
+                <RequestChat onClose={() => setIsRequestingChat(false)} />
+            )}
         </div>
     );
 };

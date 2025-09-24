@@ -10,7 +10,7 @@ import {
 import { SOCKET_EVENTS } from "../../../config/constants/socket";
 import { getNum } from "../../../utils/primitives";
 import { getChatName } from "../../../utils/chat";
-import { TakerItf } from "../../../types/types";
+import { MakerItf, TakerItf } from "../../../types/types";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../../stores/auth";
 import { useAppSelector } from "../../../hooks/hooks";
@@ -49,6 +49,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
     const [isGeneratingResponse, setIsGeneratingResponse] = useState(false);
     const [chatsOpen, setChatsOpen] = useState(false);
     const [aiChatsOpen, setAIChatsOpen] = useState(false);
+    const [availableMakers, setAvailableMakers] = useState<MakerItf[]>([]);
 
     const { user, isAuthened } = useAppSelector((state) => state.auth);
     const dispatch = useDispatch();
@@ -375,6 +376,10 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
             if (!chats) return;
         });
 
+        socket.on(SOCKET_EVENTS.RECEIVE_REQUEST_CHAT, (data) => {
+            console.log(data);
+        });
+
         return () => {
             socket.off(SOCKET_EVENTS.SEND_ONLINE_USERS);
             socket.off(SOCKET_EVENTS.GET_MESSAGE);
@@ -387,6 +392,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
             socket.off(SOCKET_EVENTS.RECEIVE_ADD_CHAT);
             socket.off(SOCKET_EVENTS.RECEIVE_BLOCK_USER);
             socket.off(SOCKET_EVENTS.RECEIVE_UNBLOCK_USER);
+            socket.off(SOCKET_EVENTS.RECEIVE_REQUEST_CHAT);
         };
     }, [socket, currentChat, chats]);
 
@@ -415,6 +421,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                 chatsOpen,
                 aiChatsOpen,
                 isLoadingChats,
+                availableMakers,
 
                 setAvailableTakers: (data) => {
                     setAvailableTakers(data);
@@ -635,6 +642,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                 },
                 setChatsOpen,
                 setAIChatsOpen,
+                setAvailableMakers,
             }}
         >
             {children}
