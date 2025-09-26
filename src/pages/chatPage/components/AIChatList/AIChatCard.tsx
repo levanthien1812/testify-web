@@ -148,6 +148,7 @@ const AIChatCard = ({ aiChat }: AIChatCardProps) => {
                         />
                     </div>
                 }
+                hideOnClickChildren
             >
                 <FontAwesomeIcon icon={faEllipsis} />
             </Popover>

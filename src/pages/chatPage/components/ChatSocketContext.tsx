@@ -7,7 +7,10 @@ import {
     ChatItf,
     MessageItf,
 } from "../../../types/chat";
-import { SOCKET_EVENTS } from "../../../config/constants/socket";
+import {
+    NOTI_TOAST_CONFIG,
+    SOCKET_EVENTS,
+} from "../../../config/constants/socket";
 import { getNum } from "../../../utils/primitives";
 import { getChatName } from "../../../utils/chat";
 import { MakerItf, TakerItf } from "../../../types/types";
@@ -21,7 +24,7 @@ import { useQuery } from "react-query";
 import { getChats, getModelsAI } from "../../../services/chat";
 import { QUERY_KEYS } from "../../../config/constants/queryMutationKeys";
 import ReactionNoti from "../../../components/notifications/ReactionNoti";
-import { SendReaction } from "../../../types/socket";
+import { NotificationItf, SendReaction } from "../../../types/socket";
 
 const ChatSocketContext = React.createContext<ChatContext | undefined>(
     undefined
@@ -50,6 +53,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
     const [chatsOpen, setChatsOpen] = useState(false);
     const [aiChatsOpen, setAIChatsOpen] = useState(false);
     const [availableMakers, setAvailableMakers] = useState<MakerItf[]>([]);
+    const [notifications, setNotifications] = useState<NotificationItf[]>([]);
 
     const { user, isAuthened } = useAppSelector((state) => state.auth);
     const dispatch = useDispatch();
@@ -194,14 +198,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                         message={message.text}
                         sender={message.sender}
                     />,
-                    {
-                        position: "top-right",
-                        autoClose: 5000,
-                        hideProgressBar: true,
-                        style: {
-                            fontFamily: "'EB Garamond', serif",
-                        },
-                    }
+                    NOTI_TOAST_CONFIG
                 );
             }
             if (currentChat && message.chat_id === currentChat!.id) {
@@ -377,6 +374,8 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
         });
 
         socket.on(SOCKET_EVENTS.RECEIVE_REQUEST_CHAT, (data) => {
+            toast(data.message, NOTI_TOAST_CONFIG);
+            setNotifications((prev) => [data, ...prev]);
             console.log(data);
         });
 
@@ -422,6 +421,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                 aiChatsOpen,
                 isLoadingChats,
                 availableMakers,
+                notifications,
 
                 setAvailableTakers: (data) => {
                     setAvailableTakers(data);
@@ -643,6 +643,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                 setChatsOpen,
                 setAIChatsOpen,
                 setAvailableMakers,
+                setNotifications,
             }}
         >
             {children}

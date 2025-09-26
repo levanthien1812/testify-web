@@ -1,3 +1,5 @@
+import { ToastOptions } from "react-toastify";
+
 export const SOCKET_EVENTS = {
     CONNECT: "connect",
     DISCONNECT: "disconnect",
@@ -35,3 +37,12 @@ export const SOCKET_EVENTS = {
     SEND_REQUEST_CHAT: "send-request-chat",
     RECEIVE_REQUEST_CHAT: "receive-request-chat",
 } as const;
+
+export const NOTI_TOAST_CONFIG: ToastOptions = {
+    position: "top-right",
+    autoClose: 5000,
+    hideProgressBar: true,
+    style: {
+        fontFamily: "'EB Garamond', serif",
+    },
+};

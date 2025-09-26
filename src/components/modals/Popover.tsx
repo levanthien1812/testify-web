@@ -6,6 +6,7 @@ interface PopoverProps {
     children: React.ReactNode;
     position?: "top" | "bottom" | "left" | "right";
     hideContent?: boolean;
+    hideOnClickChildren?: boolean;
 }
 
 const Popover: React.FC<PopoverProps> = ({
@@ -13,6 +14,7 @@ const Popover: React.FC<PopoverProps> = ({
     children,
     position = "bottom",
     hideContent = false,
+    hideOnClickChildren = false,
 }) => {
     const [isOpen, setIsOpen] = useState(false);
     const popoverRef = useRef<HTMLDivElement>(null);
@@ -55,7 +57,7 @@ const Popover: React.FC<PopoverProps> = ({
     };
 
     return (
-        <div className="relative inline-block">
+        <div className={`relative inline-block`}>
             <div
                 ref={triggerRef}
                 onClick={(e) => {
@@ -69,7 +71,12 @@ const Popover: React.FC<PopoverProps> = ({
                 <div
                     ref={popoverRef}
                     className={`absolute z-50 bg-white shadow-lg min-w-[150px] ${getPositionClasses()}`}
-                    onClick={(e) => setIsOpen(false)}
+                    onClick={(e) => {
+                        if (hideOnClickChildren) {
+                            e.stopPropagation();
+                            setIsOpen(false);
+                        }
+                    }}
                 >
                     {content}
                 </div>

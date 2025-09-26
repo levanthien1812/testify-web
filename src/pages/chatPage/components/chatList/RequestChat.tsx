@@ -13,6 +13,7 @@ import { SOCKET_EVENTS } from "../../../../config/constants/socket";
 import { useAppSelector } from "../../../../hooks/hooks";
 import { useState } from "react";
 import Input from "../../../../components/elements/Input";
+import { NOTIFICATION_TYPES } from "../../../../types/socket";
 
 const RequestChat = ({ onClose }: { onClose: () => void }) => {
     const { setAvailableMakers, socket } = useChatSocket();
@@ -49,6 +50,8 @@ const RequestChat = ({ onClose }: { onClose: () => void }) => {
                 sender_id: user.id,
                 receiver_id: maker.user.id,
                 message: requestMessage,
+                link: "/chats?tab=requests",
+                type: NOTIFICATION_TYPES.CHAT_REQUEST,
             });
         }
     };

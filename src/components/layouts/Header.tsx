@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import logoTestify from "./../../assets/images/logo-testify.png";
 import { Link, useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
@@ -10,7 +10,6 @@ import { authActions } from "../../stores/auth";
 import { AxiosError } from "axios";
 import { toast } from "react-toastify";
 import Button from "../elements/Button";
-import defaultUserPhoto from "./../../assets/images/default-user-photo.png";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
 import { ROLES } from "../../config/constants/tests";
 import { useAppSelector } from "../../hooks/hooks";
@@ -21,6 +20,7 @@ import Profile from "../../pages/profile/Profile";
 import Popover from "../modals/Popover";
 import { formatImageUrl } from "../../utils/formatImageUrl";
 import { useChatSocket } from "../../pages/chatPage/components/ChatSocketContext";
+import Notifications from "../../pages/notifications/Notifications";
 
 const Header = () => {
     const { user, isAuthened } = useAppSelector((state) => state.auth);
@@ -64,13 +64,12 @@ const Header = () => {
         }
     }, [isLoading]);
 
-    const unreadChats =
-        (chats &&
-            chats.filter(
-                (chat) =>
-                    chat.unread_messages && chat.unread_messages.length > 0
-            ).length) ||
-        0;
+    const unreadChats = useMemo(() => {
+        if (!chats) return [];
+        return chats.filter(
+            (chat) => chat.unread_messages && chat.unread_messages.length > 0
+        );
+    }, [chats]);
 
     return (
         <div className="bg-white px-2 sm:px-4 md:px-12 py-2 md:py-3 flex justify-between items-center shadow-md sticky top-0 z-10">
@@ -102,6 +101,7 @@ const Header = () => {
                             </Button>
                         </div>
                     )}
+
                     <div className="relative">
                         <Link to={"/chat"}>
                             <FontAwesomeIcon
@@ -109,12 +109,13 @@ const Header = () => {
                                 icon={faComments}
                             />
                         </Link>
-                        {unreadChats > 0 && (
+                        {unreadChats.length > 0 && (
                             <div className="absolute -top-1 -right-1 bg-red-600 text-white rounded-full flex items-center justify-center px-1 leading-none">
-                                {unreadChats}
+                                {unreadChats.length}
                             </div>
                         )}
                     </div>
+                    <Notifications />
                     <Popover
                         content={
                             <div className="bg-white shadow-md px-2 py-2 w-full space-y-1">
@@ -138,14 +139,11 @@ const Header = () => {
                             </div>
                         }
                         hideContent={hideActions}
+                        hideOnClickChildren
                     >
                         <div className="flex gap-2 items-center hover:bg-gray-100 p-1 cursor-pointer">
                             <img
-                                src={
-                                    user.photo && user.photo.length > 0
-                                        ? formatImageUrl(user.photo)
-                                        : defaultUserPhoto
-                                }
+                                src={formatImageUrl(user.photo)}
                                 alt="user"
                                 className="w-[32px] h-[32px] sm:w-[38px] sm:h-[38px] md:w-[44px] md:h-[44px] object-cover rounded-full shadow-md"
                             />

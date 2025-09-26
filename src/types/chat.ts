@@ -5,6 +5,7 @@ import {
     MESSAGE_TYPE,
     NOTIFICATION_TYPE,
 } from "../config/constants/chat";
+import { NotificationItf } from "./socket";
 
 export interface ChatAppearancesItf {
     background_color: string;
@@ -142,6 +143,7 @@ export interface ChatContext {
     aiChatsOpen: boolean;
     isLoadingChats: boolean;
     availableMakers: MakerItf[];
+    notifications: NotificationItf[];
 
     setChattingWithAI: (isChattingWithAI: boolean) => void;
     setIsOpeningChatInfo: (isOpeningChatInfo: boolean) => void;
@@ -169,6 +171,7 @@ export interface ChatContext {
     setChatsOpen: (chatsOpen: boolean) => void;
     setAIChatsOpen: (aiChatsOpen: boolean) => void;
     setAvailableMakers: (makers: MakerItf[]) => void;
+    setNotifications: (notifications: NotificationItf[]) => void;
 }
 
 export interface Emoji {
