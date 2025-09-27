@@ -30,7 +30,7 @@ const Header = () => {
     const [isViewingProfile, setIsViewingProfile] = useState(false);
     const [hideActions, setHideActions] = useState(false);
     const navigate = useNavigate();
-    const { chats } = useChatSocket();
+    const { unreadMessagesCount } = useChatSocket();
 
     const { mutate, isLoading } = useMutation({
         mutationFn: async () => {
@@ -64,13 +64,6 @@ const Header = () => {
         }
     }, [isLoading]);
 
-    const unreadChats = useMemo(() => {
-        if (!chats) return [];
-        return chats.filter(
-            (chat) => chat.unread_messages && chat.unread_messages.length > 0
-        );
-    }, [chats]);
-
     return (
         <div className="bg-white px-2 sm:px-4 md:px-12 py-2 md:py-3 flex justify-between items-center shadow-md sticky top-0 z-10">
             <Link to={"/"}>
@@ -103,15 +96,15 @@ const Header = () => {
                     )}
 
                     <div className="relative">
-                        <Link to={"/chat"}>
+                        <Link to={"/chats"}>
                             <FontAwesomeIcon
                                 className="text-2xl text-gray-500 hover:text-orange-600 transition-all duration-150"
                                 icon={faComments}
                             />
                         </Link>
-                        {unreadChats.length > 0 && (
+                        {unreadMessagesCount > 0 && (
                             <div className="absolute -top-1 -right-1 bg-red-600 text-white rounded-full flex items-center justify-center px-1 leading-none">
-                                {unreadChats.length}
+                                {unreadMessagesCount}
                             </div>
                         )}
                     </div>

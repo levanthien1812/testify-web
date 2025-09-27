@@ -23,6 +23,8 @@ const QUERY_KEYS = {
     GET_MAKERS_WITH_GROUP: "get-makers-with-group",
     GET_TESTS_TO_IMPORT_QUESTIONS_TO_BANK:
         "get-tests-to-import-questions-to-bank",
+    GET_NOTIFICATIONS: "get-notifications",
+    GET_UNREAD_COUNTS: "get-unread-counts",
 } as const;
 
 const MUTATION_KEYS = {

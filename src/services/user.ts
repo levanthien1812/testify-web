@@ -148,3 +148,13 @@ export const addTakersToGroup = async (data: AddTakersToGroup) => {
         throw error;
     }
 };
+
+export const getCounts = async () => {
+    try {
+        const response = await instance.get("users/counts");
+
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};

@@ -49,9 +49,9 @@ const RequestChat = ({ onClose }: { onClose: () => void }) => {
             socket.emit(SOCKET_EVENTS.SEND_REQUEST_CHAT, {
                 sender_id: user.id,
                 receiver_id: maker.user.id,
-                message: requestMessage,
-                link: "/chats?tab=requests",
-                type: NOTIFICATION_TYPES.CHAT_REQUEST,
+                metadata: {
+                    message: requestMessage,
+                },
             });
         }
     };

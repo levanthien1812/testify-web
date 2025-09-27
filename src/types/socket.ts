@@ -36,3 +36,9 @@ export interface NotificationItf {
     created_at: string;
     updated_at: string;
 }
+
+export interface UnreadCounts {
+    unread_messages_count: number;
+    unread_notifications_count: number;
+}
+export type ViewMode = "all" | "unread";

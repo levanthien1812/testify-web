@@ -7,6 +7,7 @@ import Chats from "./Chats";
 import { useAppSelector } from "../../../../hooks/hooks";
 import { ROLES } from "../../../../config/constants/tests";
 import RequestChat from "./RequestChat";
+import ChatTabs from "../selectedChat/ChatTabs";
 
 const ChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
     const [isAddingChat, setIsAddingChat] = React.useState(false);
@@ -31,6 +32,7 @@ const ChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
 
     return (
         <div className="p-2 bg-white shadow-md relative flex-[1] min-w-[30%]">
+            <ChatTabs />
             <div className="flex justify-between py-2 border-b border-dashed border-gray-300">
                 <h3 className="text-2xl font-bold">Messages</h3>
                 {user.role === ROLES.MAKER && (

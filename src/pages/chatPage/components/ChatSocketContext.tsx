@@ -5,6 +5,7 @@ import {
     AIModelsItf,
     ChatContext,
     ChatItf,
+    ChatTab,
     MessageItf,
 } from "../../../types/chat";
 import {
@@ -21,10 +22,16 @@ import { MESSAGE_AI_ROLE, MESSAGE_TYPE } from "../../../config/constants/chat";
 import { toast } from "react-toastify";
 import MessageNoti from "../../../components/notifications/MessageNoti";
 import { useQuery } from "react-query";
-import { getChats, getModelsAI } from "../../../services/chat";
+import { getModelsAI } from "../../../services/chat";
 import { QUERY_KEYS } from "../../../config/constants/queryMutationKeys";
 import ReactionNoti from "../../../components/notifications/ReactionNoti";
-import { NotificationItf, SendReaction } from "../../../types/socket";
+import {
+    NotificationItf,
+    SendReaction,
+    UnreadCounts,
+} from "../../../types/socket";
+import HtmlDisplay from "../../../components/elements/HtmlDisplay";
+import { getCounts } from "../../../services/user";
 
 const ChatSocketContext = React.createContext<ChatContext | undefined>(
     undefined
@@ -54,32 +61,12 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
     const [aiChatsOpen, setAIChatsOpen] = useState(false);
     const [availableMakers, setAvailableMakers] = useState<MakerItf[]>([]);
     const [notifications, setNotifications] = useState<NotificationItf[]>([]);
+    const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
+    const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
+    const [currentTab, setCurrentTab] = useState<ChatTab>("chats");
 
     const { user, isAuthened } = useAppSelector((state) => state.auth);
     const dispatch = useDispatch();
-
-    const { isLoading: isLoadingChats } = useQuery<ChatItf[]>({
-        queryFn: async () => {
-            const responseData = await getChats();
-            return responseData.chats;
-        },
-        queryKey: [QUERY_KEYS.GET_CHATS],
-        onSuccess: (data: ChatItf[]) => {
-            if (chats && chats.length > 0) return;
-            setChats(
-                data.map((chat) => {
-                    return {
-                        ...chat,
-                        scroll_position: 0,
-                        unread_messages: [],
-                        is_accessed: false,
-                        chat_name: getChatName(chat.members, user!),
-                    };
-                })
-            );
-        },
-        enabled: isAuthened && !isChattingWithAI,
-    });
 
     const { isLoading: isLoadingModels } = useQuery<AIModelsItf[]>({
         queryKey: [QUERY_KEYS.GET_AI_MODELS],
@@ -95,6 +82,18 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
         enabled: isAuthened && AIModels.length === 0,
     });
 
+    useQuery<UnreadCounts>({
+        queryKey: [QUERY_KEYS.GET_UNREAD_COUNTS],
+        queryFn: async () => {
+            const responseData = await getCounts();
+            return responseData;
+        },
+        onSuccess: (data) => {
+            setUnreadNotificationsCount(data.unread_notifications_count);
+            setUnreadMessagesCount(data.unread_messages_count);
+        },
+        enabled: isAuthened,
+    });
     useEffect(() => {
         const socket = io(
             `${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}`!
@@ -374,7 +373,11 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
         });
 
         socket.on(SOCKET_EVENTS.RECEIVE_REQUEST_CHAT, (data) => {
-            toast(data.message, NOTI_TOAST_CONFIG);
+            toast(
+                <HtmlDisplay htmlContent={data.message} />,
+                NOTI_TOAST_CONFIG
+            );
+            setUnreadNotificationsCount((prev) => prev + 1);
             setNotifications((prev) => [data, ...prev]);
             console.log(data);
         });
@@ -419,9 +422,11 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                 isGeneratingResponse,
                 chatsOpen,
                 aiChatsOpen,
-                isLoadingChats,
                 availableMakers,
                 notifications,
+                unreadNotificationsCount,
+                unreadMessagesCount,
+                currentTab,
 
                 setAvailableTakers: (data) => {
                     setAvailableTakers(data);
@@ -644,6 +649,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                 setAIChatsOpen,
                 setAvailableMakers,
                 setNotifications,
+                setCurrentTab,
             }}
         >
             {children}

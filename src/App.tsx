@@ -200,7 +200,7 @@ function App() {
                                     } as BreadcrumbHandle,
                                 },
                                 {
-                                    path: "/chat",
+                                    path: "/chats",
                                     children: [
                                         {
                                             index: true,
