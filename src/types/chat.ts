@@ -141,9 +141,11 @@ export interface ChatContext {
     isGeneratingResponse: boolean;
     chatsOpen: boolean;
     aiChatsOpen: boolean;
-    isLoadingChats: boolean;
     availableMakers: MakerItf[];
     notifications: NotificationItf[];
+    unreadNotificationsCount: number;
+    unreadMessagesCount: number;
+    currentTab: ChatTab;
 
     setChattingWithAI: (isChattingWithAI: boolean) => void;
     setIsOpeningChatInfo: (isOpeningChatInfo: boolean) => void;
@@ -171,7 +173,8 @@ export interface ChatContext {
     setChatsOpen: (chatsOpen: boolean) => void;
     setAIChatsOpen: (aiChatsOpen: boolean) => void;
     setAvailableMakers: (makers: MakerItf[]) => void;
-    setNotifications: (notifications: NotificationItf[]) => void;
+    setNotifications: React.Dispatch<React.SetStateAction<NotificationItf[]>>;
+    setCurrentTab: React.Dispatch<React.SetStateAction<ChatTab>>;
 }
 
 export interface Emoji {
@@ -189,3 +192,5 @@ export interface ReactionEmoji {
 export interface MessageAIBody {
     text: string;
 }
+
+export type ChatTab = "chats" | "requests" | "archived";

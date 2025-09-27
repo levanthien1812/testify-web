@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useQuery } from "react-query";
-import { getChatsAI } from "../../services/chat";
-import { AIChatItf } from "../../types/chat";
+import { getChats, getChatsAI } from "../../services/chat";
+import { AIChatItf, ChatItf } from "../../types/chat";
 import SelectedChat from "./components/selectedChat/SelectedChat";
 import { useChatSocket } from "./components/ChatSocketContext";
 import { SOCKET_EVENTS } from "../../config/constants/socket";
@@ -16,6 +16,7 @@ import ChatList from "./components/chatList/ChatList";
 import SelectedAIChat from "./components/selectedAIChat/SelectedAIChat";
 import { useAppSelector } from "../../hooks/hooks";
 import AIChatList from "./components/AIChatList/AIChatList";
+import { getChatName } from "../../utils/chat";
 
 const ChatPage = () => {
     const {
@@ -25,16 +26,39 @@ const ChatPage = () => {
         chats,
         setCurrentChat,
         isOpeningChatInfo,
-        isLoadingChats,
         isChattingWithAI,
         setAIChats,
         setChatsOpen,
         setAIChatsOpen,
+        setChats,
     } = useChatSocket();
     const user = useAppSelector((state) => state.auth.user);
     const params = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    const { isLoading: isLoadingChats } = useQuery<ChatItf[]>({
+        queryFn: async () => {
+            const responseData = await getChats();
+            return responseData.chats;
+        },
+        queryKey: [QUERY_KEYS.GET_CHATS],
+        onSuccess: (data: ChatItf[]) => {
+            if (chats && chats.length > 0) return;
+            setChats(
+                data.map((chat) => {
+                    return {
+                        ...chat,
+                        scroll_position: 0,
+                        unread_messages: [],
+                        is_accessed: false,
+                        chat_name: getChatName(chat.members, user!),
+                    };
+                })
+            );
+        },
+        enabled: !isChattingWithAI,
+    });
 
     const { isLoading: isLoadingAiChats } = useQuery<AIChatItf[]>({
         queryFn: async () => {
@@ -89,7 +113,7 @@ const ChatPage = () => {
                         ? chats[chatIndex].messages
                         : [],
             });
-            navigate("/chat");
+            navigate("/chats");
         }
     }, [chats, navigate, params.chatId, setCurrentChat]);
 
