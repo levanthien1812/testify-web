@@ -25,9 +25,13 @@ export const getTakers = async () => {
     }
 };
 
-export const getMakers = async () => {
+export const getMakers = async (query: {
+    excludeRequestedMakers?: boolean;
+}) => {
     try {
-        const response = await instance.get("users/makers");
+        const response = await instance.get(`users/makers`, {
+            params: query,
+        });
 
         return response.data;
     } catch (error) {

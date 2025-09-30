@@ -143,3 +143,20 @@ export enum MESSAGE_AI_ROLE {
     ASSISTANT = "assistant",
     SYSTEM = "system",
 }
+
+export enum CHAT_TAB {
+    CHATS = "chats",
+    REQUESTS = "requests",
+    ARCHIVED = "archived",
+}
+
+export enum CHAT_REQUEST_TYPE {
+    OUTGOING = "outgoing",
+    INCOMING = "incoming",
+}
+
+export enum CHAT_REQUEST_STATUS {
+    PENDING = "pending",
+    ACCEPTED = "accepted",
+    REJECTED = "rejected",
+}

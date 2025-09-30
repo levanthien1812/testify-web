@@ -1,7 +1,5 @@
 import { useEffect } from "react";
 import { useQuery } from "react-query";
-import { getChats, getChatsAI } from "../../services/chat";
-import { AIChatItf, ChatItf } from "../../types/chat";
 import SelectedChat from "./components/selectedChat/SelectedChat";
 import { useChatSocket } from "./components/ChatSocketContext";
 import { SOCKET_EVENTS } from "../../config/constants/socket";
@@ -12,11 +10,12 @@ import { UserItf } from "../../types/types";
 import { getBlockedInfo } from "../../services/user";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../stores/auth";
-import ChatList from "./components/chatList/ChatList";
 import SelectedAIChat from "./components/selectedAIChat/SelectedAIChat";
 import { useAppSelector } from "../../hooks/hooks";
-import AIChatList from "./components/AIChatList/AIChatList";
-import { getChatName } from "../../utils/chat";
+import { useSearchParams } from "react-router-dom";
+import ChatSidebar from "./components/chatSidebar/ChatSidebar";
+import AIChatSidebar from "./components/AIChatSidebar/AIChatSidebar";
+import { CHAT_TAB } from "../../config/constants/chat";
 
 const ChatPage = () => {
     const {
@@ -27,50 +26,15 @@ const ChatPage = () => {
         setCurrentChat,
         isOpeningChatInfo,
         isChattingWithAI,
-        setAIChats,
         setChatsOpen,
         setAIChatsOpen,
-        setChats,
+        setCurrentTab,
     } = useChatSocket();
     const user = useAppSelector((state) => state.auth.user);
     const params = useParams();
     const dispatch = useDispatch();
     const navigate = useNavigate();
-
-    const { isLoading: isLoadingChats } = useQuery<ChatItf[]>({
-        queryFn: async () => {
-            const responseData = await getChats();
-            return responseData.chats;
-        },
-        queryKey: [QUERY_KEYS.GET_CHATS],
-        onSuccess: (data: ChatItf[]) => {
-            if (chats && chats.length > 0) return;
-            setChats(
-                data.map((chat) => {
-                    return {
-                        ...chat,
-                        scroll_position: 0,
-                        unread_messages: [],
-                        is_accessed: false,
-                        chat_name: getChatName(chat.members, user!),
-                    };
-                })
-            );
-        },
-        enabled: !isChattingWithAI,
-    });
-
-    const { isLoading: isLoadingAiChats } = useQuery<AIChatItf[]>({
-        queryFn: async () => {
-            const responseData = await getChatsAI();
-            return responseData.chats;
-        },
-        queryKey: [QUERY_KEYS.GET_AI_CHATS],
-        onSuccess: (data: AIChatItf[]) => {
-            setAIChats(data);
-        },
-        enabled: isChattingWithAI,
-    });
+    const [searchParams, setSearchParams] = useSearchParams();
 
     useQuery({
         queryFn: async () => {
@@ -126,14 +90,23 @@ const ChatPage = () => {
         };
     }, [isChattingWithAI, setChatsOpen, setAIChatsOpen]);
 
+    useEffect(() => {
+        if (searchParams.has("tab")) {
+            const tab = searchParams.get("tab");
+            if (tab === CHAT_TAB.CHATS) setCurrentTab(CHAT_TAB.CHATS);
+            else if (tab === CHAT_TAB.REQUESTS)
+                setCurrentTab(CHAT_TAB.REQUESTS);
+            else if (tab === CHAT_TAB.ARCHIVED)
+                setCurrentTab(CHAT_TAB.ARCHIVED);
+        }
+    }, [searchParams, setCurrentTab]);
+
     return (
         <div
             className={`md:mt-6 shadow-md w-full md:w-5/6 h-[80vh] xl:w-3/4 2xl:w-2/3 mx-auto flex p-2 bg-slate-50 gap-2 relative md:static`}
         >
-            {!isChattingWithAI && <ChatList isLoadingChats={isLoadingChats} />}
-            {isChattingWithAI && (
-                <AIChatList isLoadingChats={isLoadingAiChats} />
-            )}
+            {!isChattingWithAI && <ChatSidebar />}
+            {isChattingWithAI && <AIChatSidebar />}
             {((!currentChat && !isChattingWithAI) ||
                 (!currentAIChat && isChattingWithAI)) && (
                 <p className="text-center mt-8 text-gray-500 text-xl grow hidden md:block">

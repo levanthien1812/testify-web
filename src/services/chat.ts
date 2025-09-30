@@ -4,10 +4,14 @@ import { CHAT_OPTIONS } from "../config/constants/chat";
 import {
     AIChatBodyItf,
     ChatBodyItf,
+    ChatRequestItf,
+    ChatRequestStatus,
+    ChatRequestType,
     MessageAIBody,
     MessageBody,
     UpdateAIChat,
 } from "../types/chat";
+import { getQueryString } from "../utils/object";
 
 export const getChats = async () => {
     try {
@@ -295,6 +299,53 @@ export const getModelsAI = async () => {
 export const deleteChatAI = async (chatId: string) => {
     try {
         const response = await instance.delete(`/chats/ai/${chatId}`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const createChatRequest = async (
+    body: Pick<ChatRequestItf, "receiver_id" | "message">
+) => {
+    try {
+        const response = await instance.post("/chat-requests", body);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const getChatRequests = async (query: {
+    type: ChatRequestType;
+    status: ChatRequestStatus;
+}) => {
+    try {
+        const response = await instance.get(`/chat-requests`, {
+            params: query,
+        });
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const acceptChatRequest = async (requestId: string) => {
+    try {
+        const response = await instance.patch(
+            `/chat-requests/${requestId}/accept`
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const rejectChatRequest = async (requestId: string) => {
+    try {
+        const response = await instance.patch(
+            `/chat-requests/${requestId}/reject`
+        );
         return response.data;
     } catch (error) {
         throw error;

@@ -7,18 +7,40 @@ import Chats from "./Chats";
 import { useAppSelector } from "../../../../hooks/hooks";
 import { ROLES } from "../../../../config/constants/tests";
 import RequestChat from "./RequestChat";
-import ChatTabs from "../selectedChat/ChatTabs";
+import { useQuery } from "react-query";
+import { ChatItf } from "../../../../types/chat";
+import { getChats } from "../../../../services/chat";
+import { QUERY_KEYS } from "../../../../config/constants/queryMutationKeys";
+import { getChatName } from "../../../../utils/chat";
 
-const ChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
+const ChatList = () => {
     const [isAddingChat, setIsAddingChat] = React.useState(false);
     const [isRequestingChat, setIsRequestingChat] = useState(false);
     const { user } = useAppSelector((state) => state.auth);
 
-    const { chats, setChattingWithAI, isChattingWithAI } = useChatSocket();
+    const { chats, isChattingWithAI, setChats } = useChatSocket();
 
-    const handleClickChatWithAI = () => {
-        setChattingWithAI(true);
-    };
+    const { isLoading: isLoadingChats } = useQuery<ChatItf[]>({
+        queryFn: async () => {
+            const responseData = await getChats();
+            return responseData.chats;
+        },
+        queryKey: [QUERY_KEYS.GET_CHATS],
+        onSuccess: (data: ChatItf[]) => {
+            if (chats && chats.length > 0) return;
+            setChats(
+                data.map((chat) => {
+                    return {
+                        ...chat,
+                        scroll_position: 0,
+                        unread_messages: [],
+                        is_accessed: false,
+                        chat_name: getChatName(chat.members, user!),
+                    };
+                })
+            );
+        },
+    });
 
     const handleClickAddChat = () => {
         setIsAddingChat(true);
@@ -31,8 +53,7 @@ const ChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
     if (!user) return null;
 
     return (
-        <div className="p-2 bg-white shadow-md relative flex-[1] min-w-[30%]">
-            <ChatTabs />
+        <div>
             <div className="flex justify-between py-2 border-b border-dashed border-gray-300">
                 <h3 className="text-2xl font-bold">Messages</h3>
                 {user.role === ROLES.MAKER && (
@@ -58,19 +79,6 @@ const ChatList = ({ isLoadingChats }: { isLoadingChats: boolean }) => {
                 )}
 
                 {chats && chats.length > 0 && !isChattingWithAI && <Chats />}
-
-                <div className="absolute bottom-3 left-3">
-                    <Button
-                        style={{
-                            backgroundColor: "#4158D0",
-                            backgroundImage:
-                                "linear-gradient(43deg, #4158D0 0%, #C850C0 46%, #FFCC70 100%)",
-                        }}
-                        onClick={handleClickChatWithAI}
-                    >
-                        Chat with AI
-                    </Button>
-                </div>
             </div>
             {isAddingChat && <AddChat onClose={() => setIsAddingChat(false)} />}
             {isRequestingChat && (

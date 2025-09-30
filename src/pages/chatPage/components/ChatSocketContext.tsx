@@ -18,7 +18,11 @@ import { MakerItf, TakerItf } from "../../../types/types";
 import { useDispatch } from "react-redux";
 import { authActions } from "../../../stores/auth";
 import { useAppSelector } from "../../../hooks/hooks";
-import { MESSAGE_AI_ROLE, MESSAGE_TYPE } from "../../../config/constants/chat";
+import {
+    CHAT_TAB,
+    MESSAGE_AI_ROLE,
+    MESSAGE_TYPE,
+} from "../../../config/constants/chat";
 import { toast } from "react-toastify";
 import MessageNoti from "../../../components/notifications/MessageNoti";
 import { useQuery } from "react-query";
@@ -32,6 +36,7 @@ import {
 } from "../../../types/socket";
 import HtmlDisplay from "../../../components/elements/HtmlDisplay";
 import { getCounts } from "../../../services/user";
+import Cookies from "js-cookie";
 
 const ChatSocketContext = React.createContext<ChatContext | undefined>(
     undefined
@@ -63,7 +68,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
     const [notifications, setNotifications] = useState<NotificationItf[]>([]);
     const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
     const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
-    const [currentTab, setCurrentTab] = useState<ChatTab>("chats");
+    const [currentTab, setCurrentTab] = useState<ChatTab>(CHAT_TAB.CHATS);
 
     const { user, isAuthened } = useAppSelector((state) => state.auth);
     const dispatch = useDispatch();
@@ -96,7 +101,12 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
     });
     useEffect(() => {
         const socket = io(
-            `${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}`!
+            `${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}`!,
+            {
+                auth: {
+                    token: Cookies.get("access_token"),
+                },
+            }
         );
         setSocket(socket);
 
@@ -372,14 +382,21 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
             if (!chats) return;
         });
 
-        socket.on(SOCKET_EVENTS.RECEIVE_REQUEST_CHAT, (data) => {
+        const notificationAction = (data: NotificationItf) => {
             toast(
                 <HtmlDisplay htmlContent={data.message} />,
                 NOTI_TOAST_CONFIG
             );
             setUnreadNotificationsCount((prev) => prev + 1);
             setNotifications((prev) => [data, ...prev]);
-            console.log(data);
+        };
+
+        socket.on(SOCKET_EVENTS.RECEIVE_REQUEST_CHAT, (data) => {
+            notificationAction(data);
+        });
+
+        socket.on(SOCKET_EVENTS.RECEIVE_CHAT_REQUEST_ACCEPTED, (data) => {
+            notificationAction(data);
         });
 
         return () => {
@@ -395,6 +412,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
             socket.off(SOCKET_EVENTS.RECEIVE_BLOCK_USER);
             socket.off(SOCKET_EVENTS.RECEIVE_UNBLOCK_USER);
             socket.off(SOCKET_EVENTS.RECEIVE_REQUEST_CHAT);
+            socket.off(SOCKET_EVENTS.RECEIVE_CHAT_REQUEST_ACCEPTED);
         };
     }, [socket, currentChat, chats]);
 
