@@ -1,6 +1,9 @@
 import { Socket } from "socket.io-client";
 import { MakerItf, TakerItf, UserItf } from "./types";
 import {
+    CHAT_REQUEST_STATUS,
+    CHAT_REQUEST_TYPE,
+    CHAT_TAB,
     MESSAGE_AI_ROLE,
     MESSAGE_TYPE,
     NOTIFICATION_TYPE,
@@ -193,4 +196,25 @@ export interface MessageAIBody {
     text: string;
 }
 
-export type ChatTab = "chats" | "requests" | "archived";
+export type ChatTab = CHAT_TAB.CHATS | CHAT_TAB.REQUESTS | CHAT_TAB.ARCHIVED;
+
+export interface ChatRequestItf {
+    id: string;
+    sender_id: string;
+    receiver_id: string;
+    message: string;
+    status: ChatRequestStatus;
+    created_at: string;
+    updated_at: string;
+    sender: Pick<UserItf, "id" | "name" | "photo">;
+    receiver: Pick<UserItf, "id" | "name" | "photo">;
+}
+
+export type ChatRequestType =
+    | CHAT_REQUEST_TYPE.INCOMING
+    | CHAT_REQUEST_TYPE.OUTGOING;
+
+export type ChatRequestStatus =
+    | CHAT_REQUEST_STATUS.PENDING
+    | CHAT_REQUEST_STATUS.ACCEPTED
+    | CHAT_REQUEST_STATUS.REJECTED;

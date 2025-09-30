@@ -4,26 +4,41 @@ import Modal, {
     ModalHeader,
 } from "../../../../components/modals/Modal";
 import Button from "../../../../components/elements/Button";
-import { useQuery } from "react-query";
+import { useMutation, useQuery } from "react-query";
 import { MakerItf, TakerItf } from "../../../../types/types";
 import { getMakers } from "../../../../services/user";
 import { useChatSocket } from "../ChatSocketContext";
-import { QUERY_KEYS } from "../../../../config/constants/queryMutationKeys";
-import { SOCKET_EVENTS } from "../../../../config/constants/socket";
-import { useAppSelector } from "../../../../hooks/hooks";
+import {
+    MUTATION_KEYS,
+    QUERY_KEYS,
+} from "../../../../config/constants/queryMutationKeys";
 import { useState } from "react";
 import Input from "../../../../components/elements/Input";
-import { NOTIFICATION_TYPES } from "../../../../types/socket";
+import { createChatRequest } from "../../../../services/chat";
 
 const RequestChat = ({ onClose }: { onClose: () => void }) => {
-    const { setAvailableMakers, socket } = useChatSocket();
+    const { setAvailableMakers } = useChatSocket();
     const [makerToRequest, setMakerToRequest] = useState<MakerItf | null>(null);
-    const { user } = useAppSelector((state) => state.auth);
     const [requestMessage, setRequestMessage] = useState("");
+
+    const { mutate: sendRequestMutate, isLoading: isSendingRequest } =
+        useMutation({
+            mutationFn: async () => {
+                const responseData = await createChatRequest({
+                    receiver_id: makerToRequest!.user.id,
+                    message: requestMessage,
+                });
+            },
+            mutationKey: MUTATION_KEYS.CREATE_CHAT_REQUEST,
+            onSuccess: () => {
+                setMakerToRequest(null);
+                setRequestMessage("");
+            },
+        });
 
     const { data: makers, isFetching } = useQuery<TakerItf[]>({
         queryFn: async () => {
-            const data = await getMakers();
+            const data = await getMakers({ excludeRequestedMakers: true });
             return data.makers;
         },
         onSuccess: (data) => {
@@ -37,23 +52,15 @@ const RequestChat = ({ onClose }: { onClose: () => void }) => {
             setMakerToRequest(maker);
         } else {
             if (makerToRequest.id === maker.id) {
-                handleSendRequest(maker);
+                handleSendRequest();
                 setMakerToRequest(null);
                 setRequestMessage("");
             }
         }
     };
 
-    const handleSendRequest = (maker: MakerItf) => {
-        if (socket && user) {
-            socket.emit(SOCKET_EVENTS.SEND_REQUEST_CHAT, {
-                sender_id: user.id,
-                receiver_id: maker.user.id,
-                metadata: {
-                    message: requestMessage,
-                },
-            });
-        }
+    const handleSendRequest = () => {
+        sendRequestMutate();
     };
 
     return (
@@ -86,7 +93,9 @@ const RequestChat = ({ onClose }: { onClose: () => void }) => {
                                                 handleClickRequest(maker)
                                             }
                                         >
-                                            Request
+                                            {isSendingRequest
+                                                ? "Sending request..."
+                                                : "Request"}
                                         </Button>
                                     </div>
                                 </div>

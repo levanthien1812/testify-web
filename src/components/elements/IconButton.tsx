@@ -7,6 +7,8 @@ type IconButtonProps = {
     icon: IconProp;
     type?: "button" | "submit" | "reset";
     size?: "sm" | "md" | "lg";
+    className?: string;
+    disabled?: boolean;
 };
 
 const IconButton = ({
@@ -14,6 +16,8 @@ const IconButton = ({
     icon,
     type = "button",
     size = "md",
+    className = "text-gray-400 hover:text-orange-600",
+    disabled = false,
 }: IconButtonProps) => {
     return (
         <button
@@ -23,8 +27,9 @@ const IconButton = ({
                     : size === "md"
                     ? "w-6 h-6"
                     : "w-8 h-8"
-            } flex justify-center items-center hover:bg-gray-200 leading-none`}
+            } flex justify-center items-center hover:bg-gray-200 leading-none disabled:cursor-not-allowed disabled:opacity-50`}
             onClick={onClick}
+            disabled={disabled}
             type={type}
         >
             <FontAwesomeIcon
@@ -35,7 +40,7 @@ const IconButton = ({
                         : size === "md"
                         ? "text-sm"
                         : "text-base"
-                } text-gray-400 hover:text-orange-600`}
+                } ${className}`}
             />
         </button>
     );

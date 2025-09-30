@@ -36,6 +36,7 @@ export const SOCKET_EVENTS = {
     RECEIVE_UNBLOCK_USER: "receive-unblock-user",
     SEND_REQUEST_CHAT: "send-request-chat",
     RECEIVE_REQUEST_CHAT: "receive-request-chat",
+    RECEIVE_CHAT_REQUEST_ACCEPTED: "receive-chat-request-accepted",
 } as const;
 
 export const NOTI_TOAST_CONFIG: ToastOptions = {

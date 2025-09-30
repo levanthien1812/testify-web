@@ -25,6 +25,7 @@ const QUERY_KEYS = {
         "get-tests-to-import-questions-to-bank",
     GET_NOTIFICATIONS: "get-notifications",
     GET_UNREAD_COUNTS: "get-unread-counts",
+    GET_CHAT_REQUESTS: "get-chat-requests",
 } as const;
 
 const MUTATION_KEYS = {
@@ -70,6 +71,9 @@ const MUTATION_KEYS = {
     UPDATE_USER: "update-user",
     ADD_TAKER_TO_GROUP: "add-taker-to-group",
     UPDATE_SUBMISSION: "update-submission",
+    CREATE_CHAT_REQUEST: "create-chat-request",
+    ACCEPT_CHAT_REQUEST: "accept-chat-request",
+    REJECT_CHAT_REQUEST: "reject-chat-request",
 } as const;
 
 export { QUERY_KEYS, MUTATION_KEYS };
