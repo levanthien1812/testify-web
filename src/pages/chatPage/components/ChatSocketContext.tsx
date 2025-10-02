@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { io, Socket } from "socket.io-client";
 import {
     AIChatItf,
@@ -67,7 +67,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
     const [availableMakers, setAvailableMakers] = useState<MakerItf[]>([]);
     const [notifications, setNotifications] = useState<NotificationItf[]>([]);
     const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
-    const [unreadMessagesCount, setUnreadMessagesCount] = useState(0);
+    const [unreadChatsCount, setUnreadChatsCount] = useState(0);
     const [currentTab, setCurrentTab] = useState<ChatTab>(CHAT_TAB.CHATS);
 
     const { user, isAuthened } = useAppSelector((state) => state.auth);
@@ -87,6 +87,38 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
         enabled: isAuthened && AIModels.length === 0,
     });
 
+    const appendMessage = useCallback(
+        (message: MessageItf) => {
+            if (!chats || chats.length === 0) return;
+            if (currentChat && message.chat_id === currentChat!.id) {
+                setCurrentChat(
+                    (prev) =>
+                        ({
+                            ...prev,
+                            messages: [...currentChat.messages, message],
+                        } as ChatItf)
+                );
+            }
+            const updatedChats = JSON.parse(JSON.stringify(chats));
+            const chatIndex = chats.findIndex(
+                (ch) => ch.id === message.chat_id
+            );
+            if (chatIndex < 0) return;
+            updatedChats[chatIndex].last_message = message;
+            if (
+                updatedChats[chatIndex].unread_messages &&
+                currentChat?.id !== message.chat_id
+            ) {
+                updatedChats[chatIndex].unread_messages!.push(message);
+            } else {
+                updatedChats[chatIndex].unread_messages = [];
+            }
+
+            setChats(updatedChats);
+        },
+        [chats, currentChat]
+    );
+
     useQuery<UnreadCounts>({
         queryKey: [QUERY_KEYS.GET_UNREAD_COUNTS],
         queryFn: async () => {
@@ -95,10 +127,11 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
         },
         onSuccess: (data) => {
             setUnreadNotificationsCount(data.unread_notifications_count);
-            setUnreadMessagesCount(data.unread_messages_count);
+            setUnreadChatsCount(data.unread_chats_count);
         },
         enabled: isAuthened,
     });
+
     useEffect(() => {
         const socket = io(
             `${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}`!,
@@ -210,31 +243,8 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                     NOTI_TOAST_CONFIG
                 );
             }
-            if (currentChat && message.chat_id === currentChat!.id) {
-                setCurrentChat(
-                    (prev) =>
-                        ({
-                            ...prev,
-                            messages: [...currentChat.messages, message],
-                        } as ChatItf)
-                );
-            }
-            const updatedChats = JSON.parse(JSON.stringify(chats));
-            const chatIndex = chats.findIndex(
-                (ch) => ch.id === message.chat_id
-            );
-            if (chatIndex < 0) return;
-            updatedChats[chatIndex].last_message = message;
-            if (
-                updatedChats[chatIndex].unread_messages &&
-                currentChat?.id !== message.chat_id
-            ) {
-                updatedChats[chatIndex].unread_messages!.push(message);
-            } else {
-                updatedChats[chatIndex].unread_messages = [];
-            }
 
-            setChats(updatedChats);
+            appendMessage(message);
         });
 
         socket.on(SOCKET_EVENTS.DELETE_MESSAGE, (message: MessageItf) => {
@@ -443,7 +453,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                 availableMakers,
                 notifications,
                 unreadNotificationsCount,
-                unreadMessagesCount,
+                unreadChatsCount,
                 currentTab,
 
                 setAvailableTakers: (data) => {
@@ -477,6 +487,9 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                 sendMessage: (message: MessageItf) => {
                     if (!socket) return;
                     socket.emit(SOCKET_EVENTS.SEND_MESSAGE, message);
+                },
+                appendMessage: (message: MessageItf) => {
+                    appendMessage(message);
                 },
                 removeMessage: (messageId: string) => {
                     setCurrentChat(

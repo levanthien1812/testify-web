@@ -13,3 +13,34 @@ export const getNotifications = async (query: {
         throw error;
     }
 };
+
+export const readNotification = async (notificationId: string) => {
+    try {
+        const response = await instance.patch(
+            `/notifications/${notificationId}/read`
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const readAllNotifications = async () => {
+    try {
+        const response = await instance.patch(`/notifications/read-all`);
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const deleteNotification = async (notificationId: string) => {
+    try {
+        const response = await instance.delete(
+            `/notifications/${notificationId}`
+        );
+        return response.data;
+    } catch (error) {
+        throw error;
+    }
+};

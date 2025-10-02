@@ -30,7 +30,7 @@ const Header = () => {
     const [isViewingProfile, setIsViewingProfile] = useState(false);
     const [hideActions, setHideActions] = useState(false);
     const navigate = useNavigate();
-    const { unreadMessagesCount } = useChatSocket();
+    const { unreadChatsCount } = useChatSocket();
 
     const { mutate, isLoading } = useMutation({
         mutationFn: async () => {
@@ -102,9 +102,9 @@ const Header = () => {
                                 icon={faComments}
                             />
                         </Link>
-                        {unreadMessagesCount > 0 && (
+                        {unreadChatsCount > 0 && (
                             <div className="absolute -top-1 -right-1 bg-red-600 text-white rounded-full flex items-center justify-center px-1 leading-none">
-                                {unreadMessagesCount}
+                                {unreadChatsCount}
                             </div>
                         )}
                     </div>
