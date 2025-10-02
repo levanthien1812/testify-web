@@ -147,7 +147,7 @@ export interface ChatContext {
     availableMakers: MakerItf[];
     notifications: NotificationItf[];
     unreadNotificationsCount: number;
-    unreadMessagesCount: number;
+    unreadChatsCount: number;
     currentTab: ChatTab;
 
     setChattingWithAI: (isChattingWithAI: boolean) => void;
@@ -158,6 +158,7 @@ export interface ChatContext {
     setAIChats: React.Dispatch<React.SetStateAction<AIChatItf[]>>;
     updateChatInChats: (chatId: string, chatBody: Partial<ChatItf>) => void;
     sendMessage: (message: MessageItf) => void;
+    appendMessage: (message: MessageItf) => void;
     removeMessage: (messageId: string) => void;
     emitTyping: (isTyping: boolean, chatId: string) => void;
     findSearchResult: () => void;

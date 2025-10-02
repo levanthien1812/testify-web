@@ -42,12 +42,6 @@ const NotificationList = () => {
             refetchOnWindowFocus: false,
         });
 
-    const handleClickNotification = (notification: NotificationItf) => {
-        if (notification.link) {
-            navigate(notification.link);
-        }
-    };
-
     useEffect(() => {
         const lastNotification =
             notifications.length > 0
@@ -115,7 +109,7 @@ const NotificationList = () => {
             </div>
             <hr className="my-2" />
             <div
-                className="space-y-1 custom-scrollbar-y max-h-[30vh]"
+                className="space-y-1 custom-scrollbar-y overflow-x-visible max-h-[40vh]"
                 ref={notificationContainerRef}
             >
                 {notifications &&
@@ -123,7 +117,6 @@ const NotificationList = () => {
                     notifications.map((notification) => (
                         <NotificationItem
                             notification={notification}
-                            onClick={handleClickNotification}
                             key={notification.id}
                             ref={(el) => {
                                 notificationsRef.current[notification.id] = el;

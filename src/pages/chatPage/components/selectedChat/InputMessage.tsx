@@ -22,6 +22,7 @@ const InputMessage = () => {
         currentChat: chat,
         setCurrentChat,
         sendMessage: sendMessageWS,
+        appendMessage,
         updateChatInChats,
         emitTyping,
     } = useChatSocket();
@@ -50,15 +51,17 @@ const InputMessage = () => {
             },
             mutationKey: [MUTATION_KEYS.SEND_MESSAGE, chat!.id],
             onSuccess: (data) => {
-                sendMessageWS(data);
-                setCurrentMessageText("");
-                setImages(null);
-                setPreviewURLs([]);
                 updateChatInChats(chat!.id, { message_being_replied: null });
                 setCurrentChat({
                     ...chat,
                     message_being_replied: null,
                 } as ChatItf);
+
+                appendMessage(data);
+                sendMessageWS(data);
+                setCurrentMessageText("");
+                setImages(null);
+                setPreviewURLs([]);
             },
         });
 
