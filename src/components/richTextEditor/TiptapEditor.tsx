@@ -285,6 +285,7 @@ const TextEditor = ({
             )}
             {allowZoom && (
                 <button
+                    type="button"
                     className="absolute bottom-1 right-1 bg-gray-100 rounded-sm py-0 px-1 leading-none hover:bg-gray-200 active:text-orange-600"
                     onClick={() => setIsZoomed(true)}
                 >

@@ -13,6 +13,8 @@ import {
     deleteNotification,
     readNotification,
 } from "../../services/notification";
+import { useAppSelector } from "../../hooks/hooks";
+import { useChatSocket } from "../chatPage/components/ChatSocketContext";
 
 type Props = {
     notification: NotificationItf;
@@ -22,6 +24,9 @@ const NotificationItem = forwardRef<HTMLDivElement, Props>(
     ({ notification }: Props, ref) => {
         const [isHovering, setIsHovering] = React.useState(false);
         const navigate = useNavigate();
+        const { user } = useAppSelector((state) => state.auth);
+        const { setNotifications, setUnreadNotificationsCount } =
+            useChatSocket();
 
         const {
             mutate: deleteNotificationMutate,
@@ -32,7 +37,12 @@ const NotificationItem = forwardRef<HTMLDivElement, Props>(
                 return responseData;
             },
             onSuccess: () => {
-                console.log("Notification deleted successfully");
+                setNotifications((prev) =>
+                    prev.filter((noti) => noti.id !== notification.id)
+                );
+                if (!isRead) {
+                    setUnreadNotificationsCount((prev) => prev - 1);
+                }
             },
         });
 
@@ -44,8 +54,15 @@ const NotificationItem = forwardRef<HTMLDivElement, Props>(
                 const responseData = await readNotification(notification.id);
                 return responseData;
             },
-            onSuccess: () => {
-                console.log("Notification marked as read successfully");
+            onSuccess: (data) => {
+                setNotifications((prev) =>
+                    prev.map((noti) =>
+                        noti.id === data.notification.id
+                            ? data.notification
+                            : noti
+                    )
+                );
+                setUnreadNotificationsCount((prev) => prev - 1);
             },
         });
 
@@ -60,14 +77,20 @@ const NotificationItem = forwardRef<HTMLDivElement, Props>(
         };
 
         const handleClickNotification = () => {
+            if (!notification) return;
             if (notification.link) {
                 navigate(notification.link);
             }
+            // markNotificationAsReadMutate();
         };
+
+        const isRead = notification.read_by.includes(user!.id);
 
         return (
             <div
-                className="flex gap-2 bg-white p-2 items-center shadow-md cursor-pointer hover:bg-orange-100"
+                className={`flex gap-2 ${
+                    isRead ? "bg-gray-100" : "white"
+                } p-2 items-center shadow-md cursor-pointer hover:bg-orange-100`}
                 key={notification.id}
                 onClick={handleClickNotification}
                 onMouseEnter={() => setIsHovering(true)}
@@ -94,13 +117,30 @@ const NotificationItem = forwardRef<HTMLDivElement, Props>(
                     <Popover
                         content={
                             <div className="px-1 py-1 flex flex-col gap-1 bg-white bg-opacity-45">
-                                <Button className="" secondary size="sm">
-                                    Mark as read
-                                </Button>
-                                <Button className="" secondary size="sm">
+                                {!isRead && (
+                                    <Button
+                                        className=""
+                                        secondary
+                                        size="sm"
+                                        onClick={handleClickMarkAsRead}
+                                    >
+                                        Mark as read
+                                    </Button>
+                                )}
+                                <Button
+                                    className=""
+                                    secondary
+                                    size="sm"
+                                    onClick={handleClickDelete}
+                                >
                                     Delete
                                 </Button>
-                                <Button className="" secondary size="sm">
+                                <Button
+                                    className=""
+                                    secondary
+                                    size="sm"
+                                    onClick={handleClickHide}
+                                >
                                     Hide
                                 </Button>
                             </div>

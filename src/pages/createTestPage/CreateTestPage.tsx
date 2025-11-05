@@ -10,7 +10,7 @@ import { CREATE_TEST_STEPS } from "../../config/constants/tests";
 import { QUERY_KEYS } from "../../config/constants/queryMutationKeys";
 import TestQuestions from "./components/TestQuestions";
 import TestAnswers from "./components/TestAnswers";
-import TestTakers from "./components/TestTakers";
+import TestSharing from "./components/TestSharing";
 import { createTestActions } from "../../stores/createTest";
 import { useDispatch } from "react-redux";
 import Loading from "../../components/loadings/Loading";
@@ -126,7 +126,7 @@ const CreateTestPage = () => {
                             <TestAnswers />
                         )}
                         {currentStep === CREATE_TEST_STEPS.TEST_TAKERS && (
-                            <TestTakers />
+                            <TestSharing />
                         )}
                     </div>
                 </div>

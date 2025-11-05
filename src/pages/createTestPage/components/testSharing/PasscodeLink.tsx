@@ -6,18 +6,14 @@ import Modal, {
 } from "../../../../components/modals/Modal";
 import Button from "../../../../components/elements/Button";
 import Input from "../../../../components/elements/Input";
-import { useMutation, useQuery } from "react-query";
-import {
-    MUTATION_KEYS,
-    QUERY_KEYS,
-} from "../../../../config/constants/queryMutationKeys";
-import { checkPasscode, getTestByCode } from "../../../../services/test";
+import { useQuery } from "react-query";
+import { QUERY_KEYS } from "../../../../config/constants/queryMutationKeys";
+import { getTestByCode } from "../../../../services/test";
 import { useDispatch } from "react-redux";
 import { takeTestActions } from "../../../../stores/takeTest";
 import { PasscodeItf } from "../../../../types/types";
 import { useAppSelector } from "../../../../hooks/hooks";
 import useLocalStorage from "../../../../hooks/useLocalStorage";
-import { useNavigate } from "react-router";
 
 type PasscodeLinkProps = {
     onClose: () => void;

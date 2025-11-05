@@ -37,6 +37,8 @@ export const SOCKET_EVENTS = {
     SEND_REQUEST_CHAT: "send-request-chat",
     RECEIVE_REQUEST_CHAT: "receive-request-chat",
     RECEIVE_CHAT_REQUEST_ACCEPTED: "receive-chat-request-accepted",
+    RECEIVE_TEST_SUBMISSION: "receive-test-submission",
+    RECEIVE_NOTIFICATION: "receive-notification",
 } as const;
 
 export const NOTI_TOAST_CONFIG: ToastOptions = {
@@ -46,4 +48,18 @@ export const NOTI_TOAST_CONFIG: ToastOptions = {
     style: {
         fontFamily: "'EB Garamond', serif",
     },
+};
+
+export const NOTIFICATION_TYPES = {
+    TEST_ASSIGNED: "test_assigned",
+    TEST_PUBLISHED: "test_published",
+    SUBMISSION_GRADED: "submission_graded",
+    NEW_MESSAGE: "new_message",
+    GROUP_ADDED: "group_added",
+    GROUP_REMOVED: "group_removed",
+    CHAT_REQUEST: "chat_request",
+    CHAT_REQUEST_ACCEPTED: "chat_request_accepted",
+    CHAT_REQUEST_REJECTED: "chat_request_rejected",
+    OTHER: "other",
+    TEST_SUBMISSION: "test_submission",
 };

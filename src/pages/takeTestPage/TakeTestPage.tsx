@@ -26,7 +26,7 @@ import { takeTestActions } from "../../stores/takeTest";
 import Loading from "../../components/loadings/Loading";
 import { useEffect, useMemo, useRef, useState } from "react";
 import Error from "../../components/errors/Error";
-import PasscodeLink from "../createTestPage/components/testTakers/PasscodeLink";
+import PasscodeLink from "../createTestPage/components/testSharing/PasscodeLink";
 import Submissions from "./components/Submissions";
 import { useAppSelector } from "../../hooks/hooks";
 import { ERROR_CODE } from "../../config/constants/errorCode";
@@ -370,9 +370,10 @@ const TakeTestPage = () => {
     const handleStartTest = async () => {
         if (!test) return;
         if (
-            (test.options.require_screen_recorder.enable && !canAccessScreen) ||
-            (test.options.require_camera_on.enable && !canAccessCamera) ||
-            !accepted
+            (test.options.require_screen_recorder?.enable &&
+                (!canAccessScreen || !accepted)) ||
+            (test.options.require_camera_on?.enable &&
+                (!canAccessCamera || !accepted))
         ) {
             setIsAskingForPermissions(true);
             return;

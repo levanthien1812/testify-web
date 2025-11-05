@@ -712,6 +712,9 @@ const createTestSlice = createSlice({
         setOpenAllParts(state, action: PayloadAction<boolean>) {
             state.openAllParts = action.payload;
         },
+        setnotifyAssignment(state, action: PayloadAction<boolean>) {
+            state.notifyAssignment = action.payload;
+        },
     },
 });
 

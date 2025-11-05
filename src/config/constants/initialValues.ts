@@ -387,6 +387,7 @@ export const INITIAL_CREATE_TEST_CONTEXT: CreateTestContext = {
     editibility: DRAFT_EDITIBILITY_CONFIG,
     includesManuallyScoredQuestions: false,
     openAllParts: false,
+    notifyAssignment: false,
 };
 
 export const INITIAL_PART: TestPartItf = {
