@@ -128,6 +128,7 @@ export interface CreateTestContext {
     isValidAnswers: boolean;
     isValidShareOption: boolean;
     selectedTestTakers: TakerItf[];
+    notifyAssignment: boolean;
     joinedTakers: TakerItf[];
     availableTakers: TakerItf[];
     testLink: string;

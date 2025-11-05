@@ -83,9 +83,24 @@ const Submission = ({ submission }: SubmissionProps) => {
 
                     {submission.is_evaluated && (
                         <>
-                            <p>Score: {getRound(submission.score || 0)}</p>
-                            <p>Correct answers: {submission.correct_answers}</p>
-                            <p>Wrong answers: {submission.wrong_answers}</p>
+                            <div className="">
+                                Score:{" "}
+                                <span className="bg-orange-600 text-white px-4 rounded-full">
+                                    {getRound(submission.score || 0)}
+                                </span>
+                            </div>
+                            <div className="">
+                                Correct answers:{" "}
+                                <span className="bg-orange-600 text-white px-4 rounded-full">
+                                    {submission.correct_answers}
+                                </span>
+                            </div>
+                            <div className="">
+                                Wrong answers:{" "}
+                                <span className="bg-orange-600 text-white px-4 rounded-full">
+                                    {submission.wrong_answers}
+                                </span>
+                            </div>
                         </>
                     )}
                     <Button onClick={handleViewDetail} className="mt-2" link>

@@ -1,12 +1,21 @@
+import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import React, { useState } from "react";
 
 type TooltipProps = {
-    children: React.ReactNode;
+    children?: React.ReactNode;
     content: React.ReactNode;
 };
 
 const Tooltip: React.FC<TooltipProps> = ({ children, content }) => {
     const [isVisible, setIsVisible] = useState(false);
+
+    const childrenEl = children || (
+        <FontAwesomeIcon
+            icon={faExclamationCircle}
+            className="text-gray-500 hover:text-orange-600 cursor-pointer text-sm"
+        />
+    );
 
     return (
         <div className="relative flex items-center justify-center">
@@ -14,7 +23,7 @@ const Tooltip: React.FC<TooltipProps> = ({ children, content }) => {
                 onMouseEnter={() => setIsVisible(true)}
                 onMouseLeave={() => setIsVisible(false)}
             >
-                {children}
+                {childrenEl}
             </div>
 
             {isVisible && (

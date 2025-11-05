@@ -318,10 +318,15 @@ export const getAvailableTakers = async (testId: string) => {
     }
 };
 
-export const assignTakers = async (testId: string, takers: string[]) => {
+export const assignTakers = async (
+    testId: string,
+    takers: string[],
+    notify: boolean
+) => {
     try {
         const response = await instance.patch(`/tests/${testId}/takers`, {
             taker_ids: takers,
+            notify_assignment: notify,
         });
 
         return response.data;

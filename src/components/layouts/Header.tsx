@@ -13,7 +13,7 @@ import Button from "../elements/Button";
 import { faComments } from "@fortawesome/free-solid-svg-icons";
 import { ROLES } from "../../config/constants/tests";
 import { useAppSelector } from "../../hooks/hooks";
-import PasscodeLink from "../../pages/createTestPage/components/testTakers/PasscodeLink";
+import PasscodeLink from "../../pages/createTestPage/components/testSharing/PasscodeLink";
 import { takeTestActions } from "../../stores/takeTest";
 import { PasscodeItf } from "../../types/types";
 import Profile from "../../pages/profile/Profile";

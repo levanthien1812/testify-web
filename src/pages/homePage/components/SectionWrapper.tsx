@@ -2,8 +2,6 @@ import React from "react";
 import Button from "../../../components/elements/Button";
 import { Link } from "react-router-dom";
 import Tooltip from "../../../components/modals/Tooltip";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faExclamationCircle } from "@fortawesome/free-solid-svg-icons";
 
 type SectionWrapperProps = {
     title: {
@@ -54,12 +52,7 @@ const SectionWrapper = ({
                     </div>
                     {title.moreInfo && (
                         <div className="pb-2">
-                            <Tooltip content={title.moreInfo}>
-                                <FontAwesomeIcon
-                                    icon={faExclamationCircle}
-                                    className="text-gray-500 hover:text-orange-600 cursor-pointer text-sm"
-                                />
-                            </Tooltip>
+                            <Tooltip content={title.moreInfo} />
                         </div>
                     )}
                 </div>

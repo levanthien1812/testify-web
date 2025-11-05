@@ -10,6 +10,7 @@ import {
 } from "../../../types/chat";
 import {
     NOTI_TOAST_CONFIG,
+    NOTIFICATION_TYPES,
     SOCKET_EVENTS,
 } from "../../../config/constants/socket";
 import { getNum } from "../../../utils/primitives";
@@ -66,6 +67,9 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
     const [aiChatsOpen, setAIChatsOpen] = useState(false);
     const [availableMakers, setAvailableMakers] = useState<MakerItf[]>([]);
     const [notifications, setNotifications] = useState<NotificationItf[]>([]);
+    const [filteredNotifications, setFilteredNotifications] = useState<
+        NotificationItf[]
+    >([]);
     const [unreadNotificationsCount, setUnreadNotificationsCount] = useState(0);
     const [unreadChatsCount, setUnreadChatsCount] = useState(0);
     const [currentTab, setCurrentTab] = useState<ChatTab>(CHAT_TAB.CHATS);
@@ -397,15 +401,36 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                 <HtmlDisplay htmlContent={data.message} />,
                 NOTI_TOAST_CONFIG
             );
-            setUnreadNotificationsCount((prev) => prev + 1);
-            setNotifications((prev) => [data, ...prev]);
+
+            switch (data.type) {
+                case NOTIFICATION_TYPES.TEST_SUBMISSION:
+                    const prevNoti = notifications.find(
+                        (noti) => noti.id === data.id
+                    );
+                    if (prevNoti) {
+                        setNotifications((prev) => {
+                            let updatedNotifications = prev.filter(
+                                (noti) => noti.id !== data.id
+                            );
+                            updatedNotifications = [
+                                data,
+                                ...updatedNotifications,
+                            ];
+                            return updatedNotifications;
+                        });
+                    } else {
+                        setNotifications((prev) => [data, ...prev]);
+                        setUnreadNotificationsCount((prev) => prev + 1);
+                    }
+                    break;
+                default: {
+                    setNotifications((prev) => [data, ...prev]);
+                    setUnreadNotificationsCount((prev) => prev + 1);
+                }
+            }
         };
 
-        socket.on(SOCKET_EVENTS.RECEIVE_REQUEST_CHAT, (data) => {
-            notificationAction(data);
-        });
-
-        socket.on(SOCKET_EVENTS.RECEIVE_CHAT_REQUEST_ACCEPTED, (data) => {
+        socket.on(SOCKET_EVENTS.RECEIVE_NOTIFICATION, (data) => {
             notificationAction(data);
         });
 
@@ -452,6 +477,7 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                 aiChatsOpen,
                 availableMakers,
                 notifications,
+                filteredNotifications,
                 unreadNotificationsCount,
                 unreadChatsCount,
                 currentTab,
@@ -680,6 +706,8 @@ const ChatSocketProvider = ({ children }: { children: React.ReactNode }) => {
                 setAIChatsOpen,
                 setAvailableMakers,
                 setNotifications,
+                setFilteredNotifications,
+                setUnreadNotificationsCount,
                 setCurrentTab,
             }}
         >

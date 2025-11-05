@@ -1,5 +1,5 @@
 import { ChangeEvent, useEffect } from "react";
-import Takers from "./testTakers/Takers";
+import Takers from "./testSharing/Takers";
 import { useMutation } from "react-query";
 import {
     assignTakers,
@@ -13,13 +13,13 @@ import { createTestActions } from "../../../stores/createTest";
 import { useDispatch } from "react-redux";
 import { MUTATION_KEYS } from "../../../config/constants/queryMutationKeys";
 import { SHARE_OPTIONS } from "../../../config/constants/tests";
-import Passcode from "./testTakers/Passcode";
+import Passcode from "./testSharing/Passcode";
 import { TestBodyItf } from "../../../types/types";
-import Anyone from "./testTakers/Anyone";
+import Anyone from "./testSharing/Anyone";
 import { useAppSelector } from "../../../hooks/hooks";
 import InfoMessage from "../../../components/elements/InfoMessage";
 
-const TestTakers = () => {
+const TestSharing = () => {
     const {
         testId,
         shareOption,
@@ -28,6 +28,7 @@ const TestTakers = () => {
         passcode,
         isValidShareOption,
         editibility,
+        notifyAssignment,
     } = useAppSelector((state) => state.createTest);
     const navigate = useNavigate();
     const { moveNextStep, movePrevStep, validate } = createTestActions;
@@ -67,7 +68,8 @@ const TestTakers = () => {
             mutationFn: async () => {
                 await assignTakers(
                     testId!,
-                    selectedTestTakers!.map((taker) => taker.id)
+                    selectedTestTakers!.map((taker) => taker.id),
+                    notifyAssignment
                 );
             },
             onSuccess: () => {
@@ -85,7 +87,7 @@ const TestTakers = () => {
         dispatch(validate());
     }, [validate, dispatch]);
 
-    const handleSaveTestTakers = async () => {
+    const handleSaveTestSharing = async () => {
         updateTestMutate({ share_option: shareOption });
         switch (shareOption) {
             case SHARE_OPTIONS.RESTRICTED:
@@ -109,7 +111,7 @@ const TestTakers = () => {
         <Wrapper
             viewData={{
                 headerTitle: {
-                    text: "Test Takers",
+                    text: "Test Sharing",
                     description: {
                         text: "Create test taker's accounts so that they can access the test and do it.",
                     },
@@ -119,7 +121,7 @@ const TestTakers = () => {
                         text: "Save & Finish",
                         loadingText: "Finishing...",
                         onClick: () => {
-                            handleSaveTestTakers();
+                            handleSaveTestSharing();
                         },
                         disabled:
                             isUpdatingTest ||
@@ -190,4 +192,4 @@ const TestTakers = () => {
     );
 };
 
-export default TestTakers;
+export default TestSharing;

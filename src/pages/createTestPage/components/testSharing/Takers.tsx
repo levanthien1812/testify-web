@@ -8,12 +8,16 @@ import { TakerItf } from "../../../../types/types";
 import { useDispatch } from "react-redux";
 import { createTestActions } from "../../../../stores/createTest";
 import { shorten } from "../../../../utils/text";
+import Checkbox from "../../../../components/elements/Checkbox";
+import Tooltip from "../../../../components/modals/Tooltip";
 
 const Takers = () => {
     const [isAddingTakers, setIsAddingTakers] = useState<boolean>(false);
-    const { selectedTestTakers } = useAppSelector((state) => state.createTest);
+    const { selectedTestTakers, notifyAssignment } = useAppSelector(
+        (state) => state.createTest
+    );
     const dispatch = useDispatch();
-    const { removeSelectedTestTakers } = createTestActions;
+    const { removeSelectedTestTakers, setnotifyAssignment } = createTestActions;
 
     const handleRemoveTaker = (taker: TakerItf) => {
         dispatch(removeSelectedTestTakers(taker));
@@ -75,6 +79,20 @@ const Takers = () => {
                 >
                     Add
                 </Button>
+
+                {selectedTestTakers.length > 0 && (
+                    <div className="flex justify-end gap-2">
+                        <Checkbox
+                            label={{ text: "Notify takers about this test" }}
+                            name="notify"
+                            defaultChecked={notifyAssignment}
+                            onChange={(e) => {
+                                setnotifyAssignment(e.target.checked);
+                            }}
+                        />
+                        <Tooltip content="An email and notification will be sent to the takers. Your name and test's title will be included in." />
+                    </div>
+                )}
             </div>
             {isAddingTakers && (
                 <AddTakers onClose={() => setIsAddingTakers(false)} />

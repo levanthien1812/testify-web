@@ -9,6 +9,7 @@ import {
     NOTIFICATION_TYPE,
 } from "../config/constants/chat";
 import { NotificationItf } from "./socket";
+import React from "react";
 
 export interface ChatAppearancesItf {
     background_color: string;
@@ -146,6 +147,7 @@ export interface ChatContext {
     aiChatsOpen: boolean;
     availableMakers: MakerItf[];
     notifications: NotificationItf[];
+    filteredNotifications: NotificationItf[];
     unreadNotificationsCount: number;
     unreadChatsCount: number;
     currentTab: ChatTab;
@@ -178,6 +180,10 @@ export interface ChatContext {
     setAIChatsOpen: (aiChatsOpen: boolean) => void;
     setAvailableMakers: (makers: MakerItf[]) => void;
     setNotifications: React.Dispatch<React.SetStateAction<NotificationItf[]>>;
+    setFilteredNotifications: React.Dispatch<
+        React.SetStateAction<NotificationItf[]>
+    >;
+    setUnreadNotificationsCount: React.Dispatch<React.SetStateAction<number>>;
     setCurrentTab: React.Dispatch<React.SetStateAction<ChatTab>>;
 }
 
