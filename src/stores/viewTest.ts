@@ -68,8 +68,14 @@ const viewTestSlice = createSlice({
                 fail: action.payload.fail_rate,
             };
         },
+        setAverageTime(state, action: PayloadAction<TestResult>) {
+            state.averageTime = action.payload.average_time;
+        },
         reset(state) {
             return INITIAL_VIEW_TEST_CONTEXT;
+        },
+        setIsLoadingSubmissions(state, action) {
+            state.isLoadingSubmissions = action.payload;
         },
     },
 });

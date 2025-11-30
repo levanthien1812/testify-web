@@ -180,6 +180,8 @@ export interface ViewTestContext {
         pass: number;
         fail: number;
     };
+    isLoadingSubmissions: boolean;
+    averageTime?: number;
 }
 
 export interface EditabilityConfig {
@@ -244,4 +246,5 @@ export interface TestResult {
     lowest_score: number;
     pass_rate: number;
     fail_rate: number;
+    average_time: number;
 }

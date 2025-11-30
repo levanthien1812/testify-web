@@ -41,6 +41,7 @@ export const getTest = async (
         with_user_answers?: boolean;
         passcode?: string;
         started?: boolean;
+        detailed?: boolean;
     }
 ) => {
     try {

@@ -4,7 +4,7 @@ import { refreshToken } from "../services/auth";
 
 export const instance = axios.create({
     baseURL: `${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/${process.env.REACT_APP_API_PREFIX}`,
-    timeout: 10000,
+    timeout: 20000,
     withCredentials: true,
     headers: {
         "Content-Type": "application/json",

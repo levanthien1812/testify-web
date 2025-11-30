@@ -504,6 +504,7 @@ export const INITIAL_VIEW_TEST_CONTEXT: ViewTestContext = {
     submissions: [],
     questionsResult: [],
     currentSubmissionBeingViewed: null,
+    isLoadingSubmissions: false,
 };
 
 export const INITIAL_QUESTION_BANK: QuestionBankBodyTempItf = {
