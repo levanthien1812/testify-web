@@ -12,7 +12,11 @@ import IconButton from "../../../components/elements/IconButton";
 import { faTimes } from "@fortawesome/free-solid-svg-icons";
 import DateCellWrapper from "./DateCellWrapper";
 import { useAppSelector } from "../../../hooks/hooks";
-import { ROLES } from "../../../config/constants/tests";
+import {
+    ROLES,
+    TEST_LEVEL_LABEL,
+    TEST_STATUS,
+} from "../../../config/constants/tests";
 import { shorten } from "../../../utils/text";
 
 const localizer = momentLocalizer(moment);
@@ -102,11 +106,13 @@ const TestCalendar = () => {
                             </span>
                         </p>
 
-                        <p className="text-lg text-center mt-2">
-                            Parts:{" "}
-                            <span className=" font-bold text-orange-600 underline"></span>{" "}
-                            {selectedTest.num_parts}
-                        </p>
+                        {selectedTest.num_parts > 0 && (
+                            <p className="text-lg text-center mt-2">
+                                Parts:{" "}
+                                <span className=" font-bold text-orange-600 underline"></span>{" "}
+                                {selectedTest.num_parts}
+                            </p>
+                        )}
 
                         <p className="text-lg text-center mt-2">
                             Questions:{" "}
@@ -122,7 +128,7 @@ const TestCalendar = () => {
                             <p className="text-lg text-center mt-2">
                                 Level:{" "}
                                 <span className="capitalize">
-                                    {selectedTest.level}
+                                    {TEST_LEVEL_LABEL[selectedTest.level]}
                                 </span>
                             </p>
                         )}
@@ -151,15 +157,20 @@ const TestCalendar = () => {
                                     Edit
                                 </Button>
                             )}
-                            <Button
-                                onClick={() =>
-                                    navigate(`/tests/${selectedTest.id}`)
-                                }
-                                primary
-                                className="grow rounded-md"
-                            >
-                                View detail
-                            </Button>
+                            {!(
+                                selectedTest.status === TEST_STATUS.DRAFT ||
+                                selectedTest.status === TEST_STATUS.PUBLISHABLE
+                            ) && (
+                                <Button
+                                    onClick={() =>
+                                        navigate(`/tests/${selectedTest.id}`)
+                                    }
+                                    primary
+                                    className="grow rounded-md"
+                                >
+                                    View detail
+                                </Button>
+                            )}
                         </div>
                     </div>
                 )}

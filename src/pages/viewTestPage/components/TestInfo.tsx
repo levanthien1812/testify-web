@@ -39,11 +39,13 @@ const TestInfo = () => {
                 </span>
             </p>
 
-            <p className="text-lg sm:text-xl text-center mt-1 sm:mt-2">
-                Parts:{" "}
-                <span className=" font-bold text-orange-600 underline"></span>{" "}
-                {test.num_parts}
-            </p>
+            {test.num_parts > 0 && (
+                <p className="text-lg sm:text-xl text-center mt-1 sm:mt-2">
+                    Parts:{" "}
+                    <span className=" font-bold text-orange-600 underline"></span>{" "}
+                    {test.num_parts}
+                </p>
+            )}
 
             <p className="text-lg sm:text-xl text-center mt-1 sm:mt-2">
                 Questions:{" "}

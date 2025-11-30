@@ -40,6 +40,7 @@ import MessageAction from "../others/MessageAction";
 import { AxiosError } from "axios";
 import TopTakers from "./components/TopTakers";
 import Statistics from "./components/Statistics";
+import SkeletonWrapper from "../others/SkeletonWrapper";
 
 ChartJS.register(
     CategoryScale,
@@ -63,15 +64,22 @@ const ViewTestPage = () => {
     const { test, submissions, questionsResult } = useAppSelector(
         (state) => state.viewTest
     );
-    const { setTest, setSubmissions, setScores, setRates, setQuestionsResult } =
-        viewTestActions;
+    const {
+        setTest,
+        setSubmissions,
+        setScores,
+        setRates,
+        setAverageTime,
+        setQuestionsResult,
+    } = viewTestActions;
     const dispatch = useDispatch();
     const submissionsTableRef = useRef<HTMLDivElement>(null);
+    const [detailed, setDetailed] = useState(false);
 
     const { isLoading: isLoadingTest } = useQuery<TestItf>({
-        queryKey: ["test", testId],
+        queryKey: ["test", testId, detailed],
         queryFn: async () => {
-            const responseData = await getTest(testId!);
+            const responseData = await getTest(testId!, { detailed });
             return responseData;
         },
         onSuccess: (data: any) => {
@@ -96,6 +104,7 @@ const ViewTestPage = () => {
                 dispatch(setSubmissions(data.submissions));
                 dispatch(setScores(data));
                 dispatch(setRates(data));
+                dispatch(setAverageTime(data));
             },
             retry: false,
             enabled: !!test,
@@ -124,7 +133,7 @@ const ViewTestPage = () => {
     return (
         <div className="xl:w-2/3 mx-auto py-4 md:py-10 px-4 md:px-8 shadow-lg">
             <Loading
-                isLoading={isLoadingTest}
+                isLoading={isLoadingTest && !detailed}
                 loadingText={{ text: "Loading test's information..." }}
             />
             {error && !isLoadingTest && (
@@ -144,24 +153,24 @@ const ViewTestPage = () => {
                 <>
                     <div className="flex flex-col md:flex-row gap-2">
                         <TestInfo />
-                        <Statistics />
-                        {topSubmissions.length > 0 && (
-                            <TopTakers
-                                submissions={topSubmissions}
-                                onViewMore={() => {
-                                    submissionsTableRef.current?.scrollIntoView(
-                                        {
-                                            behavior: "smooth",
-                                        }
-                                    );
-                                }}
-                            />
-                        )}
+                        <Statistics isLoading={isLoadingSubmissions} />
+                        <TopTakers
+                            submissions={topSubmissions}
+                            onViewMore={() => {
+                                submissionsTableRef.current?.scrollIntoView({
+                                    behavior: "smooth",
+                                });
+                            }}
+                            isLoading={isLoadingSubmissions}
+                        />
                     </div>
                     <div className="flex justify-end mt-2">
                         <button
                             className="text-orange-600 underline hover:italic"
-                            onClick={() => setViewQuestionsAndAnswers(true)}
+                            onClick={() => {
+                                setDetailed(true);
+                                setViewQuestionsAndAnswers(true);
+                            }}
                         >
                             <span>View questions and answers</span>
                         </button>
@@ -174,33 +183,40 @@ const ViewTestPage = () => {
                     </div>
 
                     <div className=" mt-4">
-                        <Loading
-                            isLoading={isLoadingSubmissions}
-                            loadingText={{ text: "Loading submissions..." }}
-                        />
-                        {submissions.length > 0 && (
-                            <div className="space-y-2">
-                                <h3 className="text-center text-2xl">
-                                    Test result analysis
-                                </h3>
+                        <div className="space-y-2">
+                            <h3 className="text-center text-2xl">
+                                Test result analysis
+                            </h3>
+                            <SkeletonWrapper
+                                showSkeleton={isLoadingSubmissions}
+                                variant="bar-chart"
+                                count={10}
+                                width={60}
+                                chartName="Score range"
+                            >
                                 <ScoreRangeBarChart submissions={submissions} />
-                                <Loading
-                                    isLoading={isLoadingQuestionsResult}
-                                    loadingText={{
-                                        text: "Loading questions result...",
-                                    }}
+                            </SkeletonWrapper>
+                            <SkeletonWrapper
+                                showSkeleton={isLoadingQuestionsResult}
+                                variant="bar-chart"
+                                count={20}
+                                width={30}
+                                chartName="Questions result"
+                            >
+                                <QuestionsResultChart
+                                    questionsResult={questionsResult}
                                 />
-                                {questionsResult.length > 0 && (
-                                    <QuestionsResultChart
-                                        questionsResult={questionsResult}
-                                    />
-                                )}
-                            </div>
-                        )}
+                            </SkeletonWrapper>
+                        </div>
 
-                        {submissions.length > 0 && (
-                            <div className="mt-4" ref={submissionsTableRef}>
-                                <p className="text-2xl text-center">{`Submissions (${submissions?.length}/${test?.taker_ids.length})`}</p>
+                        <div className="mt-4" ref={submissionsTableRef}>
+                            <p className="text-2xl text-center">{`Submissions (${submissions?.length}/${test?.taker_ids.length})`}</p>
+                            <SkeletonWrapper
+                                showSkeleton={isLoadingSubmissions}
+                                variant="table"
+                                rows={10}
+                                cols={7}
+                            >
                                 <div className="space-y-1 mt-2">
                                     {submissions.length > 0 && (
                                         <SubmissionsTable
@@ -214,8 +230,8 @@ const ViewTestPage = () => {
                                         </p>
                                     )}
                                 </div>
-                            </div>
-                        )}
+                            </SkeletonWrapper>
+                        </div>
                     </div>
 
                     {viewQuestionsAndAnswers && (
@@ -257,13 +273,19 @@ const ViewTestPage = () => {
                                     </div>
                                 )}
                                 <div className="mt-4">
+                                    <Loading
+                                        isLoading={isLoadingTest}
+                                        loadingText={{
+                                            text: "Loading test's questions and answers...",
+                                        }}
+                                    />
                                     <TestQuestionsAndAnswers
                                         test={test}
                                         userAnswers={[]}
                                     />
                                 </div>
                             </ModalBody>
-                            <ModalFooter></ModalFooter>
+                            <ModalFooter />
                         </Modal>
                     )}
 
