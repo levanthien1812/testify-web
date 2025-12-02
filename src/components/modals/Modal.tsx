@@ -9,6 +9,7 @@ type ModalProps = {
     children: ReactNode;
     width?: string;
     onClose: () => void;
+    zIndex?: number;
     allowClickBackdropToClose?: boolean;
 };
 
@@ -33,29 +34,23 @@ const Modal = ({
     children,
     onClose,
     width,
+    zIndex = 50,
     allowClickBackdropToClose = true,
 }: ModalProps) => {
-    const currentZIndex = React.useRef(50);
-
-    React.useEffect(() => {
-        currentZIndex.current += 10;
-    }, []);
-
     return createPortal(
         <ModalContext.Provider value={{ onClose }}>
             <Backdrop
                 onClick={allowClickBackdropToClose ? onClose : () => {}}
-                zIndex={currentZIndex.current - 5}
+                zIndex={zIndex - 1}
             />
-            {currentZIndex.current && (
-                <div
-                    className={`fixed top-0 left-0 right-0 bottom-0 bg-white shadow-md mx-2 md:mx-auto my-auto ${
-                        width || "w-fit"
-                    } h-fit min-w-40 md:min-w-[300px] 2xl:min-w-[500px] z-50`}
-                >
-                    {children}
-                </div>
-            )}
+            <div
+                className={`fixed top-0 left-0 right-0 bottom-0 bg-white shadow-md mx-2 md:mx-auto my-auto ${
+                    width || "w-fit"
+                } h-fit min-w-40 md:min-w-[300px] 2xl:min-w-[500px]`}
+                style={{ zIndex }}
+            >
+                {children}
+            </div>
         </ModalContext.Provider>,
         document.getElementById("modal")!
     );

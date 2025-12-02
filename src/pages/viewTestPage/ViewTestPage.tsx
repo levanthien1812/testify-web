@@ -7,7 +7,7 @@ import {
 } from "../../services/test";
 import { useNavigate, useParams } from "react-router";
 import SubmissionsTable from "./components/SubmissionsTable";
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import Modal, {
     ModalBody,
     ModalFooter,
@@ -92,6 +92,12 @@ const ViewTestPage = () => {
         },
         retry: false,
     });
+
+    useEffect(() => {
+        if (test && !detailed) {
+            setDetailed(true);
+        }
+    }, [test, detailed]);
 
     const { isLoading: isLoadingSubmissions, refetch: refetchSubmissions } =
         useQuery<TestResult>({
