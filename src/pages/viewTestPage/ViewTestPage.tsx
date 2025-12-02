@@ -13,7 +13,7 @@ import Modal, {
     ModalFooter,
     ModalHeader,
 } from "../../components/modals/Modal";
-import TestQuestionsAndAnswers from "../takeTestPage/components/TestQuestionsAndAnswers";
+import TestQuestionsAndAnswers from "./components/TestQuestionsAndAnswers";
 import TestAnswers from "../createTestPage/components/TestAnswers";
 import Button from "../../components/elements/Button";
 import { viewTestActions } from "../../stores/viewTest";
@@ -281,7 +281,8 @@ const ViewTestPage = () => {
                                     />
                                     <TestQuestionsAndAnswers
                                         test={test}
-                                        userAnswers={[]}
+                                        userAnswers={undefined}
+                                        includeUserAnswers={false}
                                     />
                                 </div>
                             </ModalBody>

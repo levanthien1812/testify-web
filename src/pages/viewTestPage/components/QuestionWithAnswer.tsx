@@ -41,10 +41,14 @@ import { getRound } from "../../../utils/primitives";
 type QuestionProps = {
     question: QuestionItf<QuestionContentItf>;
     userAnswer?: UserAnswerItf<AnswerContentItf> | null;
-    onUpdateScore?: () => void;
+    includeUserAnswers?: boolean;
 };
 
-const Answer = ({ question, userAnswer }: QuestionProps) => {
+const QuestionWithAnswer = ({
+    question,
+    userAnswer,
+    includeUserAnswers,
+}: QuestionProps) => {
     const [manualScore, setManualScore] = useState<number>(
         userAnswer ? userAnswer.score || 0 : 0
     );
@@ -89,6 +93,9 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
     };
 
     const points = useMemo(() => {
+        if (!includeUserAnswers) {
+            return question.score;
+        }
         if (userAnswer && userAnswer.score !== undefined) {
             return `${getRound(userAnswer.score)}/${question.score}`;
         }
@@ -96,9 +103,12 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
             return `${0}/${question.score}`;
         }
         return question.score;
-    }, [userAnswer, question.score]);
+    }, [userAnswer, question.score, includeUserAnswers]);
 
     const status = useMemo<USER_ANSWER_STATUS>(() => {
+        if (!includeUserAnswers) {
+            return USER_ANSWER_STATUS.NOTHING;
+        }
         if (!userAnswer || userAnswer.skipped) {
             return USER_ANSWER_STATUS.NOT_ANSWERED;
         }
@@ -115,7 +125,7 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
             return USER_ANSWER_STATUS.MANUALLY_SCORED;
         }
         return USER_ANSWER_STATUS.NOTHING;
-    }, [userAnswer, needManualScore]);
+    }, [userAnswer, needManualScore, includeUserAnswers]);
 
     return (
         <div
@@ -144,6 +154,7 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
                         userAnswer?.content as MultipleChoiceAnswerItf
                     }
                     answerStatus={status}
+                    includeUserAnswer={includeUserAnswers}
                 />
             )}
             {question.type === QUESTION_TYPE.FILL_IN_THE_GAPS && (
@@ -151,6 +162,7 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
                     questionContent={question.content as FillGapsQuestionItf}
                     answerContent={userAnswer?.content as FillGapsAnswerItf}
                     answerStatus={status}
+                    includeUserAnswer={includeUserAnswers}
                 />
             )}
             {question.type === QUESTION_TYPE.MATCHING && (
@@ -158,12 +170,14 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
                     questionContent={question.content as MatchingQuestionItf}
                     answerContent={userAnswer?.content as MatchingAnswerItf}
                     answerStatus={status}
+                    includeUserAnswer={includeUserAnswers}
                 />
             )}
             {question.type === QUESTION_TYPE.RESPONSE && (
                 <ResponseAnswer
                     questionContent={question.content as ResponseQuestionItf}
                     answerContent={userAnswer?.content as ResponseAnswerItf}
+                    includeUserAnswer={includeUserAnswers}
                 />
             )}
             {question.type === QUESTION_TYPE.TRUE_FALSE && (
@@ -171,68 +185,75 @@ const Answer = ({ question, userAnswer }: QuestionProps) => {
                     questionContent={question.content as TrueFalseQuestionItf}
                     answerContent={userAnswer?.content as TrueFalseAnswerItf}
                     answerStatus={status}
+                    includeUserAnswer={includeUserAnswers}
                 />
             )}
 
-            {user?.role === ROLES.MAKER && needManualScore && (
-                <div className="border-t pt-2 border-gray-400 border-dashed space-x-2">
-                    {((userAnswer && !userAnswer.evaluated) ||
-                        isUpdatingScore) && (
-                        <div className="flex gap-2 items-center">
-                            <label htmlFor="manualScore">Score: </label>
-                            <Input
-                                type="number"
-                                name="manualScore"
-                                id="manualScore"
-                                step={0.01}
-                                min={0.0}
-                                max={question.score}
-                                className="grow "
-                                sizing="sm"
-                                value={manualScore}
-                                onChange={(e) =>
-                                    setManualScore(parseFloat(e.target.value))
-                                }
-                            />
-
-                            <Button
-                                onClick={handleUpdateScore}
-                                disabled={updateScoreLoading}
-                                size="sm"
-                            >
-                                {updateScoreLoading ? "Saving..." : "Save"}
-                            </Button>
-
-                            {isUpdatingScore && (
-                                <Button
-                                    secondary
-                                    size="sm"
-                                    onClick={() => {
+            {user?.role === ROLES.MAKER &&
+                needManualScore &&
+                includeUserAnswers && (
+                    <div className="border-t pt-2 border-gray-400 border-dashed space-x-2">
+                        {((userAnswer && !userAnswer.evaluated) ||
+                            isUpdatingScore) && (
+                            <div className="flex gap-2 items-center">
+                                <label htmlFor="manualScore">Score: </label>
+                                <Input
+                                    type="number"
+                                    name="manualScore"
+                                    id="manualScore"
+                                    step={0.01}
+                                    min={0.0}
+                                    max={question.score}
+                                    className="grow "
+                                    sizing="sm"
+                                    value={manualScore}
+                                    onChange={(e) =>
                                         setManualScore(
-                                            userAnswer
-                                                ? userAnswer.score || 0
-                                                : 0
-                                        );
-                                        setIsUpdatingScore(false);
-                                    }}
+                                            parseFloat(e.target.value)
+                                        )
+                                    }
+                                />
+
+                                <Button
+                                    onClick={handleUpdateScore}
+                                    disabled={updateScoreLoading}
+                                    size="sm"
                                 >
-                                    Cancel
+                                    {updateScoreLoading ? "Saving..." : "Save"}
+                                </Button>
+
+                                {isUpdatingScore && (
+                                    <Button
+                                        secondary
+                                        size="sm"
+                                        onClick={() => {
+                                            setManualScore(
+                                                userAnswer
+                                                    ? userAnswer.score || 0
+                                                    : 0
+                                            );
+                                            setIsUpdatingScore(false);
+                                        }}
+                                    >
+                                        Cancel
+                                    </Button>
+                                )}
+                            </div>
+                        )}
+                        {userAnswer &&
+                            userAnswer.evaluated &&
+                            !isUpdatingScore && (
+                                <Button
+                                    size="sm"
+                                    onClick={() => setIsUpdatingScore(true)}
+                                >
+                                    Update score
                                 </Button>
                             )}
-                        </div>
-                    )}
-                    {userAnswer && userAnswer.evaluated && !isUpdatingScore && (
-                        <Button
-                            size="sm"
-                            onClick={() => setIsUpdatingScore(true)}
-                        >
-                            Update score
-                        </Button>
-                    )}
-                </div>
-            )}
+                    </div>
+                )}
         </div>
     );
 };
 
-export default Answer;
+export default QuestionWithAnswer;

@@ -9,12 +9,14 @@ type TrueFalseAnswerProps = {
     questionContent: TrueFalseQuestionItf;
     answerContent: TrueFalseAnswerItf;
     answerStatus: USER_ANSWER_STATUS;
+    includeUserAnswer?: boolean;
 };
 
 const TrueFalseAnswer = ({
     questionContent,
     answerContent,
     answerStatus,
+    includeUserAnswer,
 }: TrueFalseAnswerProps) => {
     const user = useAppSelector((state) => state.auth.user);
     const makerAnswer = questionContent.answer?.is_true;
@@ -25,10 +27,11 @@ const TrueFalseAnswer = ({
             if (answerStatus === USER_ANSWER_STATUS.NOT_ANSWERED) return false;
 
             if (isTrue === userAnswer) return true;
+            if (isTrue === makerAnswer) return true;
 
             return false;
         },
-        [answerStatus, userAnswer]
+        [answerStatus, userAnswer, makerAnswer]
     );
 
     const getInputClasses = useCallback(
@@ -68,7 +71,7 @@ const TrueFalseAnswer = ({
                 return `text-red-600`;
             return "";
         },
-        [answerStatus, makerAnswer, userAnswer]
+        [answerStatus, makerAnswer, userAnswer, includeUserAnswer]
     );
 
     return (
@@ -101,7 +104,7 @@ const TrueFalseAnswer = ({
                 ))}
             </div>
 
-            {questionContent.answer && (
+            {questionContent.answer && includeUserAnswer && (
                 <div className="mt-2 bg-green-500 p-2">
                     <p className="text-white">Correct answer:</p>
                     <div className="text-white">

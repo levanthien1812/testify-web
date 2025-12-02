@@ -6,7 +6,7 @@ import Modal, {
     ModalFooter,
     ModalHeader,
 } from "../../../components/modals/Modal";
-import TestQuestionsAndAnswers from "../../takeTestPage/components/TestQuestionsAndAnswers";
+import TestQuestionsAndAnswers from "./TestQuestionsAndAnswers";
 import { format } from "date-fns";
 import { useDispatch } from "react-redux";
 import { QUERY_KEYS } from "../../../config/constants/queryMutationKeys";
@@ -94,7 +94,7 @@ const TakerSubmissionDetail = () => {
             onClose={() =>
                 dispatch(viewTestActions.setCurrentSubmissionBeingViewed(null))
             }
-            width="md:w-2/3 lg:w-1/2"
+            width="md:w-3/4 lg:w-2/3 xl:w-1/2"
         >
             <ModalHeader title={`Taker's submissions detail`} />
             <ModalBody>
@@ -107,10 +107,11 @@ const TakerSubmissionDetail = () => {
                         >
                             <div
                                 className={`${
-                                    isSticky
-                                        ? "hidden"
-                                        : "row-span-4 col-span-2"
-                                } hidden overflow-hidden self-start rounded-full shadow-md m-3 md:flex justify-center items-center w-20 h-20 mx-auto`}
+                                    isSticky ? "" : "row-span-4 col-span-2"
+                                } overflow-hidden self-start rounded-full shadow-md m-3 md:flex justify-center items-center w-20 h-20 mx-auto`}
+                                style={{
+                                    display: isSticky ? "none" : "block",
+                                }}
                             >
                                 <img
                                     src={submission.taker.user?.photo}
@@ -210,6 +211,7 @@ const TakerSubmissionDetail = () => {
                             <TestQuestionsAndAnswers
                                 test={test!}
                                 userAnswers={submissionAnswers}
+                                includeUserAnswers={true}
                             />
                         </div>
                     )}
