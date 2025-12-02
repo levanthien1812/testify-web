@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faChevronRight, faEllipsis } from "@fortawesome/free-solid-svg-icons";
-import IconButton from "../elements/IconButton";
 import Popover from "../modals/Popover";
+import { motion, AnimatePresence } from "framer-motion";
 
 type viewData = {
     title: {
@@ -90,7 +90,26 @@ const Accordion = ({
                     }`}
                 />
             </div>
-            {open && children}
+            <AnimatePresence initial={false}>
+                {open && (
+                    <motion.div
+                        initial="collapsed"
+                        animate="open"
+                        exit="collapsed"
+                        variants={{
+                            open: { opacity: 1, height: "auto" },
+                            collapsed: { opacity: 0, height: 0 },
+                        }}
+                        transition={{
+                            duration: 0.3,
+                            ease: [0.24, 0.62, 0.23, 0.7],
+                        }}
+                        className="overflow-hidden"
+                    >
+                        {children}
+                    </motion.div>
+                )}
+            </AnimatePresence>
         </div>
     );
 };

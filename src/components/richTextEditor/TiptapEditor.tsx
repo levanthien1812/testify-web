@@ -278,6 +278,7 @@ const TextEditor = ({
                 <Modal
                     onClose={() => setIsZoomed(false)}
                     allowClickBackdropToClose
+                    zIndex={60}
                 >
                     <ModalBody>{editor}</ModalBody>
                     <ModalFooter includeCancelBtn></ModalFooter>

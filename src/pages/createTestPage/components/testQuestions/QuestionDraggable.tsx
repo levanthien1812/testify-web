@@ -97,7 +97,7 @@ const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
 
     return (
         <div
-            className={`bg-white rounded-md shadow-md ${
+            className={`bg-white shadow-md ${
                 question.is_content_provided
                     ? "hover:shadow-green-200"
                     : "hover:shadow-orange-200"
@@ -114,19 +114,19 @@ const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
                 className={`${
                     question.is_content_provided
                         ? "bg-teal-100"
-                        : "bg-orange-500"
-                } px-2 py-1 flex items-center gap-1 rounded-md`}
+                        : "bg-orange-100"
+                } px-2 py-1 flex items-center gap-1`}
             >
-                <span className="rounded-md p-1 leading-none">
+                <span className="p-1 leading-none">
                     <FontAwesomeIcon
                         icon={questionTypeToIcon[question.type]}
                         className="text-teal-600"
                     />
                 </span>
                 <p>Question {question.order}</p>
-                <span className="bg-teal-500 py-1 min-w-6 w-fit px-1 text-center rounded-md text-white leading-none ml-auto">
-                    {getRound(question.score)}
-                </span>
+                <p className="italic text-sm text-gray-600 leading-none ml-auto">
+                    {getRound(question.score)} pts
+                </p>
             </div>
             {question.content && question.content.text && (
                 <HtmlDisplay

@@ -119,7 +119,7 @@ const ImportQuestionFromAnotherBank = ({
     };
 
     return (
-        <Modal onClose={onClose}>
+        <Modal onClose={onClose} zIndex={60}>
             <ModalHeader title="Import Questions" />
             <ModalBody>
                 <div className="py-2">
