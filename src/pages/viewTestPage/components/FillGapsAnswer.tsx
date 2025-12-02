@@ -16,12 +16,14 @@ type FillGapsAnswerProps = {
     questionContent: FillGapsQuestionItf;
     answerContent: FillGapsAnswerItf;
     answerStatus: USER_ANSWER_STATUS;
+    includeUserAnswer?: boolean;
 };
 
 const FillGapsAnswer = ({
     questionContent,
     answerContent,
     answerStatus,
+    includeUserAnswer,
 }: FillGapsAnswerProps) => {
     const textReplacements = useMemo(() => {
         if (!questionContent.answer) return "";
@@ -43,6 +45,38 @@ const FillGapsAnswer = ({
         return <p className="text-white">{filledText}</p>;
     }, [questionContent]);
 
+    const givenAnswers = useMemo(() => {
+        if (!includeUserAnswer && questionContent.answer)
+            return questionContent.answer.gaps.reduce<GivenAnswersTextFill>(
+                (acc, gap, index) => {
+                    acc[gap.id || `gap-${index + 1}`] = {
+                        value: gap.text,
+                        status: "correct",
+                    };
+                    return acc;
+                },
+                {}
+            );
+        if (answerContent) {
+            return answerContent.gaps.reduce<GivenAnswersTextFill>(
+                (acc, gap, index) => {
+                    acc[gap.id || `gap-${index + 1}`] = {
+                        value: gap.text,
+                        status:
+                            gap.is_correct === undefined
+                                ? "normal"
+                                : gap.is_correct === true
+                                ? "correct"
+                                : "wrong",
+                    };
+                    return acc;
+                },
+                {}
+            );
+        }
+        return undefined;
+    }, [answerContent, includeUserAnswer, questionContent.answer]);
+
     return (
         <>
             <InstructionText text={questionContent.instruction_text} />
@@ -52,34 +86,18 @@ const FillGapsAnswer = ({
                 doc={JSON.parse(questionContent.json_text)}
                 method={questionContent.fill_method}
                 words={questionContent.given_words}
-                givenAnswers={
-                    answerContent
-                        ? answerContent.gaps.reduce<GivenAnswersTextFill>(
-                              (acc, gap, index) => {
-                                  acc[gap.id || `gap-${index + 1}`] = {
-                                      value: gap.text,
-                                      status:
-                                          gap.is_correct === undefined
-                                              ? "normal"
-                                              : gap.is_correct === true
-                                              ? "correct"
-                                              : "wrong",
-                                  };
-                                  return acc;
-                              },
-                              {}
-                          )
-                        : undefined
-                }
+                givenAnswers={givenAnswers}
                 readonly={true}
             />
 
-            {questionContent.answer && (
-                <div className="mt-2 bg-green-500 p-2">
-                    <p className="text-white">Correct answer:</p>
-                    <div>{textReplacements} </div>
-                </div>
-            )}
+            {questionContent.answer &&
+                answerStatus !== USER_ANSWER_STATUS.CORRECT &&
+                includeUserAnswer && (
+                    <div className="mt-2 bg-green-500 p-2">
+                        <p className="text-white">Correct answer:</p>
+                        <div>{textReplacements} </div>
+                    </div>
+                )}
         </>
     );
 };

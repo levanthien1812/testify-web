@@ -6,11 +6,13 @@ import InstructionText from "../../createTestPage/components/testAnswers/Instruc
 type ResponseAnswerProps = {
     questionContent: ResponseQuestionItf;
     answerContent: ResponseAnswerItf;
+    includeUserAnswer?: boolean;
 };
 
 const ResponseAnswer = ({
     questionContent,
     answerContent,
+    includeUserAnswer,
 }: ResponseAnswerProps) => {
     const response = useMemo(() => {
         if (answerContent === undefined) {
@@ -26,14 +28,16 @@ const ResponseAnswer = ({
         <div>
             <InstructionText text={questionContent.instruction_text} />
             <HtmlDisplay htmlContent={questionContent.text} />
-            <textarea
-                id="response"
-                name="response"
-                readOnly
-                value={response}
-                className="border border-gray-500 px-2 py-1 grow focus:border-orange-600 outline-none leading-5 w-full mt-2"
-                rows={6}
-            ></textarea>
+            {includeUserAnswer && (
+                <textarea
+                    id="response"
+                    name="response"
+                    readOnly
+                    value={response}
+                    className="border border-gray-500 px-2 py-1 grow focus:border-orange-600 outline-none leading-5 w-full mt-2"
+                    rows={6}
+                ></textarea>
+            )}
         </div>
     );
 };

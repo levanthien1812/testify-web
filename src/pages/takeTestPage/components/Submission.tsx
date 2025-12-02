@@ -2,7 +2,7 @@ import { format } from "date-fns";
 import React from "react";
 import { formatTime } from "../../../utils/time";
 import { SubmissionItf } from "../../../types/types";
-import TestQuestionsAndAnswers from "./TestQuestionsAndAnswers";
+import TestQuestionsAndAnswers from "../../viewTestPage/components/TestQuestionsAndAnswers";
 import Button from "../../../components/elements/Button";
 import { useQuery } from "react-query";
 import { QUERY_KEYS } from "../../../config/constants/queryMutationKeys";
@@ -124,6 +124,7 @@ const Submission = ({ submission }: SubmissionProps) => {
                     <TestQuestionsAndAnswers
                         test={test!}
                         userAnswers={submission.answers}
+                        includeUserAnswers={true}
                     />
                 </div>
             )}

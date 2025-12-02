@@ -12,12 +12,14 @@ type MultipleChoicesAnswerProps = {
     questionContent: MultipleChoiceQuestionItf;
     answerContent: MultipleChoiceAnswerItf;
     answerStatus: USER_ANSWER_STATUS;
+    includeUserAnswer?: boolean;
 };
 
 const MultipleChoicesAnswer = ({
     questionContent,
     answerContent,
     answerStatus,
+    includeUserAnswer,
 }: MultipleChoicesAnswerProps) => {
     const user = useAppSelector((state) => state.auth.user);
     const makerAnswer = questionContent.answer?.options;
@@ -27,11 +29,12 @@ const MultipleChoicesAnswer = ({
         (optionId: string) => {
             if (answerStatus === USER_ANSWER_STATUS.NOT_ANSWERED) return false;
 
-            if (userAnswer?.includes(optionId)) return true;
+            if (userAnswer && userAnswer.includes(optionId)) return true;
+            if (makerAnswer && makerAnswer.includes(optionId)) return true;
 
             return false;
         },
-        [answerStatus, userAnswer]
+        [answerStatus, userAnswer, makerAnswer]
     );
 
     const getInputClasses = useCallback(
@@ -123,20 +126,22 @@ const MultipleChoicesAnswer = ({
                 ))}
             </div>
 
-            {questionContent.answer && (
-                <div className="mt-2 bg-green-500 p-2">
-                    <p className="text-white">Correct answer:</p>
-                    <div className="text-white">
-                        {questionContent.options
-                            .filter((option) =>
-                                makerAnswer?.includes(option.id!)
-                            )
-                            ?.map((option) => (
-                                <p key={option.id}>{option.text}</p>
-                            ))}
+            {questionContent.answer &&
+                answerStatus !== USER_ANSWER_STATUS.CORRECT &&
+                includeUserAnswer && (
+                    <div className="mt-2 bg-green-500 p-2">
+                        <p className="text-white">Correct answer:</p>
+                        <div className="text-white">
+                            {questionContent.options
+                                .filter((option) =>
+                                    makerAnswer?.includes(option.id!)
+                                )
+                                ?.map((option) => (
+                                    <p key={option.id}>{option.text}</p>
+                                ))}
+                        </div>
                     </div>
-                </div>
-            )}
+                )}
         </>
     );
 };

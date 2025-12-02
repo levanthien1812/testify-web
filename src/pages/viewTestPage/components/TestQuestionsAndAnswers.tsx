@@ -1,25 +1,29 @@
 import { useCallback } from "react";
 import { AnswerContentItf, TestItf, UserAnswerItf } from "../../../types/types";
-import Answer from "./Answer";
+import QuestionWithAnswer from "./QuestionWithAnswer";
 
 type TestQuestionsAndAnswersProps = {
     test: TestItf;
     userAnswers: UserAnswerItf<AnswerContentItf>[] | undefined;
+    includeUserAnswers?: boolean;
 };
 
 const TestQuestionsAndAnswers = ({
     test,
     userAnswers,
+    includeUserAnswers = true,
 }: TestQuestionsAndAnswersProps) => {
     const getUserAnswer = useCallback(
         (questionId: string) => {
-            if (!userAnswers) return null;
+            if (!userAnswers || userAnswers.length === 0 || !includeUserAnswers)
+                return null;
             return userAnswers.find(
                 (answer) => answer.question_id === questionId
             );
         },
-        [userAnswers]
+        [userAnswers, includeUserAnswers]
     );
+
     return (
         <div className="">
             {test.num_parts > 1 && test.parts && (
@@ -40,12 +44,15 @@ const TestQuestionsAndAnswers = ({
                                 <div>
                                     {part.questions &&
                                         part.questions.map((question) => (
-                                            <Answer
+                                            <QuestionWithAnswer
                                                 key={question.id}
                                                 question={question}
                                                 userAnswer={getUserAnswer(
                                                     question.id!
                                                 )}
+                                                includeUserAnswers={
+                                                    includeUserAnswers
+                                                }
                                             />
                                         ))}
                                 </div>
@@ -57,10 +64,11 @@ const TestQuestionsAndAnswers = ({
             {test.num_parts === 0 &&
                 test.questions &&
                 test.questions.map((question) => (
-                    <Answer
+                    <QuestionWithAnswer
                         question={question}
                         key={question.id}
                         userAnswer={getUserAnswer(question.id!)}
+                        includeUserAnswers={includeUserAnswers}
                     />
                 ))}
         </div>
