@@ -464,6 +464,8 @@ const createTestSlice = createSlice({
             }
 
             state.selectedTestTakers = action.payload.test.takers;
+            state.notifyAssignment =
+                action.payload.test.notify_assignment || false;
 
             switch (state.status) {
                 case TEST_STATUS.DRAFT: {

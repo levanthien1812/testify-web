@@ -1,4 +1,4 @@
-import { useEffect, useMemo } from "react";
+import { useEffect, useMemo, useRef } from "react";
 import {
     PUBLIC_ANSWERS_OPTIONS,
     QUESTION_NUMBERING_METHOD,
@@ -103,6 +103,7 @@ const TestInfo = () => {
         formState: { errors },
         register,
         setValue,
+        reset,
         watch,
     } = methods;
 
@@ -117,6 +118,11 @@ const TestInfo = () => {
         const formattedStartTime = formatTimezone(
             new Date(allValues?.datetime)
         );
+        // When navigating back to an existing test, the form needs to be reset with the fetched data.
+        reset(
+            initialValues,
+            { keepDefaultValues: false } // Ensure defaultValues are updated
+        );
         setValue("datetime", formattedStartTime);
         if (options.allow_close_time.enable)
             setValue(
@@ -129,6 +135,8 @@ const TestInfo = () => {
                 allValues?.datetime
             );
     }, [
+        initialValues,
+        reset,
         allValues?.datetime,
         setValue,
         options.allow_close_time.enable,

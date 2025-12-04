@@ -38,7 +38,10 @@ const FillGapsQuestion: React.FC<{
         name: "content.given_words",
         rules: {
             validate: (value) => {
-                if (value.length < content.num_gaps) {
+                if (
+                    content.fill_method === FILL_GAP_METHOD.DRAG_DROP &&
+                    value.length < content.num_gaps
+                ) {
                     return "Number of words must be greater than or equal to number of gaps";
                 }
                 return true;

@@ -41,6 +41,7 @@ import { AxiosError } from "axios";
 import TopTakers from "./components/TopTakers";
 import Statistics from "./components/Statistics";
 import SkeletonWrapper from "../others/SkeletonWrapper";
+import { TEST_STATUS } from "../../config/constants/tests";
 
 ChartJS.register(
     CategoryScale,
@@ -83,7 +84,14 @@ const ViewTestPage = () => {
             return responseData;
         },
         onSuccess: (data: any) => {
-            dispatch(setTest(data));
+            if (
+                data.test?.status === TEST_STATUS.PUBLISHABLE ||
+                data.test?.status === TEST_STATUS.DRAFT
+            ) {
+                navigate(`/tests/${testId}/edit`);
+            } else {
+                dispatch(setTest(data));
+            }
         },
         onError: (err: any) => {
             if (err instanceof AxiosError) {

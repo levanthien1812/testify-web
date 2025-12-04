@@ -6,7 +6,7 @@ import { useAppSelector } from "../../../hooks/hooks";
 
 const Navigator = () => {
     const { steps, currentStep } = useAppSelector((state) => state.createTest);
-    const { handleNavigation, navigateStep } = createTestActions;
+    const { navigateStep } = createTestActions;
     const dispatch = useDispatch();
 
     const handleClickStep = (value: string) => {
