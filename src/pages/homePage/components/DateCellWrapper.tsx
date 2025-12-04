@@ -2,6 +2,8 @@ import moment from "moment";
 import React, { useState } from "react";
 import Button from "../../../components/elements/Button";
 import { useNavigate } from "react-router";
+import { useAppSelector } from "../../../hooks/hooks";
+import { ROLES } from "../../../config/constants/tests";
 
 type DateCellWrapperProps = {
     value: Date;
@@ -14,6 +16,7 @@ const DateCellWrapper: React.FC<DateCellWrapperProps> = ({
 }) => {
     const [isHovered, setIsHovered] = useState(false);
     const navigate = useNavigate();
+    const user = useAppSelector((state) => state.auth.user);
 
     const date: Date = value;
 
@@ -41,15 +44,18 @@ const DateCellWrapper: React.FC<DateCellWrapperProps> = ({
         >
             {children}
 
-            {isHovered && showButtonCondition && !isPastDay && (
-                <Button
-                    className="rounded-md relative z-20"
-                    size="sm"
-                    onClick={handleClickAddTest}
-                >
-                    Add Test
-                </Button>
-            )}
+            {isHovered &&
+                showButtonCondition &&
+                !isPastDay &&
+                user?.role === ROLES.MAKER && (
+                    <Button
+                        className="rounded-md relative z-20"
+                        size="sm"
+                        onClick={handleClickAddTest}
+                    >
+                        Add Test
+                    </Button>
+                )}
         </div>
     );
 };

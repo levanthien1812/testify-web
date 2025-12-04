@@ -29,7 +29,7 @@ const TestInfo = () => {
     };
 
     return (
-        <div className="border border-gray-400 border-dashed p-2">
+        <div className="border border-gray-400 border-dashed p-2 grow">
             <p className="text-center text-2xl font-bold">{test.title}</p>
 
             <p className="text-lg sm:text-xl text-center mt-1 sm:mt-2">

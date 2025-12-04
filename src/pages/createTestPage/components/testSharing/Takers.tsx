@@ -87,10 +87,10 @@ const Takers = () => {
                             name="notify"
                             defaultChecked={notifyAssignment}
                             onChange={(e) => {
-                                setnotifyAssignment(e.target.checked);
+                                dispatch(setnotifyAssignment(e.target.checked));
                             }}
                         />
-                        <Tooltip content="An email and notification will be sent to the takers. Your name and test's title will be included in." />
+                        <Tooltip content="An email and notification will be sent to the takers when you publish the test. Your name and test's title will be included in." />
                     </div>
                 )}
             </div>

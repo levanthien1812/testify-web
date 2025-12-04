@@ -46,7 +46,7 @@ const TestsPage = () => {
     }, [filter]);
 
     return (
-        <div className="xl:w-2/3 md:w-5/6 mx-auto py-10">
+        <div className="container mx-auto py-10">
             <h2 className="text-4xl">Tests</h2>
             {testsFetchResult && testsFetchResult.tests.length > 0 && (
                 <>
@@ -59,7 +59,7 @@ const TestsPage = () => {
                         ))}
                     </div>
                     <div className="flex justify-end gap-2 mt-5 pt-2 border-t border-dashed items-end">
-                        <p>
+                        <p className="text-nowrap">
                             Page {filter.page} of {testsFetchResult.totalPages}
                         </p>
                         <Button
@@ -87,7 +87,10 @@ const TestsPage = () => {
                         >
                             <FontAwesomeIcon icon={faChevronRight} size="sm" />
                         </Button>
-                        <label htmlFor="limit" className="text-gray-600">
+                        <label
+                            htmlFor="limit"
+                            className="text-gray-600 text-nowrap"
+                        >
                             Tests per page:{" "}
                         </label>
                         <Select

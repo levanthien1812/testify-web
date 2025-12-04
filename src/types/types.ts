@@ -112,6 +112,7 @@ export interface TestItf extends TestBodyItf {
     submissions_count?: number;
     status: TEST_STATUS;
     passcode?: PasscodeItf;
+    notify_assignment?: boolean;
 }
 
 export interface PartBodyItf {

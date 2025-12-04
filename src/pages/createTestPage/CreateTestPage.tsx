@@ -64,7 +64,6 @@ const CreateTestPage = () => {
 
     useEffect(() => {
         if (location.state?.givenDate) {
-            console.log(new Date(location.state.givenDate).toISOString());
             dispatch(
                 saveTestInfo({
                     datetime: new Date(location.state.givenDate).toISOString(),

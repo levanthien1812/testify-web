@@ -223,7 +223,6 @@ export const validateQuestions = (
             if (totalQuestionsNumber === part.num_questions) {
                 isEqualNumberQuestions = true;
             }
-            console.log({ totalQuestionsNumber, totalQuestionsScore });
             return isEqualTotalScores && isEqualNumberQuestions;
         });
     } else if (questions.length > 0) {
@@ -243,6 +242,7 @@ export const validateQuestions = (
         if (totalQuestionsNumber === numQuestions) {
             isEqualNumberQuestions = true;
         }
+        // console.log({ isEqualTotalScores, isEqualNumberQuestions });
         isValidQuestions = isEqualTotalScores && isEqualNumberQuestions;
     }
     return isValidQuestions;
