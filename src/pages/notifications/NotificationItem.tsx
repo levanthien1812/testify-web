@@ -100,7 +100,9 @@ const NotificationItem = forwardRef<HTMLDivElement, Props>(
                 <div className="shrink-0">
                     <img
                         className="w-7 h-7 rounded-full mx-auto object-cover"
-                        src={formatImageUrl(notification.sender?.photo)}
+                        src={formatImageUrl(
+                            notification.image || notification.sender?.photo
+                        )}
                         alt=""
                     />
                 </div>

@@ -31,6 +31,7 @@ export interface NotificationItf {
     type: NOTIFICATION_TYPES;
     message: string;
     link?: string;
+    image?: string;
     read_by: string[];
     metadata?: Record<string, any>;
     created_at: string;
