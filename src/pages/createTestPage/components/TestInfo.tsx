@@ -115,15 +115,19 @@ const TestInfo = () => {
     const allValues = watch();
 
     useEffect(() => {
-        const formattedStartTime = formatTimezone(
-            new Date(allValues?.datetime)
-        );
         // When navigating back to an existing test, the form needs to be reset with the fetched data.
         reset(
             initialValues,
             { keepDefaultValues: false } // Ensure defaultValues are updated
         );
-        setValue("datetime", formattedStartTime);
+    }, [initialValues, reset]);
+
+    useEffect(() => {
+        // const formattedStartTime = formatTimezone(
+        //     new Date(allValues?.datetime)
+        // );
+
+        // setValue("datetime", formattedStartTime);
         if (options.allow_close_time.enable)
             setValue(
                 "options.allow_close_time.close_time",
@@ -135,8 +139,6 @@ const TestInfo = () => {
                 allValues?.datetime
             );
     }, [
-        initialValues,
-        reset,
         allValues?.datetime,
         setValue,
         options.allow_close_time.enable,
@@ -155,6 +157,7 @@ const TestInfo = () => {
 
     useEffect(() => {
         if (
+            allValues?.options.allow_show_maker_answers_after_test.enable &&
             allValues?.options.allow_show_maker_answers_after_test
                 .public_answers_option ===
                 PUBLIC_ANSWERS_OPTIONS.AFTER_CLOSE_TIME &&
@@ -167,6 +170,7 @@ const TestInfo = () => {
             );
         }
     }, [
+        allValues?.options.allow_show_maker_answers_after_test.enable,
         allValues?.options.allow_show_maker_answers_after_test
             .public_answers_option,
         allValues?.options.allow_close_time.enable,
