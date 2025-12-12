@@ -211,12 +211,12 @@ const TakersPage = () => {
                             <Popover
                                 content={
                                     <div className="px-2 py-2 flex flex-col gap-2">
-                                        <Button className="w-full" size="md">
+                                        <Button className="w-20" size="sm">
                                             Delete
                                         </Button>
                                         <Button
-                                            className="w-full"
-                                            size="md"
+                                            className="w-20"
+                                            size="sm"
                                             onClick={() => {
                                                 setCurrentTakerBeingViewed(
                                                     row.original

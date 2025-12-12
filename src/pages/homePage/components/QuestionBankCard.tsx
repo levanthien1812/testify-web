@@ -79,7 +79,7 @@ const QuestionBankCard = ({
 
     return (
         <div
-            className={`border border-gray-300 rounded-xl p-4 ${randomGradient} h-full flex flex-col min-w-[300px] max-w-[40%]`}
+            className={`border border-gray-300 p-4 ${randomGradient} h-full flex flex-col min-w-[300px] max-w-[40%]`}
         >
             <div className="flex items-center">
                 <div className="flex gap-1">
@@ -112,17 +112,8 @@ const QuestionBankCard = ({
             </div>
             <div className="mb-1">
                 <div className="text-[24px] mt-2">{questionBank.name}</div>
-                {questionBank.description && (
-                    <div className="text-[16px] text-gray-500">
-                        {questionBank.description}
-                    </div>
-                )}
 
-                <div className="mt-2 bg-orange-50 border border-orange-500 rounded-md px-4 py-1 leading-none text-orange-500 w-fit">
-                    <FontAwesomeIcon
-                        icon={faQuestion}
-                        className="mr-1 text-orange-500"
-                    />
+                <div className="mt-2 text-orange-500 w-fit">
                     {questionBank.questions.length} questions
                 </div>
                 {!questionBank.updated_at && questionBank.created_at && (
@@ -137,7 +128,7 @@ const QuestionBankCard = ({
                     </div>
                 )}
                 {questionBank.updated_at && (
-                    <div className="mt-1">
+                    <div className="mt-1 text-sm text-gray-500">
                         Updated at:{" "}
                         <span>
                             {format(

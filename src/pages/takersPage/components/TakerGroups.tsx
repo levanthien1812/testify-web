@@ -2,9 +2,10 @@ import React from "react";
 import { TakerGroupItf, TakerItf } from "../../../types/types";
 import { shorten } from "../../../utils/text";
 import IconButton from "../../../components/elements/IconButton";
-import { faEllipsis } from "@fortawesome/free-solid-svg-icons";
+import { faEllipsis, faUser } from "@fortawesome/free-solid-svg-icons";
 import { Table } from "@tanstack/react-table";
 import { TAKER_FIELDS } from "../../../config/constants/users";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 type Props = {
     table: Table<TakerItf>;
@@ -17,7 +18,7 @@ const TakerGroups = ({ groups, table }: Props) => {
             {groups &&
                 groups.map((group) => (
                     <div
-                        className="flex flex-col bg-white rounded-md shadow-md shadow-gray-300 border-t relative overflow-hidden w-[250px] shrink-0"
+                        className="flex flex-col bg-white shadow-md shadow-gray-300 border-t relative overflow-hidden w-[250px] shrink-0"
                         key={group.id}
                     >
                         <div className="p-2 space-y-2 bg-wave grow">
@@ -27,7 +28,11 @@ const TakerGroups = ({ groups, table }: Props) => {
                                     {shorten(group.description, 50)}
                                 </p>
                             )}
-                            <div className="bg-orange-50 border border-orange-600 px-2 py-1 rounded-md leading-none w-fit">
+                            <div className="text-orange-600 flex gap-1 items-center">
+                                <FontAwesomeIcon
+                                    icon={faUser}
+                                    className="text-xs"
+                                />
                                 {group.takers ? group.takers.length : 0} takers
                             </div>
                         </div>
