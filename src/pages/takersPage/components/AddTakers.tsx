@@ -160,12 +160,12 @@ const AddTakers = ({ onClose, taker, takerGroups }: AddTakersProps) => {
     };
 
     return (
-        <Modal onClose={onClose} width="md:w-2/3">
+        <Modal onClose={onClose} width="md:w-2/3 xl:w-1/2">
             <ModalHeader title={taker ? "Update Taker" : "Add Taker"} />
             <ModalBody>
                 <form>
                     <div className="flex flex-col md:flex-row gap-4">
-                        <div className="flex flex-col gap-2">
+                        <div className="flex flex-col gap-2 grow">
                             <div className="flex flex-col sm:flex-row gap-0 sm:gap-2">
                                 <Input
                                     {...register("email", {

@@ -66,9 +66,6 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
     const dispatch = useDispatch();
     const [isDeletingQuestion, setIsDeletingQuestion] =
         useState<boolean>(false);
-    const [currentType, setCurrentType] = useState<QUESTION_TYPE>(
-        question.type
-    );
 
     const [isImportingFromBank, setIsImportingFromBank] =
         useState<boolean>(false);
@@ -88,12 +85,6 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
     const allValues = watch();
 
     useEffect(() => {
-        if (!question?.id || allValues?.type !== question.type) {
-            setValue("content", getInitialQuestionContent(allValues?.type));
-        } else {
-            setValue("content", question.content as QuestionBodyContentItf);
-        }
-        setCurrentType(allValues?.type);
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [allValues?.type, question?.id]);
 
@@ -157,6 +148,15 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
             },
         });
 
+    const handleChangeType = (value: QUESTION_TYPE) => {
+        if (!question?.id || value !== question.type) {
+            setValue("content", getInitialQuestionContent(value));
+        } else {
+            setValue("content", question.content as QuestionBodyContentItf);
+        }
+        setValue("type", value);
+    };
+
     const onSubmit = (data: QuestionBodyItf<QuestionBodyContentItf>) => {
         if (!question?.id) {
             createQuestionMutate(data);
@@ -185,19 +185,10 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
     ) => {
         if (selectedQuestions.length === 0) return;
         const selectedQuestion = selectedQuestions[0];
-        if (selectedQuestion.content) {
-            setValue("content", selectedQuestion.content);
-        }
-        setValue("type", selectedQuestion.type);
-        if (selectedQuestion.partial_scoring) {
-            setValue("partial_scoring", selectedQuestion.partial_scoring);
-        }
-        if (selectedQuestion.level) {
-            setValue("level", selectedQuestion.level);
-        }
-        if (selectedQuestion.score) {
-            setValue("score", selectedQuestion.score);
-        }
+        // Reset the form with the new question data.
+        // This is more reliable than setting values individually,
+        // especially for nested objects like 'content'.
+        reset(selectedQuestion as QuestionBodyItf<QuestionBodyContentItf>);
 
         setIsImportingFromBank(false);
     };
@@ -274,8 +265,7 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
                                             {...register("type", {
                                                 required: "Type is required",
                                                 onChange(event) {
-                                                    setValue(
-                                                        "type",
+                                                    handleChangeType(
                                                         event.target.value
                                                     );
                                                 },
@@ -362,91 +352,115 @@ const Question = ({ question, part, playAudio }: QuestionProps) => {
                                 </div>
                                 <div className="border-l border-gray-300 border-dashed"></div>
                                 <div className="grow overflow-hidden">
-                                    {allValues.content &&
-                                        allValues.type === currentType && (
-                                            <>
-                                                {allValues.type ===
-                                                    QUESTION_TYPE.MULTIPLE_CHOICES && (
-                                                    <MulitpleChoiceQuestion
-                                                        content={
-                                                            allValues?.content as MultipleChoiceQuestionBodyItf
-                                                        }
-                                                        control={
-                                                            control as Control<
-                                                                QuestionBodyItf<MultipleChoiceQuestionBodyItf>
-                                                            >
-                                                        }
-                                                        errors={errors}
-                                                        setValue={
-                                                            setValue as UseFormSetValue<
-                                                                QuestionBodyItf<MultipleChoiceQuestionBodyItf>
-                                                            >
-                                                        }
-                                                    />
-                                                )}
-                                                {allValues.type ===
-                                                    QUESTION_TYPE.FILL_IN_THE_GAPS && (
-                                                    <FillGapsQuestion
-                                                        content={
+                                    {allValues.content && (
+                                        <>
+                                            {allValues.type ===
+                                                QUESTION_TYPE.MULTIPLE_CHOICES && (
+                                                <MulitpleChoiceQuestion
+                                                    key={`${question.id}-${
+                                                        (
+                                                            allValues.content as MultipleChoiceQuestionBodyItf
+                                                        )?.text
+                                                    }`}
+                                                    content={
+                                                        allValues?.content as MultipleChoiceQuestionBodyItf
+                                                    }
+                                                    control={
+                                                        control as Control<
+                                                            QuestionBodyItf<MultipleChoiceQuestionBodyItf>
+                                                        >
+                                                    }
+                                                    errors={errors}
+                                                    setValue={
+                                                        setValue as UseFormSetValue<
+                                                            QuestionBodyItf<MultipleChoiceQuestionBodyItf>
+                                                        >
+                                                    }
+                                                />
+                                            )}
+                                            {allValues.type ===
+                                                QUESTION_TYPE.FILL_IN_THE_GAPS && (
+                                                <FillGapsQuestion
+                                                    key={`${question.id}-${
+                                                        (
                                                             allValues.content as FillGapsQuestionBodyItf
-                                                        }
-                                                        control={
-                                                            control as Control<
-                                                                QuestionBodyItf<FillGapsQuestionBodyItf>
-                                                            >
-                                                        }
-                                                        errors={errors}
-                                                        setValue={
-                                                            setValue as UseFormSetValue<
-                                                                QuestionBodyItf<FillGapsQuestionBodyItf>
-                                                            >
-                                                        }
-                                                    />
-                                                )}
-                                                {allValues.type ===
-                                                    QUESTION_TYPE.MATCHING && (
-                                                    <MatchingQuestion
-                                                        content={
+                                                        )?.text
+                                                    }`}
+                                                    content={
+                                                        allValues.content as FillGapsQuestionBodyItf
+                                                    }
+                                                    control={
+                                                        control as Control<
+                                                            QuestionBodyItf<FillGapsQuestionBodyItf>
+                                                        >
+                                                    }
+                                                    errors={errors}
+                                                    setValue={
+                                                        setValue as UseFormSetValue<
+                                                            QuestionBodyItf<FillGapsQuestionBodyItf>
+                                                        >
+                                                    }
+                                                />
+                                            )}
+                                            {allValues.type ===
+                                                QUESTION_TYPE.MATCHING && (
+                                                <MatchingQuestion
+                                                    key={`${question.id}-${
+                                                        (
                                                             allValues.content as MatchingQuestionBodyItf
-                                                        }
-                                                        control={
-                                                            control as Control<
-                                                                QuestionBodyItf<MatchingQuestionBodyItf>
-                                                            >
-                                                        }
-                                                        errors={errors}
-                                                    />
-                                                )}
-                                                {allValues.type ===
-                                                    QUESTION_TYPE.RESPONSE && (
-                                                    <ResponseQuestion
-                                                        content={
+                                                        )?.text
+                                                    }`}
+                                                    content={
+                                                        allValues.content as MatchingQuestionBodyItf
+                                                    }
+                                                    control={
+                                                        control as Control<
+                                                            QuestionBodyItf<MatchingQuestionBodyItf>
+                                                        >
+                                                    }
+                                                    errors={errors}
+                                                />
+                                            )}
+                                            {allValues.type ===
+                                                QUESTION_TYPE.RESPONSE && (
+                                                <ResponseQuestion
+                                                    key={`${question.id}-${
+                                                        (
                                                             allValues.content as ResponseQuestionBodyItf
-                                                        }
-                                                        control={
-                                                            control as Control<
-                                                                QuestionBodyItf<ResponseQuestionBodyItf>
-                                                            >
-                                                        }
-                                                        errors={errors}
-                                                    />
-                                                )}
-                                                {allValues.type ===
-                                                    QUESTION_TYPE.TRUE_FALSE && (
-                                                    <TrueFalseQuestion
-                                                        content={
+                                                        )?.text
+                                                    }`}
+                                                    content={
+                                                        allValues.content as ResponseQuestionBodyItf
+                                                    }
+                                                    control={
+                                                        control as Control<
+                                                            QuestionBodyItf<ResponseQuestionBodyItf>
+                                                        >
+                                                    }
+                                                    errors={errors}
+                                                />
+                                            )}
+                                            {allValues.type ===
+                                                QUESTION_TYPE.TRUE_FALSE && (
+                                                <TrueFalseQuestion
+                                                    key={`${question.id}-${
+                                                        (
                                                             allValues.content as TrueFalseQuestionBodyItf
-                                                        }
-                                                        control={
-                                                            control as Control<
-                                                                QuestionBodyItf<TrueFalseQuestionBodyItf>
-                                                            >
-                                                        }
-                                                        errors={errors}
-                                                    />
-                                                )}
-                                            </>
-                                        )}
+                                                        )?.text
+                                                    }`}
+                                                    content={
+                                                        allValues.content as TrueFalseQuestionBodyItf
+                                                    }
+                                                    control={
+                                                        control as Control<
+                                                            QuestionBodyItf<TrueFalseQuestionBodyItf>
+                                                        >
+                                                    }
+                                                    errors={errors}
+                                                />
+                                            )}
+                                        </>
+                                    )}
                                 </div>
                             </div>
 
