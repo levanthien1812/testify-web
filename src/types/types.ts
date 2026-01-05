@@ -335,6 +335,7 @@ export interface TakerItf {
     group_id?: string;
     group?: TakerGroupItf;
     user: UserItf;
+    onboarded: boolean;
 }
 
 export interface MakerItf {

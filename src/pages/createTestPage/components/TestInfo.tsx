@@ -406,7 +406,9 @@ const TestInfo = () => {
                             disabled={!editibility.TEST_INFORMATION.level}
                         />
                     </div>
-                    <TestOptions />
+                    <div id="test-options-section">
+                        <TestOptions />
+                    </div>
                 </form>
             </FormProvider>
         </Wrapper>

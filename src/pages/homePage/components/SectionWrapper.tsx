@@ -44,7 +44,7 @@ const SectionWrapper = ({
         : [];
 
     return (
-        <div>
+        <div className="bg-white p-2">
             <div className="flex justify-between items-end border-b border-dashed border-gray-300 gap-4">
                 <div className="flex gap-1">
                     <div className={`text-2xl inline-block ${title.className}`}>

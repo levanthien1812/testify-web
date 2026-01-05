@@ -67,7 +67,7 @@ const TestQuestions = () => {
             )}
             <InfoMessage message="Drag to reorder questions" type="info" />
 
-            <div className="space-y-3 mt-4">
+            <div className="space-y-3 mt-4" id="question-list">
                 {testParts.length > 1 &&
                     testParts.map(
                         (part) =>
