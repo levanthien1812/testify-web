@@ -161,7 +161,7 @@ const TopTakers = () => {
                                         {row.getVisibleCells().map((cell) => (
                                             <td
                                                 key={cell.id}
-                                                className={`py-0 sm:py-1 px-1 align-middle border text-center border-slate-400`}
+                                                className={`py-0 sm:py-1 px-1 align-middle border text-center border-slate-400 bg-white`}
                                             >
                                                 {flexRender(
                                                     cell.column.columnDef.cell,
@@ -169,7 +169,7 @@ const TopTakers = () => {
                                                 )}
                                             </td>
                                         ))}
-                                        <td className="text-center py-0 sm:py-1 px-1 border border-slate-400">
+                                        <td className="text-center py-0 sm:py-1 px-1 border border-slate-400 bg-white">
                                             <Link
                                                 to={`/takers/${row.original.taker.id}`}
                                             >

@@ -55,7 +55,7 @@ const Wrapper = ({
     const dispatch = useDispatch();
 
     return (
-        <div className="px-2 sm:px-10 md:px-20 py-4 sm:py-8 md:py-12 md:shadow-2xl">
+        <div className="px-2 sm:px-10 md:px-20 py-4 sm:py-8 md:py-12 md:shadow-2xl bg-white">
             <h2 className="text-center text-3xl">
                 {viewData?.headerTitle?.text}
             </h2>

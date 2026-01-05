@@ -19,6 +19,7 @@ import { useAppSelector } from "../../hooks/hooks";
 import { AxiosError } from "axios";
 import MessageAction from "../others/MessageAction";
 import { formatTimezone } from "../../utils/time";
+import CreateTestTour from "./components/CreateTestTour";
 
 const CreateTestPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
@@ -109,23 +110,38 @@ const CreateTestPage = () => {
             )}
             {((test && testIdParam) || (!test && !testIdParam)) && (
                 <div className="xl:w-2/3 md:w-5/6 mx-auto py-2 sm:py-4 md:py-10 px-2">
-                    <Navigator />
-                    <StatusPanel />
+                    <CreateTestTour />
+                    <div id="navigator-panel">
+                        <Navigator />
+                    </div>
+                    <div id="status-panel">
+                        <StatusPanel />
+                    </div>
                     <div className="2xl:w-2/3 mx-auto my-2 md:my-6 relative">
                         {currentStep === CREATE_TEST_STEPS.TEST_INFORMATION && (
-                            <TestInfo />
+                            <div id="test-info-section">
+                                <TestInfo />
+                            </div>
                         )}
                         {currentStep === CREATE_TEST_STEPS.TEST_PARTS && (
-                            <TestParts />
+                            <div id="test-parts-section">
+                                <TestParts />
+                            </div>
                         )}
                         {currentStep === CREATE_TEST_STEPS.TEST_QUESTIONS && (
-                            <TestQuestions />
+                            <div id="test-questions-section">
+                                <TestQuestions />
+                            </div>
                         )}
                         {currentStep === CREATE_TEST_STEPS.TEST_ANSWERS && (
-                            <TestAnswers />
+                            <div id="test-answers-section">
+                                <TestAnswers />
+                            </div>
                         )}
                         {currentStep === CREATE_TEST_STEPS.TEST_TAKERS && (
-                            <TestSharing />
+                            <div id="test-sharing-section">
+                                <TestSharing />
+                            </div>
                         )}
                     </div>
                 </div>
