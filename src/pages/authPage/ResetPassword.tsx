@@ -6,8 +6,9 @@ import { useMutation } from "react-query";
 import { toast } from "react-toastify";
 import AuthInput from "./AuthInput";
 import Button from "../../components/elements/Button";
-import { useNavigate, useParams } from "react-router";
+import { useNavigate } from "react-router";
 import { useSearchParams } from "react-router-dom";
+import { MUTATION_KEYS } from "../../config/constants/queryMutationKeys";
 
 const ResetPassword = () => {
     const navigate = useNavigate();
@@ -32,7 +33,7 @@ const ResetPassword = () => {
                 const responseData = await resetPassword(data!);
                 return responseData.data;
             },
-            mutationKey: [`reset-password`],
+            mutationKey: [MUTATION_KEYS.RESET_PASSWORD],
             onSuccess: (data: any) => {
                 toast.success("Password reset successfully");
                 navigate("/login");

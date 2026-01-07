@@ -1,29 +1,34 @@
 import { render, screen, waitFor } from "@testing-library/react";
-import ForgotPassword from "./ForgotPassword";
-import { MemoryRouter } from "react-router-dom";
+import SendVerificationCode from "./SendVerificationCode";
+import { MemoryRouter, useNavigate } from "react-router-dom";
 import userEvent from "@testing-library/user-event";
-import { toast } from "react-toastify";
 import { useMutation } from "react-query";
+import { toast } from "react-toastify";
 
-// Mock the service to prevent loading the real file (and axios)
-const mockSendResetPasswordEmail = jest.fn();
+// Mock the service
+const mockSendVerificationCodeService = jest.fn();
 jest.mock("../../services/auth", () => ({
-    sendResetPasswordEmail: () => mockSendResetPasswordEmail,
+    sendVerificationCode: () => mockSendVerificationCodeService,
 }));
 
 const renderComponent = (emailState?: string) => {
     const initialEntries = emailState
-        ? [{ pathname: "/forgot-password", state: { email: emailState } }]
-        : ["/forgot-password"];
+        ? [
+              {
+                  pathname: "/send-verification-code",
+                  state: { email: emailState },
+              },
+          ]
+        : ["/send-verification-code"];
 
     return render(
         <MemoryRouter initialEntries={initialEntries}>
-            <ForgotPassword />
+            <SendVerificationCode />
         </MemoryRouter>
     );
 };
 
-describe("ForgotPassword", () => {
+describe("SendVerificationCode", () => {
     beforeEach(() => {
         (useMutation as jest.Mock).mockReturnValue({
             mutate: jest.fn(),
@@ -34,22 +39,12 @@ describe("ForgotPassword", () => {
     it("should render without crashing", () => {
         renderComponent();
         expect(
-            screen.getByRole("heading", { name: /forgot password/i })
+            screen.getByRole("heading", { name: /verify your email/i })
         ).toBeInTheDocument();
-    });
-
-    it("should render email input and submit button", () => {
-        renderComponent();
         expect(screen.getByLabelText(/email/i)).toBeInTheDocument();
         expect(
-            screen.getByRole("button", { name: /send/i })
+            screen.getByRole("button", { name: /get verification code/i })
         ).toBeInTheDocument();
-    });
-
-    it("should have a link back to login", () => {
-        renderComponent();
-        const loginLink = screen.getByRole("link", { name: /back to login/i });
-        expect(loginLink).toHaveAttribute("href", "/login");
     });
 
     it("should pre-fill email from location state", () => {
@@ -60,7 +55,9 @@ describe("ForgotPassword", () => {
     it("should display validation error for empty email", async () => {
         const user = userEvent.setup();
         renderComponent();
-        const submitButton = screen.getByRole("button", { name: /send/i });
+        const submitButton = screen.getByRole("button", {
+            name: /get verification code/i,
+        });
 
         await user.click(submitButton);
 
@@ -69,7 +66,7 @@ describe("ForgotPassword", () => {
         ).toBeInTheDocument();
     });
 
-    it("should call mutation and show success message on valid submission", async () => {
+    it("should call mutation and navigate on valid submission", async () => {
         const user = userEvent.setup();
         const mockMutate = jest.fn();
         (useMutation as jest.Mock).mockImplementation((options) => ({
@@ -82,25 +79,25 @@ describe("ForgotPassword", () => {
 
         renderComponent();
         const emailInput = screen.getByLabelText(/email/i);
-        await user.type(emailInput, "test@example.com");
+        await user.type(emailInput, "new@example.com");
 
-        const submitButton = screen.getByRole("button", { name: /send/i });
+        const submitButton = screen.getByRole("button", {
+            name: /get verification code/i,
+        });
         await user.click(submitButton);
 
         await waitFor(() => {
             expect(mockMutate).toHaveBeenCalledWith({
-                email: "test@example.com",
+                email: "new@example.com",
             });
         });
 
         expect(toast.success).toHaveBeenCalledWith(
-            "Send reset password email successfully"
+            "Send verification code successfully"
         );
-        expect(
-            screen.getByText(
-                /Check your email to find the reset password link/i
-            )
-        ).toBeInTheDocument();
+        expect(useNavigate()).toHaveBeenCalledWith("/verify-email", {
+            state: { email: "new@example.com" },
+        });
     });
 
     it("should show loading state", () => {
@@ -110,6 +107,8 @@ describe("ForgotPassword", () => {
         });
 
         renderComponent();
-        expect(screen.getByRole("button", { name: /sending/i })).toBeDisabled();
+        expect(
+            screen.getByRole("button", { name: /sending email/i })
+        ).toBeDisabled();
     });
 });

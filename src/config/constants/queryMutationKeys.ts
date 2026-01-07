@@ -75,6 +75,7 @@ const MUTATION_KEYS = {
     ACCEPT_CHAT_REQUEST: "accept-chat-request",
     REJECT_CHAT_REQUEST: "reject-chat-request",
     READ_ALL_NOTIFICATIONS: "read-all-notifications",
+    RESET_PASSWORD: "reset-password",
 } as const;
 
 export { QUERY_KEYS, MUTATION_KEYS };
