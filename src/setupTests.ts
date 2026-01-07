@@ -7,6 +7,11 @@ jest.mock("react-router-dom", () => ({
     useNavigate: () => mockNavigate,
 }));
 
+jest.mock("react-router", () => ({
+    ...jest.requireActual("react-router"),
+    useNavigate: () => mockNavigate,
+}));
+
 // Mock react-redux
 const mockDispatch = jest.fn();
 jest.mock("react-redux", () => ({
