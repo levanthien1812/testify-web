@@ -1,7 +1,7 @@
 import { RouterProvider, createBrowserRouter } from "react-router-dom";
 import { ToastContainer } from "react-toastify";
 import GuessRoute from "./components/routes/GuessRoute";
-import RegistePage from "./pages/authPage/RegistePage";
+import RegisterPage from "./pages/authPage/RegisterPage";
 import { QueryClient, QueryClientProvider } from "react-query";
 import MainLayout from "./components/layouts/MainLayout";
 import LoginPage from "./pages/authPage/LoginPage";
@@ -41,7 +41,7 @@ function App() {
                     children: [
                         {
                             path: "/register",
-                            element: <RegistePage />,
+                            element: <RegisterPage />,
                         },
                         {
                             path: "/login",
