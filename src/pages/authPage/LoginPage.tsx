@@ -4,7 +4,6 @@ import { login as loginService, loginGoogle } from "../../services/auth";
 import { isSuccess } from "../../utils/response";
 import { authActions } from "../../stores/auth";
 import { toast } from "react-toastify";
-import { AxiosError } from "axios";
 import { CredentialResponse, GoogleLogin } from "@react-oauth/google";
 import Button from "../../components/elements/Button";
 import AuthInput from "./AuthInput";
@@ -45,10 +44,11 @@ const LoginPage = () => {
             dispatch(authActions.authenticate({ user, tokens }));
         },
         onError: (err) => {
-            if (err instanceof AxiosError) {
-                toast.error(err.response?.data.message);
-                if (err.response?.data.errorCode) {
-                    setErrorCode(err.response?.data.errorCode);
+            const error = err as any;
+            if (error?.isAxiosError && error.response?.data) {
+                toast.error(error.response.data.message);
+                if (error.response.data.errorCode) {
+                    setErrorCode(error.response.data.errorCode);
                 }
             }
         },
@@ -74,8 +74,9 @@ const LoginPage = () => {
                 navigate("/");
             }
         } catch (error: unknown) {
-            if (error instanceof AxiosError) {
-                toast.error(error.response?.data.message);
+            const axiosError = error as any;
+            if (axiosError?.isAxiosError && axiosError.response?.data) {
+                toast.error(axiosError.response.data.message);
             }
         }
     };

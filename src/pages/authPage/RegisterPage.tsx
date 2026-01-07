@@ -15,7 +15,7 @@ type RegisterFields = {
     password_confirm: string;
 };
 
-const RegistePage = () => {
+const RegisterPage = () => {
     const [isNavigatingToEmailVerification, setIsNavigaingToEmailVerification] =
         useState(false);
 
@@ -158,4 +158,4 @@ const RegistePage = () => {
     );
 };
 
-export default RegistePage;
+export default RegisterPage;

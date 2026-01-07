@@ -11,8 +11,8 @@
     "@reduxjs/toolkit": "^2.2.3",
     "@tanstack/react-table": "^8.17.3",
     "@testing-library/jest-dom": "^5.17.0",
-    "@testing-library/react": "^13.4.0",
-    "@testing-library/user-event": "^13.5.0",
+    "@testing-library/react": "^15.0.6",
+    "@testing-library/user-event": "^14.6.1",
     "@tiptap/extension-color": "^2.4.0",
     "@tiptap/extension-image": "^2.11.7",
     "@tiptap/extension-list-item": "^2.4.0",
@@ -75,7 +75,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "watch": "npx tailwindcss -i ./src/index.css -o ./public/output.css --watch"
+    "watch": "npx tailwindcss -i ./src/index.css -o ./public/output.css --watch",
+    "coverage": "react-scripts test --coverage"
   },
   "eslintConfig": {
     "extends": [
