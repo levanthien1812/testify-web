@@ -24,7 +24,10 @@ const Input = forwardRef<HTMLInputElement, InputProps>((props, ref) => {
     return (
         <>
             {label && (
-                <label className={`shrink-0 ${label.extraClass}`}>
+                <label
+                    className={`shrink-0 ${label.extraClass}`}
+                    htmlFor={props.name}
+                >
                     {label.text}
                     {rest.required && (
                         <span className="text-orange-600 text-md ml-0.5">

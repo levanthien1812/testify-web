@@ -129,7 +129,7 @@ const MulitpleChoiceQuestion: React.FC<{
                         className="w-full"
                         onClick={() => appendOption({ text: "" })}
                         disabled={
-                            content?.options?.length >= 10 &&
+                            content?.options?.length >= 10 ||
                             !editibility.TEST_QUESTIONS.content
                         }
                     >

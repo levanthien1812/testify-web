@@ -14,7 +14,7 @@ const CopyLink = ({ link }: CopyLinkProps) => {
 
     const handleCopy = async () => {
         try {
-            navigator.clipboard.writeText(link);
+            await navigator.clipboard.writeText(link);
             setIsCopied(true);
             setTimeout(() => {
                 setIsCopied(false);

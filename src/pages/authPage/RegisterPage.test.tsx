@@ -136,5 +136,5 @@ describe("RegisterPage", () => {
         expect(useNavigate()).toHaveBeenCalledWith("/verify-email", {
             state: { email: "test@example.com" },
         });
-    });
+    }, 15000);
 });

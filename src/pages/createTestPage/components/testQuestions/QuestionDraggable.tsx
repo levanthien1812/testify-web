@@ -109,6 +109,7 @@ const QuestionDraggable = ({ question, onClick }: QuestionDraggableProps) => {
             onDragOver={handleDragOver}
             onDragLeave={handleDragLeave}
             onDrop={handleDrop}
+            data-testid={`question-drag-${question.order}`}
         >
             <div
                 className={`${

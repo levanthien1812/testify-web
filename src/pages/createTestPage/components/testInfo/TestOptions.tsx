@@ -53,6 +53,7 @@ const TestOptions = () => {
                     }
                     subOptions={[
                         <Checkbox
+                            key="let-taker-know"
                             label={{ text: "Let taker know" }}
                             sizing="sm"
                             {...register(
@@ -100,6 +101,7 @@ const TestOptions = () => {
                     }
                     subOptions={[
                         <Checkbox
+                            key="let-taker-know"
                             label={{ text: "Let taker know" }}
                             sizing="sm"
                             {...register(
@@ -128,6 +130,7 @@ const TestOptions = () => {
                     }
                     subOptions={[
                         <Checkbox
+                            key="let-taker-know"
                             label={{ text: "Let taker know" }}
                             sizing="sm"
                             {...register(
@@ -176,6 +179,7 @@ const TestOptions = () => {
                     }
                     subOptions={[
                         <Checkbox
+                            key="let-taker-know"
                             label={{ text: "Let taker know" }}
                             sizing="sm"
                             {...register(
@@ -204,6 +208,7 @@ const TestOptions = () => {
                     }
                     subOptions={[
                         <Checkbox
+                            key="let-taker-know"
                             label={{ text: "Let taker know" }}
                             sizing="sm"
                             {...register(
@@ -232,6 +237,7 @@ const TestOptions = () => {
                     }
                     subOptions={[
                         <Checkbox
+                            key="let-taker-know"
                             label={{ text: "Let taker know" }}
                             sizing="sm"
                             {...register(
@@ -314,6 +320,7 @@ const TestOptions = () => {
                     }
                     subOptions={[
                         <Checkbox
+                            key="let-taker-know"
                             label={{ text: "Let taker know" }}
                             sizing="sm"
                             {...register(
@@ -342,6 +349,7 @@ const TestOptions = () => {
                     }
                     subOptions={[
                         <Checkbox
+                            key="let-taker-know"
                             label={{ text: "Let taker know" }}
                             sizing="sm"
                             {...register(
@@ -370,6 +378,7 @@ const TestOptions = () => {
                     }
                     subOptions={[
                         <Checkbox
+                            key="let-taker-know"
                             label={{ text: "Let taker know" }}
                             sizing="sm"
                             {...register(
@@ -396,6 +405,7 @@ const TestOptions = () => {
                     }
                     subOptions={[
                         <Checkbox
+                            key="let-taker-know"
                             label={{ text: "Let taker know" }}
                             sizing="sm"
                             {...register(
@@ -420,6 +430,7 @@ const TestOptions = () => {
                     }
                     subOptions={[
                         <Checkbox
+                            key="let-taker-know"
                             label={{ text: "Let taker know" }}
                             sizing="sm"
                             {...register(
@@ -527,6 +538,7 @@ const TestOptions = () => {
                     }
                     subOptions={[
                         <Checkbox
+                            key="let-taker-know"
                             label={{ text: "Let taker know" }}
                             sizing="sm"
                             {...register(
@@ -601,6 +613,7 @@ const TestOptions = () => {
                     }
                     subOptions={[
                         <Checkbox
+                            key="let-taker-know"
                             label={{ text: "Let taker know" }}
                             sizing="sm"
                             {...register(

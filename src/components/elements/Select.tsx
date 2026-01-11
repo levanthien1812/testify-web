@@ -53,6 +53,7 @@ const Select = forwardRef<HTMLSelectElement, SelectProps>((props, ref) => {
                         sizing === "md" && "px-2 py-1"
                     } focus:border-orange-600 outline-none disabled:bg-gray-100 disabled:cursor-not-allowed w-full ${className}`}
                     ref={ref}
+                    id={props.name}
                     {...rest}
                 >
                     {guideOption && (

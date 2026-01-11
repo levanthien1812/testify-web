@@ -18,7 +18,7 @@ import { format } from "date-fns";
 
 const Passcode = () => {
     const { passcode } = useAppSelector((state) => state.createTest);
-    const { testId, shareOption } = useAppSelector((state) => state.createTest);
+    const { testId } = useAppSelector((state) => state.createTest);
     const { validate, setPasscode } = createTestActions;
     const dispatch = useDispatch();
 
@@ -30,7 +30,7 @@ const Passcode = () => {
                 [e.target.name]: e.target.value,
             })
         );
-        dispatch(validate());
+        // dispatch(validate());
     };
 
     const { mutate, isLoading: isGeneratingPasscode } = useMutation({
