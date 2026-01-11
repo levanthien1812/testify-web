@@ -15,18 +15,19 @@ const Option = forwardRef<HTMLInputElement, OptionProps>((props, ref) => {
         <div
             className="items-end"
             key={index}
-            onMouseOver={() => setHover(true)}
+            data-testid="option-item"
+            onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
         >
             <div className="flex justify-between">
                 <label htmlFor={rest.name} className="text-nowrap">
                     Option {index + 1}:
                 </label>
-                {hover && (
+                {hover && onDelete && (
                     <button
                         type="button"
                         className="text-gray-500 hover:text-orange-600"
-                        onClick={() => onDelete && onDelete(index)}
+                        onClick={() => onDelete(index)}
                     >
                         Delete
                     </button>

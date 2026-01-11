@@ -20,7 +20,10 @@ const TestOption = ({
                 </div>
             </div>
             {additionalInfo && (
-                <div className="sm:ms-4 px-2 py-1 sm:px-4 sm:py-2 bg-orange-50">
+                <div
+                    className="sm:ms-4 px-2 py-1 sm:px-4 sm:py-2 bg-orange-50"
+                    data-testid="additional-info"
+                >
                     {additionalInfo}
                 </div>
             )}

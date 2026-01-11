@@ -45,10 +45,7 @@ const MatchingAnswer = ({
     };
 
     useEffect(() => {
-        if (
-            matchings.length > 0 &&
-            matchings.length !== content.answer?.matchings?.length
-        ) {
+        if (matchings.length !== (content.answer?.matchings?.length || 0)) {
             onProvideAnswer({ ...content.answer, matchings });
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -63,7 +60,10 @@ const MatchingAnswer = ({
         <>
             <InstructionText text={content.instruction_text} />
             <HtmlDisplay htmlContent={content.text} />
-            <div className="grid grid-cols-2 gap-3 w-full mt-2 px-2 auto-rows-fr">
+            <div
+                className="grid grid-cols-2 gap-3 w-full mt-2 px-2 auto-rows-fr"
+                data-testid="matching-items"
+            >
                 <div className="space-y-2">
                     {content.left_items.map((item) => (
                         <DraggableItem
@@ -96,7 +96,7 @@ const MatchingAnswer = ({
                 </div>
             </div>
 
-            <div className="mt-2">
+            <div className="mt-2" data-testid="matching-answer">
                 <p>Matchings:</p>
                 {matchings.length === 0 && (
                     <p className="text-gray-500 text-sm italic">

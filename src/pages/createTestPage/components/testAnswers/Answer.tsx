@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
     AnswerContentItf,
     FillGapsQuestionItf,
@@ -42,6 +42,11 @@ const Answer: React.FC<{
     const [contentTemp, setContentTemp] = useState<QuestionContentItf>(
         question.content!
     );
+
+    useEffect(() => {
+        setContentTemp(question.content!);
+    }, [question.content]);
+
     const dispatch = useDispatch();
     const [isAskingAI, setIsAskingAI] = useState<boolean>(false);
     const [textToAsk, setTextToAsk] = useState<string>("");
@@ -130,11 +135,11 @@ const Answer: React.FC<{
                         contentTemp.answer?.is_saved
                             ? "bg-orange-600"
                             : "bg-gray-600"
-                    } w-fit`}
+                    } w-fit whitespace-nowrap`}
                 >
-                    Question {question.order}{" "}
+                    <span>{`Question ${question.order}`}</span>{" "}
                     <span className="italic">
-                        ({getRound(question.score)} points)
+                        {`(${getRound(question.score)} points)`}
                     </span>{" "}
                     :
                 </p>

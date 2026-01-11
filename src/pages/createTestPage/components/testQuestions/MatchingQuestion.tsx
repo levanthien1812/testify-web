@@ -74,7 +74,7 @@ const MatchingQuestion: React.FC<{
                     </p>
                 )}
             </div>
-            <div className="mt-2">
+            <div className="mt-2" data-testid="left-part">
                 <p>Left part:</p>
                 <div className="space-y-1">
                     {leftItems.map((item, index) => (
@@ -104,7 +104,7 @@ const MatchingQuestion: React.FC<{
                     </Button>
                 </div>
             </div>
-            <div className="mt-2">
+            <div className="mt-2" data-testid="right-part">
                 <p>Right part:</p>
                 <div className="space-y-1">
                     {rightItems?.map((item, index) => (
