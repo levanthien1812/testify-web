@@ -37,7 +37,6 @@ import {
 } from "chart.js";
 import Loading from "../../components/loadings/Loading";
 import MessageAction from "../others/MessageAction";
-import { AxiosError } from "axios";
 import TopTakers from "./components/TopTakers";
 import Statistics from "./components/Statistics";
 import SkeletonWrapper from "../others/SkeletonWrapper";
@@ -94,7 +93,7 @@ const ViewTestPage = () => {
             }
         },
         onError: (err: any) => {
-            if (err instanceof AxiosError) {
+            if (err.isAxiosError) {
                 setError(err.response?.data.message);
             }
         },

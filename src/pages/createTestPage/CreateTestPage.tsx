@@ -18,7 +18,6 @@ import StatusPanel from "./components/StatusPanel";
 import { useAppSelector } from "../../hooks/hooks";
 import { AxiosError } from "axios";
 import MessageAction from "../others/MessageAction";
-import { formatTimezone } from "../../utils/time";
 import CreateTestTour from "./components/CreateTestTour";
 
 const CreateTestPage = () => {

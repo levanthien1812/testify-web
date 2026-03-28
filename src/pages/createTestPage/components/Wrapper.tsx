@@ -86,6 +86,7 @@ const Wrapper = ({
                                 type="button"
                                 disabled={button?.disabled}
                                 onClick={button?.onClick}
+                                key={button.text}
                             >
                                 {!button?.isLoading && !button?.disabled
                                     ? button.text
