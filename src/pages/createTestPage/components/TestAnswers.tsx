@@ -46,8 +46,12 @@ const TestAnswers = () => {
         >
             <div className={`space-y-3 mt-4`}>
                 {numParts > 1 &&
-                    testParts.map((part) => (
-                        <Questions part={part} withAnswer={true} />
+                    testParts.map((part, index) => (
+                        <Questions
+                            part={part}
+                            withAnswer={true}
+                            key={part.id || index}
+                        />
                     ))}
                 {numParts === 0 && (
                     <div className={`px-4 py-4 space-y-2`}>

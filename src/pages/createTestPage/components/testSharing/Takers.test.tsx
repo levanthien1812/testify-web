@@ -1,4 +1,4 @@
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, within } from "@testing-library/react";
 import Takers from "./Takers";
 import { useDispatch } from "react-redux";
 import { useAppSelector } from "../../../../hooks/hooks";
@@ -131,7 +131,7 @@ describe("Takers", () => {
         // Find remove buttons (buttons containing the icon)
         const removeButtons = screen
             .getAllByRole("button")
-            .filter((btn) => btn.querySelector('[data-testid="fa-icon"]'));
+            .filter((btn) => within(btn).queryByTestId("fa-icon"));
 
         fireEvent.click(removeButtons[0]);
 

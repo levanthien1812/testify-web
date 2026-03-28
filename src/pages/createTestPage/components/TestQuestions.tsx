@@ -22,7 +22,7 @@ const TestQuestions = () => {
         isLoading: isValidatingQuestions,
     } = useMutation({
         mutationFn: async () => {
-            return await validateQuestions(testId!);
+            await validateQuestions(testId!);
         },
         mutationKey: [MUTATION_KEYS.VALIDATE_QUESTIONS, { testId }],
         onSuccess: () => {
