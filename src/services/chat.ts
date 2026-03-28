@@ -12,6 +12,7 @@ import {
     UpdateAIChat,
 } from "../types/chat";
 import { getQueryString } from "../utils/object";
+import Cookies from "js-cookie";
 
 export const getChats = async () => {
     try {
@@ -24,7 +25,7 @@ export const getChats = async () => {
 
 export const updateChat = async (
     chatId: string,
-    chatBody: Partial<ChatBodyItf>
+    chatBody: Partial<ChatBodyItf>,
 ) => {
     try {
         const response = await instance.patch(`chats/${chatId}`, chatBody);
@@ -36,12 +37,12 @@ export const updateChat = async (
 
 export const createChats = async (
     chatsBody: ChatBodyItf,
-    option: CHAT_OPTIONS
+    option: CHAT_OPTIONS,
 ) => {
     try {
         const response = await instance.post(
             `/chats?option=${option}`,
-            chatsBody
+            chatsBody,
         );
         return response.data;
     } catch (error) {
@@ -52,7 +53,7 @@ export const createChats = async (
 export const updateReadMessagesByChatId = async (chatId: string) => {
     try {
         const response = await instance.patch(
-            `/chats/${chatId}/messages/update-readby`
+            `/chats/${chatId}/messages/update-readby`,
         );
         return response.data;
     } catch (error) {
@@ -83,7 +84,7 @@ export const sendMessage = async (messageBody: MessageBody) => {
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
-            }
+            },
         );
         return response.data;
     } catch (error) {
@@ -93,12 +94,12 @@ export const sendMessage = async (messageBody: MessageBody) => {
 
 export const updateMessage = async (
     messageId: string,
-    messageBody: Partial<MessageBody>
+    messageBody: Partial<MessageBody>,
 ) => {
     try {
         const response = await instance.patch(
             `/chats/${messageBody.chat_id}/messages/${messageId}`,
-            messageBody
+            messageBody,
         );
         return response.data;
     } catch (error) {
@@ -108,7 +109,7 @@ export const updateMessage = async (
 
 export const getMessages = async (
     chatId: string,
-    query?: { limit: number; oldestMessageId?: string }
+    query?: { limit: number; oldestMessageId?: string },
 ) => {
     try {
         let queryString = "";
@@ -120,7 +121,7 @@ export const getMessages = async (
         }
 
         const response = await instance.get(
-            `/chats/${chatId}/messages${queryString}`
+            `/chats/${chatId}/messages${queryString}`,
         );
         return response.data;
     } catch (error) {
@@ -131,7 +132,7 @@ export const getMessages = async (
 export const deleteMessage = async (chatId: string, messageId: string) => {
     try {
         const response = await instance.delete(
-            `/chats/${chatId}/messages/${messageId}`
+            `/chats/${chatId}/messages/${messageId}`,
         );
         return response.data;
     } catch (error) {
@@ -142,12 +143,12 @@ export const deleteMessage = async (chatId: string, messageId: string) => {
 export const updaetNickname = async (
     chatId: string,
     memberId: string,
-    nickname: string
+    nickname: string,
 ) => {
     try {
         const response = await instance.patch(
             `chats/${chatId}/update-nickname`,
-            { memberId, nickname }
+            { memberId, nickname },
         );
         return response.data;
     } catch (error) {
@@ -186,7 +187,7 @@ export const createMessageAI = async (
     chatId: string,
     AIModel: string,
     content: MessageAIBody,
-    cancelToken: CancelToken
+    cancelToken: CancelToken,
 ) => {
     try {
         const response = await instance.post(
@@ -198,9 +199,38 @@ export const createMessageAI = async (
             {
                 timeout: 20000,
                 cancelToken: cancelToken,
-            }
+                onDownloadProgress: (progressEvent) => {},
+            },
         );
-        return response.data;
+        return response;
+    } catch (error) {
+        throw error;
+    }
+};
+
+export const createMessageAIStream = async (
+    chatId: string,
+    AIModel: string,
+    content: MessageAIBody,
+    signal: AbortSignal,
+) => {
+    try {
+        const response = await fetch(
+            `${process.env.REACT_APP_API_HOST}:${process.env.REACT_APP_API_PORT}/${process.env.REACT_APP_API_PREFIX}/chats/ai/${chatId}/messages/stream`,
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Bearer ${Cookies.get("access_token")}`,
+                },
+                body: JSON.stringify({
+                    content: content,
+                    model: AIModel,
+                }),
+                signal: signal,
+            },
+        );
+        return response;
     } catch (error) {
         throw error;
     }
@@ -210,7 +240,7 @@ export const regenerateMessageAI = async (
     chatId: string,
     AIModel: string,
     messageId: string,
-    cancelToken: CancelToken
+    cancelToken: CancelToken,
 ) => {
     try {
         const response = await instance.patch(
@@ -221,7 +251,7 @@ export const regenerateMessageAI = async (
             {
                 timeout: 20000,
                 cancelToken: cancelToken,
-            }
+            },
         );
         return response.data;
     } catch (error) {
@@ -234,7 +264,7 @@ export const updateMessageAI = async (
     messageId: string,
     AIModel: string,
     content: MessageAIBody,
-    cancelToken: CancelToken
+    cancelToken: CancelToken,
 ) => {
     try {
         const response = await instance.patch(
@@ -246,7 +276,7 @@ export const updateMessageAI = async (
             {
                 timeout: 20000,
                 cancelToken: cancelToken,
-            }
+            },
         );
         return response.data;
     } catch (error) {
@@ -258,7 +288,7 @@ export const createMockMessageAI = async (
     chatId: string,
     content: MessageAIBody,
     delay: number,
-    cancelToken: CancelToken
+    cancelToken: CancelToken,
 ) => {
     try {
         const response = await instance.post(
@@ -270,7 +300,7 @@ export const createMockMessageAI = async (
             {
                 timeout: 20000,
                 cancelToken: cancelToken,
-            }
+            },
         );
         return response.data;
     } catch (error) {
@@ -306,7 +336,7 @@ export const deleteChatAI = async (chatId: string) => {
 };
 
 export const createChatRequest = async (
-    body: Pick<ChatRequestItf, "receiver_id" | "message">
+    body: Pick<ChatRequestItf, "receiver_id" | "message">,
 ) => {
     try {
         const response = await instance.post("/chat-requests", body);
@@ -333,7 +363,7 @@ export const getChatRequests = async (query: {
 export const acceptChatRequest = async (requestId: string) => {
     try {
         const response = await instance.patch(
-            `/chat-requests/${requestId}/accept`
+            `/chat-requests/${requestId}/accept`,
         );
         return response.data;
     } catch (error) {
@@ -344,7 +374,7 @@ export const acceptChatRequest = async (requestId: string) => {
 export const rejectChatRequest = async (requestId: string) => {
     try {
         const response = await instance.patch(
-            `/chat-requests/${requestId}/reject`
+            `/chat-requests/${requestId}/reject`,
         );
         return response.data;
     } catch (error) {
