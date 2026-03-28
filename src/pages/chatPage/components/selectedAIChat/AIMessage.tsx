@@ -1,4 +1,4 @@
-import { AIChatMessageItf } from "../../../../types/chat";
+import { useEffect, useRef, useState } from "react";
 import { MESSAGE_AI_ROLE } from "../../../../config/constants/chat";
 import {
     faCopy,
@@ -6,7 +6,6 @@ import {
     faRotateRight,
 } from "@fortawesome/free-solid-svg-icons";
 import IconButton from "../../../../components/elements/IconButton";
-import { useRef, useState } from "react";
 import { useChatSocket } from "../ChatSocketContext";
 import Input from "../../../../components/elements/Input";
 import Button from "../../../../components/elements/Button";
@@ -15,6 +14,7 @@ import {
     regenerateMessageAI,
     updateMessageAI,
 } from "../../../../services/chat";
+import { AIChatMessageItf } from "../../../../types/chat";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
 import axios from "axios";
 
@@ -32,9 +32,16 @@ const AIMessage = ({ message }: AIMessageProps) => {
     const [isHover, setIsHover] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
     const [updatedMessageText, setUpdatedMessageText] = useState<string>(
-        message.content
+        message.content,
     );
     const cancelTokenSourceRef = useRef<any>(null);
+
+    // Sync local state with streaming content from props
+    useEffect(() => {
+        if (!isEditing) {
+            setUpdatedMessageText(message.content);
+        }
+    }, [message.content, isEditing]);
 
     const handleCLickCopyButton = () => {
         navigator.clipboard.writeText(message.content);
@@ -54,7 +61,7 @@ const AIMessage = ({ message }: AIMessageProps) => {
                 {
                     text: updatedMessageText,
                 },
-                cancelTokenSourceRef.current.token
+                cancelTokenSourceRef.current.token,
             );
             return responseData.messages;
         },
@@ -85,7 +92,7 @@ const AIMessage = ({ message }: AIMessageProps) => {
                 currentAIChat!.id!,
                 selectedAIModel!,
                 message.reply_to!,
-                cancelTokenSourceRef.current.token
+                cancelTokenSourceRef.current.token,
             );
             return responseData.messages;
         },
@@ -112,7 +119,7 @@ const AIMessage = ({ message }: AIMessageProps) => {
         setCurrentAIChat((prev) => ({
             ...prev!,
             messages: prev!.messages.filter(
-                (msg) => msg.reply_to !== message.id
+                (msg) => msg.reply_to !== message.id,
             ),
         }));
         setIsEditing(false);
@@ -130,7 +137,7 @@ const AIMessage = ({ message }: AIMessageProps) => {
 
     return (
         <div
-            className={`flex flex-col gap-1 ${
+            className={`flex flex-col gap-1 relative ${
                 message.role === MESSAGE_AI_ROLE.USER
                     ? "items-end"
                     : "items-start"
@@ -139,22 +146,17 @@ const AIMessage = ({ message }: AIMessageProps) => {
             onMouseLeave={() => setIsHover(false)}
         >
             {message.role === MESSAGE_AI_ROLE.ASSISTANT && (
-                <div className="gap-2 flex">
-                    {currentAIChat?.last_assistant_message_id ===
-                        message.id && (
+                <div
+                    className={`absolute -top-7 left-0 bg-gray-100 rounded-md p-1 flex gap-1 ${message.id === currentAIChat?.last_assistant_message_id || isHover ? "flex" : "hidden"}`}
+                >
+                    {message.id ===
+                        currentAIChat?.last_assistant_message_id && (
                         <IconButton
                             icon={faRotateRight}
                             onClick={handleRegenerateResponse}
                         />
                     )}
-                    {(isHover ||
-                        currentAIChat?.last_assistant_message_id ===
-                            message.id) && (
-                        <IconButton
-                            icon={faCopy}
-                            onClick={handleCLickCopyButton}
-                        />
-                    )}
+                    <IconButton icon={faCopy} onClick={handleCLickCopyButton} />
                 </div>
             )}
             {!isEditing && (

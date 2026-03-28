@@ -168,7 +168,7 @@ export interface ChatContext {
     updateNickname: (
         chatId: string,
         memberId: string,
-        nickname: string
+        nickname: string,
     ) => void;
     setAvailableTakers: (availabelTakers: TakerItf[]) => void;
     setAIModels: (aiModels: AIModelsItf[]) => void;
