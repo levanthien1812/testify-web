@@ -38,6 +38,7 @@ import SelectPanel from "./components/SelectPanel";
 import TakerGroups from "./components/TakerGroups";
 import InlineLoading from "../../components/loadings/InlineLoading";
 import Popover from "../../components/modals/Popover";
+import { shorten } from "../../utils/text";
 
 const TakersPage = () => {
     const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -169,7 +170,7 @@ const TakersPage = () => {
                     return row.original.user.birthday
                         ? format(
                               new Date(row.original.user.birthday),
-                              "dd/MM/yyyy"
+                              "dd/MM/yyyy",
                           )
                         : "N/A";
                 },
@@ -194,7 +195,7 @@ const TakersPage = () => {
                     if (row.original.group) {
                         return (
                             <div className="text-sm rounded-md lg:rounded-full border border-gray-300 px-2 py-1">
-                                {row.original.group.name}
+                                {shorten(row.original.group.name, 20)}
                             </div>
                         );
                     }
@@ -219,7 +220,7 @@ const TakersPage = () => {
                                             size="sm"
                                             onClick={() => {
                                                 setCurrentTakerBeingViewed(
-                                                    row.original
+                                                    row.original,
                                                 );
                                             }}
                                         >
@@ -237,7 +238,7 @@ const TakersPage = () => {
                 enableSorting: false,
             },
         ],
-        []
+        [],
     );
 
     const table = useReactTable({

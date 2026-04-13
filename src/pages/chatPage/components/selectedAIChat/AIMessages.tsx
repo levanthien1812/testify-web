@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { useChatSocket } from "../ChatSocketContext";
 import AIMessage from "./AIMessage";
+import InlineLoading from "../../../../components/loadings/InlineLoading";
 
 const AIMessages = () => {
     const { currentAIChat: chat, isGeneratingResponse } = useChatSocket();
@@ -30,7 +31,12 @@ const AIMessages = () => {
                 chat.messages.map((message) => (
                     <AIMessage message={message} key={message.id} />
                 ))}
-            {isGeneratingResponse && <p>Generating response ...</p>}
+            {isGeneratingResponse && (
+                <InlineLoading
+                    isLoading={true}
+                    loadingText={{ text: "Generating response..." }}
+                />
+            )}
         </div>
     );
 };
