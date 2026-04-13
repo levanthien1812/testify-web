@@ -17,6 +17,7 @@ import {
 import { AIChatMessageItf } from "../../../../types/chat";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
 import axios from "axios";
+import { toast } from "react-toastify";
 
 type AIMessageProps = {
     message: AIChatMessageItf;
@@ -28,6 +29,7 @@ const AIMessage = ({ message }: AIMessageProps) => {
         selectedAIModel,
         setIsGeneratingResponse,
         setCurrentAIChat,
+        isGeneratingResponse,
     } = useChatSocket();
     const [isHover, setIsHover] = useState(false);
     const [isEditing, setIsEditing] = useState(false);
@@ -45,6 +47,7 @@ const AIMessage = ({ message }: AIMessageProps) => {
 
     const handleCLickCopyButton = () => {
         navigator.clipboard.writeText(message.content);
+        toast.success("Message copied to clipboard!");
     };
 
     const handleCLickEditButton = () => {
@@ -145,20 +148,24 @@ const AIMessage = ({ message }: AIMessageProps) => {
             onMouseEnter={() => setIsHover(true)}
             onMouseLeave={() => setIsHover(false)}
         >
-            {message.role === MESSAGE_AI_ROLE.ASSISTANT && (
-                <div
-                    className={`absolute -top-7 left-0 bg-gray-100 rounded-md p-1 flex gap-1 ${message.id === currentAIChat?.last_assistant_message_id || isHover ? "flex" : "hidden"}`}
-                >
-                    {message.id ===
-                        currentAIChat?.last_assistant_message_id && (
+            {message.role === MESSAGE_AI_ROLE.ASSISTANT &&
+                !isGeneratingResponse && (
+                    <div
+                        className={`absolute -top-7 left-0 bg-gray-100 rounded-md p-1 flex gap-1 ${message.id === currentAIChat?.last_assistant_message_id || isHover ? "flex" : "hidden"}`}
+                    >
+                        {message.id ===
+                            currentAIChat?.last_assistant_message_id && (
+                            <IconButton
+                                icon={faRotateRight}
+                                onClick={handleRegenerateResponse}
+                            />
+                        )}
                         <IconButton
-                            icon={faRotateRight}
-                            onClick={handleRegenerateResponse}
+                            icon={faCopy}
+                            onClick={handleCLickCopyButton}
                         />
-                    )}
-                    <IconButton icon={faCopy} onClick={handleCLickCopyButton} />
-                </div>
-            )}
+                    </div>
+                )}
             {!isEditing && (
                 <div className="flex gap-2 max-w-[80%] items-center">
                     {isHover &&

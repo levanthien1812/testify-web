@@ -12,6 +12,7 @@ import { useChatSocket } from "../ChatSocketContext";
 import { MUTATION_KEYS } from "../../../../config/constants/queryMutationKeys";
 import { MESSAGE_AI_ROLE } from "../../../../config/constants/chat";
 import TextArea from "../../../../components/elements/TextArea";
+import { toast } from "react-toastify";
 
 type Props = {
     initialMessage?: string;
@@ -155,7 +156,10 @@ const AIInputMessage = ({ initialMessage }: Props) => {
 
     const handleClickSendBtn = async () => {
         if (!currentAIChat) return;
-        if (currentMessageText.length === 0) return;
+        if (currentMessageText.length === 0) {
+            toast.warning("Please enter a message.");
+            return;
+        }
 
         const messageToSend = currentMessageText;
         setCurrentAIChat((prev) => ({
