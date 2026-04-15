@@ -99,6 +99,7 @@ export interface TestBodyItf {
     options: TestOptions;
     question_numbering_method?: QUESTION_NUMBERING_METHOD;
 }
+
 export interface TestItf extends TestBodyItf {
     id: string;
     parts: TestPartItf[];
@@ -125,6 +126,7 @@ export interface PartBodyItf {
 
 export interface TestPartItf extends PartBodyItf {
     id?: string;
+    template_id?: string;
     test_id?: string;
     questions?: QuestionItf<QuestionContentItf>[];
     is_saved?: boolean;
@@ -141,7 +143,8 @@ export interface MultipleChoiceQuestionBodyItf {
 }
 
 export interface MultipleChoiceQuestionItf
-    extends MultipleChoiceQuestionBodyItf,
+    extends
+        MultipleChoiceQuestionBodyItf,
         BaseQuestionContentItf<MultipleChoiceAnswerItf> {
     id?: string;
     options: {
@@ -162,8 +165,7 @@ export interface FillGapsQuestionBodyItf {
 }
 
 export interface FillGapsQuestionItf
-    extends FillGapsQuestionBodyItf,
-        BaseQuestionContentItf<FillGapsAnswerItf> {
+    extends FillGapsQuestionBodyItf, BaseQuestionContentItf<FillGapsAnswerItf> {
     id?: string;
 }
 
@@ -179,8 +181,7 @@ export interface MatchingQuestionBodyItf {
 }
 
 export interface MatchingQuestionItf
-    extends MatchingQuestionBodyItf,
-        BaseQuestionContentItf<MatchingAnswerItf> {
+    extends MatchingQuestionBodyItf, BaseQuestionContentItf<MatchingAnswerItf> {
     id?: string;
     left_items: {
         id?: string;
@@ -200,8 +201,7 @@ export interface ResponseQuestionBodyItf {
 }
 
 export interface ResponseQuestionItf
-    extends ResponseQuestionBodyItf,
-        BaseQuestionContentItf<ResponseAnswerItf> {
+    extends ResponseQuestionBodyItf, BaseQuestionContentItf<ResponseAnswerItf> {
     id?: string;
 }
 
@@ -211,7 +211,8 @@ export interface TrueFalseQuestionBodyItf {
 }
 
 export interface TrueFalseQuestionItf
-    extends TrueFalseQuestionBodyItf,
+    extends
+        TrueFalseQuestionBodyItf,
         BaseQuestionContentItf<TrueFalseAnswerItf> {
     id?: string;
 }
@@ -313,8 +314,9 @@ export interface UserAnswerBodyItf<T extends AnswerContentItf> {
     content: T;
 }
 
-export interface UserAnswerItf<T extends AnswerContentItf>
-    extends UserAnswerBodyItf<T> {
+export interface UserAnswerItf<
+    T extends AnswerContentItf,
+> extends UserAnswerBodyItf<T> {
     id?: string;
     date?: Date;
     score?: number;

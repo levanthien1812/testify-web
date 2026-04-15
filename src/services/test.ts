@@ -1,4 +1,5 @@
 import { instance } from "../config/axios";
+import { TestTemplateBodyItf } from "../types/testTemplate";
 import {
     AnswerContentItf,
     FilterState,
@@ -42,11 +43,11 @@ export const getTest = async (
         passcode?: string;
         started?: boolean;
         detailed?: boolean;
-    }
+    },
 ) => {
     try {
         const response = await instance.get(
-            `/tests/${testId}${getQueryString(options)}`
+            `/tests/${testId}${getQueryString(options)}`,
         );
 
         return response.data;
@@ -61,11 +62,11 @@ export const getTestByCode = async (
         with_user_answers?: boolean;
         passcode?: string;
         started?: boolean;
-    }
+    },
 ) => {
     try {
         const response = await instance.get(
-            `/tests/code/${code}${getQueryString(options)}`
+            `/tests/code/${code}${getQueryString(options)}`,
         );
 
         return response.data;
@@ -85,11 +86,11 @@ export const getTestStatus = async (testId: string) => {
 
 export const getTestWithTakerAnswers = async (
     testId: string,
-    takerId: string
+    takerId: string,
 ) => {
     try {
         const response = await instance.get(
-            `/tests/${testId}/submissions/${takerId}`
+            `/tests/${testId}/submissions/${takerId}`,
         );
         return response.data;
     } catch (error) {
@@ -100,13 +101,13 @@ export const getTestWithTakerAnswers = async (
 export const updateSubmission = async (
     testId: string,
     submissionId: string,
-    submissionBody: Pick<SubmissionItf, "recording">
+    submissionBody: Pick<SubmissionItf, "recording">,
 ) => {
     try {
         const response = await instance.patch(
             `/tests/${testId}/submissions/${submissionId}`,
 
-            submissionBody
+            submissionBody,
         );
         return response.data;
     } catch (error) {
@@ -116,7 +117,7 @@ export const updateSubmission = async (
 
 export const updateTest = async (
     testId: string,
-    testBody: Partial<TestBodyItf>
+    testBody: Partial<TestBodyItf>,
 ) => {
     try {
         const response = await instance.patch(`/tests/${testId}`, testBody);
@@ -139,7 +140,7 @@ export const addPart = async (testId: string, partBody: PartBodyItf) => {
     try {
         const response = await instance.post(
             `/tests/${testId}/parts`,
-            partBody
+            partBody,
         );
         return response.data;
     } catch (error) {
@@ -150,12 +151,12 @@ export const addPart = async (testId: string, partBody: PartBodyItf) => {
 export const updatePart = async (
     testId: string,
     partId: string,
-    partBody: Partial<PartBodyItf>
+    partBody: Partial<PartBodyItf>,
 ) => {
     try {
         const response = await instance.patch(
             `/tests/${testId}/parts/${partId}`,
-            partBody
+            partBody,
         );
         return response.data;
     } catch (error) {
@@ -166,14 +167,14 @@ export const updatePart = async (
 export const movePart = async (
     testId: string,
     partId: string,
-    direction: "up" | "down"
+    direction: "up" | "down",
 ) => {
     try {
         const response = await instance.patch(
             `/tests/${testId}/parts/${partId}/move`,
             {
                 direction,
-            }
+            },
         );
         return response.data;
     } catch (error) {
@@ -193,19 +194,19 @@ export const validateParts = async (testId: string) => {
 export const saveQuestion = async (
     testId: string,
     questionBody: QuestionBodyItf<QuestionBodyContentItf>,
-    questionId?: string
+    questionId?: string,
 ) => {
     try {
         let response;
         if (!questionId) {
             response = await instance.post(
                 `/tests/${testId}/questions`,
-                questionBody
+                questionBody,
             );
         } else {
             response = await instance.patch(
                 `/tests/${testId}/questions/${questionId}`,
-                questionBody
+                questionBody,
             );
         }
         return response.data;
@@ -219,7 +220,7 @@ export const reorderQuestions = async (
     startOrder: number,
     endOrder: number,
     partFromId?: string,
-    partToId?: string
+    partToId?: string,
 ) => {
     try {
         const response = await instance.patch(
@@ -229,7 +230,7 @@ export const reorderQuestions = async (
                 endOrder,
                 partFromId,
                 partToId,
-            }
+            },
         );
 
         return response.data;
@@ -241,14 +242,14 @@ export const reorderQuestions = async (
 export const deleteQuestion = async (
     testId: string,
     questionId: string,
-    questionBody: Partial<QuestionBodyItf<QuestionBodyContentItf>>
+    questionBody: Partial<QuestionBodyItf<QuestionBodyContentItf>>,
 ) => {
     try {
         const response = await instance.delete(
             `/tests/${testId}/questions/${questionId}`,
             {
                 data: questionBody,
-            }
+            },
         );
 
         return response.data;
@@ -260,14 +261,14 @@ export const deleteQuestion = async (
 export const addAnswer = async (
     testId: string,
     questionId: string,
-    answerBody: AnswerContentItf
+    answerBody: AnswerContentItf,
 ) => {
     try {
         const response = await instance.patch(
             `/tests/${testId}/questions/${questionId}/answer`,
             {
                 ...answerBody,
-            }
+            },
         );
 
         return response.data;
@@ -280,7 +281,7 @@ export const createTakersForTest = async (
     testId: string,
     takersBody: {
         takers: TakerBodyItf[];
-    }
+    },
 ) => {
     try {
         const response = await instance.post(`/tests/${testId}/takers`, {
@@ -299,7 +300,7 @@ export const getTakersDetails = async (testId: string, takerIds: string[]) => {
             `/tests/${testId}/takers/details`,
             {
                 taker_ids: takerIds,
-            }
+            },
         );
 
         return response.data;
@@ -310,7 +311,7 @@ export const getTakersDetails = async (testId: string, takerIds: string[]) => {
 export const getAvailableTakers = async (testId: string) => {
     try {
         const response = await instance.get(
-            `/tests/${testId}/takers/available`
+            `/tests/${testId}/takers/available`,
         );
 
         return response.data;
@@ -322,7 +323,7 @@ export const getAvailableTakers = async (testId: string) => {
 export const assignTakers = async (
     testId: string,
     takers: string[],
-    notify: boolean
+    notify: boolean,
 ) => {
     try {
         const response = await instance.patch(`/tests/${testId}/takers`, {
@@ -338,12 +339,12 @@ export const assignTakers = async (
 
 export const generatePasscode = async (
     testId: string,
-    passcode: GeneratePasscodeBodyItf
+    passcode: GeneratePasscodeBodyItf,
 ) => {
     try {
         const response = await instance.post(
             `/tests/${testId}/passcode/generate`,
-            { passcode }
+            { passcode },
         );
 
         return response.data;
@@ -389,7 +390,7 @@ export const getPasscode = async (testId: string) => {
 export const validateQuestions = async (testId: string) => {
     try {
         const response = await instance.get(
-            `/tests/${testId}/questions/validate`
+            `/tests/${testId}/questions/validate`,
         );
 
         return response.data;
@@ -401,7 +402,7 @@ export const validateQuestions = async (testId: string) => {
 export const submitAnswers = async (
     testId: string,
     answers: UserAnswerItf<AnswerContentItf>[],
-    startTime: Date
+    startTime: Date,
 ) => {
     try {
         const response = await instance.post(`/tests/${testId}/submission`, {
@@ -437,11 +438,11 @@ export const getSubmissions = async (testId: string) => {
 
 export const getSubmissionAnswers = async (
     testId: string,
-    submissionId: string
+    submissionId: string,
 ) => {
     try {
         const response = await instance.get(
-            `/tests/${testId}/submissions/${submissionId}/answers`
+            `/tests/${testId}/submissions/${submissionId}/answers`,
         );
 
         return response.data;
@@ -453,12 +454,12 @@ export const getSubmissionAnswers = async (
 export const updateTakerAnswer = async (
     testId: string,
     answerId: string,
-    answerBody: Pick<UserAnswerItf<AnswerContentItf>, "score">
+    answerBody: Pick<UserAnswerItf<AnswerContentItf>, "score">,
 ) => {
     try {
         const response = await instance.patch(
             `/tests/${testId}/answers/${answerId}`,
-            answerBody
+            answerBody,
         );
 
         return response.data;
@@ -494,7 +495,7 @@ export const createTaker = async (body: TakerBodyItf) => {
 
 export const updateTaker = async (
     takerId: string,
-    body: Partial<TakerBodyItf>
+    body: Partial<TakerBodyItf>,
 ) => {
     try {
         const formData = new FormData();
@@ -519,7 +520,7 @@ export const updateTaker = async (
                 headers: {
                     "Content-Type": "multipart/form-data",
                 },
-            }
+            },
         );
 
         return response.data;
@@ -531,7 +532,7 @@ export const updateTaker = async (
 export const getQuestionsResultForTest = async (testId: string) => {
     try {
         const response = await instance.get(
-            `/tests/${testId}/questions-result`
+            `/tests/${testId}/questions-result`,
         );
 
         return response.data;
@@ -543,7 +544,7 @@ export const getQuestionsResultForTest = async (testId: string) => {
 export const getTestsToImportQuestionToBank = async () => {
     try {
         const response = await instance.get(
-            `/tests/tests-for-importing-questions-to-bank`
+            `/tests/tests-for-importing-questions-to-bank`,
         );
 
         return response.data;

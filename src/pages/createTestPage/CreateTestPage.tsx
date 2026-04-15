@@ -23,8 +23,8 @@ import CreateTestTour from "./components/CreateTestTour";
 const CreateTestPage = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const stepParam = searchParams.get("step");
-    const { currentStep, testTitle } = useAppSelector(
-        (state) => state.createTest
+    const { currentStep, testTitle, steps } = useAppSelector(
+        (state) => state.createTest,
     );
     const [error, setError] = useState<string | null>(null);
     const { setTestFromAPI, setStep, saveTestInfo, reset, navigateStep } =
@@ -67,7 +67,7 @@ const CreateTestPage = () => {
             dispatch(
                 saveTestInfo({
                     datetime: new Date(location.state.givenDate).toISOString(),
-                })
+                }),
             );
         }
     }, [location.state, dispatch, saveTestInfo]);
@@ -111,7 +111,15 @@ const CreateTestPage = () => {
                 <div className="xl:w-2/3 md:w-5/6 mx-auto py-2 sm:py-4 md:py-10 px-2">
                     <CreateTestTour />
                     <div id="navigator-panel">
-                        <Navigator />
+                        <Navigator
+                            steps={steps}
+                            currentStep={currentStep}
+                            onStepClick={(step) =>
+                                dispatch(
+                                    navigateStep(step as CREATE_TEST_STEPS),
+                                )
+                            }
+                        />
                     </div>
                     <div id="status-panel">
                         <StatusPanel />
