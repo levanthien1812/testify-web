@@ -5,6 +5,7 @@ import { useAppSelector } from "../../hooks/hooks";
 import QuestionBanks from "./components/QuestionBanks";
 import TestCalendar from "./components/TestCalendar";
 import OnboardingTour from "./components/OnboardingTour";
+import RecentTestTemplates from "./components/RecentTestTemplates";
 
 const HomePage = () => {
     const user = useAppSelector((state) => state.auth.user);
@@ -18,6 +19,11 @@ const HomePage = () => {
             <div id="recent-tests">
                 <RecentTests />
             </div>
+            {user?.role === ROLES.MAKER && (
+                <div id="recent-test-templates">
+                    <RecentTestTemplates />
+                </div>
+            )}
             {user?.role === ROLES.MAKER && (
                 <div id="question-banks">
                     <QuestionBanks />

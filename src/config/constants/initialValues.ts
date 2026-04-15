@@ -44,6 +44,8 @@ import {
     TEST_STATUS,
 } from "./tests";
 import { CREATE_TEST_STEPS, QUESTION_TYPE } from "./tests";
+import { CREATE_TEST_TEMPLATE_STEPS } from "./testTemplate";
+import { CreateTestTemplateContext } from "../../types/testTemplate";
 
 export const INITIAL_OPTIONS: TestOptions = {
     allow_close_time: {
@@ -541,4 +543,40 @@ export const INITIAL_PASSCODE: PasscodeItf = {
     valid_in: 0,
     valid_unit: PASSCODE_VALID_UNIT.MINUTES,
     method: "",
+};
+
+export const INITIAL_CREATE_TEST_TEMPLATE_CONTEXT: CreateTestTemplateContext = {
+    currentStep: CREATE_TEST_TEMPLATE_STEPS.TEMPLATE_INFORMATION,
+    enablePrevStep: false,
+    enableNextStep: true,
+    steps: [
+        {
+            index: 1,
+            value: CREATE_TEST_TEMPLATE_STEPS.TEMPLATE_INFORMATION,
+            title: "Template Information",
+            isTotallyDone: false,
+            isPartiallyDone: false,
+            isCurrentStep: true,
+        },
+        {
+            index: 2,
+            value: CREATE_TEST_TEMPLATE_STEPS.TEMPLATE_PARTS,
+            title: "Template Parts",
+            isTotallyDone: false,
+            isPartiallyDone: false,
+            isCurrentStep: false,
+        },
+    ],
+    templateId: "",
+    templateName: "",
+    testDescription: "",
+    testDuration: 0,
+    maxScore: 10,
+    numQuestions: 10,
+    numParts: 0,
+    level: TEST_LEVEL.EASY,
+    testParts: [],
+    options: INITIAL_OPTIONS,
+    isValidTemplateInfo: false,
+    isValidCurrentPart: false,
 };

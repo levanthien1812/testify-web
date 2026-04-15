@@ -15,7 +15,7 @@ type ViewData = {
     };
     bottomButtons: {
         containButton: Partial<ButtonProps>;
-        outlinedButton: Partial<ButtonProps>;
+        outlinedButton?: Partial<ButtonProps>;
         additionalButtons?: Partial<ButtonProps>[];
     };
     canOpenParts?: boolean;
@@ -49,7 +49,7 @@ const Wrapper = ({
         viewData?.bottomButtons;
 
     const { openAllParts, testParts } = useAppSelector(
-        (state) => state.createTest
+        (state) => state.createTest,
     );
     const { setOpenAllParts } = createTestActions;
     const dispatch = useDispatch();
@@ -95,7 +95,7 @@ const Wrapper = ({
                         ))}
                 </>
 
-                {!(outlinedButton?.included === false) && (
+                {outlinedButton && !(outlinedButton?.included === false) && (
                     <Button
                         size="lg"
                         type="button"
@@ -105,7 +105,7 @@ const Wrapper = ({
                         {outlinedButton?.text}
                     </Button>
                 )}
-                {!(containButton?.included === false) && (
+                {containButton && !(containButton?.included === false) && (
                     <Button
                         size="lg"
                         type={containButton?.type}
@@ -115,8 +115,9 @@ const Wrapper = ({
                         {containButton?.isLoading
                             ? containButton?.loadingText
                             : containButton?.disabled
-                            ? containButton?.disabledText || containButton?.text
-                            : containButton?.text}
+                              ? containButton?.disabledText ||
+                                containButton?.text
+                              : containButton?.text}
                     </Button>
                 )}
             </div>

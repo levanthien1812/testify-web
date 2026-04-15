@@ -1,6 +1,8 @@
 const QUERY_KEYS = {
     GET_TESTS: "get-tests",
     GET_TEST: "get-test",
+    GET_TEST_TEMPLATES: "get-test-templates",
+    GET_TEST_TEMPLATE: "get-test-template",
     GET_AVAILABLE_TAKERS: "get-available-takers",
     GET_AVAILABLE_MAKERS: "get-available-makers",
     GET_TEST_SUBMISSION: "get-test-submission",
@@ -32,6 +34,8 @@ const MUTATION_KEYS = {
     UPDATE_TEST: "update-test",
     VALIDATE_PARTS: "validate-parts",
     CREATE_TEST: "create-test",
+    CREATE_TEST_TEMPLATE: "create-test-template",
+    UPDATE_TEST_TEMPLATE: "update-test-template",
     CREATE_PARTS: "create-parts",
     ADD_PART: "add-part",
     UPDATE_PART: "update-part",

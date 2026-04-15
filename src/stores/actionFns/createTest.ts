@@ -24,7 +24,7 @@ export const initializeParts = (
     existingParts: TestPartItf[],
     numParts: number,
     testId: string,
-    questionNumberingMethod?: QUESTION_NUMBERING_METHOD
+    questionNumberingMethod?: QUESTION_NUMBERING_METHOD,
 ) => {
     let updatedParts = [...existingParts];
 
@@ -43,7 +43,7 @@ export const initializeParts = (
                 part.num_questions,
                 testId,
                 part.id,
-                startOrder
+                startOrder,
             );
 
             if (
@@ -63,7 +63,7 @@ export const initializeParts = (
                     ...INITIAL_PART,
                     order: existingParts.length + (index + 1),
                     test_id: testId,
-                })
+                }),
             ),
         ];
     }
@@ -76,14 +76,14 @@ export const initializeQuestions = (
     numQuestions: number,
     testId: string,
     partId?: string,
-    startOrder?: number
+    startOrder?: number,
 ) => {
     let updatedQuestions = [...existingQuestions];
 
     if (existingQuestions.length === 0) {
         const orderArray = generateArrayFromStart(
             startOrder || 1,
-            numQuestions
+            numQuestions,
         );
         updatedQuestions = orderArray.map((order) => {
             return {
@@ -96,7 +96,7 @@ export const initializeQuestions = (
     } else {
         if (existingQuestions.length < numQuestions) {
             let existingOrderArray = existingQuestions.map(
-                (question) => question.order
+                (question) => question.order,
             );
 
             updatedQuestions = [
@@ -105,7 +105,7 @@ export const initializeQuestions = (
                     () => {
                         const missingOrder = findSmallestMissingPositive(
                             existingOrderArray,
-                            startOrder
+                            startOrder,
                         );
                         existingOrderArray.push(missingOrder);
                         return {
@@ -114,7 +114,7 @@ export const initializeQuestions = (
                             ...(partId ? { part_id: partId } : {}),
                             order: missingOrder,
                         };
-                    }
+                    },
                 ),
             ];
         }
@@ -127,7 +127,7 @@ export const initializeQuestions = (
 };
 
 export const initializeAnswers = (
-    existingQuestions: QuestionItf<QuestionContentItf>[]
+    existingQuestions: QuestionItf<QuestionContentItf>[],
 ) => {
     let updatedQuestions = [...existingQuestions];
     if (existingQuestions.length > 0)
@@ -152,7 +152,7 @@ export const validateTestInfo = (
             | "num_questions"
             | "num_parts"
         >
-    >
+    >,
 ) => {
     const isValidTestInfo =
         testInfo.title.length > 0 &&
@@ -168,7 +168,7 @@ export const validateParts = (
     parts: TestPartItf[],
     numParts: number,
     numQuestions: number,
-    maxScore: number
+    maxScore: number,
 ) => {
     let isValidParts = false;
     if (numParts === 0) isValidParts = true;
@@ -177,7 +177,7 @@ export const validateParts = (
         let isEqualNumberQuestions = false;
         const totalPartsScores = parts.reduce(
             (total, curr) => curr.score + total,
-            0
+            0,
         );
         if (
             totalPartsScores === maxScore &&
@@ -188,7 +188,7 @@ export const validateParts = (
 
         const totalPartsQuestions = parts.reduce(
             (total, curr) => total + curr?.num_questions,
-            0
+            0,
         );
         if (
             totalPartsQuestions === numQuestions &&
@@ -205,7 +205,7 @@ export const validateQuestions = (
     parts: TestPartItf[],
     questions: QuestionItf<QuestionContentItf>[],
     numQuestions: number,
-    maxScore: number
+    maxScore: number,
 ) => {
     let isValidQuestions = false;
     if (questions.length === 0) {
@@ -214,7 +214,7 @@ export const validateQuestions = (
             let isEqualNumberQuestions = false;
             const totalQuestionsScore = part?.questions?.reduce(
                 (total, curr) => curr.score + total,
-                0
+                0,
             );
             if (totalQuestionsScore === part?.score) {
                 isEqualTotalScores = true;
@@ -230,13 +230,13 @@ export const validateQuestions = (
         let isEqualNumberQuestions = false;
         const totalQuestionsScore = questions.reduce(
             (total, curr) => curr.score + total,
-            0
+            0,
         );
         if (totalQuestionsScore === maxScore) {
             isEqualTotalScores = true;
         }
         const totalQuestionsNumber = questions.filter(
-            (question) => question.is_content_provided
+            (question) => question.is_content_provided,
         ).length;
 
         if (totalQuestionsNumber === numQuestions) {
@@ -255,7 +255,7 @@ export const validateAnswers = () => {
 export const validateShareOption = (
     shareOption: SHARE_OPTIONS | undefined,
     noOfSelectedTakers: number,
-    passcode: PasscodeItf
+    passcode: PasscodeItf,
 ) => {
     let isValidShareOption = false;
     switch (shareOption) {

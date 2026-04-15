@@ -68,7 +68,7 @@ const TestInfo = () => {
             numParts,
             level,
             options,
-        ]
+        ],
     );
 
     const { mutate: createTestMutate, isLoading: createTestLoading } =
@@ -105,11 +105,22 @@ const TestInfo = () => {
         setValue,
         reset,
         watch,
+        getValues,
     } = methods;
 
     const onSubmit = async (data: TestBodyItf) => {
+        // Save to Redux before creating/updating
+        dispatch(saveTestInfo(data));
+        dispatch(validateTest());
+
         if (!testId) createTestMutate(data);
         else updateTestMutate(data);
+    };
+
+    const handleFieldBlur = () => {
+        const values = getValues();
+        dispatch(saveTestInfo(values));
+        dispatch(validateTest());
     };
 
     const allValues = watch();
@@ -118,7 +129,7 @@ const TestInfo = () => {
         // When navigating back to an existing test, the form needs to be reset with the fetched data.
         reset(
             initialValues,
-            { keepDefaultValues: false } // Ensure defaultValues are updated
+            { keepDefaultValues: false }, // Ensure defaultValues are updated
         );
     }, [initialValues, reset]);
 
@@ -131,12 +142,12 @@ const TestInfo = () => {
         if (options.allow_close_time.enable)
             setValue(
                 "options.allow_close_time.close_time",
-                allValues?.datetime
+                allValues?.datetime,
             );
         if (options.allow_show_maker_answers_after_test.enable)
             setValue(
                 "options.allow_show_maker_answers_after_test.public_answers_date",
-                allValues?.datetime
+                allValues?.datetime,
             );
     }, [
         allValues?.datetime,
@@ -150,12 +161,6 @@ const TestInfo = () => {
     }, [testDatetime, setValue]);
 
     useEffect(() => {
-        dispatch(saveTestInfo(allValues));
-        dispatch(validateTest());
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [JSON.stringify(allValues), dispatch, saveTestInfo, validateTest]);
-
-    useEffect(() => {
         if (
             allValues?.options.allow_show_maker_answers_after_test.enable &&
             allValues?.options.allow_show_maker_answers_after_test
@@ -166,7 +171,7 @@ const TestInfo = () => {
         ) {
             setValue(
                 "options.allow_show_maker_answers_after_test.public_answers_date",
-                allValues?.options.allow_close_time.close_time
+                allValues?.options.allow_close_time.close_time,
             );
         }
     }, [
@@ -191,7 +196,7 @@ const TestInfo = () => {
         if (allValues.options.require_screen_recorder.enable) {
             setValue(
                 "options.require_screen_recorder.record_mode",
-                allValues.options.require_camera_on.record_mode
+                allValues.options.require_camera_on.record_mode,
             );
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -204,7 +209,7 @@ const TestInfo = () => {
         if (allValues.options.require_camera_on.enable) {
             setValue(
                 "options.require_camera_on.record_mode",
-                allValues.options.require_screen_recorder.record_mode
+                allValues.options.require_screen_recorder.record_mode,
             );
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -239,8 +244,8 @@ const TestInfo = () => {
                         loadingText: createTestLoading
                             ? "Saving..."
                             : updateTestLoading
-                            ? "Updating..."
-                            : null,
+                              ? "Updating..."
+                              : null,
                     },
                 },
             }}
@@ -252,6 +257,7 @@ const TestInfo = () => {
                             {...register("title", {
                                 required: "Title is required",
                             })}
+                            onBlur={handleFieldBlur}
                             error={errors?.title && errors?.title.message}
                             required
                             disabled={!editibility.TEST_INFORMATION.title}
@@ -261,6 +267,7 @@ const TestInfo = () => {
                         />
                         <Input
                             {...register("description")}
+                            onBlur={handleFieldBlur}
                             label={{ text: "Test description" }}
                             disabled={!editibility.TEST_INFORMATION.description}
                         />
@@ -278,6 +285,7 @@ const TestInfo = () => {
                                     return true;
                                 },
                             })}
+                            onBlur={handleFieldBlur}
                             error={errors?.datetime && errors?.datetime.message}
                             label={{ text: "Start time" }}
                             disabled={!editibility.TEST_INFORMATION.datetime}
@@ -293,6 +301,8 @@ const TestInfo = () => {
                                     message: "Duration must be greater than 0",
                                 },
                             })}
+                            min={1}
+                            onBlur={handleFieldBlur}
                             disabled={options.disallow_time_limit.enable}
                             error={errors?.duration && errors?.duration.message}
                             label={{ text: "Duration (mins)" }}
@@ -307,6 +317,8 @@ const TestInfo = () => {
                                     message: "Max score must be greater than 0",
                                 },
                             })}
+                            min={1}
+                            onBlur={handleFieldBlur}
                             required
                             error={
                                 errors?.max_score && errors?.max_score.message
@@ -330,6 +342,8 @@ const TestInfo = () => {
                                 },
                                 valueAsNumber: true,
                             })}
+                            min={0}
+                            onBlur={handleFieldBlur}
                             required
                             error={
                                 errors?.num_parts && errors?.num_parts.message
@@ -360,6 +374,7 @@ const TestInfo = () => {
                                 },
                                 valueAsNumber: true,
                             })}
+                            onBlur={handleFieldBlur}
                             required
                             error={
                                 errors?.num_questions &&
@@ -379,8 +394,9 @@ const TestInfo = () => {
                             <Select
                                 className="grow capitalize"
                                 {...register("question_numbering_method")}
+                                onBlur={handleFieldBlur}
                                 options={Object.values(
-                                    QUESTION_NUMBERING_METHOD
+                                    QUESTION_NUMBERING_METHOD,
                                 ).map((method) => ({
                                     label: QUESTION_NUMBERING_METHOD_LABEL[
                                         method
@@ -396,6 +412,7 @@ const TestInfo = () => {
                         <Select
                             className="grow capitalize"
                             {...register("level")}
+                            onBlur={handleFieldBlur}
                             options={Object.values(TEST_LEVEL).map((level) => ({
                                 label: TEST_LEVEL_LABEL[level],
                                 value: level,

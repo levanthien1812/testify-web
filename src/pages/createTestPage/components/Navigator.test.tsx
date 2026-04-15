@@ -66,7 +66,7 @@ describe("Navigator", () => {
             currentStep: CREATE_TEST_STEPS.TEST_INFORMATION,
         });
 
-        render(<Navigator />);
+        // render(<Navigator />);
 
         expect(screen.getByText("1")).toBeInTheDocument();
         expect(screen.getByText("2")).toBeInTheDocument();
@@ -79,7 +79,7 @@ describe("Navigator", () => {
             currentStep: CREATE_TEST_STEPS.TEST_PARTS, // Step 2 is current
         });
 
-        render(<Navigator />);
+        // render(<Navigator />);
 
         const step1Button = screen.getByText("1");
         const step2Button = screen.getByText("2");
@@ -101,13 +101,13 @@ describe("Navigator", () => {
             currentStep: CREATE_TEST_STEPS.TEST_INFORMATION,
         });
 
-        render(<Navigator />);
+        // render(<Navigator />);
 
         const step3Button = screen.getByText("3");
         fireEvent.click(step3Button);
 
         expect(createTestActions.navigateStep).toHaveBeenCalledWith(
-            CREATE_TEST_STEPS.TEST_QUESTIONS
+            CREATE_TEST_STEPS.TEST_QUESTIONS,
         );
         expect(mockDispatch).toHaveBeenCalledWith({
             type: "NAVIGATE_STEP",

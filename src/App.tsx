@@ -26,6 +26,8 @@ import VerifyEmail from "./pages/authPage/VerifyEmail";
 import ForgotPassword from "./pages/authPage/ForgotPassword";
 import ResetPassword from "./pages/authPage/ResetPassword";
 import SendVerificationCode from "./pages/authPage/SendVerificationCode";
+import TestTemplatePage from "./pages/testTemplatePage/TestTemplatePage";
+import CreateTestTemplatePage from "./pages/testTemplatePage/CreateTestTemplatePage";
 
 const queryClient = new QueryClient(queryClientConfig);
 
@@ -217,6 +219,32 @@ function App() {
                                             } as BreadcrumbHandle,
                                         },
                                     ],
+                                },
+                                {
+                                    path: "test-templates",
+                                    children: [
+                                        {
+                                            index: true,
+                                            element: <TestTemplatePage />,
+                                        },
+                                        {
+                                            path: "create",
+                                            element: <CreateTestTemplatePage />,
+                                            handle: {
+                                                crumb: "Create Template",
+                                            } as BreadcrumbHandle,
+                                        },
+                                        {
+                                            path: ":templateId/edit",
+                                            element: <CreateTestTemplatePage />,
+                                            handle: {
+                                                crumb: "Edit Template",
+                                            } as BreadcrumbHandle,
+                                        },
+                                    ],
+                                    handle: {
+                                        crumb: "Test Templates",
+                                    } as BreadcrumbHandle,
                                 },
                             ],
                             handle: {
