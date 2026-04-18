@@ -579,4 +579,5 @@ export const INITIAL_CREATE_TEST_TEMPLATE_CONTEXT: CreateTestTemplateContext = {
     options: INITIAL_OPTIONS,
     isValidTemplateInfo: false,
     isValidCurrentPart: false,
+    isValidParts: false,
 };

@@ -41,6 +41,8 @@ import {
     validateTestInfo,
 } from "./actionFns/createTest";
 import { toast } from "react-toastify";
+import { TestTemplateItf } from "../types/testTemplate";
+import { pickFieldsFromObject } from "../utils/object";
 
 const createTestSlice = createSlice({
     initialState: INITIAL_CREATE_TEST_CONTEXT,
@@ -48,7 +50,7 @@ const createTestSlice = createSlice({
     reducers: {
         checkStep(state, action) {
             const isValidStep = state.steps?.find(
-                (step) => step.value === action.payload.step
+                (step) => step.value === action.payload.step,
             );
             if (!isValidStep) state.currentStep = state.steps?.[0].value;
         },
@@ -57,7 +59,7 @@ const createTestSlice = createSlice({
         },
         moveNextStep(state) {
             const currentStep = state.steps?.find(
-                (step) => step.value === state.currentStep
+                (step) => step.value === state.currentStep,
             );
             if (!currentStep) return;
             if (currentStep?.index === state.steps?.length) {
@@ -65,13 +67,13 @@ const createTestSlice = createSlice({
                 return;
             }
             const next_step = state.steps?.find(
-                (step) => step.index === currentStep?.index + 1
+                (step) => step.index === currentStep?.index + 1,
             );
             state.currentStep = next_step ? next_step.value : "";
         },
         movePrevStep(state) {
             const currentStep = state.steps?.find(
-                (step) => step.value === state.currentStep
+                (step) => step.value === state.currentStep,
             );
             if (!currentStep) return;
             if (currentStep?.index === 0) {
@@ -79,7 +81,7 @@ const createTestSlice = createSlice({
                 return;
             }
             const prev_step = state.steps?.find(
-                (step) => step.index === currentStep?.index - 1
+                (step) => step.index === currentStep?.index - 1,
             );
             state.currentStep = prev_step ? prev_step.value : "";
         },
@@ -105,20 +107,20 @@ const createTestSlice = createSlice({
             if (action.payload?.testId) state.testId = action.payload.testId;
             if (action.payload?.options)
                 state.options = JSON.parse(
-                    JSON.stringify(action.payload.options)
+                    JSON.stringify(action.payload.options),
                 );
         },
         initializeTestParts(state) {
             state.testParts = initializeParts(
                 state.testParts,
                 state.numParts,
-                state.testId!
+                state.testId!,
             );
         },
         saveTestParts(state, action: PayloadAction<Partial<TestPartItf>>) {
             if (!action.payload.order) return;
             const partIndex = state.testParts.findIndex(
-                (part) => part.order === action.payload.order
+                (part) => part.order === action.payload.order,
             );
             state.testParts[partIndex] = {
                 ...state.testParts[partIndex],
@@ -133,18 +135,18 @@ const createTestSlice = createSlice({
         },
         movePart(
             state,
-            action: PayloadAction<{ partId: string; direction: "up" | "down" }>
+            action: PayloadAction<{ partId: string; direction: "up" | "down" }>,
         ) {
             let updatedParts = [...state.testParts];
             const partToMoveIndex = state.testParts.findIndex(
-                (part) => part.id === action.payload.partId
+                (part) => part.id === action.payload.partId,
             );
             if (partToMoveIndex === -1) return;
 
             if (action.payload.direction === "up") {
                 const partAboveIndex = state.testParts.findIndex(
                     (part) =>
-                        part.order === updatedParts[partToMoveIndex].order - 1
+                        part.order === updatedParts[partToMoveIndex].order - 1,
                 );
                 if (partAboveIndex === -1) return;
                 updatedParts[partToMoveIndex].order =
@@ -154,7 +156,7 @@ const createTestSlice = createSlice({
             } else {
                 const partBelowIndex = state.testParts.findIndex(
                     (part) =>
-                        part.order === updatedParts[partToMoveIndex].order + 1
+                        part.order === updatedParts[partToMoveIndex].order + 1,
                 );
                 if (partBelowIndex === -1) return;
                 updatedParts[partToMoveIndex].order =
@@ -175,7 +177,7 @@ const createTestSlice = createSlice({
                         part.num_questions,
                         state.testId!,
                         part.id,
-                        startOrder
+                        startOrder,
                     );
 
                     startOrder += questions.length;
@@ -189,24 +191,24 @@ const createTestSlice = createSlice({
                 state.testQuestions = initializeQuestions(
                     state.testQuestions,
                     state.numQuestions,
-                    state.testId!
+                    state.testId!,
                 );
             }
         },
 
         saveTestQuestions(
             state,
-            action: PayloadAction<Partial<QuestionItf<QuestionContentItf>>>
+            action: PayloadAction<Partial<QuestionItf<QuestionContentItf>>>,
         ) {
             if (!action.payload.order) return;
             if (action.payload?.part_id) {
                 const partIndex = state.testParts.findIndex(
-                    (part) => part.id === action.payload.part_id
+                    (part) => part.id === action.payload.part_id,
                 );
                 const partQuestions = state.testParts[partIndex].questions;
                 if (!partQuestions) return;
                 const questionIndex = partQuestions.findIndex(
-                    (question) => question.order === action.payload.order
+                    (question) => question.order === action.payload.order,
                 );
                 const question = partQuestions[questionIndex];
                 if (!question) return;
@@ -217,7 +219,7 @@ const createTestSlice = createSlice({
                 };
             } else {
                 const questionIndex = state.testQuestions.findIndex(
-                    (question) => question.order === action.payload.order
+                    (question) => question.order === action.payload.order,
                 );
                 const question = state.testQuestions[questionIndex];
                 if (!question) return;
@@ -247,7 +249,7 @@ const createTestSlice = createSlice({
         },
         removeSelectedTestTakers(state, action: PayloadAction<TakerItf>) {
             state.selectedTestTakers = state.selectedTestTakers.filter(
-                (selectedTaker) => selectedTaker.id !== action.payload.id
+                (selectedTaker) => selectedTaker.id !== action.payload.id,
             );
         },
         setAvailableTakers(state, action: PayloadAction<TakerItf[]>) {
@@ -255,7 +257,7 @@ const createTestSlice = createSlice({
         },
         validate(
             state,
-            action: PayloadAction<{ step: CREATE_TEST_STEPS } | undefined>
+            action: PayloadAction<{ step: CREATE_TEST_STEPS } | undefined>,
         ) {
             const step = action.payload?.step || state.currentStep;
             switch (step) {
@@ -275,7 +277,7 @@ const createTestSlice = createSlice({
                         state.testParts || [],
                         state.numParts,
                         state.numQuestions,
-                        state.maxScore
+                        state.maxScore,
                     );
                     break;
                 }
@@ -284,7 +286,7 @@ const createTestSlice = createSlice({
                         state.testParts || [],
                         state.testQuestions || [],
                         state.numQuestions,
-                        state.maxScore
+                        state.maxScore,
                     );
                     break;
                 }
@@ -296,7 +298,7 @@ const createTestSlice = createSlice({
                     state.isValidShareOption = validateShareOption(
                         state.shareOption,
                         state.selectedTestTakers.length,
-                        state.passcode
+                        state.passcode,
                     );
                     break;
                 }
@@ -304,7 +306,7 @@ const createTestSlice = createSlice({
         },
         validateCurrentPart(
             state,
-            action: PayloadAction<{ partIndex: number }>
+            action: PayloadAction<{ partIndex: number }>,
         ) {
             const currentPart = state.testParts[action.payload.partIndex];
             if (
@@ -325,7 +327,7 @@ const createTestSlice = createSlice({
                 endOrder: number;
                 partFromId?: string;
                 partToId?: string;
-            }>
+            }>,
         ) {
             const { startOrder, endOrder, partFromId, partToId } =
                 action.payload;
@@ -334,25 +336,25 @@ const createTestSlice = createSlice({
 
             if (partFromId && partToId) {
                 const partFrom = state.testParts.find(
-                    (part) => part.id === partFromId
+                    (part) => part.id === partFromId,
                 );
                 const partTo = state.testParts.find(
-                    (part) => part.id === partToId
+                    (part) => part.id === partToId,
                 );
 
                 if (!partFrom || !partTo) return;
                 startIndex = partFrom.questions?.findIndex(
-                    (question) => question.order === startOrder
+                    (question) => question.order === startOrder,
                 );
                 endIndex = partTo.questions?.findIndex(
-                    (question) => question.order === endOrder
+                    (question) => question.order === endOrder,
                 );
 
                 if (startIndex === undefined || endIndex === undefined) return;
 
                 console.log("hello");
                 const partFromIndex = state.testParts.findIndex(
-                    (part) => part.id === partFromId
+                    (part) => part.id === partFromId,
                 );
                 const partFromQuestions =
                     state.testParts[partFromIndex].questions;
@@ -362,11 +364,11 @@ const createTestSlice = createSlice({
                     state.testParts[partFromIndex].questions = reorderQuestions(
                         partFromQuestions,
                         startIndex,
-                        endIndex
+                        endIndex,
                     );
                 } else {
                     const partToIndex = state.testParts.findIndex(
-                        (part) => part.id === partToId
+                        (part) => part.id === partToId,
                     );
                     const partToQuestions =
                         state.testParts[partToIndex].questions;
@@ -384,28 +386,28 @@ const createTestSlice = createSlice({
                         questionToAdd,
                         endIndex,
                         moveDirection,
-                        state.questionNumberingMethod
+                        state.questionNumberingMethod,
                     );
 
                     state.testParts[partFromIndex].questions = removeQuestion(
                         partFromQuestions,
                         startIndex,
                         moveDirection,
-                        state.questionNumberingMethod
+                        state.questionNumberingMethod,
                     );
 
                     if (partFromIndex < partToIndex) {
                         for (let i = partFromIndex + 1; i < partToIndex; i++) {
                             changeIntermediateQuestionsOrder(
                                 state.testParts[i].questions!,
-                                "increase"
+                                "increase",
                             );
                         }
                     } else {
                         for (let i = partFromIndex - 1; i > partToIndex; i--) {
                             changeIntermediateQuestionsOrder(
                                 state.testParts[i].questions!,
-                                "decrease"
+                                "decrease",
                             );
                         }
                     }
@@ -415,16 +417,16 @@ const createTestSlice = createSlice({
                 }
             } else {
                 startIndex = state.testQuestions?.findIndex(
-                    (question) => question.order === startOrder
+                    (question) => question.order === startOrder,
                 );
                 endIndex = state.testQuestions?.findIndex(
-                    (question) => question.order === endOrder
+                    (question) => question.order === endOrder,
                 );
 
                 state.testQuestions = reorderQuestions(
                     state.testQuestions,
                     startIndex,
-                    endIndex
+                    endIndex,
                 );
             }
         },
@@ -434,7 +436,7 @@ const createTestSlice = createSlice({
                 test: TestItf;
                 parts: TestPartItf[];
                 questions: QuestionItf<QuestionContentItf>[];
-            }>
+            }>,
         ) {
             state.testTitle = action.payload.test.title;
             state.testDatetime = action.payload.test.datetime;
@@ -459,7 +461,7 @@ const createTestSlice = createSlice({
                 state.testParts = initializeParts(
                     state.testParts,
                     state.numParts,
-                    state.testId
+                    state.testId,
                 );
             }
 
@@ -494,7 +496,7 @@ const createTestSlice = createSlice({
                 state.testQuestions = initializeQuestions(
                     state.testQuestions,
                     state.numQuestions,
-                    state.testId
+                    state.testId,
                 );
             }
 
@@ -512,10 +514,10 @@ const createTestSlice = createSlice({
         },
         navigateStep(state, action: PayloadAction<CREATE_TEST_STEPS>) {
             const currentStep = state.steps?.find(
-                (step) => step.value === state.currentStep
+                (step) => step.value === state.currentStep,
             );
             const targetStep = state.steps?.find(
-                (step) => step.value === action.payload
+                (step) => step.value === action.payload,
             );
             if (!targetStep || !currentStep) return;
 
@@ -553,7 +555,7 @@ const createTestSlice = createSlice({
                                 state.testParts || [],
                                 state.numParts,
                                 state.numQuestions,
-                                state.maxScore
+                                state.maxScore,
                             )
                         ) {
                             state.isValidParts = true;
@@ -567,7 +569,7 @@ const createTestSlice = createSlice({
                                 state.testParts,
                                 state.testQuestions,
                                 state.numQuestions,
-                                state.maxScore
+                                state.maxScore,
                             )
                         ) {
                             state.isValidQuestions = true;
@@ -587,7 +589,7 @@ const createTestSlice = createSlice({
                             validateShareOption(
                                 state.shareOption,
                                 state.selectedTestTakers.length,
-                                state.passcode
+                                state.passcode,
                             )
                         ) {
                             state.isValidShareOption = true;
@@ -618,14 +620,14 @@ const createTestSlice = createSlice({
                 state.passcode.valid_till = new Date(
                     Date.now() +
                         action.payload.valid_in *
-                            MILISECONDS_BY_UNIT[state.passcode.valid_unit]
+                            MILISECONDS_BY_UNIT[state.passcode.valid_unit],
                 ).toISOString();
             }
             if (state.passcode.valid_in && action.payload.valid_unit) {
                 state.passcode.valid_till = new Date(
                     Date.now() +
                         state.passcode.valid_in *
-                            MILISECONDS_BY_UNIT[action.payload.valid_unit]
+                            MILISECONDS_BY_UNIT[action.payload.valid_unit],
                 ).toISOString();
             }
 
@@ -633,14 +635,14 @@ const createTestSlice = createSlice({
                 state.passcode.valid_in = Math.round(
                     (new Date(action.payload.valid_till).getTime() -
                         Date.now()) /
-                        MILISECONDS_BY_UNIT[state.passcode.valid_unit]
+                        MILISECONDS_BY_UNIT[state.passcode.valid_unit],
                 );
             }
             if (state.passcode.valid_till && action.payload.valid_unit) {
                 state.passcode.valid_in = Math.round(
                     (new Date(state.passcode.valid_till).getTime() -
                         Date.now()) /
-                        MILISECONDS_BY_UNIT[action.payload.valid_unit]
+                        MILISECONDS_BY_UNIT[action.payload.valid_unit],
                 );
             }
 
@@ -676,7 +678,7 @@ const createTestSlice = createSlice({
             }
 
             state.testQuestions = state.testQuestions?.filter(
-                (ques) => ques.id !== question.id
+                (ques) => ques.id !== question.id,
             );
 
             state.currentStep = CREATE_TEST_STEPS.TEST_PARTS;
@@ -716,6 +718,22 @@ const createTestSlice = createSlice({
         },
         setnotifyAssignment(state, action: PayloadAction<boolean>) {
             state.notifyAssignment = action.payload;
+        },
+        handleSelectTemplate(state, action: PayloadAction<TestTemplateItf>) {
+            console.log("Selected template:", action.payload);
+            const template = action.payload;
+            state.testTitle = template.name;
+            state.testDescription = template.description;
+            state.testDuration = template.duration;
+            state.maxScore = template.max_score;
+            state.numParts = template.num_parts;
+            state.level = template.level;
+            state.options = {
+                ...INITIAL_OPTIONS,
+                ...pickFieldsFromObject(template.options, INITIAL_OPTIONS),
+            };
+            state.currentStep = CREATE_TEST_STEPS.TEST_INFORMATION;
+            state.testParts = template.parts || [];
         },
     },
 });

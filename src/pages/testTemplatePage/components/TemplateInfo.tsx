@@ -92,7 +92,7 @@ const TemplateInfo = () => {
 
     const {
         handleSubmit,
-        formState: { errors },
+        formState: { errors, isDirty, dirtyFields },
         register,
         setValue,
         reset,
@@ -120,6 +120,10 @@ const TemplateInfo = () => {
     };
 
     const onSubmit = async (data: TestTemplateBodyItf) => {
+        if (!isDirty && templateId) {
+            dispatch(moveNextStep());
+            return;
+        }
         // Save to Redux before creating/updating
         dispatch(
             saveTemplateInfo({

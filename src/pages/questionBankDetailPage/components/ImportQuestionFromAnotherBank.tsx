@@ -13,9 +13,9 @@ import Modal, {
     ModalHeader,
 } from "../../../components/modals/Modal";
 import Button from "../../../components/elements/Button";
-import PickBank from "./PickBank";
 import Loading from "../../../components/loadings/Loading";
 import { QuestionContentItf, QuestionItf } from "../../../types/types";
+import PickBank from "./PickBank";
 import PickQuestionsFromBank from "./PickQuestionsFromBank";
 
 enum IMPORT_STEP {
@@ -28,7 +28,7 @@ type ImportQuestionFromAnotherBankProps = {
     currentQuestion?: QuestionItf<QuestionContentItf>;
     onClose: () => void;
     onConfirmQuestions: (
-        questions: QuestionInBankItf<QuestionContentItf>[]
+        questions: QuestionInBankItf<QuestionContentItf>[],
     ) => void;
 };
 
@@ -39,13 +39,13 @@ const ImportQuestionFromAnotherBank = ({
     onConfirmQuestions,
 }: ImportQuestionFromAnotherBankProps) => {
     const [selectedBank, setSelectedBank] = useState<QuestionBankItf | null>(
-        null
+        null,
     );
     const [selectedQuestions, setSelectedQuestions] = useState<
         QuestionInBankItf<QuestionContentItf>[]
     >([]);
     const [currentStep, setCurrentStep] = useState<IMPORT_STEP>(
-        IMPORT_STEP.SELECT_BANK
+        IMPORT_STEP.SELECT_BANK,
     );
 
     const { data: questionBanks, isLoading: isLoadingQuestionBanks } = useQuery<
@@ -56,7 +56,7 @@ const ImportQuestionFromAnotherBank = ({
             const data: { questionBanks: QuestionBankItf[] } =
                 await getQuestionBanks();
             return data.questionBanks.filter((bank) =>
-                currentBank ? bank.id !== currentBank.id : true
+                currentBank ? bank.id !== currentBank.id : true,
             );
         },
     });
@@ -76,7 +76,7 @@ const ImportQuestionFromAnotherBank = ({
                 ...data.questionBank,
                 questions_detail: data.questionBank.questions,
                 questions: data.questionBank.questions.map(
-                    (question: any) => question.id
+                    (question: any) => question.id,
                 ),
             };
         },
@@ -96,21 +96,10 @@ const ImportQuestionFromAnotherBank = ({
         }
     };
 
-    const handleSelectQuestion = (
-        question: QuestionInBankItf<QuestionContentItf>
+    const handleSelectQuestions = (
+        questions: QuestionInBankItf<QuestionContentItf>[],
     ) => {
-        if (currentBank) {
-            if (selectedQuestions.find((q) => q.id === question.id)) {
-                setSelectedQuestions(
-                    selectedQuestions.filter((q) => q.id !== question.id)
-                );
-            } else {
-                setSelectedQuestions([...selectedQuestions, question]);
-            }
-        }
-        if (currentQuestion) {
-            setSelectedQuestions([question]);
-        }
+        setSelectedQuestions(questions);
     };
 
     const handleClickBack = () => {
@@ -155,7 +144,7 @@ const ImportQuestionFromAnotherBank = ({
                                 selectedBank={selectedBankDetail}
                                 currentBank={currentBank}
                                 currentQuestion={currentQuestion}
-                                onSelectQuestion={handleSelectQuestion}
+                                onSelectQuestions={handleSelectQuestions}
                                 selectedQuestions={selectedQuestions}
                             />
                         )}
@@ -184,9 +173,9 @@ const ImportQuestionFromAnotherBank = ({
                                 currentStep === IMPORT_STEP.SELECT_BANK
                                     ? !selectedBank
                                     : currentStep ===
-                                      IMPORT_STEP.SELECT_QUESTIONS
-                                    ? selectedQuestions.length === 0
-                                    : false
+                                        IMPORT_STEP.SELECT_QUESTIONS
+                                      ? selectedQuestions.length === 0
+                                      : false
                             }
                         >
                             {currentStep === IMPORT_STEP.SELECT_BANK

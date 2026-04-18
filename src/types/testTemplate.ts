@@ -41,4 +41,5 @@ export interface CreateTestTemplateContext {
     options: any;
     isValidTemplateInfo: boolean;
     isValidCurrentPart: boolean;
+    isValidParts: boolean;
 }
