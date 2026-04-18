@@ -1,7 +1,6 @@
 import React from "react";
 import { QuestionBankItf } from "../../../types/questionBank";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCheckCircle } from "@fortawesome/free-solid-svg-icons";
+import CardPicker from "../../../components/pickers/CardPicker";
 
 type PickBankProps = {
     banks: QuestionBankItf[];
@@ -10,34 +9,40 @@ type PickBankProps = {
 };
 
 const PickBank = ({ banks, onSelectBank, selectedBank }: PickBankProps) => {
-    const handleClickBank = (bank: QuestionBankItf) => {
-        onSelectBank(bank);
+    const selectedBankIds = selectedBank ? [selectedBank.id] : [];
+
+    const handleSelectionChange = (
+        _ids: string[],
+        selectedItems: QuestionBankItf[],
+    ) => {
+        if (selectedItems.length === 0) {
+            return;
+        }
+        onSelectBank(selectedItems[0]);
     };
 
     return (
         <div>
             <p>Choose a bank to import questions from:</p>
-            <div className="grid grid-cols-3 gap-2 mt-1">
-                {banks.map((bank) => (
-                    <div
-                        onClick={() => handleClickBank(bank)}
-                        key={bank.id}
-                        className={`cursor-pointer relative px-4 py-2 rounded-lg bg-orange-50 hover:bg-orange-100 shadow-sm`}
-                    >
-                        {selectedBank && selectedBank.id === bank.id && (
-                            <span>
-                                <FontAwesomeIcon
-                                    icon={faCheckCircle}
-                                    className="text-orange-600 absolute top-1 right-1"
-                                />
-                            </span>
-                        )}
-                        <div className="text-lg font-bold">{bank.name}</div>
-                        <div className="text-sm text-gray-500">
-                            {bank.questions.length} questions
+            <div className="mt-4">
+                <CardPicker
+                    items={banks}
+                    selectedIds={selectedBankIds}
+                    onSelectionChange={handleSelectionChange}
+                    getItemId={(bank) => bank.id}
+                    renderCard={(bank) => (
+                        <div className="px-4 py-2 rounded-lg bg-orange-50 hover:bg-orange-100 shadow-sm transition">
+                            <div className="text-lg font-bold">{bank.name}</div>
+                            <div className="text-sm text-gray-500">
+                                {bank.questions.length} questions
+                            </div>
                         </div>
-                    </div>
-                ))}
+                    )}
+                    multiSelect={false}
+                    gridCols={3}
+                    showSelectAllButton={false}
+                    emptyMessage="No banks available"
+                />
             </div>
         </div>
     );

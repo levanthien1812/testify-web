@@ -27,8 +27,11 @@ const TemplatePart: React.FC<{
     );
     const [isEditing, setIsEditing] = useState(!part.id ? true : false);
     const [isDeleting, setIsDeleting] = useState(false);
-    const { saveTemplateParts, movePart: movePartAction } =
-        createTestTemplateActions;
+    const {
+        saveTemplateParts,
+        movePart: movePartAction,
+        validate,
+    } = createTestTemplateActions;
     const dispatch = useDispatch();
 
     const { mutate: createPartMutate, isLoading: createPartLoading } =
@@ -40,6 +43,7 @@ const TemplatePart: React.FC<{
                 dispatch(saveTemplateParts({ ...data.part, is_saved: true }));
                 setIsEditing(false);
                 toast.success(TOAST_MESSAGES.PART_ADDED_SUCCESSFULLY);
+                dispatch(validate());
             },
         });
 
@@ -60,6 +64,7 @@ const TemplatePart: React.FC<{
                 );
                 setIsEditing(false);
                 toast.success(TOAST_MESSAGES.PART_UPDATED_SUCCESSFULLY);
+                dispatch(validate());
             },
         });
 
@@ -191,6 +196,28 @@ const TemplatePart: React.FC<{
                         })}
                         error={errors?.score && errors?.score.message}
                         label={{ text: "Score" }}
+                        required
+                        disabled={!isEditing}
+                    />
+
+                    <Input
+                        type="number"
+                        min={0}
+                        step={1}
+                        {...register("num_questions", {
+                            required: "Number of questions is required",
+                            min: {
+                                value: 1,
+                                message:
+                                    "Number of questions must be greater than 0",
+                            },
+                            valueAsNumber: true,
+                        })}
+                        error={
+                            errors?.num_questions &&
+                            errors?.num_questions.message
+                        }
+                        label={{ text: "Number of Questions" }}
                         required
                         disabled={!isEditing}
                     />

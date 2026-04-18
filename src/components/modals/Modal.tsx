@@ -27,7 +27,7 @@ type FooterProps = {
 };
 
 const ModalContext = React.createContext<Pick<ModalProps, "onClose"> | null>(
-    null
+    null,
 );
 
 const Modal = ({
@@ -46,13 +46,13 @@ const Modal = ({
             <div
                 className={`fixed top-0 left-0 right-0 bottom-0 bg-white shadow-md mx-2 md:mx-auto my-auto ${
                     width || "w-fit"
-                } h-fit min-w-40 md:min-w-[300px] 2xl:min-w-[500px]`}
+                } h-fit min-w-40 md:min-w-[300px] md:max-w-4xl 2xl:min-w-[500px] 2xl:max-w-6xl`}
                 style={{ zIndex }}
             >
                 {children}
             </div>
         </ModalContext.Provider>,
-        document.getElementById("modal")!
+        document.getElementById("modal")!,
     );
 };
 export const ModalHeader = ({ title }: HeaderProps) => {

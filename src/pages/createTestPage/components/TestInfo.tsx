@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import {
     PUBLIC_ANSWERS_OPTIONS,
     QUESTION_NUMBERING_METHOD,
@@ -19,6 +19,8 @@ import { createTest, updateTest } from "../../../services/test";
 import { useDispatch } from "react-redux";
 import TestOptions from "./testInfo/TestOptions";
 import { useAppSelector } from "../../../hooks/hooks";
+import Button from "../../../components/elements/Button";
+import TemplatePicker from "./TemplatePicker";
 
 const TestInfo = () => {
     const {
@@ -43,6 +45,8 @@ const TestInfo = () => {
         editibility,
         testParts,
     } = useAppSelector((state) => state.createTest);
+
+    const [isSelectingTemplate, setIsSelectingTemplate] = useState(false);
 
     const dispatch = useDispatch();
 
@@ -250,6 +254,16 @@ const TestInfo = () => {
                 },
             }}
         >
+            <div className="flex justify-end">
+                <Button link onClick={() => setIsSelectingTemplate(true)}>
+                    Select template
+                </Button>
+                {isSelectingTemplate && (
+                    <TemplatePicker
+                        onClose={() => setIsSelectingTemplate(false)}
+                    />
+                )}
+            </div>
             <FormProvider {...methods}>
                 <form className="mt-4 ">
                     <div className="grid grid-cols-1 sm:grid-cols-[2fr_5fr] gap-2">

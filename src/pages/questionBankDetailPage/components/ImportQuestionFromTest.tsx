@@ -29,7 +29,7 @@ type ImportQuestionFromTestProps = {
     currentBank: QuestionBankItf;
     onClose: () => void;
     onConfirmQuestions: (
-        questions: QuestionInBankItf<QuestionContentItf>[]
+        questions: QuestionInBankItf<QuestionContentItf>[],
     ) => void;
 };
 
@@ -44,7 +44,7 @@ const ImportQuestionFromTest = ({
         QuestionItf<QuestionContentItf>[]
     >([]);
     const [currentStep, setCurrentStep] = useState<IMPORT_STEP>(
-        IMPORT_STEP.SELECT_TEST
+        IMPORT_STEP.SELECT_TEST,
     );
 
     const { data: tests, isLoading: isLoadingTests } = useQuery<
@@ -69,16 +69,11 @@ const ImportQuestionFromTest = ({
         }
     };
 
-    const handleSelectQuestion = (
-        question: QuestionItf<QuestionContentItf>
+    // Updated to receive the full array of selected questions directly from CardPicker
+    const handleSelectQuestions = (
+        questions: QuestionItf<QuestionContentItf>[],
     ) => {
-        if (selectedQuestions.find((q) => q.id === question.id)) {
-            setSelectedQuestions(
-                selectedQuestions.filter((q) => q.id !== question.id)
-            );
-        } else {
-            setSelectedQuestions([...selectedQuestions, question]);
-        }
+        setSelectedQuestions(questions);
     };
 
     const handleClickBack = () => {
@@ -107,17 +102,18 @@ const ImportQuestionFromTest = ({
                         selectedTest && (
                             <PickQuestionsFromTest
                                 selectedTest={selectedTest}
-                                onSelectQuestion={handleSelectQuestion}
+                                onSelectQuestions={handleSelectQuestions} // Updated prop name
                                 selectedQuestions={selectedQuestions}
                                 importedQuestions={
                                     currentBank.questions_detail &&
                                     currentBank.questions_detail
                                         .filter(
-                                            (question) => question.imported_from
+                                            (question) =>
+                                                question.imported_from,
                                         )
                                         .map(
                                             (question) =>
-                                                question.imported_from!
+                                                question.imported_from!,
                                         )
                                 }
                             />
@@ -147,9 +143,9 @@ const ImportQuestionFromTest = ({
                                 currentStep === IMPORT_STEP.SELECT_TEST
                                     ? !selectedTest
                                     : currentStep ===
-                                      IMPORT_STEP.SELECT_QUESTIONS
-                                    ? selectedQuestions.length === 0
-                                    : false
+                                        IMPORT_STEP.SELECT_QUESTIONS
+                                      ? selectedQuestions.length === 0
+                                      : false
                             }
                         >
                             {currentStep === IMPORT_STEP.SELECT_TEST

@@ -12,14 +12,20 @@ import MessageAction from "../others/MessageAction";
 import { getTestTemplate } from "../../services/testTemplate";
 import Navigator from "../createTestPage/components/Navigator";
 import { CREATE_TEST_TEMPLATE_STEPS } from "../../config/constants/testTemplate";
+import { date } from "joi";
 
 const CreateTestTemplatePage = () => {
     const { numParts, currentStep, steps } = useAppSelector(
         (state) => state.createTestTemplate,
     );
     const [error, setError] = useState<string | null>(null);
-    const { setTemplateFromAPI, reset, navigateStep } =
-        createTestTemplateActions;
+    const {
+        setTemplateFromAPI,
+        reset,
+        navigateStep,
+        validate,
+        initializeTemplateParts,
+    } = createTestTemplateActions;
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -38,6 +44,7 @@ const CreateTestTemplatePage = () => {
         enabled: false,
         onSuccess: (data) => {
             dispatch(setTemplateFromAPI(data));
+            dispatch(validate());
         },
         onError: (err: any) => {
             if (err instanceof AxiosError) {

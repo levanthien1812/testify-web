@@ -7,6 +7,7 @@ export const initializeTemplateParts = (
     numParts: number,
     templateId: string,
 ) => {
+    console.log(existingParts);
     let updatedParts = [...existingParts];
 
     if (numParts > 1 && existingParts.length === 0) {

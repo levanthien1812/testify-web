@@ -107,8 +107,8 @@ const createTestTemplateSlice = createSlice({
             state.level = action.payload.template.level;
             state.templateId = action.payload.template.id;
 
-            state.testParts = action.payload?.parts;
-            if (state.testParts && state.testParts.length > 0) {
+            state.testParts = action.payload.parts || [];
+            if (state.testParts) {
                 state.testParts = initializePartsHelper(
                     state.testParts,
                     state.numParts,
@@ -137,14 +137,38 @@ const createTestTemplateSlice = createSlice({
         },
         validate(state) {
             // Validate template info
-            if (
-                state.templateName?.length === 0 ||
-                state.testDuration <= 0 ||
-                state.maxScore <= 0
-            ) {
-                state.isValidTemplateInfo = false;
-            } else {
-                state.isValidTemplateInfo = true;
+            switch (state.currentStep) {
+                case CREATE_TEST_TEMPLATE_STEPS.TEMPLATE_INFORMATION:
+                    if (
+                        state.templateName?.length === 0 ||
+                        state.testDuration <= 0 ||
+                        state.maxScore <= 0
+                    ) {
+                        state.isValidTemplateInfo = false;
+                    } else {
+                        state.isValidTemplateInfo = true;
+                    }
+                    break;
+                case CREATE_TEST_TEMPLATE_STEPS.TEMPLATE_PARTS:
+                    const totalScore = state.testParts.reduce(
+                        (acc, part) => acc + part.score,
+                        0,
+                    );
+                    const totalNumQuestions = state.testParts.reduce(
+                        (acc, part) => acc + part.num_questions,
+                        0,
+                    );
+                    if (
+                        totalScore !== state.maxScore ||
+                        totalNumQuestions !== state.numQuestions
+                    ) {
+                        state.isValidParts = false;
+                    } else {
+                        state.isValidParts = true;
+                    }
+                    break;
+                default:
+                    break;
             }
         },
         moveNextStep(state) {

@@ -3,14 +3,26 @@ import { useDispatch } from "react-redux";
 import { createTestTemplateActions } from "../../../stores/createTestTemplate";
 import TemplatePart from "./TemplatePart";
 import Wrapper from "../../createTestPage/components/Wrapper";
+import { useNavigate } from "react-router";
+import { toast } from "react-toastify";
 
 const TemplateParts = () => {
     const { movePrevStep } = createTestTemplateActions;
-    const { numParts, maxScore, templateId, testParts } = useAppSelector(
-        (state) => state.createTestTemplate,
-    );
+    const { numParts, maxScore, templateId, testParts, isValidParts } =
+        useAppSelector((state) => state.createTestTemplate);
 
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const handleComplete = () => {
+        if (!isValidParts) {
+            toast.error(
+                "Total score and total number of questions in parts must match the values you entered in the previous step",
+            );
+            return;
+        }
+        navigate("/test-templates");
+    };
 
     return (
         <Wrapper
@@ -23,11 +35,7 @@ const TemplateParts = () => {
                     },
                     containButton: {
                         disabled: numParts > 1 && !templateId,
-                        onClick: () => {
-                            // Template creation complete
-                            alert("Template created successfully!");
-                            // You can add navigation or callback here
-                        },
+                        onClick: handleComplete,
                         text: "Complete",
                     },
                 },
